@@ -1,5 +1,5 @@
-import * as Types from "./types";
-import { supabase } from "@/lib/supabaseClient";
+import * as Types from './types';
+import { supabase } from '@/lib/supabaseClient';
 
 export const draftPlayer = (player: Types.Player, team: Types.Team) => {};
 
