@@ -1,8 +1,5 @@
-import { supabase } from './../lib/supabaseClient';
-import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
-import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useState } from 'react';
+import { supabase } from './../lib/supabaseClient';
 
 interface ICountry {
    countries: Array<Country>;
@@ -49,16 +46,15 @@ function Page({ countries }: ICountry) {
 
    const channelId = 'custom-all-channel';
 
-   const databaseFilter = {
-      schema: 'public',
-      table: 'countries',
-      event: '*',
-   };
    const channel = supabase
       .channel(channelId)
-      .on('postgres_changes', databaseFilter, (payload: any) => {
-         receivedDatabaseEvent(payload);
-      })
+      .on(
+         'postgres_changes',
+         { event: '*', schema: 'public', table: 'countries' },
+         (payload: any) => {
+            receivedDatabaseEvent(payload);
+         }
+      )
       .subscribe();
 
    console.log(countryList);
