@@ -13,33 +13,33 @@ interface Country {
 function Page({ countries }: ICountry) {
    const [countryList, setCountryList] = useState(countries);
 
-   const deleteCountry = (newData: Country) => {
-      console.log(
+   const deleteCountry = (old: Country) => {
+      setCountryList(
          countryList.filter((country) => {
-            return country.id === newData.id;
+            return country.id !== old.id;
          })
       );
    };
    const addCountry = (newData: Country) => {
       setCountryList((countryList) => [...countryList, newData]);
    };
-   const updateCountry = (newData: Country) => {
-      deleteCountry(newData);
+   const updateCountry = (old: Country, newData: Country) => {
+      deleteCountry(old);
       addCountry(newData);
    };
 
    const receivedDatabaseEvent = (event: any) => {
-      const { eventType } = event;
+      const { old, eventType } = event;
       const newData = event.new;
       switch (eventType) {
          case 'DELETE':
-            deleteCountry(newData);
+            deleteCountry(old);
             break;
          case 'INSERT':
             addCountry(newData);
             break;
          case 'UPDATE':
-            updateCountry(newData);
+            updateCountry(old, newData);
             break;
       }
    };
