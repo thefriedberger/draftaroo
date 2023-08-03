@@ -11,7 +11,7 @@ export default async function LoginNav() {
    } = await supabase.auth.getUser();
 
    return (
-      <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16 mb-2">
+      <nav className="bg-emerald-700 w-full flex justify-center border-b border-b-foreground/10 h-16">
          <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm text-foreground">
             <div />
             <div>
