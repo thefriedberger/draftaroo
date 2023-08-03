@@ -105,7 +105,7 @@ export default function Login() {
                )}
                {view === 'sign-up' && (
                   <>
-                     <button className="bg-green-700 rounded px-4 py-2 text-white mb-6">
+                     <button className="bg-emerald-700 rounded px-4 py-2 text-white mb-6">
                         Sign Up
                      </button>
                      <p className="text-sm text-center">

@@ -14,7 +14,7 @@ export default async function Unauthenticated() {
 
    return (
       <>
-         <p className="text-white">Please sign in to see todos!</p>
+         <p className="text-white">Please sign in to see!</p>
       </>
    );
 }
