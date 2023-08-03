@@ -1,7 +1,7 @@
 'use client';
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 
 export default function RealtimeTeams({ teamsList }: { teamsList: Team[] }) {
    const [teams, setTeams] = useState(teamsList);
@@ -11,6 +11,11 @@ export default function RealtimeTeams({ teamsList }: { teamsList: Team[] }) {
       setTeams(teamsList);
    }, [teamsList]);
 
+   const handleRemove = async (e: FormEvent, team: Team) => {
+      const { id } = team;
+      const { error } = await supabase.from('teams').delete().match({ id });
+      console.log(error);
+   };
    useEffect(() => {
       const channel = supabase
          .channel('any')
@@ -51,8 +56,14 @@ export default function RealtimeTeams({ teamsList }: { teamsList: Team[] }) {
    return (
       <>
          {teams.map((team) => (
-            <div key={team.id} className="text-white">
-               {team.team_name}
+            <div key={team.id} className="text-white flex justify-between m-1">
+               <p>{team.team_name}</p>
+               <button
+                  className="bg-white rounded-sm text-black p-1"
+                  onClick={(e) => handleRemove(e, team)}
+               >
+                  Remove
+               </button>
             </div>
          ))}
       </>
