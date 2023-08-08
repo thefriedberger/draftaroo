@@ -27,3 +27,8 @@ export interface UserProps {
    username: string;
    origin: string;
 }
+export interface TabProps {
+   text?: string;
+   linkType?: string; //you need to define this, it cannot be a string
+   link?: string;
+}

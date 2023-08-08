@@ -1,5 +1,4 @@
 'use server';
-import { FORM_STATUS } from '@/app/login/page';
 import { UserProps } from '@/lib/types';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
@@ -20,8 +19,8 @@ const addUser = async (props: UserProps) => {
       },
    });
    console.log(error);
-   if (error) return FORM_STATUS.VIEW_FORM;
-   return FORM_STATUS.CHECK_EMAIL;
+   if (error) return 'VIEW_FORM';
+   return 'CHECK_EMAIL';
 };
 
 export default addUser;

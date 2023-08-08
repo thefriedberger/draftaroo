@@ -8,19 +8,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, useContext, useState } from 'react';
 
-export enum FORM_STATUS {
-   'VIEW_FORM',
-   'CHECK_EMAIL',
-}
+export type formStatus = 'VIEW_FORM' | 'CHECK_EMAIL';
 
-export enum FORM_TYPE {
-   'SIGN_IN',
-   'SIGN_UP',
-}
+export type formType = 'SIGN_IN' | 'SIGN_UP';
 
 export default function Login() {
-   const [view, setView] = useState(FORM_STATUS.VIEW_FORM);
-   const [formType, setFormType] = useState(FORM_TYPE.SIGN_IN);
+   const [view, setView] = useState<formStatus>('VIEW_FORM');
+   const [formType, setFormType] = useState<formType>('SIGN_IN');
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const [verifyPassword, setVerifyPassword] = useState('');
@@ -31,7 +25,7 @@ export default function Login() {
    const [passwordsMatch, setPasswordsMatch] = useState(true);
 
    const router = useRouter();
-   const supabase = createClientComponentClient();
+   const supabase = createClientComponentClient<Database>();
 
    const { prevUrl } = useContext(PageContext);
 
@@ -95,7 +89,7 @@ export default function Login() {
             </svg>{' '}
             Back
          </Link>
-         {view === FORM_STATUS.CHECK_EMAIL ? (
+         {view === 'CHECK_EMAIL' ? (
             <p className="text-center text-foreground">
                Check <span className="font-bold">{email}</span> to continue
                signing up
@@ -103,11 +97,9 @@ export default function Login() {
          ) : (
             <form
                className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
-               onSubmit={
-                  formType === FORM_TYPE.SIGN_IN ? handleSignIn : handleSignUp
-               }
+               onSubmit={formType === 'SIGN_IN' ? handleSignIn : handleSignUp}
             >
-               {formType === FORM_TYPE.SIGN_UP && (
+               {formType === 'SIGN_UP' && (
                   <>
                      <label className="text-md" htmlFor="username">
                         Username
@@ -166,7 +158,7 @@ export default function Login() {
                   value={password}
                   placeholder="••••••••"
                />
-               {formType === FORM_TYPE.SIGN_UP && (
+               {formType === 'SIGN_UP' && (
                   <>
                      <label className="text-md" htmlFor="verify-password">
                         Verify Password
@@ -185,11 +177,11 @@ export default function Login() {
                      />
                   </>
                )}
-               {!passwordsMatch && formType === FORM_TYPE.SIGN_UP && (
+               {!passwordsMatch && formType === 'SIGN_UP' && (
                   <p className="text-red-700 mb-6">Passwords must match</p>
                )}
 
-               {formType === FORM_TYPE.SIGN_IN && (
+               {formType === 'SIGN_IN' && (
                   <>
                      <button className="bg-emerald-700 rounded px-4 py-2 text-white mb-6">
                         Sign In
@@ -198,14 +190,14 @@ export default function Login() {
                         Don&rsquo;t have an account?
                         <button
                            className="ml-1 underline"
-                           onClick={() => setFormType(FORM_TYPE.SIGN_UP)}
+                           onClick={() => setFormType('SIGN_UP')}
                         >
                            Sign Up Now
                         </button>
                      </p>
                   </>
                )}
-               {formType === FORM_TYPE.SIGN_UP && (
+               {formType === 'SIGN_UP' && (
                   <>
                      <button
                         className={`${
@@ -219,7 +211,7 @@ export default function Login() {
                         Already have an account?
                         <button
                            className="ml-1 underline"
-                           onClick={() => setFormType(FORM_TYPE.SIGN_IN)}
+                           onClick={() => setFormType('SIGN_IN')}
                         >
                            Sign In Now
                         </button>

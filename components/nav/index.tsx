@@ -17,7 +17,7 @@ export default function Nav(props: NavProps) {
    useEffect(() => {
       if (pathname === '/login') return;
       updatePrevUrl?.(pathname);
-   }, [pathname]);
+   }, [pathname, updatePrevUrl]);
 
    return (
       <nav className="bg-emerald-700 w-full flex justify-center border-b border-b-foreground/10 h-16">
