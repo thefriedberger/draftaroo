@@ -6,7 +6,10 @@ import { cookies } from 'next/headers';
 const addUser = async (props: UserProps) => {
    const supabase = createServerActionClient<Database>({ cookies });
    const { firstName, lastName, username, email, password, origin } = props;
-   const { error } = await supabase.auth.signUp({
+   const {
+      data: { user },
+      error,
+   } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -18,6 +21,16 @@ const addUser = async (props: UserProps) => {
          },
       },
    });
+   await supabase
+      .from('profiles')
+      .update([
+         {
+            first_name: user?.user_metadata?.first_name,
+            last_name: user?.user_metadata?.last_name,
+            username: user?.user_metadata?.username,
+         },
+      ])
+      .match({ id: user?.id });
    console.log(error);
    if (error) return 'VIEW_FORM';
    return 'CHECK_EMAIL';
