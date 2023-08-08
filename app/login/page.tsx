@@ -40,7 +40,7 @@ export default function Login() {
          origin: location.origin,
       };
       const didSubmit = await addUser(userProps);
-      setView('VIEW_FORM');
+      setView(didSubmit);
    };
 
    const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
