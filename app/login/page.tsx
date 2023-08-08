@@ -1,27 +1,52 @@
 'use client';
 
+import { PageContext } from '@/components/context/page-context';
+import { UserProps } from '@/lib/types';
+import addUser from '@/utils/add-user';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { ChangeEvent, useContext, useState } from 'react';
+
+export enum FORM_STATUS {
+   'VIEW_FORM',
+   'CHECK_EMAIL',
+}
+
+export enum FORM_TYPE {
+   'SIGN_IN',
+   'SIGN_UP',
+}
 
 export default function Login() {
+   const [view, setView] = useState(FORM_STATUS.VIEW_FORM);
+   const [formType, setFormType] = useState(FORM_TYPE.SIGN_IN);
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
-   const [view, setView] = useState('sign-in');
+   const [verifyPassword, setVerifyPassword] = useState('');
+   const [firstName, setFirstName] = useState('');
+   const [lastName, setLastName] = useState('');
+   const [username, setUsername] = useState('');
+
+   const [passwordsMatch, setPasswordsMatch] = useState(true);
+
    const router = useRouter();
    const supabase = createClientComponentClient();
 
+   const { prevUrl } = useContext(PageContext);
+
    const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      await supabase.auth.signUp({
-         email,
-         password,
-         options: {
-            emailRedirectTo: `${location.origin}/auth/callback`,
-         },
-      });
-      setView('check-email');
+      const userProps: UserProps = {
+         email: email,
+         password: password,
+         firstName: firstName,
+         lastName: lastName,
+         username: username,
+         origin: location.origin,
+      };
+      const didSubmit = await addUser(userProps);
+      setView(didSubmit);
    };
 
    const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -30,8 +55,22 @@ export default function Login() {
          email,
          password,
       });
-      router.push('/');
+
+      if (prevUrl) {
+         router.push(prevUrl);
+      } else {
+         router.push('/');
+      }
       router.refresh();
+   };
+
+   const checkPassword = (e: ChangeEvent<HTMLInputElement>) => {
+      setVerifyPassword(e.target.value);
+      if (e?.target?.value === password) {
+         setPasswordsMatch(true);
+      } else {
+         setPasswordsMatch(false);
+      }
    };
 
    return (
@@ -56,7 +95,7 @@ export default function Login() {
             </svg>{' '}
             Back
          </Link>
-         {view === 'check-email' ? (
+         {view === FORM_STATUS.CHECK_EMAIL ? (
             <p className="text-center text-foreground">
                Check <span className="font-bold">{email}</span> to continue
                signing up
@@ -64,13 +103,53 @@ export default function Login() {
          ) : (
             <form
                className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
-               onSubmit={view === 'sign-in' ? handleSignIn : handleSignUp}
+               onSubmit={
+                  formType === FORM_TYPE.SIGN_IN ? handleSignIn : handleSignUp
+               }
             >
+               {formType === FORM_TYPE.SIGN_UP && (
+                  <>
+                     <label className="text-md" htmlFor="username">
+                        Username
+                     </label>
+                     <input
+                        className="rounded-md px-4 py-2 bg-inherit border mb-6"
+                        type="text"
+                        name="username"
+                        onChange={(e) => setUsername(e.target.value)}
+                        value={username}
+                        placeholder=""
+                     />
+                     <label className="text-md" htmlFor="first-name">
+                        First Name
+                     </label>
+                     <input
+                        className="rounded-md px-4 py-2 bg-inherit border mb-6"
+                        type="text"
+                        name="first-name"
+                        onChange={(e) => setFirstName(e.target.value)}
+                        value={firstName}
+                        placeholder="Joe"
+                     />
+                     <label className="text-md" htmlFor="last-name">
+                        Last Name
+                     </label>
+                     <input
+                        className="rounded-md px-4 py-2 bg-inherit border mb-6"
+                        type="text"
+                        name="last-name"
+                        onChange={(e) => setLastName(e.target.value)}
+                        value={lastName}
+                        placeholder="Mama"
+                     />
+                  </>
+               )}
                <label className="text-md" htmlFor="email">
                   Email
                </label>
                <input
                   className="rounded-md px-4 py-2 bg-inherit border mb-6"
+                  type="email"
                   name="email"
                   onChange={(e) => setEmail(e.target.value)}
                   value={email}
@@ -87,7 +166,30 @@ export default function Login() {
                   value={password}
                   placeholder="••••••••"
                />
-               {view === 'sign-in' && (
+               {formType === FORM_TYPE.SIGN_UP && (
+                  <>
+                     <label className="text-md" htmlFor="verify-password">
+                        Verify Password
+                     </label>
+                     <input
+                        className={`rounded-md px-4 py-2 bg-inherit border ${
+                           !passwordsMatch ? 'mb-0' : 'mb-6'
+                        }`}
+                        type="password"
+                        name="verify-password"
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                           checkPassword(e)
+                        }
+                        value={verifyPassword}
+                        placeholder="••••••••"
+                     />
+                  </>
+               )}
+               {!passwordsMatch && formType === FORM_TYPE.SIGN_UP && (
+                  <p className="text-red-700 mb-6">Passwords must match</p>
+               )}
+
+               {formType === FORM_TYPE.SIGN_IN && (
                   <>
                      <button className="bg-emerald-700 rounded px-4 py-2 text-white mb-6">
                         Sign In
@@ -96,23 +198,28 @@ export default function Login() {
                         Don&rsquo;t have an account?
                         <button
                            className="ml-1 underline"
-                           onClick={() => setView('sign-up')}
+                           onClick={() => setFormType(FORM_TYPE.SIGN_UP)}
                         >
                            Sign Up Now
                         </button>
                      </p>
                   </>
                )}
-               {view === 'sign-up' && (
+               {formType === FORM_TYPE.SIGN_UP && (
                   <>
-                     <button className="bg-emerald-700 rounded px-4 py-2 text-white mb-6">
+                     <button
+                        className={`${
+                           !passwordsMatch ? 'opacity-30' : ''
+                        } bg-emerald-700 rounded px-4 py-2 text-white mb-6`}
+                        disabled={!passwordsMatch}
+                     >
                         Sign Up
                      </button>
                      <p className="text-sm text-center">
                         Already have an account?
                         <button
                            className="ml-1 underline"
-                           onClick={() => setView('sign-in')}
+                           onClick={() => setFormType(FORM_TYPE.SIGN_IN)}
                         >
                            Sign In Now
                         </button>
