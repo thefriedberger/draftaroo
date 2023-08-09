@@ -28,10 +28,11 @@ const addUser = async (props: UserProps) => {
             first_name: user?.user_metadata?.first_name,
             last_name: user?.user_metadata?.last_name,
             username: user?.user_metadata?.username,
+            email: user?.email,
          },
       ])
       .match({ id: user?.id });
-   console.log(error);
+
    if (error) return 'VIEW_FORM';
    return 'CHECK_EMAIL';
 };

@@ -1,4 +1,4 @@
-import { AnchorHTMLAttributes } from 'react';
+import { AnchorHTMLAttributes, ReactNode } from 'react';
 
 export interface BaseProps {
    title?: string;
@@ -27,8 +27,21 @@ export interface UserProps {
    username: string;
    origin: string;
 }
+
+export interface Tab {
+   tabButton: ReactNode | any;
+   linkTab?: boolean;
+   tabPane?: ReactNode | string;
+}
 export interface TabProps {
-   text?: string;
-   linkType?: string; //you need to define this, it cannot be a string
-   link?: string;
+   tabs: Tab[];
+   className?: string;
+   useHash?: boolean;
+   activeTabName?: string;
+}
+export interface Profile {
+   firstName: string;
+   lastName: string;
+   email: string;
+   username: string;
 }
