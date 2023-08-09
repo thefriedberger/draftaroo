@@ -1,0 +1,13 @@
+.nav-active {
+   position: relative;
+}
+.nav-active::after {
+   content: '';
+   position: absolute;
+   width: 92%;
+   height: 4px;
+   left: 4%;
+   bottom: 3px;
+   background-color: white;
+   border-radius: 6px;
+}
