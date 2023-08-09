@@ -183,7 +183,7 @@ export default function Login() {
 
                {formType === 'SIGN_IN' && (
                   <>
-                     <button className="bg-emerald-700 rounded px-4 py-2 text-white mb-6">
+                     <button className="bg-emerald-primary rounded px-4 py-2 text-white mb-6">
                         Sign In
                      </button>
                      <p className="text-sm text-center">
@@ -202,7 +202,7 @@ export default function Login() {
                      <button
                         className={`${
                            !passwordsMatch ? 'opacity-30' : ''
-                        } bg-emerald-700 rounded px-4 py-2 text-white mb-6`}
+                        } bg-emerald-primary rounded px-4 py-2 text-white mb-6`}
                         disabled={!passwordsMatch}
                      >
                         Sign Up

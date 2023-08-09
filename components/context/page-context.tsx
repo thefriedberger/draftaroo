@@ -8,7 +8,7 @@ export type PageContextType = {
 };
 
 const initialValues = {
-   prevUrl: '',
+   prevUrl: '/',
 };
 
 interface Props {
