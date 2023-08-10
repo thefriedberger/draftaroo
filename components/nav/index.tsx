@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useContext, useEffect } from 'react';
 import { PageContext } from '../context/page-context';
+import AuthModal from '../modals/auth';
 
 export interface NavProps {
    user?: User;
@@ -31,12 +32,7 @@ export default function Nav(props: NavProps) {
                   <LogoutButton />
                </div>
             ) : (
-               <Link
-                  href="/login"
-                  className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover text-sm"
-               >
-                  Login
-               </Link>
+               <AuthModal buttonClass="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover text-sm" />
             )}
          </div>
       </nav>

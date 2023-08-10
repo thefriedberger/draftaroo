@@ -1,6 +1,6 @@
 const LeaguesTab = () => {
    return (
-      <div className="bg-gray rounded-sm p-2">
+      <div className="bg-gray-primary rounded-sm p-2">
          <h2 className="text-2xl">Lorem ipsum</h2>
          <p>
             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut
