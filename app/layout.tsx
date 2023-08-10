@@ -27,7 +27,7 @@ export default async function RootLayout({
    return (
       <PageContextProvider>
          <html lang="en">
-            <body>
+            <body id="DraftarooApp">
                <header>
                   <Nav {...{ user: user || ({} as User) }} />
                </header>

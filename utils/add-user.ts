@@ -23,14 +23,12 @@ const addUser = async (props: UserProps) => {
    });
    await supabase
       .from('profiles')
-      .update([
-         {
-            first_name: user?.user_metadata?.first_name,
-            last_name: user?.user_metadata?.last_name,
-            username: user?.user_metadata?.username,
-            email: user?.email,
-         },
-      ])
+      .update({
+         first_name: firstName,
+         last_name: lastName,
+         username: username,
+         email: email,
+      })
       .match({ id: user?.id });
 
    if (error) return 'VIEW_FORM';

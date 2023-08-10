@@ -3,12 +3,16 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function PUT(request: Request) {
-   const { id, has_drafted } = await request.json();
+   const { leagueName, owner, leagueRules, leagueStats } = await request.json();
 
    const supabase = createRouteHandlerClient<Database>({ cookies });
-   const { data } = await supabase
-      .from('teams')
-      .update([{ has_drafted: !has_drafted }])
-      .match({ id });
+   const { data } = await supabase.from('leagues').insert([
+      {
+         league_name: leagueName,
+         owner: owner,
+         league_rules: leagueRules,
+         league_stats: leagueStats,
+      },
+   ]);
    return NextResponse.json(data);
 }

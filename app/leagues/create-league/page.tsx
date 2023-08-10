@@ -1,11 +1,7 @@
-import Tabs from '@/components/tabs';
-import { Tab, TabProps } from '@/lib/types';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import LeaguesTab from './tabs/leagues';
-import OverviewTab from './tabs/overview';
 
-const AdminDashboard = async () => {
+const CreateLeague = async () => {
    const supabase = createServerComponentClient<Database>({ cookies });
    const {
       data: { session },
@@ -22,21 +18,6 @@ const AdminDashboard = async () => {
 
    const currentUser = data?.[0];
 
-   const tabs: Tab[] = [
-      {
-         tabButton: 'Overview',
-         tabPane: <OverviewTab />,
-      },
-      {
-         tabButton: 'Leagues',
-         tabPane: <LeaguesTab />,
-      },
-   ];
-   const tabProps: TabProps = {
-      tabs,
-      className: 'flex flex-col w-full lg:max-w-screen-xl text-white',
-   };
-
    return (
       <>
          {session && (
@@ -44,7 +25,6 @@ const AdminDashboard = async () => {
                <h1 className="my-2 text-3xl">
                   Welcome, {currentUser?.first_name && currentUser.first_name}
                </h1>
-               <Tabs {...tabProps} />
             </>
          )}
          {!session && (
@@ -54,4 +34,4 @@ const AdminDashboard = async () => {
    );
 };
 
-export default AdminDashboard;
+export default CreateLeague;

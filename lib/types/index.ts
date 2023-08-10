@@ -1,3 +1,4 @@
+import { formStatus, formType } from '@/components/modals/auth';
 import { AnchorHTMLAttributes, ReactNode } from 'react';
 
 export interface BaseProps {
@@ -44,4 +45,14 @@ export interface Profile {
    lastName: string;
    email: string;
    username: string;
+}
+
+export interface ModalProps {
+   buttonClass?: string;
+   buttonText?: string;
+}
+
+export interface AuthFormProps {
+   setFormType: (formType: formType) => void;
+   setView: (view: formStatus) => void;
 }
