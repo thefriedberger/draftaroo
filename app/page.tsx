@@ -25,7 +25,7 @@ export default async function Home() {
                {...{
                   calloutText: 'Want to create a new league?',
                   link: {
-                     href: '/dashboard/admin#create-league',
+                     href: '/leagues/create',
                      text: 'Create league',
                   },
                }}

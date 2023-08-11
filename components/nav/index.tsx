@@ -28,7 +28,9 @@ export default function Nav(props: NavProps) {
             </Link>
             {props.user?.id ? (
                <div className="flex items-center gap-4">
-                  Hey, {props.user.email}!
+                  <span className="hidden lg:block">
+                     Hey, {props.user.email}!
+                  </span>
                   <LogoutButton />
                </div>
             ) : (

@@ -28,14 +28,7 @@ export interface Database {
                league_id?: string;
                timer?: number | null;
             };
-            Relationships: [
-               {
-                  foreignKeyName: 'draft_league_id_fkey';
-                  columns: ['league_id'];
-                  referencedRelation: 'leagues';
-                  referencedColumns: ['league_id'];
-               }
-            ];
+            Relationships: [];
          };
          draft_selections: {
             Row: {
@@ -80,6 +73,7 @@ export interface Database {
                league_id: string;
                league_name: string | null;
                league_rules: Json[] | null;
+               league_scoring: Json[] | null;
                owner: string;
             };
             Insert: {
@@ -87,6 +81,7 @@ export interface Database {
                league_id?: string;
                league_name?: string | null;
                league_rules?: Json[] | null;
+               league_scoring?: Json[] | null;
                owner: string;
             };
             Update: {
@@ -94,6 +89,7 @@ export interface Database {
                league_id?: string;
                league_name?: string | null;
                league_rules?: Json[] | null;
+               league_scoring?: Json[] | null;
                owner?: string;
             };
             Relationships: [
@@ -229,12 +225,6 @@ export interface Database {
                team_name?: string | null;
             };
             Relationships: [
-               {
-                  foreignKeyName: 'teams_league_id_fkey';
-                  columns: ['league_id'];
-                  referencedRelation: 'leagues';
-                  referencedColumns: ['league_id'];
-               },
                {
                   foreignKeyName: 'teams_owner_fkey';
                   columns: ['owner'];

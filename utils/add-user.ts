@@ -21,17 +21,24 @@ const addUser = async (props: UserProps) => {
          },
       },
    });
-   await supabase
-      .from('profiles')
-      .update({
+   if (user) {
+      const { error } = await supabase.from('profiles').insert({
+         id: user.id,
          first_name: firstName,
          last_name: lastName,
          username: username,
          email: email,
-      })
-      .match({ id: user?.id });
+      });
+      console.log(error);
+   } else {
+      console.log(error);
+      return 'VIEW_FORM';
+   }
 
-   if (error) return 'VIEW_FORM';
+   if (error) {
+      console.log(error);
+      return 'VIEW_FORM';
+   }
    return 'CHECK_EMAIL';
 };
 
