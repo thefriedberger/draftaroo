@@ -27,13 +27,11 @@ export default async function RootLayout({
    return (
       <PageContextProvider>
          <html lang="en">
-            <body id="DraftarooApp">
+            <body id="DraftarooApp" className="min-h-screen bg-background ">
                <header>
                   <Nav {...{ user: user || ({} as User) }} />
                </header>
-               <main className="min-h-screen bg-background flex flex-col items-center">
-                  {children}
-               </main>
+               <main className="flex flex-col items-center">{children}</main>
             </body>
          </html>
       </PageContextProvider>

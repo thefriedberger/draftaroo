@@ -18,8 +18,7 @@ const Tabs = (props: TabProps) => {
                key={key}
                className={classNames(
                   isActive && styles['nav-active'],
-                  !isActive && 'overflow-hidden h-0',
-                  'lg:inline-flex lg:h-auto p-2'
+                  'inline-flex lg:h-auto text-center items-end first-of-type:border-r-2 border-r-emerald-600'
                )}
             >
                <button
@@ -27,7 +26,7 @@ const Tabs = (props: TabProps) => {
                      e.preventDefault();
                      setActiveTabIndex(index);
                   }}
-                  className={'text-center p-1'}
+                  className={'text-center p-3 '}
                >
                   {tab.tabButton}
                </button>
@@ -53,7 +52,10 @@ const Tabs = (props: TabProps) => {
       <>
          <section className={className}>
             <ul
-               className={`${styles['tablist']} flex flex-row bg-emerald-primary justify-between rounded-t-sm max-w-fit mx-auto`}
+               className={classNames(
+                  styles['tablist'],
+                  'flex flex-row bg-emerald-primary justify-between rounded-t-sm lg:max-w-fit mx-auto'
+               )}
             >
                {navList()}
             </ul>
