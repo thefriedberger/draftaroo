@@ -55,6 +55,9 @@ const CreateLeague = async () => {
          const supabase = createServerComponentClient<Database>({ cookies });
          const { data } = await supabase.from('leagues').select('league_id');
          let leagueId;
+         if (data?.length === 0) {
+            return Math.random().toString(30).slice(2);
+         }
          data?.forEach((league) => {
             leagueId = Math.random().toString(30).slice(2);
             do {
@@ -65,6 +68,7 @@ const CreateLeague = async () => {
       };
 
       const leagueId = await generateLeagueId();
+
       if (user) {
          const owner = user.id;
          const response = await fetch(
@@ -80,12 +84,12 @@ const CreateLeague = async () => {
                }),
             }
          );
-         const output = await response.json();
-         if (output?.[0].code) {
-            alert('Something went wrong creating a league');
+         const { error, data } = await response.json();
+         if (error) {
+            console.log(error);
             return;
          }
-         redirect(`/leagues/${output?.[0].league_id}`);
+         redirect(`/leagues/${data?.[0].league_id}`);
       }
    };
 

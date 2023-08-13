@@ -20,6 +20,12 @@ export interface TabProps {
    link?: string;
 }
 
+export interface TeamProps {
+   teamName: string;
+   owner: string;
+   leagueId: string;
+}
+
 export interface UserProps {
    email: string;
    password: string;

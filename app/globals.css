@@ -19,6 +19,19 @@
       }
    }
 }
+@layer base {
+   body {
+      color: black;
+   }
+   @media (prefers-color-scheme: dark) {
+      body {
+         color: white;
+      }
+      input {
+         color: black;
+      }
+   }
+}
 
 @layer base {
    * {

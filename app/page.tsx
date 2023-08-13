@@ -15,7 +15,7 @@ export default async function Home() {
    const { data: teams } = await supabase
       .from('teams')
       .select('*')
-      .match({ id: user?.id });
+      .match({ owner: user?.id });
 
    return (
       <div className="pt-5 text-white text-center">
@@ -30,24 +30,25 @@ export default async function Home() {
                   },
                }}
             />
-            <Callout
-               {...{
-                  calloutText: 'New user?',
-                  link: {
-                     href: '/login',
-                     text: 'Create account',
-                  },
-               }}
-            />
-            <Callout
-               {...{
-                  calloutText: 'Ready to draft?',
-                  link: {
-                     href: '/draft',
-                     text: 'Join draft',
-                  },
-               }}
-            />
+            {teams?.map(async (team, index) => {
+               const { data: leagues } = await supabase
+                  .from('leagues')
+                  .select('league_name')
+                  .match({ league_id: team.league_id });
+
+               return (
+                  <Callout
+                     key={index}
+                     {...{
+                        calloutText: `${team.team_name} - ${leagues?.[0].league_name}`,
+                        link: {
+                           href: `/leagues/${team.league_id}`,
+                           text: 'View league',
+                        },
+                     }}
+                  />
+               );
+            })}
          </div>
       </div>
    );
