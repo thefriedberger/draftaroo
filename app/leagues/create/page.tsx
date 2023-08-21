@@ -85,10 +85,7 @@ const CreateLeague = async () => {
             }
          );
          const { error, data } = await response.json();
-         if (error) {
-            console.log(error);
-            return;
-         }
+         if (error) return;
          redirect(`/leagues/${data?.[0].league_id}`);
       }
    };

@@ -2,7 +2,7 @@
 
 import { AuthFormProps, ModalProps } from '@/lib/types';
 import classNames from 'classnames';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import SignInForm from '../forms/sign-in';
 import SignUpForm from '../forms/sign-up';
@@ -19,7 +19,9 @@ const AuthModal = (props: ModalProps) => {
 
    const [modalIsOpen, setModalIsOpen] = useState(false);
 
-   Modal.setAppElement('#DraftarooApp');
+   useEffect(() => {
+      Modal.setAppElement('#DraftarooApp');
+   }, []);
 
    const handleClick = () => {
       setModalIsOpen(true);
@@ -59,17 +61,13 @@ const AuthModal = (props: ModalProps) => {
             isOpen={modalIsOpen}
             className={styles['modal']}
             style={modalStyles}
+            ariaHideApp={false}
          >
             <button onClick={handleClose} className={classNames('text-white')}>
                Close
             </button>
             <>
-               {view === 'CHECK_EMAIL' ? (
-                  <p className="text-center text-foreground">
-                     Check <span className="font-bold">{email}</span> to
-                     continue signing up
-                  </p>
-               ) : formType === 'SIGN_IN' ? (
+               {formType === 'SIGN_IN' ? (
                   <SignInForm {...authFormProps} />
                ) : (
                   <SignUpForm {...authFormProps} />

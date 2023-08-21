@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
-export default function Team({ team }: { team: any }) {
+export default function TeamPage({ team }: { team: any }) {
    const router = useRouter();
 
    const markAsComplete = async () => {

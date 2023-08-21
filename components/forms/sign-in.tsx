@@ -1,22 +1,29 @@
+'use client';
+
 import { AuthFormProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { PageContext } from '../context/page-context';
 
 const SignInForm = (props: AuthFormProps) => {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const [invalidCredentials, setInvalidCredentials] = useState(false);
 
-   const supabase = createClientComponentClient<Database>();
+   const { updateUser, updateSession } = useContext(PageContext);
 
-   const router = useRouter();
+   const supabase = createClientComponentClient<Database>();
 
    const { setFormType, setView } = props;
 
+   const getSession = async () => {
+      const { data: session } = await supabase.auth.getSession();
+      return session;
+   };
+
    const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
          email,
          password,
       });
@@ -25,7 +32,9 @@ const SignInForm = (props: AuthFormProps) => {
          setInvalidCredentials(true);
       } else {
          setInvalidCredentials(false);
-         router.refresh();
+         updateUser?.(data.user);
+         const session = await getSession();
+         if (session.session) updateSession?.(session.session);
       }
    };
    return (

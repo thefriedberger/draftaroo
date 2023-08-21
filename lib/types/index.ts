@@ -21,9 +21,9 @@ export interface TabProps {
 }
 
 export interface TeamProps {
-   teamName: string;
+   team_name: string;
    owner: string;
-   leagueId: string;
+   league_id: string;
 }
 
 export interface UserProps {
@@ -45,6 +45,7 @@ export interface TabProps {
    className?: string;
    useHash?: boolean;
    activeTabName?: string;
+   tabBgColor?: string;
 }
 export interface Profile {
    firstName: string;
@@ -56,6 +57,11 @@ export interface Profile {
 export interface ModalProps {
    buttonClass?: string;
    buttonText?: string;
+}
+
+export interface DropdownProps {
+   links: ReactNode[] | Link[] | any[];
+   className?: string;
 }
 
 export interface AuthFormProps {

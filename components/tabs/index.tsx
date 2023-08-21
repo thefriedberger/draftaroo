@@ -7,7 +7,7 @@ import styles from './tabs.module.css';
 
 const Tabs = (props: TabProps) => {
    const [activeTabIndex, setActiveTabIndex] = useState(0);
-   const { tabs, className } = props;
+   const { tabs } = props;
 
    const navList = () =>
       tabs.map((tab, index) => {
@@ -18,7 +18,7 @@ const Tabs = (props: TabProps) => {
                key={key}
                className={classNames(
                   isActive && styles['nav-active'],
-                  'inline-flex lg:h-auto text-center items-end first-of-type:border-r-2 border-r-emerald-600'
+                  'inline-flex lg:h-auto text-center items-end border-r-2 border-r-emerald-600 last-of-type:border-none'
                )}
             >
                <button
@@ -50,17 +50,18 @@ const Tabs = (props: TabProps) => {
 
    return (
       <>
-         <section className={className}>
+         <div className={classNames(props.className)}>
             <ul
                className={classNames(
                   styles['tablist'],
-                  'flex flex-row bg-emerald-primary justify-between rounded-t-sm lg:max-w-fit mx-auto'
+                  props.tabBgColor ? props.tabBgColor : 'bg-emerald-primary',
+                  'flex flex-row justify-between rounded-t-sm lg:max-w-fit mx-auto'
                )}
             >
                {navList()}
             </ul>
             <div className={`${styles['tabpanes']}`}>{panes()}</div>
-         </section>
+         </div>
       </>
    );
 };

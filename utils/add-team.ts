@@ -1,9 +1,9 @@
 'use server';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
+import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
-export default async function addTeam(formData: FormData) {
-   console.log('adding team');
+export default async function addTeam(formData: FormData, id?: string) {
    const supabase = createServerActionClient<Database>({ cookies });
    const teamName = String(formData.get('team_name'));
    const leagueId = String(formData.get('league_id'));
@@ -23,4 +23,5 @@ export default async function addTeam(formData: FormData) {
       });
       if (error) return error;
    }
+   revalidatePath(`/leagues/${id}`);
 }

@@ -29,14 +29,11 @@ const addUser = async (props: UserProps) => {
          username: username,
          email: email,
       });
-      console.log(error);
    } else {
-      console.log(error);
       return 'VIEW_FORM';
    }
 
    if (error) {
-      console.log(error);
       return 'VIEW_FORM';
    }
    return 'CHECK_EMAIL';
