@@ -72,15 +72,15 @@ export interface Database {
                created_at: string | null;
                league_id: string;
                league_name: string | null;
-               league_rules: Json[] | null;
+               league_rules: Json | null;
                league_scoring: Json[] | null;
                owner: string;
             };
             Insert: {
                created_at?: string | null;
-               league_id?: string;
+               league_id: string;
                league_name?: string | null;
-               league_rules?: Json[] | null;
+               league_rules?: Json | null;
                league_scoring?: Json[] | null;
                owner: string;
             };
@@ -88,7 +88,7 @@ export interface Database {
                created_at?: string | null;
                league_id?: string;
                league_name?: string | null;
-               league_rules?: Json[] | null;
+               league_rules?: Json | null;
                league_scoring?: Json[] | null;
                owner?: string;
             };
@@ -208,23 +208,29 @@ export interface Database {
                id: string;
                league_id: string;
                owner: string;
-               team_name: string | null;
+               team_name: string;
             };
             Insert: {
                created_at?: string | null;
                id?: string;
                league_id: string;
                owner: string;
-               team_name?: string | null;
+               team_name: string;
             };
             Update: {
                created_at?: string | null;
                id?: string;
                league_id?: string;
                owner?: string;
-               team_name?: string | null;
+               team_name?: string;
             };
             Relationships: [
+               {
+                  foreignKeyName: 'teams_league_id_fkey';
+                  columns: ['league_id'];
+                  referencedRelation: 'leagues';
+                  referencedColumns: ['league_id'];
+               },
                {
                   foreignKeyName: 'teams_owner_fkey';
                   columns: ['owner'];

@@ -11,3 +11,6 @@
    background-color: white;
    border-radius: 6px;
 }
+.tabpanes {
+   @apply max-w-screen-2xl flex items-center mx-auto text-left;
+}

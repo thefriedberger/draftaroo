@@ -19,7 +19,7 @@ export async function PUT(request: Request) {
          },
       ])
       .select();
-   if (error) return NextResponse.json(error);
+   if (error) return NextResponse.json({ error: error });
 
-   return NextResponse.json(data);
+   return NextResponse.json({ data: data });
 }
