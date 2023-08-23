@@ -1,11 +1,10 @@
 'use server';
 
 import { EmailInvite } from '@/app/leagues/[id]/tabs/teams';
-import { createClient } from '@supabase/supabase-js';
-import { revalidatePath } from 'next/cache';
+import { User, createClient } from '@supabase/supabase-js';
 
 const inviteUser = async (formData: EmailInvite) => {
-   const { email, callback, leagueId } = formData;
+   const { email, callback, leagueId, teamName } = formData;
 
    const supabase = createClient(
       String(process.env.NEXT_PUBLIC_SUPABASE_URL),
@@ -24,8 +23,45 @@ const inviteUser = async (formData: EmailInvite) => {
       error,
    } = await adminAuthClient.inviteUserByEmail(email, { redirectTo: callback });
 
-   revalidatePath(`/leagues/${leagueId}`);
+   const createTeam = async (user: User) => {
+      const { data: teams } = await supabase
+         .from('teams')
+         .select('*')
+         .match({ owner: user.id });
+      console.log(teams);
+      await supabase.from('teams').insert({
+         owner: user.id,
+         team_name: teamName,
+         league_id: leagueId,
+      });
+   };
+   const createProfile = async (user: User, email: string) => {
+      await supabase.from('profiles').insert({
+         id: user.id,
+         email: email,
+      });
+   };
+
+   if (
+      error?.message ===
+      'A user with this email address has already been registered'
+   ) {
+      const { data: users } = await supabase.auth.admin.listUsers();
+      console.log(users);
+      users.users.forEach((user) => {
+         if (user.id === user.id) {
+            createTeam(user);
+            createProfile(user, email);
+         }
+      });
+   }
+
    if (error) return { error };
+
+   if (user) {
+      createTeam(user);
+      createProfile(user, email);
+   }
    return { user };
 };
 

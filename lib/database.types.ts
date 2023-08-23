@@ -33,66 +33,162 @@ export interface Database {
          draft_selections: {
             Row: {
                created_at: string | null;
-               drafted_at: number | null;
+               draft_id: string;
                id: string;
-               owned_by: string | null;
-               player: number | null;
+               player_id: number | null;
+               team_id: string | null;
             };
             Insert: {
                created_at?: string | null;
-               drafted_at?: number | null;
+               draft_id: string;
                id?: string;
-               owned_by?: string | null;
-               player?: number | null;
+               player_id?: number | null;
+               team_id?: string | null;
             };
             Update: {
                created_at?: string | null;
-               drafted_at?: number | null;
+               draft_id?: string;
                id?: string;
-               owned_by?: string | null;
-               player?: number | null;
+               player_id?: number | null;
+               team_id?: string | null;
             };
             Relationships: [
                {
-                  foreignKeyName: 'draft_selections_owned_by_fkey';
-                  columns: ['owned_by'];
-                  referencedRelation: 'teams';
+                  foreignKeyName: 'draft_selections_draft_id_fkey';
+                  columns: ['draft_id'];
+                  referencedRelation: 'draft';
                   referencedColumns: ['id'];
                },
                {
-                  foreignKeyName: 'draft_selections_player_fkey';
-                  columns: ['player'];
+                  foreignKeyName: 'draft_selections_player_id_fkey';
+                  columns: ['player_id'];
                   referencedRelation: 'players';
+                  referencedColumns: ['id'];
+               },
+               {
+                  foreignKeyName: 'draft_selections_team_id_fkey';
+                  columns: ['team_id'];
+                  referencedRelation: 'teams';
                   referencedColumns: ['id'];
                }
             ];
+         };
+         league_rules: {
+            Row: {
+               created_at: string;
+               draft_picks: Json | null;
+               draft_style: string | null;
+               id: string;
+               keepers_enabled: boolean | null;
+               number_of_rounds: number | null;
+               number_of_teams: number | null;
+            };
+            Insert: {
+               created_at?: string;
+               draft_picks?: Json | null;
+               draft_style?: string | null;
+               id?: string;
+               keepers_enabled?: boolean | null;
+               number_of_rounds?: number | null;
+               number_of_teams?: number | null;
+            };
+            Update: {
+               created_at?: string;
+               draft_picks?: Json | null;
+               draft_style?: string | null;
+               id?: string;
+               keepers_enabled?: boolean | null;
+               number_of_rounds?: number | null;
+               number_of_teams?: number | null;
+            };
+            Relationships: [];
+         };
+         league_scoring: {
+            Row: {
+               assists: number | null;
+               blocks: number | null;
+               goals: number | null;
+               hits: number | null;
+               id: string;
+               plus_minus: number | null;
+               powerplay_assists: number | null;
+               powerplay_goals: number | null;
+               powerplay_points: number | null;
+               shorthanded_assists: number | null;
+               shorthanded_goals: number | null;
+               shorthanded_points: number | null;
+               shots: number | null;
+            };
+            Insert: {
+               assists?: number | null;
+               blocks?: number | null;
+               goals?: number | null;
+               hits?: number | null;
+               id?: string;
+               plus_minus?: number | null;
+               powerplay_assists?: number | null;
+               powerplay_goals?: number | null;
+               powerplay_points?: number | null;
+               shorthanded_assists?: number | null;
+               shorthanded_goals?: number | null;
+               shorthanded_points?: number | null;
+               shots?: number | null;
+            };
+            Update: {
+               assists?: number | null;
+               blocks?: number | null;
+               goals?: number | null;
+               hits?: number | null;
+               id?: string;
+               plus_minus?: number | null;
+               powerplay_assists?: number | null;
+               powerplay_goals?: number | null;
+               powerplay_points?: number | null;
+               shorthanded_assists?: number | null;
+               shorthanded_goals?: number | null;
+               shorthanded_points?: number | null;
+               shots?: number | null;
+            };
+            Relationships: [];
          };
          leagues: {
             Row: {
                created_at: string | null;
                league_id: string;
                league_name: string | null;
-               league_rules: Json | null;
-               league_scoring: Json[] | null;
+               league_scoring: string | null;
+               leagues_rules: string | null;
                owner: string;
             };
             Insert: {
                created_at?: string | null;
                league_id: string;
                league_name?: string | null;
-               league_rules?: Json | null;
-               league_scoring?: Json[] | null;
+               league_scoring?: string | null;
+               leagues_rules?: string | null;
                owner: string;
             };
             Update: {
                created_at?: string | null;
                league_id?: string;
                league_name?: string | null;
-               league_rules?: Json | null;
-               league_scoring?: Json[] | null;
+               league_scoring?: string | null;
+               leagues_rules?: string | null;
                owner?: string;
             };
             Relationships: [
+               {
+                  foreignKeyName: 'leagues_league_scoring_fkey';
+                  columns: ['league_scoring'];
+                  referencedRelation: 'league_scoring';
+                  referencedColumns: ['id'];
+               },
+               {
+                  foreignKeyName: 'leagues_leagues_rules_fkey';
+                  columns: ['leagues_rules'];
+                  referencedRelation: 'league_rules';
+                  referencedColumns: ['id'];
+               },
                {
                   foreignKeyName: 'leagues_owner_fkey';
                   columns: ['owner'];

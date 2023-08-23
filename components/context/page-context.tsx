@@ -10,6 +10,8 @@ export type PageContextType = {
    updateSession?: (newSession: Session) => void;
    user?: User;
    updateUser?: (newUser: User) => void;
+   team?: Team | any;
+   updateTeam?: (newTeam: Team | any) => void;
    teams?: Team | any;
    updateTeams?: (newTeams: Team | any) => void;
    leagues?: League | any;
@@ -17,6 +19,9 @@ export type PageContextType = {
    profile?: Profile | any;
    udpateProfile?: (newProfile: Profile | any) => void;
    userSignout?: () => void;
+   fetchTeam?: () => void;
+   fetchTeams?: () => void;
+   fetchLeagues?: () => void;
 };
 
 const initialValues = {};
@@ -30,9 +35,17 @@ export const PageContext = React.createContext<PageContextType>(initialValues);
 export const PageContextProvider: React.FC<Props> = ({ children }) => {
    const [session, setSession] = React.useState<Session | any>();
    const [user, setUser] = React.useState<User | any>();
+   const [team, setTeam] = React.useState<Team | any>();
    const [teams, setTeams] = React.useState<Team | any>();
    const [leagues, setLeagues] = React.useState<League | any>();
    const [profile, setProfile] = React.useState<Profile | any>();
+   const [shouldFetchTeam, setShouldFetchTeam] = React.useState<boolean>(true);
+   const [shouldFetchTeams, setShouldFetchTeams] =
+      React.useState<boolean>(true);
+   const [shouldFetchLeague, setShouldFetchLeague] =
+      React.useState<boolean>(true);
+   const [shouldFetchProfile, setShouldFetchProfile] =
+      React.useState<boolean>(true);
 
    const router = useRouter();
 
@@ -44,6 +57,9 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
       setUser(newUser);
       router.refresh();
    };
+   const updateTeam = (newTeam: Team) => {
+      setTeam(newTeam);
+   };
    const updateTeams = (newTeams: Team) => {
       setTeams(newTeams);
    };
@@ -54,51 +70,66 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
       setProfile(newProfile);
    };
 
-   const fetchTeams = async () => {
+   const fetchTeam = async () => {
       const supabase = createClientComponentClient<Database>();
-      const { data } = await supabase
+      const { data, error } = await supabase
          .from('teams')
          .select('*')
          .match({ owner: user?.id });
+      if (data) setTeam(data as Team);
+      if (error) setShouldFetchTeam(false);
+   };
+
+   const fetchTeams = async () => {
+      const supabase = createClientComponentClient<Database>();
+      const { data, error } = await supabase.from('teams').select('*');
       if (data) setTeams(data as Team);
+      if (error) setShouldFetchTeams(false);
    };
 
    const fetchProfile = async () => {
       const supabase = createClientComponentClient<Database>();
-      const { data } = await supabase
+      const { data, error } = await supabase
          .from('profiles')
          .select('*')
          .match({ id: user?.id });
       if (data) setProfile(data);
+      if (error) setShouldFetchProfile(false);
    };
 
    const fetchLeagues = async () => {
       const supabase = createClientComponentClient<Database>();
-      const { data } = await supabase.from('leagues').select('*');
+      const { data, error } = await supabase.from('leagues').select('*');
       if (data) {
          teams?.forEach((team: Team) => {
             if (team.league_id === data?.[0].league_id)
                setLeagues(data as League);
          });
       }
+      if (!error) setShouldFetchLeague(false);
    };
 
    const userSignout = () => {
       setSession(null);
       setUser(null);
+      setTeam(null);
       setTeams(null);
       setLeagues(null);
       setProfile(null);
       router.refresh();
    };
    useEffect(() => {
-      if (user?.id && user !== undefined) fetchTeams();
-      if (user?.id && user !== undefined) fetchProfile();
+      if (user?.id && user !== undefined && shouldFetchTeam) fetchTeam();
+      if (user?.id && user !== undefined && shouldFetchTeams) fetchTeams();
+      if (user?.id && user !== undefined && shouldFetchProfile) fetchProfile();
    }, [user]);
 
    useEffect(() => {
-      if (user?.id && user !== undefined && teams) fetchLeagues();
-   }, [teams]);
+      if (user?.id && user !== undefined && team && shouldFetchLeague)
+         fetchLeagues();
+      if (user?.id && user !== undefined && teams && shouldFetchLeague)
+         fetchLeagues();
+   }, [team, teams]);
 
    return (
       <PageContext.Provider
@@ -107,6 +138,8 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
             updateUser,
             session,
             updateSession,
+            team,
+            updateTeam,
             teams,
             updateTeams,
             leagues,
@@ -114,6 +147,9 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
             profile,
             udpateProfile,
             userSignout,
+            fetchTeam,
+            fetchTeams,
+            fetchLeagues,
          }}
       >
          {children}

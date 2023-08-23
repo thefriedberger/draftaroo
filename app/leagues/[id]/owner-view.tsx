@@ -1,6 +1,7 @@
 import Tabs from '@/components/tabs';
 import { Tab, TabProps } from '@/lib/types';
 import DraftTab from './tabs/draft';
+import RostersTab from './tabs/rosters';
 import RulesTab from './tabs/rules';
 import ScoringTab from './tabs/scoring';
 import TeamsTab from './tabs/teams';
@@ -18,6 +19,10 @@ const OwnerView = (league: League | any) => {
       {
          tabButton: 'Manage Teams',
          tabPane: <TeamsTab {...league} />,
+      },
+      {
+         tabButton: 'Manage Rosters',
+         tabPane: <RostersTab />,
       },
       {
          tabButton: 'Manage Draft',

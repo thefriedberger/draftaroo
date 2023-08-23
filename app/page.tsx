@@ -2,11 +2,13 @@
 
 import Callout from '@/components/callout';
 import { PageContext } from '@/components/context/page-context';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 
 export default function Home() {
-   const { teams, leagues } = useContext(PageContext);
-
+   const { team, leagues } = useContext(PageContext);
+   useEffect(() => {
+      console.log(team);
+   }, [team]);
    return (
       <div className="pt-5 text-white text-center">
          <h1 className="text-3xl">Welcome to Draftaroo!</h1>
@@ -20,8 +22,8 @@ export default function Home() {
                   },
                }}
             />
-            {teams &&
-               teams?.map((team: Team, index: number) => {
+            {team &&
+               team?.map((team: Team, index: number) => {
                   leagues?.filter((league: League) => {
                      {
                         if (league.league_id)

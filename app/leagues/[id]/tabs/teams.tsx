@@ -9,12 +9,15 @@ export type EmailInvite = {
    email: string;
    callback: string;
    leagueId: string;
+   teamName: string;
 };
 
 const TeamsTab = ({ league }: { league: League }) => {
    const [newUserEmail, setNewUserEmail] = useState<string>('');
+   const [newTeamName, setNewTeamName] = useState<string>('');
 
-   const { leagues, teams, user, session } = useContext(PageContext);
+   const { leagues, teams, user, session, fetchTeams } =
+      useContext(PageContext);
    const [numTeams, setNumTeams] = useState<number>(0);
    const [hasMaxTeams, setHasMaxTeams] = useState<boolean>(
       numTeams <= leagues?.league_rules?.['number_of_teams']
@@ -25,6 +28,10 @@ const TeamsTab = ({ league }: { league: League }) => {
       setNewUserEmail(e.target.value);
    };
 
+   const updateTeamName = (e: ChangeEvent<HTMLInputElement>) => {
+      setNewTeamName(e.target.value);
+   };
+
    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       const formData: EmailInvite = {
@@ -33,11 +40,14 @@ const TeamsTab = ({ league }: { league: League }) => {
             `${location.origin}/leagues/${league.league_id}/callback`
          ),
          leagueId: league.league_id || '',
+         teamName: newTeamName,
       };
       const { user, error } = await inviteUser(formData);
-      if (!error) {
+      if (!error || error === undefined) {
+         fetchTeams?.();
          router.refresh();
-         console.log(user, error);
+         setNewTeamName('');
+         setNewUserEmail('');
       }
    };
    return (
@@ -61,39 +71,60 @@ const TeamsTab = ({ league }: { league: League }) => {
                   </>
                )}
                {!hasMaxTeams && (
-                  <form onSubmit={handleSubmit}>
-                     <input
-                        hidden
-                        defaultValue={`${location.origin}/auth/callback`}
-                        name="callback"
-                     />
-                     <input
-                        hidden
-                        defaultValue={
-                           league && league !== undefined
-                              ? league.league_id
-                              : ''
-                        }
-                        name="league-id"
-                     />
-                     <div className="flex">
-                        <label htmlFor="new-team">Owner&apos;s email</label>
+                  <>
+                     <form
+                        className="bg-gray-primary p-2 rounded-md my-2"
+                        onSubmit={handleSubmit}
+                     >
+                        <p className="font-bold mb-2 text-lg">Add new team</p>
                         <input
-                           id="new-team"
-                           name="new-team"
-                           className="mr-3"
-                           type="email"
-                           value={newUserEmail}
-                           onChange={updateEmail}
+                           hidden
+                           defaultValue={`${location.origin}/auth/callback`}
+                           name="callback"
                         />
-                        <button
-                           type="submit"
-                           className="bg-white text-black rounded-sm"
-                        >
-                           Invite owner
-                        </button>
-                     </div>
-                  </form>
+                        <input
+                           hidden
+                           defaultValue={
+                              league && league !== undefined
+                                 ? league.league_id
+                                 : ''
+                           }
+                           name="league-id"
+                        />
+                        <div className="flex flex-col">
+                           <div className="flex flex-row justify-between mb-2">
+                              <label htmlFor="team_name">Team name</label>
+                              <input
+                                 type="text"
+                                 value={newTeamName}
+                                 id="team_name"
+                                 name="team_name"
+                                 className="ml-3"
+                                 onChange={updateTeamName}
+                              />
+                           </div>
+                           <div className="flex flex-row justify-between mb-2">
+                              <label htmlFor="new_team">
+                                 Owner&apos;s email
+                              </label>
+                              <input
+                                 id="new_team"
+                                 name="new_team"
+                                 className="ml-3"
+                                 type="email"
+                                 value={newUserEmail}
+                                 onChange={updateEmail}
+                              />
+                           </div>
+                           <button
+                              type="submit"
+                              className="bg-white text-black rounded-sm"
+                           >
+                              Invite owner
+                           </button>
+                        </div>
+                     </form>
+                  </>
                )}
             </>
          )}

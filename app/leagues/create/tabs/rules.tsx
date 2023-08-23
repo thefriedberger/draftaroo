@@ -1,3 +1,4 @@
+'use client';
 const RulesTab = () => {
    return (
       <div className="flex flex-col">

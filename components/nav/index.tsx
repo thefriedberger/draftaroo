@@ -11,7 +11,7 @@ export interface NavProps {
    user?: User;
 }
 export default function Nav(props: NavProps) {
-   const { user, teams, leagues } = useContext(PageContext);
+   const { user } = useContext(PageContext);
 
    return (
       <>

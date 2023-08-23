@@ -60,6 +60,7 @@ export interface ModalProps {
 }
 
 export interface DropdownProps {
+   parentText: string;
    links: ReactNode[] | Link[] | any[];
    className?: string;
 }

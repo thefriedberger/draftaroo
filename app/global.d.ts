@@ -10,4 +10,6 @@ declare global {
    type DraftSelection = DB['public']['Tables']['draft_selections']['Row'];
    type Profile = DB['public']['Tables']['profiles']['Row'];
    type TeamHistory = DB['public']['Tables']['team_history']['Row'];
+   type LeagueRules = DB['public']['Tables']['league_rules']['Row'];
+   type LeagueScoring = DB['public']['Tables']['league_scoring']['Row'];
 }

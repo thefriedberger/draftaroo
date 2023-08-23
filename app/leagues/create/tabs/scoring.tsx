@@ -1,3 +1,4 @@
+'use client';
 const ScoringTab = () => {
    return (
       <div className="flex flex-col">
