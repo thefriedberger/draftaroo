@@ -1,6 +1,6 @@
 'use server';
 
-import { EmailInvite } from '@/app/leagues/[id]/tabs/teams';
+import { EmailInvite } from '@/app/leagues/tabs/teams';
 import { User, createClient } from '@supabase/supabase-js';
 
 const inviteUser = async (formData: EmailInvite) => {

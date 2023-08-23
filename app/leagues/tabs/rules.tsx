@@ -1,5 +1,6 @@
 'use client';
-const RulesTab = () => {
+
+const RulesTab = (league?: League) => {
    return (
       <div className="flex flex-col">
          <label htmlFor="number_of_teams" className="text-white">
@@ -32,6 +33,19 @@ const RulesTab = () => {
             <option value="20">20</option>
          </select>
 
+         <div className="flex items-center p-1">
+            <label className="mr-2" htmlFor="number_of_rounds">
+               Number of rounds
+            </label>
+            <input
+               type="number"
+               name="number_of_rounds"
+               id="number_of_rounds"
+               className="text-black"
+               min={15}
+            />
+         </div>
+
          <p className="text-white">Using keepers?</p>
          <div className="flex items-center p-1">
             <input
@@ -43,6 +57,7 @@ const RulesTab = () => {
             />
             <label htmlFor="keepers_yes">Yes</label>
          </div>
+
          <div className="flex items-center p-1">
             <input
                type="radio"

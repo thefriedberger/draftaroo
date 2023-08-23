@@ -1,5 +1,5 @@
 'use client';
-const ScoringTab = () => {
+const ScoringTab = (league?: League) => {
    return (
       <div className="flex flex-col">
          <p className="text-white mb-3">Set scoring values for league:</p>

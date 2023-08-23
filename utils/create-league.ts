@@ -13,25 +13,25 @@ const createLeague = async (
 ) => {
    const leagueName = String(formData.get('league-name'));
    const rules = {
-      number_of_teams: Number(formData.get('number_of_teams')) || 1,
-      keepers_enabled: Boolean(formData.get('keepers_enabled')) || false,
-      number_of_rounds: Number(formData.get('number_of_picks')) || null,
-      draft_picks: draftPicks || null,
-      draft_style: String(formData.get('draft_style')) || 'standard',
+      number_of_teams: Number(formData.get('number_of_teams')),
+      keepers_enabled: Boolean(formData.get('keepers_enabled')),
+      number_of_rounds: Number(formData.get('number_of_picks')),
+      draft_picks: draftPicks,
+      draft_style: String(formData.get('draft_style')),
    };
    const scoring = {
-      goals: Number(formData.get('goals')) | 2,
-      assists: Number(formData.get('assists')) | 1.5,
-      plus_minus: Number(formData.get('plus_minus')) | 0.5,
-      powerplay_goals: Number(formData.get('ppg')) | 1.5,
-      powerplay_assists: Number(formData.get('ppa')) | 1,
-      powerplay_points: Number(formData.get('ppp')) | 1,
-      shorthanded_goals: Number(formData.get('shg')) | 3,
-      shorthanded_assists: Number(formData.get('sha')) | 2.5,
-      shorthanded_points: Number(formData.get('shp')) | 3,
-      shots: Number(formData.get('shots')) | 0.25,
-      hits: Number(formData.get('hits')) | 0.5,
-      blocks: Number(formData.get('blocks')) | 0.75,
+      goals: Number(formData.get('goals')),
+      assists: Number(formData.get('assists')),
+      plus_minus: Number(formData.get('plus_minus')),
+      powerplay_goals: Number(formData.get('ppg')),
+      powerplay_assists: Number(formData.get('ppa')),
+      powerplay_points: Number(formData.get('ppp')),
+      shorthanded_goals: Number(formData.get('shg')),
+      shorthanded_assists: Number(formData.get('sha')),
+      shorthanded_points: Number(formData.get('shp')),
+      shots: Number(formData.get('shots')),
+      hits: Number(formData.get('hits')),
+      blocks: Number(formData.get('blocks')),
    };
    const {
       goals,
@@ -116,6 +116,7 @@ const createLeague = async (
          })
          .select();
       if (error) return;
+      await supabase.from('draft').insert({ league_id: leagueId });
       redirect(`/leagues/${data?.[0].league_id}`);
    }
 };
