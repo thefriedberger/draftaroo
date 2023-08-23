@@ -5,8 +5,8 @@ import Tabs from '@/components/tabs';
 import { Tab, TabProps } from '@/lib/types';
 import createLeague from '@/utils/create-league';
 import { useContext, useState } from 'react';
-import RulesTab from './tabs/rules';
-import ScoringTab from './tabs/scoring';
+import RulesTab from '../tabs/rules';
+import ScoringTab from '../tabs/scoring';
 
 const CreateLeague = () => {
    const { session, user, profile } = useContext(PageContext);
