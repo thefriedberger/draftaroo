@@ -2,13 +2,10 @@
 
 import Callout from '@/components/callout';
 import { PageContext } from '@/components/context/page-context';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 
 export default function Home() {
    const { team, leagues } = useContext(PageContext);
-   useEffect(() => {
-      console.log(team);
-   }, [team]);
    return (
       <div className="pt-5 text-white text-center">
          <h1 className="text-3xl">Welcome to Draftaroo!</h1>

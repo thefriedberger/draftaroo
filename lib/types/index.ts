@@ -69,3 +69,11 @@ export interface AuthFormProps {
    setFormType: (formType: formType) => void;
    setView: (view: formStatus) => void;
 }
+
+export interface TimerProps {
+   owner?: string | any;
+   doStart?: any;
+   doReset?: any;
+   doStop?: any;
+   autoPick?: any;
+}
