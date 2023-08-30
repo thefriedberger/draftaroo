@@ -13,22 +13,32 @@ export interface Database {
             Row: {
                created_at: string | null;
                id: string;
+               is_active: boolean;
                league_id: string;
                timer: number | null;
             };
             Insert: {
                created_at?: string | null;
                id?: string;
+               is_active?: boolean;
                league_id: string;
                timer?: number | null;
             };
             Update: {
                created_at?: string | null;
                id?: string;
+               is_active?: boolean;
                league_id?: string;
                timer?: number | null;
             };
-            Relationships: [];
+            Relationships: [
+               {
+                  foreignKeyName: 'draft_league_id_fkey';
+                  columns: ['league_id'];
+                  referencedRelation: 'leagues';
+                  referencedColumns: ['league_id'];
+               }
+            ];
          };
          draft_selections: {
             Row: {
@@ -156,37 +166,37 @@ export interface Database {
                created_at: string | null;
                league_id: string;
                league_name: string | null;
+               league_rules: string | null;
                league_scoring: string | null;
-               leagues_rules: string | null;
                owner: string;
             };
             Insert: {
                created_at?: string | null;
                league_id: string;
                league_name?: string | null;
+               league_rules?: string | null;
                league_scoring?: string | null;
-               leagues_rules?: string | null;
                owner: string;
             };
             Update: {
                created_at?: string | null;
                league_id?: string;
                league_name?: string | null;
+               league_rules?: string | null;
                league_scoring?: string | null;
-               leagues_rules?: string | null;
                owner?: string;
             };
             Relationships: [
                {
-                  foreignKeyName: 'leagues_league_scoring_fkey';
-                  columns: ['league_scoring'];
-                  referencedRelation: 'league_scoring';
+                  foreignKeyName: 'leagues_league_rules_fkey';
+                  columns: ['league_rules'];
+                  referencedRelation: 'league_rules';
                   referencedColumns: ['id'];
                },
                {
-                  foreignKeyName: 'leagues_leagues_rules_fkey';
-                  columns: ['leagues_rules'];
-                  referencedRelation: 'league_rules';
+                  foreignKeyName: 'leagues_league_scoring_fkey';
+                  columns: ['league_scoring'];
+                  referencedRelation: 'league_scoring';
                   referencedColumns: ['id'];
                },
                {
@@ -246,14 +256,7 @@ export interface Database {
                last_name?: string | null;
                username?: string | null;
             };
-            Relationships: [
-               {
-                  foreignKeyName: 'profiles_id_fkey';
-                  columns: ['id'];
-                  referencedRelation: 'users';
-                  referencedColumns: ['id'];
-               }
-            ];
+            Relationships: [];
          };
          team_history: {
             Row: {
@@ -326,12 +329,6 @@ export interface Database {
                   columns: ['league_id'];
                   referencedRelation: 'leagues';
                   referencedColumns: ['league_id'];
-               },
-               {
-                  foreignKeyName: 'teams_owner_fkey';
-                  columns: ['owner'];
-                  referencedRelation: 'profiles';
-                  referencedColumns: ['id'];
                }
             ];
          };
@@ -354,7 +351,14 @@ export interface Database {
                owner?: string;
                players?: number[] | null;
             };
-            Relationships: [];
+            Relationships: [
+               {
+                  foreignKeyName: 'watchlist_owner_fkey';
+                  columns: ['owner'];
+                  referencedRelation: 'users';
+                  referencedColumns: ['id'];
+               }
+            ];
          };
       };
       Views: {
