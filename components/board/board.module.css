@@ -1,0 +1,21 @@
+.draft-board {
+   display: grid;
+   /* grid-template-areas: 
+   'timer featured-player watchlist'
+   'draft-order player-list'; */
+}
+.draft-board:nth-child(1) {
+   grid-area: 'timer';
+}
+.draft-board:nth-child(2) {
+   grid-area: 'featured-player';
+}
+.draft-board:nth-child(3) {
+   grid-area: 'watchlist';
+}
+.draft-board:nth-child(4) {
+   grid-area: 'draft-order';
+}
+.draft-board:nth-child(5) {
+   grid-area: 'player-list';
+}

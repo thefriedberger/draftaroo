@@ -1,12 +1,17 @@
 'use client';
 
-import { BoardProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { PageContext } from '../context/page-context';
 import Player from '../player';
 
-const PlayerList = (props: BoardProps) => {
+const PlayerList = ({
+   updateFeaturedPlayer,
+   leagueID,
+}: {
+   updateFeaturedPlayer: (player: Player | any) => void;
+   leagueID: string;
+}) => {
    const [isLoading, setIsLoading] = useState(true);
    const [players, setPlayers] = useState<Player[]>([]);
    const [leagueScoring, setLeagueScoring] = useState<LeagueScoring | any>();
@@ -56,11 +61,12 @@ const PlayerList = (props: BoardProps) => {
       'Winnipeg Jets',
    ];
    const positions = [
-      'Position',
+      'Skaters',
+      'Goalie',
       'Center',
       'Left Wing',
+      'Right Wing',
       'Defenseman',
-      'Goalie',
    ];
 
    const seasons = ['Season', '2021-2022', '2022-2023'];
@@ -69,7 +75,7 @@ const PlayerList = (props: BoardProps) => {
       if (leagues)
          setLeague(
             leagues?.filter((league: League) => {
-               return league.league_id === props.leagueID && league;
+               return league.league_id === leagueID && league;
             })
          );
    }, [leagues]);
@@ -98,6 +104,8 @@ const PlayerList = (props: BoardProps) => {
 
    const filterPlayers = () => {
       const playersByPostion = players.filter((player: Player) => {
+         if (positionFilter === 'Skaters')
+            return player.primary_position !== 'Goalie';
          if (positionFilter != '') {
             return player.primary_position === positionFilter;
          } else {
@@ -163,7 +171,7 @@ const PlayerList = (props: BoardProps) => {
    return (
       <>
          {!isLoading && (
-            <div className="flex flex-col items-center w-full max-w-screen-md">
+            <div className="flex flex-col items-center w-full">
                <div className="flex flex-row justify-start self-start items-end">
                   <Filter values={positions} filterFun={setPositionFilter} />
                   <Filter values={teams} filterFun={setTeamFilter} />
@@ -189,63 +197,139 @@ const PlayerList = (props: BoardProps) => {
                      onChange={(e) => setPlayerSearch(e.target.value)}
                   />
                </div>
-               <table className="block overflow-y-scroll w-full max-h-[75vh]">
-                  <tr className="dark:bg-gray-700">
-                     <td className="my-2" onClick={(e) => setSort('')}>
-                        Name
-                     </td>
-                     <td className="my-2" onClick={(e) => setSort('')}>
-                        Team
-                     </td>
-                     <td className="my-2" onClick={(e) => setSort('')}>
-                        Pos
-                     </td>
-                     <td className="my-2" onClick={(e) => setSort('')}>
-                        Score
-                     </td>
-                     <td className="my-2" onClick={(e) => setSort('')}>
-                        Avg Score
-                     </td>
-                     <td className="my-2" onClick={(e) => setSort('')}>
-                        GP
-                     </td>
-                     <td className="my-2" onClick={(e) => setSort('')}>
-                        ATOI
-                     </td>
-                     <td className="my-2" onClick={(e) => setSort('goals')}>
-                        G
-                     </td>
-                     <td className="my-2" onClick={(e) => setSort('assists')}>
-                        A
-                     </td>
-                     <td className="my-2" onClick={(e) => setSort('plusMinus')}>
-                        +/-
-                     </td>
-                     <td className="my-2" onClick={(e) => setSort('shots')}>
-                        S
-                     </td>
-                     <td className="my-2" onClick={(e) => setSort('hits')}>
-                        H
-                     </td>
-                     <td className="my-2" onClick={(e) => setSort('blocked')}>
-                        B
-                     </td>
-                     <td className="my-2" onClick={(e) => setSort('pim')}>
-                        PIM
-                     </td>
-                  </tr>
-                  {leagueScoring &&
-                     filterPlayers().map((player: Player) => {
-                        return (
-                           <Player
-                              key={player.id}
-                              player={player}
-                              leagueScoring={leagueScoring}
-                              season={season}
-                           />
-                        );
-                     })}
-               </table>
+               <div className=" w-full max-h-[75vh] overflow-y-scroll ">
+                  <table className="w-full">
+                     <thead className="w-full">
+                        <tr className="dark:bg-gray-700 min-w-full text-left">
+                           <th className="my-2" onClick={(e) => setSort('')}>
+                              Name
+                           </th>
+                           <th className="my-2" onClick={(e) => setSort('')}>
+                              Team
+                           </th>
+                           <th className="my-2" onClick={(e) => setSort('')}>
+                              Pos
+                           </th>
+                           <th className="my-2" onClick={(e) => setSort('')}>
+                              Score
+                           </th>
+                           <th className="my-2" onClick={(e) => setSort('')}>
+                              Avg Score
+                           </th>
+                           <th className="my-2" onClick={(e) => setSort('')}>
+                              GP
+                           </th>
+                           {positionFilter !== 'Goalie' ? (
+                              <>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) => setSort('')}
+                                 >
+                                    ATOI
+                                 </th>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) => setSort('goals')}
+                                 >
+                                    G
+                                 </th>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) => setSort('assists')}
+                                 >
+                                    A
+                                 </th>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) => setSort('plusMinus')}
+                                 >
+                                    +/-
+                                 </th>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) => setSort('shots')}
+                                 >
+                                    S
+                                 </th>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) => setSort('hits')}
+                                 >
+                                    H
+                                 </th>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) => setSort('blocked')}
+                                 >
+                                    B
+                                 </th>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) => setSort('pim')}
+                                 >
+                                    PIM
+                                 </th>
+                              </>
+                           ) : (
+                              <>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) => setSort('wins')}
+                                 >
+                                    W
+                                 </th>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) => setSort('losses')}
+                                 >
+                                    L
+                                 </th>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) => setSort('saves')}
+                                 >
+                                    S
+                                 </th>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) => setSort('goalsAgainst')}
+                                 >
+                                    GA
+                                 </th>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) =>
+                                       setSort('goalAgainstAverage')
+                                    }
+                                 >
+                                    GAA
+                                 </th>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) => setSort('shutouts')}
+                                 >
+                                    SO
+                                 </th>
+                              </>
+                           )}
+                        </tr>
+                     </thead>
+                     <tbody>
+                        {leagueScoring &&
+                           filterPlayers().map((player: Player) => {
+                              return (
+                                 <Player
+                                    key={player.id}
+                                    player={player}
+                                    leagueScoring={leagueScoring}
+                                    season={season}
+                                    updateFeaturedPlayer={updateFeaturedPlayer}
+                                 />
+                              );
+                           })}
+                     </tbody>
+                  </table>
+               </div>
             </div>
          )}
       </>

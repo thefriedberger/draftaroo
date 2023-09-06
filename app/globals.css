@@ -57,3 +57,10 @@
       transform: translateY(0);
    }
 }
+table tr td,
+table tr th {
+   @apply p-1;
+}
+table tr:nth-of-type(even) {
+   @apply bg-gray-300 dark:bg-gray-primary;
+}

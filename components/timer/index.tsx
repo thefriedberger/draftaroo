@@ -108,7 +108,7 @@ const Timer = ({
                </p>
             )} */}
             {owner && (
-               <div className="flex flex-col">
+               <div className="flex flex-col items-start">
                   <button onClick={handleStart} type="button">
                      Start Timer
                   </button>

@@ -5,10 +5,12 @@ const Player = ({
    player,
    leagueScoring,
    season,
+   updateFeaturedPlayer,
 }: {
-   player: any;
-   leagueScoring: any;
+   player: Player;
+   leagueScoring: LeagueScoring | any;
    season: number;
+   updateFeaturedPlayer: (player: Player | any) => void;
 }) => {
    const [playerStats, setPlayerStats] = useState<PlayerStats[] | any>();
    const getStatFromLastSeason = (player_stats: any, stat: string) => {
@@ -64,30 +66,67 @@ const Player = ({
    }, [playerStats, leagueScoring, season]);
 
    return (
-      <>
-         <tr key={player.id} className="my-1">
-            <td className="">
-               {player.first_name} {player.last_name}
-            </td>
-            <td className="">{player.current_team}</td>
-            <td className="">
-               {player.primary_position
-                  .split(' ')
-                  .map((char: string) => char[0])}
-            </td>
-            <td className="">{points}</td>
-            <td className="">{averagePoints}</td>
-            <td className="">{playerStats?.[season]?.stats?.games}</td>
-            <td className="">{getAverageTimeOnIce(player.stats)}</td>
-            <td className="">{playerStats?.[season]?.stats?.goals}</td>
-            <td className="">{playerStats?.[season]?.stats?.assists}</td>
-            <td className="">{playerStats?.[season]?.stats?.plusMinus}</td>
-            <td className="">{playerStats?.[season]?.stats?.shots}</td>
-            <td className="">{playerStats?.[season]?.stats?.hits}</td>
-            <td className="">{playerStats?.[season]?.stats?.blocked}</td>
-            <td className="">{playerStats?.[season]?.stats?.pim}</td>
-         </tr>
-      </>
+      player && (
+         <>
+            <tr
+               key={player.id}
+               className="my-1 min-w-full"
+               onClick={() => updateFeaturedPlayer(player)}
+            >
+               <td className="">
+                  {player.first_name} {player.last_name}
+               </td>
+               <td className="">{player.current_team}</td>
+               <td className="">
+                  {player.primary_position &&
+                     player.primary_position
+                        .split(' ')
+                        .map((char: string) => char[0])}
+               </td>
+               <td className="">{points}</td>
+               <td className="">{averagePoints}</td>
+               <td className="">{playerStats?.[season]?.stats?.games}</td>
+               {player.primary_position !== 'Goalie' ? (
+                  <>
+                     <td className="">{getAverageTimeOnIce(player.stats)}</td>
+                     <td className="">{playerStats?.[season]?.stats?.goals}</td>
+                     <td className="">
+                        {playerStats?.[season]?.stats?.assists}
+                     </td>
+                     <td className="">
+                        {playerStats?.[season]?.stats?.plusMinus}
+                     </td>
+                     <td className="">{playerStats?.[season]?.stats?.shots}</td>
+                     <td className="">{playerStats?.[season]?.stats?.hits}</td>
+                     <td className="">
+                        {playerStats?.[season]?.stats?.blocked}
+                     </td>
+                     <td className="">{playerStats?.[season]?.stats?.pim}</td>
+                  </>
+               ) : (
+                  <>
+                     <td className="">{playerStats?.[season]?.stats?.wins}</td>
+                     <td className="">
+                        {playerStats?.[season]?.stats?.losses}
+                     </td>
+                     <td className="">{playerStats?.[season]?.stats?.saves}</td>
+                     <td className="">
+                        {playerStats?.[season]?.stats?.goalsAgainst}
+                     </td>
+                     <td className="">
+                        {Math.round(
+                           playerStats?.[season]?.stats?.goalAgainstAverage *
+                              100
+                        ) / 100}
+                     </td>
+                     <td className="">
+                        {playerStats?.[season]?.stats?.shutouts}
+                     </td>
+                  </>
+               )}
+            </tr>
+         </>
+      )
    );
 };
 
