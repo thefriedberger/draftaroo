@@ -11,7 +11,7 @@ export interface Link {
 }
 export interface CalloutProps {
    calloutText?: string;
-   link?: Link;
+   links?: Link[];
 }
 
 export interface TabProps {
@@ -72,8 +72,48 @@ export interface AuthFormProps {
 
 export interface TimerProps {
    owner?: string | any;
+   currentPick: number | string;
    doStart?: any;
    doReset?: any;
    doStop?: any;
    autoPick?: any;
+}
+
+export interface BoardProps {
+   timer: TimerProps;
+   leagueID: string | any;
+}
+
+export type stats = {
+   pim: number;
+   hits: number;
+   games: number;
+   goals: number;
+   shots: number;
+   points: number;
+   shifts: number;
+   assists: number;
+   blocked: number;
+   shotPct: number;
+   plusMinus: number;
+   timeOnIce: string;
+   faceOffPct: number;
+   evenTimeOnIce: string;
+   overTimeGoals: number;
+   penaltyMinutes: number;
+   powerPlayGoals: number;
+   powerPlayPoints: number;
+   gameWinningGoals: number;
+   shortHandedGoals: number;
+   timeOnIcePerGame: string;
+   shortHandedPoints: number;
+   powerPlayTimeOnIce: string;
+   evenTimeOnIcePerGame: string;
+   shortHandedTimeOnIce: string;
+   powerPlayTimeOnIcePerGame: string;
+   shortHandedTimeOnIcePerGame: string;
+};
+export interface PlayerStats {
+   stats?: stats;
+   season?: string | number;
 }

@@ -32,6 +32,10 @@ const createLeague = async (
       shots: Number(formData.get('shots')),
       hits: Number(formData.get('hits')),
       blocks: Number(formData.get('blocks')),
+      wins: Number(formData.get('wins')),
+      goals_against: Number(formData.get('goals_against')),
+      saves: Number(formData.get('saves')),
+      shutouts: Number(formData.get('shutouts')),
    };
    const {
       goals,
@@ -46,6 +50,10 @@ const createLeague = async (
       hits,
       blocks,
       shots,
+      wins,
+      saves,
+      goals_against,
+      shutouts,
    } = scoring;
    const {
       keepers_enabled,
@@ -90,6 +98,10 @@ const createLeague = async (
          hits: hits,
          blocks: blocks,
          shots: shots,
+         wins: wins,
+         saves: saves,
+         goals_against: goals_against,
+         shutouts: shutouts,
       })
       .select();
    const league_rules = await supabase

@@ -1,155 +1,272 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { BoardProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { ChangeEvent, useContext, useEffect, useState } from 'react';
+import { PageContext } from '../context/page-context';
 import Player from '../player';
 
-const PlayerList = () => {
-    const [isLoading, setIsLoading] = useState(true);
-    const [players, setPlayers] = useState<any>([]);
-    const [leagueScoring, setLeagueScoring] = useState<any>();
-    const [sort, setSort] = useState<string>("");
-    const [positionFilter, setPositionFilter] = useState<string>("");
-    const [teamFilter, setTeamFilter] = useState<string>("");
-    const [playerSearch, setPlayerSearch] = useState<string>("");
-    const supabase = createClientComponentClient<Database>();
+const PlayerList = (props: BoardProps) => {
+   const [isLoading, setIsLoading] = useState(true);
+   const [players, setPlayers] = useState<Player[]>([]);
+   const [leagueScoring, setLeagueScoring] = useState<LeagueScoring | any>();
+   const [league, setLeague] = useState<League | any>();
+   const [sort, setSort] = useState<string>('');
+   const [positionFilter, setPositionFilter] = useState<string>('');
+   const [seasonFilter, setSeasonFilter] = useState<string>('');
+   const [teamFilter, setTeamFilter] = useState<string>('');
+   const [playerSearch, setPlayerSearch] = useState<string>('');
+   const [season, setSeason] = useState<number>(1);
+   const supabase = createClientComponentClient<Database>();
 
-    const teams = ["", "Arizona Coyotes", "Anaheim Ducks", "Boston Bruins", "Buffalo Sabres", "Calgary Flames", "Carolina Hurricanes",
-                   "Colorado Avalanche", "Columbus Blue Jackets", "Dallas Stars", "Detroit Red Wings", "Edmonton Oilers",
-                   "Florida Panthers", "Los Angeles Kings", "Minnesota Wild", "Montréal Canadiens", "Nashville Predators",
-                   "New Jersey Devils", "New York Islanders", "New York Rangers", "Ottawa Senators", "Philadelphia Flyers",
-                   "Pittsburgh Penguins", "San Jose Sharks", "Seattle Kraken", "St. Louis Blues", "Tampa Bay Lightning", 
-                   "Tornto Maple Leafs", "Vancouver Canucks", "Vegas Golden Knights", "Washington Capitals", "Winnipeg Jets"
-                  ]
-    const positions = ["", "Center", "Left Wing", "Defenseman", "Goalie"]
+   const { leagues } = useContext(PageContext);
 
-    useEffect(() => {
-        const fetchPlayers = async () => {
-          const { data } = await supabase.from('players').select()
-          setPlayers(data)
-          setIsLoading(false)
-        }
+   const teams = [
+      'Team',
+      'Arizona Coyotes',
+      'Anaheim Ducks',
+      'Boston Bruins',
+      'Buffalo Sabres',
+      'Calgary Flames',
+      'Carolina Hurricanes',
+      'Colorado Avalanche',
+      'Columbus Blue Jackets',
+      'Dallas Stars',
+      'Detroit Red Wings',
+      'Edmonton Oilers',
+      'Florida Panthers',
+      'Los Angeles Kings',
+      'Minnesota Wild',
+      'Montréal Canadiens',
+      'Nashville Predators',
+      'New Jersey Devils',
+      'New York Islanders',
+      'New York Rangers',
+      'Ottawa Senators',
+      'Philadelphia Flyers',
+      'Pittsburgh Penguins',
+      'San Jose Sharks',
+      'Seattle Kraken',
+      'St. Louis Blues',
+      'Tampa Bay Lightning',
+      'Tornto Maple Leafs',
+      'Vancouver Canucks',
+      'Vegas Golden Knights',
+      'Washington Capitals',
+      'Winnipeg Jets',
+   ];
+   const positions = [
+      'Position',
+      'Center',
+      'Left Wing',
+      'Defenseman',
+      'Goalie',
+   ];
 
-        const fetchScoring = async () => {
-            const { data } = await supabase.from('league_scoring').select().eq('id', 'ad9eafad-045d-440b-a56c-d09f9fd9ead7')
-            setLeagueScoring(data)
-        }
-    
-        fetchPlayers()
-        fetchScoring()
-      }, [supabase])
-    
-    const filterPlayers = () => {
-        const playersByPostion = players.filter((player: Player) => {
-            if (positionFilter != "") {
-                return player.primary_position === positionFilter
-            } else {
-                return true
-            }
-        })
+   const seasons = ['Season', '2021-2022', '2022-2023'];
 
-        const playersByTeam = playersByPostion.filter((player: Player) => {
-            if (teamFilter != "") {
-                return player.current_team === teamFilter
-            } else {
-                return true
-            }
-        })
+   useEffect(() => {
+      if (leagues)
+         setLeague(
+            leagues?.filter((league: League) => {
+               return league.league_id === props.leagueID && league;
+            })
+         );
+   }, [leagues]);
+   useEffect(() => {
+      const fetchPlayers = async () => {
+         const data = await fetch(
+            'https://mfiegmjwkqpipahwvcbz.supabase.co/storage/v1/object/sign/players/players.json?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJwbGF5ZXJzL3BsYXllcnMuanNvbiIsImlhdCI6MTY5Mzk0MDgxOCwiZXhwIjoxNzI1NDc2ODE4fQ.jGh3wUFUMqnOUiSQ63pCXaOSoliqeYTH-N1qJIZx4-E&t=2023-09-05T19%3A06%3A58.178Z'
+         );
+         const players = await data.json();
+         setPlayers(players);
+         setIsLoading(false);
+      };
 
-        const playersSearched = playersByTeam.filter((player: Player) => {
-            if (playerSearch != "") {
-                const fullName = player.first_name + " " + player.last_name
-                return fullName.toLowerCase().includes(playerSearch.toLowerCase())
-            } else {
-                return true
-            }
-        })
+      const fetchScoring = async () => {
+         const { data } = await supabase
+            .from('league_scoring')
+            .select('*')
+            .eq('id', league?.[0]?.league_scoring);
+         setLeagueScoring(data?.[0] as LeagueScoring);
+      };
 
-        if (sort != "") {
-            return sortPlayers(playersSearched)
-        } else {
-            return playersSearched
-        }
-    }
+      fetchPlayers();
 
-    const sortPlayers = (players: Player[]) => {
-        players.sort((a: Player, b: Player) => {
-            const statForA = getStatFromLastSeason(a.stats, sort)
-            const statForB = getStatFromLastSeason(b.stats, sort)
-            return statForB - statForA
-        })
+      if (league) fetchScoring();
+   }, [supabase, league]);
 
-        return players
-    }
+   const filterPlayers = () => {
+      const playersByPostion = players.filter((player: Player) => {
+         if (positionFilter != '') {
+            return player.primary_position === positionFilter;
+         } else {
+            return true;
+         }
+      });
 
-    const getStatFromLastSeason = (player_stats: any, stat: string) => {
-        if (!player_stats) {
-            return 0
-        }
+      const playersByTeam = playersByPostion.filter((player: Player) => {
+         if (teamFilter != '') {
+            return player.current_team === teamFilter;
+         } else {
+            return true;
+         }
+      });
 
-        if (!player_stats[1]["stats"]) {
-            return 0
-        } 
+      const playersSearched = playersByTeam.filter((player: Player) => {
+         if (playerSearch != '') {
+            const fullName = player.first_name + ' ' + player.last_name;
+            return fullName.toLowerCase().includes(playerSearch.toLowerCase());
+         } else {
+            return true;
+         }
+      });
 
-        if (!player_stats[1]["stats"][stat]) {
-            return 0
-        }
+      const playersBySeason = players.filter((player: Player) => {
+         if (seasonFilter !== '') {
+            // const season =
+         }
+      });
 
-        return player_stats[1]["stats"][stat]
+      if (sort != '') {
+         return sortPlayers(playersSearched);
+      } else {
+         return playersSearched;
+      }
+   };
 
-    }
+   const sortPlayers = (players: Player[]) => {
+      players.sort((a: Player, b: Player) => {
+         const statForA = getStatFromLastSeason(a.stats, sort);
+         const statForB = getStatFromLastSeason(b.stats, sort);
+         return statForB - statForA;
+      });
 
-    return (
-        <>
-            {!isLoading && 
-            <div>
-                <Filter values={positions} filterFun={setPositionFilter}/>
-                <Filter values={teams} filterFun={setTeamFilter}/>
-                <input
-                    type="text"
-                    value={ playerSearch }
-                    onChange={ e => setPlayerSearch(e.target.value) } 
-                />
-                <div className='flex flex-col justify-start'>
-                    <div className='justify-start'>
-                        <span className='m-2' onClick={e => setSort("")}>Name</span>
-                        <span className='m-2' onClick={e => setSort("")}>Team</span>
-                        <span className='m-2' onClick={e => setSort("")}>Position</span>
-                        <span className='m-2' onClick={e => setSort("")}>Games Played</span>
-                        <span className='m-2' onClick={e => setSort("")}>ATOI</span>
-                        <span className='m-2' onClick={e => setSort("")}>Points</span>
-                        <span className='m-2' onClick={e => setSort("")}>AVG Points</span>
-                        <span className='m-2' onClick={e => setSort("goals")}>Goals</span>
-                        <span className='m-2' onClick={e => setSort("assists")}>Assists</span>
-                        <span className='m-2' onClick={e => setSort("plusMinus")}>Plus/Minus</span>
-                        <span className='m-2' onClick={e => setSort("shots")}>Shots</span>
-                        <span className='m-2' onClick={e => setSort("hits")}>Hits</span>
-                        <span className='m-2' onClick={e => setSort("blocked")}>Blocks</span>
-                        <span className='m-2' onClick={e => setSort("pim")}>Pims</span>
-                    </div>
-                    {filterPlayers().map((player: Player) => {
+      return players;
+   };
+   const getStatFromLastSeason = (player_stats: any, stat: string) => {
+      if (!player_stats) {
+         return 0;
+      }
+
+      if (!player_stats[season]['stats']) {
+         return 0;
+      }
+
+      if (!player_stats[season]['stats'][stat]) {
+         return 0;
+      }
+
+      return player_stats[season]['stats'][stat];
+   };
+
+   return (
+      <>
+         {!isLoading && (
+            <div className="flex flex-col items-center w-full max-w-screen-md">
+               <div className="flex flex-row justify-start self-start items-end">
+                  <Filter values={positions} filterFun={setPositionFilter} />
+                  <Filter values={teams} filterFun={setTeamFilter} />
+                  <div className="flex flex-col">
+                     <label htmlFor="season">Season:</label>
+                     <select
+                        className="text-black p-1 mr-2"
+                        onChange={(e: ChangeEvent) => {
+                           const target = e.target as HTMLSelectElement;
+                           setSeason(Number(target?.value));
+                        }}
+                     >
+                        <option value="0">2021-2022</option>
+                        <option value="1" selected>
+                           2022-2023
+                        </option>
+                     </select>
+                  </div>
+                  <input
+                     className="text-black p-1"
+                     type="text"
+                     value={playerSearch}
+                     onChange={(e) => setPlayerSearch(e.target.value)}
+                  />
+               </div>
+               <table className="block overflow-y-scroll w-full max-h-[75vh]">
+                  <tr className="dark:bg-gray-700">
+                     <td className="my-2" onClick={(e) => setSort('')}>
+                        Name
+                     </td>
+                     <td className="my-2" onClick={(e) => setSort('')}>
+                        Team
+                     </td>
+                     <td className="my-2" onClick={(e) => setSort('')}>
+                        Pos
+                     </td>
+                     <td className="my-2" onClick={(e) => setSort('')}>
+                        Score
+                     </td>
+                     <td className="my-2" onClick={(e) => setSort('')}>
+                        Avg Score
+                     </td>
+                     <td className="my-2" onClick={(e) => setSort('')}>
+                        GP
+                     </td>
+                     <td className="my-2" onClick={(e) => setSort('')}>
+                        ATOI
+                     </td>
+                     <td className="my-2" onClick={(e) => setSort('goals')}>
+                        G
+                     </td>
+                     <td className="my-2" onClick={(e) => setSort('assists')}>
+                        A
+                     </td>
+                     <td className="my-2" onClick={(e) => setSort('plusMinus')}>
+                        +/-
+                     </td>
+                     <td className="my-2" onClick={(e) => setSort('shots')}>
+                        S
+                     </td>
+                     <td className="my-2" onClick={(e) => setSort('hits')}>
+                        H
+                     </td>
+                     <td className="my-2" onClick={(e) => setSort('blocked')}>
+                        B
+                     </td>
+                     <td className="my-2" onClick={(e) => setSort('pim')}>
+                        PIM
+                     </td>
+                  </tr>
+                  {leagueScoring &&
+                     filterPlayers().map((player: Player) => {
                         return (
-                            <Player key={player.id} player={player} leagueScoring={leagueScoring} />
-                        )
-                    })}
-                </div>
+                           <Player
+                              key={player.id}
+                              player={player}
+                              leagueScoring={leagueScoring}
+                              season={season}
+                           />
+                        );
+                     })}
+               </table>
             </div>
-            }
-        </>
-    )    
+         )}
+      </>
+   );
+};
 
-}
-
-const Filter = ({values, filterFun}: any) => {
-    return (
-        <select onChange={ e =>  filterFun(e.target.value)} className='text-black m-8'>
-            {
-                values.map((x:any) => {
-                    return <option key={x} value={x}>{x}</option>
-                })
-            }
-        </select>
-    )
-}
+const Filter = ({ values, filterFun }: any) => {
+   return (
+      <select
+         onChange={(e) => filterFun(e.target.value)}
+         className="text-black p-1 mr-2"
+      >
+         {values.map((x: any) => {
+            return (
+               <option key={x} value={x}>
+                  {x}
+               </option>
+            );
+         })}
+      </select>
+   );
+};
 
 export default PlayerList;

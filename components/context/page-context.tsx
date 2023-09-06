@@ -39,10 +39,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
    const [teams, setTeams] = React.useState<Team | any>();
    const [leagues, setLeagues] = React.useState<League | any>();
    const [profile, setProfile] = React.useState<Profile | any>();
-   const [shouldFetchTeam, setShouldFetchTeam] = React.useState<boolean>(true);
    const [shouldFetchTeams, setShouldFetchTeams] =
-      React.useState<boolean>(true);
-   const [shouldFetchLeague, setShouldFetchLeague] =
       React.useState<boolean>(true);
    const [shouldFetchProfile, setShouldFetchProfile] =
       React.useState<boolean>(true);
@@ -77,13 +74,15 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
          .select('*')
          .match({ owner: user?.id });
       if (data) setTeam(data as Team);
-      if (error) setShouldFetchTeam(false);
    };
 
    const fetchTeams = async () => {
       const supabase = createClientComponentClient<Database>();
       const { data, error } = await supabase.from('teams').select('*');
-      if (data) setTeams(data as Team);
+      if (data && data.length !== 0) {
+         setTeams(data as Team);
+         setTeam(data.filter((team) => team.owner === user.id));
+      }
       if (error) setShouldFetchTeams(false);
    };
 
@@ -101,12 +100,15 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
       const supabase = createClientComponentClient<Database>();
       const { data, error } = await supabase.from('leagues').select('*');
       if (data) {
+         if (teams.length === 0 && data?.[0].owner === user.id) {
+            setLeagues(data as League);
+         }
          teams?.forEach((team: Team) => {
-            if (team.league_id === data?.[0].league_id)
+            if (team.league_id === data?.[0].league_id) {
                setLeagues(data as League);
+            }
          });
       }
-      if (!error) setShouldFetchLeague(false);
    };
 
    const userSignout = () => {
@@ -119,16 +121,12 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
       router.refresh();
    };
    useEffect(() => {
-      if (user?.id && user !== undefined && shouldFetchTeam) fetchTeam();
       if (user?.id && user !== undefined && shouldFetchTeams) fetchTeams();
       if (user?.id && user !== undefined && shouldFetchProfile) fetchProfile();
    }, [user]);
 
    useEffect(() => {
-      if (user?.id && user !== undefined && team && shouldFetchLeague)
-         fetchLeagues();
-      if (user?.id && user !== undefined && teams && shouldFetchLeague)
-         fetchLeagues();
+      if (user?.id && user !== undefined && teams) fetchLeagues();
    }, [team, teams]);
 
    return (

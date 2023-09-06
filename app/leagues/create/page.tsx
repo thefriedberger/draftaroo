@@ -57,7 +57,7 @@ const CreateLeague = () => {
                   <Tabs {...tabProps} />
                   <button
                      type="submit"
-                     className="bg-white rounded-md mx-auto max-w-min-content p-2"
+                     className="bg-white dark:text-black rounded-md mx-auto max-w-min-content p-2 mt-2"
                   >
                      Submit
                   </button>

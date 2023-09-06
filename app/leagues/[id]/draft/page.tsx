@@ -1,8 +1,8 @@
 'use client';
 
+import Board from '@/components/board';
 import { PageContext } from '@/components/context/page-context';
-import Timer from '@/components/timer';
-import { TimerProps } from '@/lib/types';
+import { BoardProps, TimerProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
@@ -86,6 +86,12 @@ const Draft = ({ params }: { params: { id: string } }) => {
 
    const timerProps: TimerProps = {
       owner: owner,
+      currentPick: 1,
+   };
+
+   const boardProps: BoardProps = {
+      timer: timerProps,
+      leagueID: params.id,
    };
    return (
       <>
@@ -95,24 +101,12 @@ const Draft = ({ params }: { params: { id: string } }) => {
                <button onClick={createDraft} type="button">
                   Creat Draft
                </button>
-               {/* <h1>{timer}</h1> */}
             </>
          ) : (
             <>
-               {/* <h1>{timer}</h1> */}
-               {/* {owner && (
-                  <>
-                     <button onClick={startTimer} type="button">
-                        Start Timer
-                     </button>
-                     <button onClick={resetTimer} type="button">
-                        Reset Timer
-                     </button>
-                  </>
-               )} */}
+               <Board {...boardProps} />
             </>
          )}
-         <Timer {...timerProps} />
       </>
    );
 };

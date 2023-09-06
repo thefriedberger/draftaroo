@@ -4,47 +4,62 @@ import { TimerProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
 
-enum STATUS {
+export enum STATUS {
    START = 'Started',
    STOP = 'Stopped',
    RESET = 'Reset',
 }
 
-const Timer = ({ owner, doStart, doStop, doReset, autoPick }: TimerProps) => {
+const Timer = ({
+   owner,
+   currentPick,
+   doStart,
+   doStop,
+   doReset,
+   autoPick,
+}: TimerProps) => {
    const TIMER_DURATION = 120;
    const [pick, setPick] = useState();
    const [round, setRound] = useState();
    const [status, setStatus] = useState(STATUS.STOP);
    const [hostTimer, setHostTimer] = useState<number>(TIMER_DURATION);
    const [timer, setTimer] = useState<string | number>();
-   const [timerTimeout, setTimerTimeout] = useState<any>();
+   const [timerInterval, setTimerInterval] = useState<any>();
    const [userPick, setUserPick] = useState();
    const supabase = createClientComponentClient<Database>();
 
    const twoDigits = (num: number) =>
       new Date(num * 1000).toISOString().substring(14, 19);
 
-   const [counter, setCounter] = useState(TIMER_DURATION);
    const startTimer = () => {
       if (hostTimer === 0) setHostTimer(TIMER_DURATION);
       if (status === STATUS.START)
-         setTimeout(() => setHostTimer(hostTimer - 1), 1000);
+         setTimerInterval(
+            setInterval(() => setHostTimer((hostTimer) => hostTimer - 1), 1000)
+         );
    };
+
    useEffect(() => {
       startTimer();
-   }, [hostTimer, status]);
+      return () => {
+         clearInterval;
+      };
+   }, [status]);
+
    const handleStart = () => {
       setStatus(STATUS.START);
       const timeout = startTimer();
-      setTimerTimeout(timeout);
+      setTimerInterval(timeout);
    };
+
    const handleStop = () => {
       setStatus(STATUS.STOP);
-      setTimerTimeout(clearTimeout(timerTimeout));
+      setTimerInterval(clearInterval(timerInterval));
    };
+
    const handleReset = () => {
       setStatus(STATUS.RESET);
-      setTimerTimeout(clearTimeout(timerTimeout));
+      setTimerInterval(clearInterval(timerInterval));
       setHostTimer(TIMER_DURATION);
    };
 
@@ -79,7 +94,7 @@ const Timer = ({ owner, doStart, doStop, doReset, autoPick }: TimerProps) => {
                <p>{timer}</p>
                <p>{round}&nbsp;Round</p>
                <p>{pick}&nbsp;Pick</p>
-               {/* <p>{currentPick}&nbsp;Overall</p> */}
+               <p>{currentPick}&nbsp;Overall</p>
             </div>
          </div>
          <div className="">

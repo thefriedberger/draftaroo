@@ -6,7 +6,6 @@ const TeamView = (
       params?: { id: string };
    }
 ) => {
-   console.log(team);
    return <>{<p>{team?.team_name}</p>}</>;
 };
 
