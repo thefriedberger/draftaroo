@@ -58,10 +58,22 @@ const Player = ({
          let tempPoints = 0;
          for (const stat in stats) {
             if (
-               leagueScoring?.[stat] !== undefined &&
-               stats?.[stat] !== undefined
-            )
-               tempPoints += leagueScoring?.[stat] * stats?.[stat];
+               (leagueScoring?.[stat] !== undefined || leagueScoring?.[stat]) &&
+               (stats?.[stat] !== undefined || stats?.[stat])
+            ) {
+               if (stat === 'powerPlayPoints') {
+                  tempPoints +=
+                     leagueScoring?.['powerPlayAssists'] *
+                     (stats?.['powerPlayPoints'] - stats?.['powerPlayGoals']);
+               } else if (stat === 'shortHandedPoints') {
+                  tempPoints +=
+                     leagueScoring?.['shortHandedAssists'] *
+                     (stats?.['shortHandedPoints'] -
+                        stats?.['shortHandedGoals']);
+               } else {
+                  tempPoints += leagueScoring?.[stat] * stats?.[stat];
+               }
+            }
          }
          setPoints(Math.round(tempPoints * 100) / 100);
          if (tempPoints !== 0)
@@ -141,6 +153,33 @@ const Player = ({
                      </td>
                      <td className="">
                         <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.pim}
+                        </span>
+                     </td>
+                     <td className="">
+                        <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.powerPlayGoals}
+                        </span>
+                     </td>
+                     <td className="">
+                        <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.powerPlayPoints -
+                              playerStats?.[season]?.stats?.powerPlayGoals}
+                        </span>
+                     </td>
+                     <td className="">
+                        <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.shortHandedGoals}
+                        </span>
+                     </td>
+                     <td className="">
+                        <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.shortHandedPoints -
+                              playerStats?.[season]?.stats?.shortHandedGoals}
+                        </span>
+                     </td>
+                     <td className="">
+                        <span className="cursor-pointer">
                            {playerStats?.[season]?.stats?.shots}
                         </span>
                      </td>
@@ -152,11 +191,6 @@ const Player = ({
                      <td className="">
                         <span className="cursor-pointer">
                            {playerStats?.[season]?.stats?.blocked}
-                        </span>
-                     </td>
-                     <td className="">
-                        <span className="cursor-pointer">
-                           {playerStats?.[season]?.stats?.pim}
                         </span>
                      </td>
                   </>

@@ -116,57 +116,60 @@ export interface Database {
          league_scoring: {
             Row: {
                assists: number | null;
-               blocks: number | null;
+               blocked: number | null;
                goals: number | null;
                goalsAgainst: number | null;
                hits: number | null;
                id: string;
+               pim: number | null;
                plusMinus: number | null;
-               powerplayAssists: number | null;
-               powerplayGoals: number | null;
-               powerplayPoints: number | null;
+               powerPlayAssists: number | null;
+               powerPlayGoals: number | null;
+               powerPlayPoints: number | null;
                saves: number | null;
-               shorthandedAssists: number | null;
-               shorthandedGoals: number | null;
-               shorthandedPoints: number | null;
+               shortHandedAssists: number | null;
+               shortHandedGoals: number | null;
+               shortHandedPoints: number | null;
                shots: number | null;
                shutouts: number | null;
                wins: number | null;
             };
             Insert: {
                assists?: number | null;
-               blocks?: number | null;
+               blocked?: number | null;
                goals?: number | null;
                goalsAgainst?: number | null;
                hits?: number | null;
                id?: string;
+               pim?: number | null;
                plusMinus?: number | null;
-               powerplayAssists?: number | null;
-               powerplayGoals?: number | null;
-               powerplayPoints?: number | null;
+               powerPlayAssists?: number | null;
+               powerPlayGoals?: number | null;
+               powerPlayPoints?: number | null;
                saves?: number | null;
-               shorthandedAssists?: number | null;
-               shorthandedGoals?: number | null;
-               shorthandedPoints?: number | null;
+               shortHandedAssists?: number | null;
+               shortHandedGoals?: number | null;
+               shortHandedPoints?: number | null;
                shots?: number | null;
                shutouts?: number | null;
                wins?: number | null;
             };
             Update: {
                assists?: number | null;
-               blocks?: number | null;
+               blocked?: number | null;
                goals?: number | null;
                goalsAgainst?: number | null;
                hits?: number | null;
                id?: string;
+               pim?: number | null;
                plusMinus?: number | null;
-               powerplayAssists?: number | null;
-               powerplayGoals?: number | null;
-               powerplayPoints?: number | null;
+               powerPlayAssists?: number | null;
+               powerPlayGoals?: number | null;
+               powerPlayPoints?: number | null;
                saves?: number | null;
-               shorthandedAssists?: number | null;
-               shorthandedGoals?: number | null;
-               shorthandedPoints?: number | null;
+               shortHandedAssists?: number | null;
+               shortHandedGoals?: number | null;
+               shortHandedPoints?: number | null;
                shots?: number | null;
                shutouts?: number | null;
                wins?: number | null;
@@ -347,19 +350,19 @@ export interface Database {
          watchlist: {
             Row: {
                created_at: string | null;
-               id: number;
+               id: string;
                owner: string;
                players: number[] | null;
             };
             Insert: {
                created_at?: string | null;
-               id?: number;
+               id?: string;
                owner: string;
                players?: number[] | null;
             };
             Update: {
                created_at?: string | null;
-               id?: number;
+               id?: string;
                owner?: string;
                players?: number[] | null;
             };
@@ -367,7 +370,7 @@ export interface Database {
                {
                   foreignKeyName: 'watchlist_owner_fkey';
                   columns: ['owner'];
-                  referencedRelation: 'users';
+                  referencedRelation: 'profiles';
                   referencedColumns: ['id'];
                }
             ];

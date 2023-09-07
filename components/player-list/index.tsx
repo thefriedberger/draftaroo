@@ -210,13 +210,19 @@ const PlayerList = ({
                            <th className="my-2" onClick={(e) => setSort('')}>
                               Pos
                            </th>
-                           <th className="my-2" onClick={(e) => setSort('')}>
+                           <th
+                              className="my-2"
+                              onClick={(e) => setSort('score')}
+                           >
                               Score
                            </th>
                            <th className="my-2" onClick={(e) => setSort('')}>
                               Avg Score
                            </th>
-                           <th className="my-2" onClick={(e) => setSort('')}>
+                           <th
+                              className="my-2"
+                              onClick={(e) => setSort('games')}
+                           >
                               GP
                            </th>
                            {positionFilter !== 'Goalie' ? (
@@ -247,27 +253,53 @@ const PlayerList = ({
                                  </th>
                                  <th
                                     className="my-2"
+                                    onClick={(e) => setSort('pim')}
+                                 >
+                                    PIM
+                                 </th>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) => setSort('powerPlayGoals')}
+                                 >
+                                    PPG
+                                 </th>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) => setSort('powerPlayAssists')}
+                                 >
+                                    PPA
+                                 </th>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) => setSort('shortHandedGoals')}
+                                 >
+                                    SHG
+                                 </th>
+                                 <th
+                                    className="my-2"
+                                    onClick={(e) =>
+                                       setSort('shortHandedAssists')
+                                    }
+                                 >
+                                    SHA
+                                 </th>
+                                 <th
+                                    className="my-2"
                                     onClick={(e) => setSort('shots')}
                                  >
-                                    S
+                                    SOG
                                  </th>
                                  <th
                                     className="my-2"
                                     onClick={(e) => setSort('hits')}
                                  >
-                                    H
+                                    HIT
                                  </th>
                                  <th
                                     className="my-2"
                                     onClick={(e) => setSort('blocked')}
                                  >
-                                    B
-                                 </th>
-                                 <th
-                                    className="my-2"
-                                    onClick={(e) => setSort('pim')}
-                                 >
-                                    PIM
+                                    BLK
                                  </th>
                               </>
                            ) : (
