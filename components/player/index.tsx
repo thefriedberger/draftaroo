@@ -82,7 +82,7 @@ const Player = ({
          <>
             <tr
                key={player.id}
-               className="my-1 cursor-pointer min-w-full"
+               className="my-1 min-w-full"
                onClick={(e: any) => {
                   handleUpdateFeaturedPlayer(player, e);
                }}
@@ -105,53 +105,109 @@ const Player = ({
                   )}
                </td>
                <td className="">
-                  {player.first_name} {player.last_name}
+                  <span className="cursor-pointer">
+                     {player.first_name} {player.last_name}
+                  </span>
                </td>
-               <td className="">{player.current_team}</td>
                <td className="">
-                  {player.primary_position &&
-                     player.primary_position
-                        .split(' ')
-                        .map((char: string) => char[0])}
+                  <span className="cursor-pointer">{player.current_team}</span>
                </td>
-               <td className="">{points}</td>
-               <td className="">{averagePoints}</td>
-               <td className="">{playerStats?.[season]?.stats?.games}</td>
+               <td className="">
+                  <span className="cursor-pointer">
+                     {player.primary_position &&
+                        player.primary_position
+                           .split(' ')
+                           .map((char: string) => char[0])}
+                  </span>
+               </td>
+               <td className="">
+                  <span className="cursor-pointer">{points}</span>
+               </td>
+               <td className="">
+                  <span className="cursor-pointer">{averagePoints}</span>
+               </td>
+               <td className="">
+                  <span className="cursor-pointer">
+                     {playerStats?.[season]?.stats?.games}
+                  </span>
+               </td>
                {player.primary_position !== 'Goalie' ? (
                   <>
-                     <td className="">{getAverageTimeOnIce(player.stats)}</td>
-                     <td className="">{playerStats?.[season]?.stats?.goals}</td>
                      <td className="">
-                        {playerStats?.[season]?.stats?.assists}
+                        <span className="cursor-pointer">
+                           {getAverageTimeOnIce(player.stats)}
+                        </span>
                      </td>
                      <td className="">
-                        {playerStats?.[season]?.stats?.plusMinus}
+                        <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.goals}
+                        </span>
                      </td>
-                     <td className="">{playerStats?.[season]?.stats?.shots}</td>
-                     <td className="">{playerStats?.[season]?.stats?.hits}</td>
                      <td className="">
-                        {playerStats?.[season]?.stats?.blocked}
+                        <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.assists}
+                        </span>
                      </td>
-                     <td className="">{playerStats?.[season]?.stats?.pim}</td>
+                     <td className="">
+                        <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.plusMinus}
+                        </span>
+                     </td>
+                     <td className="">
+                        <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.shots}
+                        </span>
+                     </td>
+                     <td className="">
+                        <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.hits}
+                        </span>
+                     </td>
+                     <td className="">
+                        <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.blocked}
+                        </span>
+                     </td>
+                     <td className="">
+                        <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.pim}
+                        </span>
+                     </td>
                   </>
                ) : (
                   <>
-                     <td className="">{playerStats?.[season]?.stats?.wins}</td>
                      <td className="">
-                        {playerStats?.[season]?.stats?.losses}
-                     </td>
-                     <td className="">{playerStats?.[season]?.stats?.saves}</td>
-                     <td className="">
-                        {playerStats?.[season]?.stats?.goalsAgainst}
+                        <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.wins}
+                        </span>
                      </td>
                      <td className="">
-                        {Math.round(
-                           playerStats?.[season]?.stats?.goalAgainstAverage *
-                              100
-                        ) / 100}
+                        <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.losses}
+                        </span>
                      </td>
                      <td className="">
-                        {playerStats?.[season]?.stats?.shutouts}
+                        <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.saves}
+                        </span>
+                     </td>
+                     <td className="">
+                        <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.goalsAgainst}
+                        </span>
+                     </td>
+                     <td className="">
+                        <span className="cursor-pointer">
+                           {Math.round(
+                              playerStats?.[season]?.stats?.goalAgainstAverage *
+                                 100
+                           ) / 100}
+                        </span>
+                     </td>
+                     <td className="">
+                        <span className="cursor-pointer">
+                           {playerStats?.[season]?.stats?.shutouts}
+                        </span>
                      </td>
                   </>
                )}
