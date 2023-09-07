@@ -22,6 +22,9 @@ export type PageContextType = {
    fetchTeam?: () => void;
    fetchTeams?: () => void;
    fetchLeagues?: () => void;
+   watchlist?: Watchlist | any;
+   fetchWatchlist?: () => void;
+   updateWatchlist?: (player: string | number) => void;
 };
 
 const initialValues = {};
@@ -39,6 +42,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
    const [teams, setTeams] = React.useState<Team | any>();
    const [leagues, setLeagues] = React.useState<League | any>();
    const [profile, setProfile] = React.useState<Profile | any>();
+   const [watchlist, setWatchlist] = React.useState<Watchlist | any>();
    const [shouldFetchTeams, setShouldFetchTeams] =
       React.useState<boolean>(true);
    const [shouldFetchProfile, setShouldFetchProfile] =
@@ -65,6 +69,19 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
    };
    const udpateProfile = (newProfile: Profile) => {
       setProfile(newProfile);
+   };
+   const updateWatchlist = async (player: string | number) => {
+      const supabase = createClientComponentClient<Database>();
+      let newWatchlist: number[] = watchlist?.players
+         ? watchlist.players.filter((p: number | string) => p !== player)
+         : [player];
+      const { data, error } = await supabase
+         .from('watchlist')
+         .update({ players: newWatchlist })
+         .match({ owner: user?.id });
+      if (data) {
+         setWatchlist(data?.[0]);
+      }
    };
 
    const fetchTeam = async () => {
@@ -111,6 +128,25 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
       }
    };
 
+   const fetchWatchlist = async () => {
+      const supabase = createClientComponentClient<Database>();
+      const { data, error } = await supabase
+         .from('watchlist')
+         .select('*')
+         .match({ owner: user?.id });
+      if (data) {
+         setWatchlist(data?.[0]);
+      }
+      if (data?.length === 0) {
+         const { data, error } = await supabase
+            .from('watchlist')
+            .insert({ owner: user?.id });
+         if (data) {
+            setWatchlist(data?.[0]);
+         }
+      }
+   };
+
    const userSignout = () => {
       setSession(null);
       setUser(null);
@@ -118,6 +154,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
       setTeams(null);
       setLeagues(null);
       setProfile(null);
+      setWatchlist(null);
       router.refresh();
    };
    useEffect(() => {
@@ -127,6 +164,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
 
    useEffect(() => {
       if (user?.id && user !== undefined && teams) fetchLeagues();
+      if (user?.id && user !== undefined && teams) fetchWatchlist();
    }, [team, teams]);
 
    return (
@@ -148,6 +186,9 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
             fetchTeam,
             fetchTeams,
             fetchLeagues,
+            watchlist,
+            fetchWatchlist,
+            updateWatchlist,
          }}
       >
          {children}

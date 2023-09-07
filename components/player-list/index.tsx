@@ -17,7 +17,7 @@ const PlayerList = ({
    const [leagueScoring, setLeagueScoring] = useState<LeagueScoring | any>();
    const [league, setLeague] = useState<League | any>();
    const [sort, setSort] = useState<string>('');
-   const [positionFilter, setPositionFilter] = useState<string>('');
+   const [positionFilter, setPositionFilter] = useState<string>('Skaters');
    const [seasonFilter, setSeasonFilter] = useState<string>('');
    const [teamFilter, setTeamFilter] = useState<string>('');
    const [playerSearch, setPlayerSearch] = useState<string>('');
@@ -178,6 +178,7 @@ const PlayerList = ({
                   <div className="flex flex-col">
                      <label htmlFor="season">Season:</label>
                      <select
+                        defaultValue={1}
                         className="text-black p-1 mr-2"
                         onChange={(e: ChangeEvent) => {
                            const target = e.target as HTMLSelectElement;
@@ -185,9 +186,7 @@ const PlayerList = ({
                         }}
                      >
                         <option value="0">2021-2022</option>
-                        <option value="1" selected>
-                           2022-2023
-                        </option>
+                        <option value="1">2022-2023</option>
                      </select>
                   </div>
                   <input
@@ -197,10 +196,11 @@ const PlayerList = ({
                      onChange={(e) => setPlayerSearch(e.target.value)}
                   />
                </div>
-               <div className=" w-full max-h-[75vh] overflow-y-scroll ">
+               <div className=" w-full max-h-[75vh] overflow-y-scroll relative">
                   <table className="w-full">
                      <thead className="w-full">
-                        <tr className="dark:bg-gray-700 min-w-full text-left">
+                        <tr className="dark:bg-gold min-w-full text-left">
+                           <th></th>
                            <th className="my-2" onClick={(e) => setSort('')}>
                               Name
                            </th>

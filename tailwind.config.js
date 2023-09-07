@@ -18,6 +18,7 @@ module.exports = {
             purple: '#570478',
             gold: '#785704',
             'gray-primary': 'rgba(66, 58, 45, 0.6)',
+            'muted-blue': '#5065ad',
          },
          gridTemplateColumns: {
             13: 'repeat(13, minmax(0, 1fr))',

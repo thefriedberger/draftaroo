@@ -5,7 +5,7 @@ const Callout = (props: CalloutProps) => {
    const { links } = props;
 
    return (
-      <div className="flex flex-col p-3 text-red bg-emerald-500 rounded-xl my-3">
+      <div className="flex flex-col p-3 text-red bg-emerald-500 rounded-xl max-w-[250px] my-3">
          <p className="mb-2">{props.calloutText}</p>
          {links?.map((link, index) => {
             return (
