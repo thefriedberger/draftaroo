@@ -1,11 +1,40 @@
-import { useContext } from 'react';
-import { PageContext } from '../context/page-context';
+'use client';
 
-const Watchlist = () => {
-   const { watchlist, updateWatchlist } = useContext(PageContext);
+import { useContext, useEffect } from 'react';
+import { PageContext } from '../context/page-context';
+import WatchlistStar from './watchlist-star';
+
+const Watchlist = ({
+   updateFeaturedPlayer,
+}: {
+   updateFeaturedPlayer: (player: Player | any) => void;
+}) => {
+   const { watchlist } = useContext(PageContext);
+   useEffect(() => {}, [watchlist]);
+   const handleUpdateFeaturedPlayer = (player: Player, e: any) => {
+      const target: HTMLElement = e.target;
+      !['svg', 'path'].includes(target.localName) &&
+         updateFeaturedPlayer(player);
+   };
    return (
       <>
-         <h3>Watchlist</h3>
+         <h3 className="text-xl font-bold">Watchlist</h3>
+         {watchlist?.map((player: Player) => {
+            return (
+               <div
+                  key={player.id}
+                  className="flex flex-row "
+                  onClick={(e) => handleUpdateFeaturedPlayer(player, e)}
+               >
+                  <div className="fill-emerald-500 w-[20px] flex items-center mr-1">
+                     <WatchlistStar player={player} />
+                  </div>
+                  <p>
+                     {player.first_name} {player.last_name}
+                  </p>
+               </div>
+            );
+         })}
       </>
    );
 };

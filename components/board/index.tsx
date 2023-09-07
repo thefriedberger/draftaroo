@@ -31,7 +31,7 @@ const Board = (props: BoardProps) => {
             />
          </div>
          <div className="flex flex-col lg:max-w-[15vw] w-full">
-            <Watchlist />
+            <Watchlist updateFeaturedPlayer={updateFeaturedPlayer} />
             <MyTeam />
          </div>
       </div>
