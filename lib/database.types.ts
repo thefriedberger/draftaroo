@@ -12,6 +12,7 @@ export interface Database {
          draft: {
             Row: {
                created_at: string | null;
+               current_pick: number;
                id: string;
                is_active: boolean;
                league_id: string;
@@ -19,6 +20,7 @@ export interface Database {
             };
             Insert: {
                created_at?: string | null;
+               current_pick?: number;
                id?: string;
                is_active?: boolean;
                league_id: string;
@@ -26,6 +28,7 @@ export interface Database {
             };
             Update: {
                created_at?: string | null;
+               current_pick?: number;
                id?: string;
                is_active?: boolean;
                league_id?: string;
@@ -45,21 +48,27 @@ export interface Database {
                created_at: string | null;
                draft_id: string;
                id: string;
+               pick: number;
                player_id: number;
+               round: number;
                team_id: string;
             };
             Insert: {
                created_at?: string | null;
                draft_id: string;
                id?: string;
+               pick: number;
                player_id: number;
+               round: number;
                team_id: string;
             };
             Update: {
                created_at?: string | null;
                draft_id?: string;
                id?: string;
+               pick?: number;
                player_id?: number;
+               round?: number;
                team_id?: string;
             };
             Relationships: [
@@ -86,7 +95,6 @@ export interface Database {
          league_rules: {
             Row: {
                created_at: string;
-               current_pick: number;
                draft_picks: Json | null;
                draft_style: string | null;
                id: string;
@@ -96,7 +104,6 @@ export interface Database {
             };
             Insert: {
                created_at?: string;
-               current_pick?: number;
                draft_picks?: Json | null;
                draft_style?: string | null;
                id?: string;
@@ -106,7 +113,6 @@ export interface Database {
             };
             Update: {
                created_at?: string;
-               current_pick?: number;
                draft_picks?: Json | null;
                draft_style?: string | null;
                id?: string;

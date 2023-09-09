@@ -1,9 +1,8 @@
 'use client';
 
-import { BoardProps, TimerProps } from '@/lib/types';
+import { BoardProps, TabProps, TimerProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
-import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 import { PageContext } from '../context/page-context';
 import DraftOrder from '../draft-order';
@@ -26,19 +25,17 @@ const Board = (props: BoardProps) => {
 
    const [featuredPlayer, setFeaturedPlayer] = useState<Player>();
    const [isYourTurn, setIsYourTurn] = useState<boolean>(false);
-   const [hostTimer, setHostTimer] = useState<string | number>();
-   const [timer, setTimer] = useState<string | number>();
    const [timerStatus, setTimerStatus] = useState<TIMER_STATUS>(
       TIMER_STATUS.STOP
    );
-   const [timerTimeout, setTimerTimeout] = useState<any>();
+   const [currentPick, setCurrentPick] = useState<number>(1);
+   const [currentRound, setCurrentRound] = useState<number>(1);
    const [owner, setOwner] = useState<boolean>(false);
    const [draftedPlayers, setDraftedPlayers] = useState<number[]>([]);
    const [league, setLeague] = useState<League>();
    const [shouldFetchDraftedPlayers, setShouldFetchDraftedPlayers] =
       useState<boolean>(true);
-   const { session, user, team, teams, leagues } = useContext(PageContext);
-   const router = useRouter();
+   const { user, team, teams, leagues } = useContext(PageContext);
 
    const updateFeaturedPlayer = (player: Player) => {
       setFeaturedPlayer(player);
@@ -54,21 +51,6 @@ const Board = (props: BoardProps) => {
       });
    }, [leagues]);
 
-   const startTimer = () => {
-      const timestamp = Date.now() / 1000;
-      console.log(timestamp);
-      const timeLeft =
-         TIMER_DURATION - (Math.round(timestamp) % TIMER_DURATION);
-      setHostTimer(timeLeft);
-
-      const timeCorrection = Math.round(timestamp) - timestamp;
-      setTimerTimeout(setTimeout(startTimer, timeCorrection * 1000 + 1000));
-   };
-   const resetTimer = () => {
-      setTimerTimeout(clearTimeout(timerTimeout));
-      setHostTimer(TIMER_DURATION);
-   };
-
    const handleDraftSelection = async (player: Player) => {
       if (team && player && draft) {
          const { data, error } = await supabase
@@ -77,6 +59,8 @@ const Board = (props: BoardProps) => {
                player_id: player.id,
                team_id: team[0].id,
                draft_id: draft.id,
+               round: currentPick,
+               pick: currentRound,
             });
          if (error) console.log(error);
          if (data) console.log(data);
@@ -92,7 +76,6 @@ const Board = (props: BoardProps) => {
                .select('*')
                .match({ draft_id: draft.id });
             if (data) {
-               let tempPlayers = [];
                data.forEach((draftPick) => {
                   console.log(draftPick);
                   setDraftedPlayers((prev) => [
@@ -122,14 +105,13 @@ const Board = (props: BoardProps) => {
          .subscribe();
    }, [supabase, draft]);
 
-   useEffect(() => {
-      console.log(draftedPlayers);
-   }, [draftedPlayers]);
-
    const timerProps: TimerProps = {
       owner: owner,
       currentPick: 1,
       status: timerStatus,
+   };
+   const tabs: TabProps = {
+      tabs: [],
    };
    return (
       <div className={classNames('w-full flex flex-row')}>

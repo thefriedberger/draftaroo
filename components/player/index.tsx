@@ -40,7 +40,7 @@ export const teamAbreviations: string | any = {
    'Washington Capitals': 'WSH',
 };
 
-const Player = ({
+const PlayerComponent = ({
    player,
    leagueScoring,
    season,
@@ -51,7 +51,7 @@ const Player = ({
    season: number;
    updateFeaturedPlayer: (player: Player | any) => void;
 }) => {
-   const [playerStats, setPlayerStats] = useState<PlayerStats[] | any>();
+   const [playerStats, setPlayerStats] = useState<PlayerStats[]>();
    const { watchlist, updateWatchlist } = useContext(PageContext);
 
    const getStatFromLastSeason = (player_stats: any, stat: string) => {
@@ -80,43 +80,9 @@ const Player = ({
 
       return Math.floor(timeOnIce.split(':')[0] / games);
    };
-
-   const [points, setPoints] = useState<number>(0);
-   const [averagePoints, setAveragePoints] = useState<number>(0);
    useEffect(() => {
-      if (player.stats) setPlayerStats(player.stats);
+      if (player.stats) setPlayerStats(player.stats as PlayerStats[]);
    }, []);
-
-   useEffect(() => {
-      if (playerStats?.[season] !== undefined && leagueScoring !== undefined) {
-         const { stats } = playerStats?.[season];
-         let tempPoints = 0;
-         for (const stat in stats) {
-            if (
-               (leagueScoring?.[stat] !== undefined || leagueScoring?.[stat]) &&
-               (stats?.[stat] !== undefined || stats?.[stat])
-            ) {
-               if (stat === 'powerPlayPoints') {
-                  tempPoints +=
-                     leagueScoring?.['powerPlayAssists'] *
-                     (stats?.['powerPlayPoints'] - stats?.['powerPlayGoals']);
-               } else if (stat === 'shortHandedPoints') {
-                  tempPoints +=
-                     leagueScoring?.['shortHandedAssists'] *
-                     (stats?.['shortHandedPoints'] -
-                        stats?.['shortHandedGoals']);
-               } else {
-                  tempPoints += leagueScoring?.[stat] * stats?.[stat];
-               }
-            }
-         }
-         setPoints(Math.round(tempPoints * 100) / 100);
-         if (tempPoints !== 0)
-            setAveragePoints(
-               Math.round((tempPoints / stats?.games) * 100) / 100
-            );
-      }
-   }, [playerStats, leagueScoring, season]);
 
    const handleUpdateFeaturedPlayer = (player: Player, e: any) => {
       const target: HTMLElement = e.target;
@@ -151,10 +117,14 @@ const Player = ({
                   </span>
                </td>
                <td className="py-2 px-1">
-                  <span className="cursor-pointer">{points}</span>
+                  <span className="cursor-pointer">
+                     {playerStats?.[season]?.stats?.score}
+                  </span>
                </td>
                <td className="py-2 px-1">
-                  <span className="cursor-pointer">{averagePoints}</span>
+                  <span className="cursor-pointer">
+                     {playerStats?.[season]?.stats?.averageScore}
+                  </span>
                </td>
                <td className="py-2 px-1">
                   <span className="cursor-pointer">
@@ -195,8 +165,10 @@ const Player = ({
                      </td>
                      <td className="py-2 px-1">
                         <span className="cursor-pointer">
-                           {playerStats?.[season]?.stats?.powerPlayPoints -
-                              playerStats?.[season]?.stats?.powerPlayGoals || 0}
+                           {playerStats?.[season]?.stats?.powerPlayPoints ||
+                              0 -
+                                 (playerStats?.[season]?.stats
+                                    ?.powerPlayGoals || 0)}
                         </span>
                      </td>
                      <td className="py-2 px-1">
@@ -206,9 +178,10 @@ const Player = ({
                      </td>
                      <td className="py-2 px-1">
                         <span className="cursor-pointer">
-                           {playerStats?.[season]?.stats?.shortHandedPoints -
-                              playerStats?.[season]?.stats?.shortHandedGoals ||
-                              0}
+                           {playerStats?.[season]?.stats?.shortHandedPoints ||
+                              0 -
+                                 (playerStats?.[season]?.stats
+                                    ?.shortHandedGoals || 0)}
                         </span>
                      </td>
                      <td className="py-2 px-1">
@@ -252,9 +225,9 @@ const Player = ({
                      <td className="py-2 px-1">
                         <span className="cursor-pointer">
                            {Math.round(
-                              playerStats?.[season]?.stats?.goalAgainstAverage *
-                                 100
-                           ) / 100 || 0}
+                              playerStats?.[season]?.stats
+                                 ?.goalAgainstAverage || 0 * 100
+                           ) / 100}
                         </span>
                      </td>
                      <td className="py-2 px-1">
@@ -270,4 +243,4 @@ const Player = ({
    );
 };
 
-export default Player;
+export default PlayerComponent;

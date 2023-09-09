@@ -1,9 +1,10 @@
 'use client';
 
+import getPlayers from '@/utils/get-players';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { PageContext } from '../context/page-context';
-import Player from '../player';
+import PlayerComponent from '../player';
 
 const PlayerList = ({
    updateFeaturedPlayer,
@@ -23,7 +24,18 @@ const PlayerList = ({
    const [teamFilter, setTeamFilter] = useState<string>('Team');
    const [playerSearch, setPlayerSearch] = useState<string>('');
    const [season, setSeason] = useState<number>(1);
+   const [shouldGetPlayerPoints, setShouldGetPlayerPoints] =
+      useState<boolean>(true);
    const supabase = createClientComponentClient<Database>();
+
+   useEffect(() => {
+      const fetchPlayers = async () => {
+         const playersArray = await getPlayers(leagueID);
+         setPlayers(playersArray as Player[]);
+         setIsLoading(false);
+      };
+      fetchPlayers();
+   }, []);
 
    const { leagues } = useContext(PageContext);
 
@@ -80,28 +92,6 @@ const PlayerList = ({
             })
          );
    }, [leagues]);
-   useEffect(() => {
-      const fetchPlayers = async () => {
-         const data = await fetch(
-            'https://mfiegmjwkqpipahwvcbz.supabase.co/storage/v1/object/sign/players/players.json?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJwbGF5ZXJzL3BsYXllcnMuanNvbiIsImlhdCI6MTY5Mzk0MDgxOCwiZXhwIjoxNzI1NDc2ODE4fQ.jGh3wUFUMqnOUiSQ63pCXaOSoliqeYTH-N1qJIZx4-E&t=2023-09-05T19%3A06%3A58.178Z'
-         );
-         const players = await data.json();
-         setPlayers(players);
-         setIsLoading(false);
-      };
-
-      const fetchScoring = async () => {
-         const { data } = await supabase
-            .from('league_scoring')
-            .select('*')
-            .eq('id', league?.[0]?.league_scoring);
-         setLeagueScoring(data?.[0] as LeagueScoring);
-      };
-
-      fetchPlayers();
-
-      if (league) fetchScoring();
-   }, [supabase, league]);
 
    const filterPlayers = () => {
       const playersByPostion = players.filter((player: Player) => {
@@ -146,11 +136,8 @@ const PlayerList = ({
    };
 
    useEffect(() => {
-      filterDraftedPlayers();
+      !shouldGetPlayerPoints && filterDraftedPlayers();
    }, [draftedPlayers]);
-   useEffect(() => {
-      filterPlayers();
-   }, [players]);
 
    const sortPlayers = (players: Player[]) => {
       players.sort((a: Player, b: Player) => {
@@ -161,6 +148,64 @@ const PlayerList = ({
 
       return players;
    };
+
+   //    const getPlayerPoints = async () => {
+   //       if (players.length > 0 && leagueScoring !== undefined) {
+   //          players.forEach((player: Player) => {
+   //             const playerStats = player?.stats as PlayerStats[];
+   //             if (playerStats?.[season] !== undefined) {
+   //                const { stats } = playerStats?.[season];
+   //                let tempPoints: number = 0;
+   //                for (const key in stats) {
+   //                   const stat = key as keyof PlayerStats;
+   //                   if (
+   //                      (leagueScoring?.[stat] !== undefined ||
+   //                         leagueScoring?.[stat]) &&
+   //                      (stats?.[key] || null !== undefined || stats?.[key])
+   //                   ) {
+   //                      if (key === 'powerPlayPoints') {
+   //                         tempPoints +=
+   //                            leagueScoring?.['powerPlayAssists'] *
+   //                            (stats?.['powerPlayPoints'] ||
+   //                               0 - (stats?.['powerPlayGoals'] || 0));
+   //                      } else if (key === 'shortHandedPoints') {
+   //                         tempPoints +=
+   //                            leagueScoring?.['shortHandedAssists'] *
+   //                            (stats?.['shortHandedPoints'] ||
+   //                               0 - (stats?.['shortHandedGoals'] || 0));
+   //                      } else {
+   //                         tempPoints += leagueScoring?.[stat] * stats?.[stat];
+   //                      }
+   //                   }
+   //                }
+
+   //                if (stats && tempPoints > 0) {
+   //                   stats.score = Math.round(tempPoints * 100) / 100;
+   //                   stats.averageScore =
+   //                      Math.round((tempPoints / (stats?.games || 1)) * 100) / 100;
+   //                }
+   //                setPlayers((prev) => [...prev, player]);
+   //             }
+   //          });
+   //          return true;
+   //       }
+   //       return false;
+   //    };
+
+   //    useEffect(() => {
+   //       const setPoints = async () => {
+   //          const pointsReady = await getPlayerPoints();
+   //          if (pointsReady) {
+   //             setShouldGetPlayerPoints(false);
+   //             setIsLoading(false);
+   //          } else {
+   //             setShouldGetPlayerPoints(true);
+   //             setIsLoading(true);
+   //          }
+   //       };
+   //       shouldGetPlayerPoints && setPoints();
+   //    }, [players, leagueScoring]);
+
    const getStatFromLastSeason = (player_stats: any, stat: string) => {
       if (!player_stats) {
          return 0;
@@ -177,6 +222,7 @@ const PlayerList = ({
       return player_stats[season]['stats'][stat];
    };
 
+   useEffect(() => {}, [leagueScoring, season]);
    return (
       <>
          {!isLoading && (
@@ -219,7 +265,10 @@ const PlayerList = ({
                            >
                               Score
                            </th>
-                           <th className="my-2" onClick={(e) => setSort('')}>
+                           <th
+                              className="my-2"
+                              onClick={(e) => setSort('averageScore')}
+                           >
                               Avg Score
                            </th>
                            <th
@@ -350,10 +399,10 @@ const PlayerList = ({
                         </tr>
                      </thead>
                      <tbody>
-                        {leagueScoring &&
+                        {players.length > 0 &&
                            filterPlayers().map((player: Player) => {
                               return (
-                                 <Player
+                                 <PlayerComponent
                                     key={player.id}
                                     player={player}
                                     leagueScoring={leagueScoring}
