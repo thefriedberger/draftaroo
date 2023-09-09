@@ -18,7 +18,7 @@ const getPlayers = async (leagueID: string) => {
    const league_scoring = await supabase
       .from('league_scoring')
       .select('*')
-      .eq('id', league?.data?.[0]?.league_scoring);
+      .eq('id', String(league?.data?.[0]?.league_scoring) || '');
    const leagueScoring = league_scoring?.data?.[0] as LeagueScoring | any;
    if (players.length > 0 && leagueScoring !== undefined) {
       players.forEach((player: Player) => {
