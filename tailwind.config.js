@@ -17,6 +17,7 @@ module.exports = {
             'emerald-primary': '#047857',
             purple: '#570478',
             gold: '#785704',
+            fuscia: '#bb4467',
             'gray-primary': 'rgba(66, 58, 45, 0.6)',
             'muted-blue': '#5065ad',
          },

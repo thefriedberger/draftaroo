@@ -88,7 +88,7 @@ const Timer = ({
 
    return (
       <div className="">
-         <div className="text-white">
+         <div className="dark:text-white">
             <h1 id="timer"></h1>
             <div className="">
                <p>{timer}</p>

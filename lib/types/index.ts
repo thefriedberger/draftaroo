@@ -80,8 +80,8 @@ export interface TimerProps {
 }
 
 export interface BoardProps {
-   timer: TimerProps;
    leagueID: string | any;
+   draft: Draft | any;
 }
 
 export type stats = {

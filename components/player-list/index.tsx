@@ -18,8 +18,7 @@ const PlayerList = ({
    const [league, setLeague] = useState<League | any>();
    const [sort, setSort] = useState<string>('');
    const [positionFilter, setPositionFilter] = useState<string>('Skaters');
-   const [seasonFilter, setSeasonFilter] = useState<string>('');
-   const [teamFilter, setTeamFilter] = useState<string>('');
+   const [teamFilter, setTeamFilter] = useState<string>('Team');
    const [playerSearch, setPlayerSearch] = useState<string>('');
    const [season, setSeason] = useState<number>(1);
    const supabase = createClientComponentClient<Database>();
@@ -114,7 +113,7 @@ const PlayerList = ({
       });
 
       const playersByTeam = playersByPostion.filter((player: Player) => {
-         if (teamFilter != '') {
+         if (teamFilter != 'Team') {
             return player.current_team === teamFilter;
          } else {
             return true;
@@ -127,12 +126,6 @@ const PlayerList = ({
             return fullName.toLowerCase().includes(playerSearch.toLowerCase());
          } else {
             return true;
-         }
-      });
-
-      const playersBySeason = players.filter((player: Player) => {
-         if (seasonFilter !== '') {
-            // const season =
          }
       });
 
@@ -171,7 +164,7 @@ const PlayerList = ({
    return (
       <>
          {!isLoading && (
-            <div className="flex flex-col items-center w-full">
+            <div className="flex flex-col items-center md:h-[75vh] w-full">
                <div className="flex flex-row justify-start self-start items-end">
                   <Filter values={positions} filterFun={setPositionFilter} />
                   <Filter values={teams} filterFun={setTeamFilter} />
@@ -197,18 +190,12 @@ const PlayerList = ({
                   />
                </div>
                <div className=" w-full max-h-[75vh] overflow-y-scroll relative">
-                  <table className="w-full">
+                  <table className="w-full text-sm">
                      <thead className="w-full">
-                        <tr className="dark:bg-gold min-w-full text-left">
+                        <tr className="bg-gray-700 text-white dark:bg-gold min-w-full text-left">
                            <th></th>
                            <th className="my-2" onClick={(e) => setSort('')}>
                               Name
-                           </th>
-                           <th className="my-2" onClick={(e) => setSort('')}>
-                              Team
-                           </th>
-                           <th className="my-2" onClick={(e) => setSort('')}>
-                              Pos
                            </th>
                            <th
                               className="my-2"

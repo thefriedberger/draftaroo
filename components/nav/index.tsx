@@ -15,8 +15,8 @@ export default function Nav(props: NavProps) {
 
    return (
       <>
-         <nav>
-            <div className="bg-emerald-primary w-full flex justify-center border-b border-b-foreground/10 h-16">
+         <nav className="h-[5vh] min-h-[80px]">
+            <div className="bg-emerald-primary w-full flex justify-center border-b border-b-foreground/10">
                <div className="w-full max-w-4xl flex justify-between items-center p-3 text-foreground flex-row">
                   <Link className="text-2xl hover:text-gray-300" href="/">
                      Draftaroo

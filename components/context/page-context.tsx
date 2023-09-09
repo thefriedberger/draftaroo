@@ -83,7 +83,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
             setShouldUpdateWatchlist(true);
          }
          if (action === WatchlistAction.ADD) {
-            setWatchlist([...watchlist, player]);
+            setWatchlist((prev) => [...prev, player]);
             setShouldUpdateWatchlist(true);
          }
       }
@@ -147,7 +147,6 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
                   .from('players')
                   .select('*')
                   .match({ id: player });
-               console.log(players?.data?.[0]);
                newWatchlist.push(players?.data?.[0] as Player);
             }
             setShouldUpdateWatchlist(false);
