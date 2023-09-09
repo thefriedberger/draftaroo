@@ -14,6 +14,11 @@ import Timer from '../timer';
 import Watchlist from '../watchlist';
 
 export const TIMER_DURATION = 120;
+export enum TIMER_STATUS {
+   START = 'start',
+   STOP = 'stop',
+   RESET = 'reset',
+}
 
 const Board = (props: BoardProps) => {
    const supabase = createClientComponentClient<Database>();
@@ -23,6 +28,9 @@ const Board = (props: BoardProps) => {
    const [isYourTurn, setIsYourTurn] = useState<boolean>(false);
    const [hostTimer, setHostTimer] = useState<string | number>();
    const [timer, setTimer] = useState<string | number>();
+   const [timerStatus, setTimerStatus] = useState<TIMER_STATUS>(
+      TIMER_STATUS.STOP
+   );
    const [timerTimeout, setTimerTimeout] = useState<any>();
    const [owner, setOwner] = useState<boolean>(false);
    const [draftedPlayers, setDraftedPlayers] = useState<number[]>([]);
@@ -121,6 +129,7 @@ const Board = (props: BoardProps) => {
    const timerProps: TimerProps = {
       owner: owner,
       currentPick: 1,
+      status: timerStatus,
    };
    return (
       <div className={classNames('w-full flex flex-row')}>
@@ -133,14 +142,19 @@ const Board = (props: BoardProps) => {
                featuredPlayer={featuredPlayer || null}
                yourTurn={isYourTurn}
                handleDraftSelection={handleDraftSelection}
+               draftedPlayers={draftedPlayers}
             />
             <PlayerList
                leagueID={leagueID}
                updateFeaturedPlayer={updateFeaturedPlayer}
+               draftedPlayers={draftedPlayers}
             />
          </div>
          <div className="flex flex-col lg:max-w-[15vw] w-full">
-            <Watchlist updateFeaturedPlayer={updateFeaturedPlayer} />
+            <Watchlist
+               updateFeaturedPlayer={updateFeaturedPlayer}
+               draftedPlayers={draftedPlayers}
+            />
             <MyTeam />
          </div>
       </div>

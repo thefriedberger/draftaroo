@@ -45,22 +45,22 @@ export interface Database {
                created_at: string | null;
                draft_id: string;
                id: string;
-               player_id: number | null;
-               team_id: string | null;
+               player_id: number;
+               team_id: string;
             };
             Insert: {
                created_at?: string | null;
                draft_id: string;
                id?: string;
-               player_id?: number | null;
-               team_id?: string | null;
+               player_id: number;
+               team_id: string;
             };
             Update: {
                created_at?: string | null;
                draft_id?: string;
                id?: string;
-               player_id?: number | null;
-               team_id?: string | null;
+               player_id?: number;
+               team_id?: string;
             };
             Relationships: [
                {
@@ -86,6 +86,7 @@ export interface Database {
          league_rules: {
             Row: {
                created_at: string;
+               current_pick: number;
                draft_picks: Json | null;
                draft_style: string | null;
                id: string;
@@ -95,6 +96,7 @@ export interface Database {
             };
             Insert: {
                created_at?: string;
+               current_pick?: number;
                draft_picks?: Json | null;
                draft_style?: string | null;
                id?: string;
@@ -104,6 +106,7 @@ export interface Database {
             };
             Update: {
                created_at?: string;
+               current_pick?: number;
                draft_picks?: Json | null;
                draft_style?: string | null;
                id?: string;

@@ -8,9 +8,11 @@ import Player from '../player';
 const PlayerList = ({
    updateFeaturedPlayer,
    leagueID,
+   draftedPlayers,
 }: {
    updateFeaturedPlayer: (player: Player | any) => void;
    leagueID: string;
+   draftedPlayers: number[];
 }) => {
    const [isLoading, setIsLoading] = useState(true);
    const [players, setPlayers] = useState<Player[]>([]);
@@ -135,6 +137,20 @@ const PlayerList = ({
          return playersSearched;
       }
    };
+
+   const filterDraftedPlayers = () => {
+      const updatedPlayers: Player[] = players.filter((player: Player) => {
+         return !draftedPlayers.includes(player.id);
+      });
+      setPlayers(updatedPlayers);
+   };
+
+   useEffect(() => {
+      filterDraftedPlayers();
+   }, [draftedPlayers]);
+   useEffect(() => {
+      filterPlayers();
+   }, [players]);
 
    const sortPlayers = (players: Player[]) => {
       players.sort((a: Player, b: Player) => {

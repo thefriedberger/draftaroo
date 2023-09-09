@@ -3,25 +3,12 @@
 import { TimerProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
+import { TIMER_STATUS } from '../board';
 
-export enum STATUS {
-   START = 'Started',
-   STOP = 'Stopped',
-   RESET = 'Reset',
-}
-
-const Timer = ({
-   owner,
-   currentPick,
-   doStart,
-   doStop,
-   doReset,
-   autoPick,
-}: TimerProps) => {
+const Timer = ({ owner, currentPick, status }: TimerProps) => {
    const TIMER_DURATION = 120;
    const [pick, setPick] = useState();
    const [round, setRound] = useState();
-   const [status, setStatus] = useState(STATUS.STOP);
    const [hostTimer, setHostTimer] = useState<number>(TIMER_DURATION);
    const [timer, setTimer] = useState<string | number>();
    const [timerInterval, setTimerInterval] = useState<any>();
@@ -33,7 +20,7 @@ const Timer = ({
 
    const startTimer = () => {
       if (hostTimer === 0) setHostTimer(TIMER_DURATION);
-      if (status === STATUS.START)
+      if (status === TIMER_STATUS.START)
          setTimerInterval(
             setInterval(() => setHostTimer((hostTimer) => hostTimer - 1), 1000)
          );
@@ -47,18 +34,15 @@ const Timer = ({
    }, [status]);
 
    const handleStart = () => {
-      setStatus(STATUS.START);
       const timeout = startTimer();
       setTimerInterval(timeout);
    };
 
    const handleStop = () => {
-      setStatus(STATUS.STOP);
       setTimerInterval(clearInterval(timerInterval));
    };
 
    const handleReset = () => {
-      setStatus(STATUS.RESET);
       setTimerInterval(clearInterval(timerInterval));
       setHostTimer(TIMER_DURATION);
    };

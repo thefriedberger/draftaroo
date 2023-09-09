@@ -9,10 +9,12 @@ const FeaturedPlayer = ({
    featuredPlayer,
    yourTurn,
    handleDraftSelection,
+   draftedPlayers,
 }: {
    featuredPlayer: Player | null;
    yourTurn?: boolean;
    handleDraftSelection: (player: Player) => void;
+   draftedPlayers: number[];
 }) => {
    const { watchlist } = useContext(PageContext);
    const watchlistStarProps: WatchlistStarProps = {
@@ -23,7 +25,7 @@ const FeaturedPlayer = ({
    };
    return (
       <div className="md:h-[15vh]">
-         {featuredPlayer ? (
+         {featuredPlayer && !draftedPlayers.includes(featuredPlayer.id) ? (
             <>
                <div className="dark:text-white text-xl">
                   {featuredPlayer.first_name} {featuredPlayer.last_name}
