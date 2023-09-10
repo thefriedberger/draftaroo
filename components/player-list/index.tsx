@@ -19,7 +19,7 @@ const PlayerList = ({
    const [players, setPlayers] = useState<Player[]>([]);
    const [leagueScoring, setLeagueScoring] = useState<LeagueScoring | any>();
    const [league, setLeague] = useState<League | any>();
-   const [sort, setSort] = useState<string>('');
+   const [sort, setSort] = useState<string>('score');
    const [positionFilter, setPositionFilter] = useState<string>('Skaters');
    const [teamFilter, setTeamFilter] = useState<string>('Team');
    const [playerSearch, setPlayerSearch] = useState<string>('');
@@ -149,77 +149,10 @@ const PlayerList = ({
       return players;
    };
 
-   //    const getPlayerPoints = async () => {
-   //       if (players.length > 0 && leagueScoring !== undefined) {
-   //          players.forEach((player: Player) => {
-   //             const playerStats = player?.stats as PlayerStats[];
-   //             if (playerStats?.[season] !== undefined) {
-   //                const { stats } = playerStats?.[season];
-   //                let tempPoints: number = 0;
-   //                for (const key in stats) {
-   //                   const stat = key as keyof PlayerStats;
-   //                   if (
-   //                      (leagueScoring?.[stat] !== undefined ||
-   //                         leagueScoring?.[stat]) &&
-   //                      (stats?.[key] || null !== undefined || stats?.[key])
-   //                   ) {
-   //                      if (key === 'powerPlayPoints') {
-   //                         tempPoints +=
-   //                            leagueScoring?.['powerPlayAssists'] *
-   //                            (stats?.['powerPlayPoints'] ||
-   //                               0 - (stats?.['powerPlayGoals'] || 0));
-   //                      } else if (key === 'shortHandedPoints') {
-   //                         tempPoints +=
-   //                            leagueScoring?.['shortHandedAssists'] *
-   //                            (stats?.['shortHandedPoints'] ||
-   //                               0 - (stats?.['shortHandedGoals'] || 0));
-   //                      } else {
-   //                         tempPoints += leagueScoring?.[stat] * stats?.[stat];
-   //                      }
-   //                   }
-   //                }
-
-   //                if (stats && tempPoints > 0) {
-   //                   stats.score = Math.round(tempPoints * 100) / 100;
-   //                   stats.averageScore =
-   //                      Math.round((tempPoints / (stats?.games || 1)) * 100) / 100;
-   //                }
-   //                setPlayers((prev) => [...prev, player]);
-   //             }
-   //          });
-   //          return true;
-   //       }
-   //       return false;
-   //    };
-
-   //    useEffect(() => {
-   //       const setPoints = async () => {
-   //          const pointsReady = await getPlayerPoints();
-   //          if (pointsReady) {
-   //             setShouldGetPlayerPoints(false);
-   //             setIsLoading(false);
-   //          } else {
-   //             setShouldGetPlayerPoints(true);
-   //             setIsLoading(true);
-   //          }
-   //       };
-   //       shouldGetPlayerPoints && setPoints();
-   //    }, [players, leagueScoring]);
-
    const getStatFromLastSeason = (player_stats: any, stat: string) => {
-      if (!player_stats) {
-         return 0;
-      }
-
-      if (!player_stats[season]['stats']) {
-         return 0;
-      }
-
-      if (!player_stats[season]['stats'][stat]) {
-         return 0;
-      }
-
-      return player_stats[season]['stats'][stat];
+      return !player_stats?.[season]?.['stats']?.[stat]
+         ? 0
+         : player_stats[season]['stats'][stat];
    };
 
    useEffect(() => {}, [leagueScoring, season]);
@@ -281,7 +214,7 @@ const PlayerList = ({
                               <>
                                  <th
                                     className="my-2"
-                                    onClick={(e) => setSort('')}
+                                    onClick={(e) => setSort('timeOnIcePerGame')}
                                  >
                                     ATOI
                                  </th>

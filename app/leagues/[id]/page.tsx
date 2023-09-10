@@ -8,6 +8,7 @@ import {
    User,
    createClientComponentClient,
 } from '@supabase/auth-helpers-nextjs';
+import Link from 'next/link';
 import { useContext, useEffect, useState } from 'react';
 import OwnerView from './owner-view';
 import TeamView from './team-view';
@@ -110,6 +111,12 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
                )}
             </>
          )}
+         <Link
+            className={'bg-emerald-primary p-2 rounded-md mt-2'}
+            href={`/leagues/${id}/draft`}
+         >
+            Join Draft
+         </Link>
       </>
    );
 };

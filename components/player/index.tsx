@@ -70,16 +70,6 @@ const PlayerComponent = ({
       return player_stats[1]['stats'][stat];
    };
 
-   const getAverageTimeOnIce = (player_stats: any) => {
-      const games = getStatFromLastSeason(player_stats, 'games');
-      const timeOnIce = getStatFromLastSeason(player_stats, 'timeOnIce');
-
-      if (games === 0) {
-         return 0;
-      }
-
-      return Math.floor(timeOnIce.split(':')[0] / games);
-   };
    useEffect(() => {
       if (player.stats) setPlayerStats(player.stats as PlayerStats[]);
    }, []);
@@ -135,7 +125,7 @@ const PlayerComponent = ({
                   <>
                      <td className="py-2 px-1">
                         <span className="cursor-pointer">
-                           {getAverageTimeOnIce(player.stats) || 0}
+                           {playerStats?.[season]?.stats?.timeOnIcePerGame || 0}
                         </span>
                      </td>
                      <td className="py-2 px-1">
