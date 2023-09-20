@@ -25,10 +25,10 @@ export default function RootLayout({
                      <Nav />
                   </header>
                   <main className="flex flex-col items-center">{children}</main>
+                  <Analytics />
                </body>
             </html>
          </ContextWrapper>
-         <Analytics />
       </PageContextProvider>
    );
 }
