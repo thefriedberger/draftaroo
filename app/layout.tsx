@@ -1,5 +1,6 @@
 import { PageContextProvider } from '@/components/context/page-context';
 import Nav from '@/components/nav';
+import { Analytics } from '@vercel/analytics';
 import ContextWrapper from './context-wrapper';
 import './globals.css';
 
@@ -27,6 +28,7 @@ export default function RootLayout({
                </body>
             </html>
          </ContextWrapper>
+         <Analytics />
       </PageContextProvider>
    );
 }
