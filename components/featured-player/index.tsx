@@ -1,7 +1,7 @@
 'use client';
 
 import classNames from 'classnames';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { PageContext } from '../context/page-context';
 import { teamAbreviations } from '../player';
 import WatchlistStar, { WatchlistStarProps } from '../watchlist/watchlist-star';
@@ -24,9 +24,7 @@ const FeaturedPlayer = ({
       className:
          'flex flex-row bg-gray-primary text-white fill-emerald-700 p-2 rounded-md',
    };
-   useEffect(() => {
-      console.log(yourTurn);
-   }, [yourTurn]);
+
    return (
       <div className="md:h-[15vh]">
          {featuredPlayer && !draftedPlayers.includes(featuredPlayer.id) ? (

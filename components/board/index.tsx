@@ -13,22 +13,13 @@ import PlayerList from '../player-list';
 import Timer from '../timer';
 import Watchlist from '../watchlist';
 
-export const TIMER_DURATION = 120;
-export enum TIMER_STATUS {
-   START = 'start',
-   STOP = 'stop',
-   RESET = 'reset',
-}
-
 const Board = (props: BoardProps) => {
    const supabase = createClientComponentClient<Database>();
    const { leagueID, draft } = props;
 
    const [featuredPlayer, setFeaturedPlayer] = useState<Player>();
    const [isYourTurn, setIsYourTurn] = useState<boolean>(false);
-   const [timerStatus, setTimerStatus] = useState<TIMER_STATUS>(
-      TIMER_STATUS.STOP
-   );
+   const [doStart, setDoStart] = useState<boolean>(false);
    const [currentPick, setCurrentPick] = useState<number>(1);
    const [currentRound, setCurrentRound] = useState<number>(1);
    const [owner, setOwner] = useState<boolean>(false);
@@ -36,9 +27,11 @@ const Board = (props: BoardProps) => {
    const [league, setLeague] = useState<League | any>();
    const [turnOrder, setTurnOrder] = useState<any>([]);
    const [team, setTeam] = useState<Team | any>(null);
+   const [numberOfTeams, setNumberOfTeams] = useState<number>();
    const [shouldFetchDraftedPlayers, setShouldFetchDraftedPlayers] =
       useState<boolean>(true);
-   const { user, userTeams, teams, leagues } = useContext(PageContext);
+   const [isActive, setIsActive] = useState<boolean>(draft?.is_active);
+   const { user, userTeams, leagues } = useContext(PageContext);
 
    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
@@ -46,56 +39,14 @@ const Board = (props: BoardProps) => {
       setFeaturedPlayer(player);
    };
 
-   useEffect(() => {
-      leagues?.forEach((league: League) => {
-         if (league.league_id === leagueID) {
-            if (league.owner === user?.id) {
-               setOwner(true);
-            }
-         }
-      });
-      setLeague(
-         leagues?.filter((league: League) => {
-            return league.league_id === leagueID;
-         })
-      );
-   }, [leagues]);
+   const startDraft = async () => {
+      await supabase
+         .from('draft')
+         .update({ is_active: true })
+         .match({ league_id: leagueID });
+   };
 
-   useEffect(() => {
-      const getTurnOrder = async () => {
-         if (league) {
-            const { data } = await supabase
-               .from('league_rules')
-               .select('draft_picks')
-               .match({ id: league[0].league_rules });
-            data && setTurnOrder(data?.[0]?.draft_picks);
-         }
-      };
-      turnOrder.length === 0 && getTurnOrder();
-   }, [league]);
-
-   useEffect(() => {
-      if (team) {
-         if (turnOrder[team.id] !== undefined) {
-            console.log(team.id);
-            setIsYourTurn(turnOrder[team.id].includes(currentPick));
-         }
-      }
-   }, [turnOrder, team, currentPick]);
-
-   useEffect(() => {
-      console.log(isYourTurn);
-   }, [isYourTurn]);
-
-   useEffect(() => {
-      userTeams &&
-         userTeams !== undefined &&
-         setTeam(
-            userTeams.filter((team: Team) => {
-               return team.league_id === leagueID;
-            })[0]
-         );
-   }, [userTeams]);
+   const autoDraft = async () => {};
 
    const handleDraftSelection = async (player: Player) => {
       if (team && player && draft) {
@@ -112,16 +63,40 @@ const Board = (props: BoardProps) => {
             console.log(error);
             return;
          }
-         data && console.log(data);
          setCurrentPick(currentPick + 1);
-         await supabase.from('draft').update({ current_pick: currentPick + 1 });
 
          await supabase
             .from('draft')
             .update({ current_pick: currentPick + 1 })
             .match({ league_id: leagueID });
+
+         setDoStart(false);
       }
    };
+
+   useEffect(() => {
+      userTeams &&
+         userTeams !== undefined &&
+         setTeam(
+            userTeams.filter((team: Team) => {
+               return team.league_id === leagueID;
+            })[0]
+         );
+   }, [userTeams]);
+
+   useEffect(() => {
+      if (numberOfTeams) {
+         if (currentPick < numberOfTeams) {
+            setCurrentRound(Math.floor(currentPick / numberOfTeams));
+         } else {
+            setCurrentRound(1);
+         }
+      }
+   }, [currentPick, numberOfTeams]);
+
+   useEffect(() => {
+      console.log(draftedPlayers);
+   }, [draftedPlayers]);
 
    useEffect(() => {
       const getCurrentPick = async () => {
@@ -162,7 +137,7 @@ const Board = (props: BoardProps) => {
                event: 'INSERT',
                schema: 'public',
                table: 'draft_selections',
-               filter: `draft_id=eq.${draft ? draft.id : ''}`,
+               filter: `draft_id=eq.${draft?.id}`,
             },
             (payload) => {
                setDraftedPlayers((prev) => [...prev, payload.new.player_id]);
@@ -184,18 +159,107 @@ const Board = (props: BoardProps) => {
             }
          )
          .subscribe();
+   }, [supabase, draft, leagueID]);
+
+   useEffect(() => {
+      isActive === undefined && draft && setIsActive(draft.is_active);
+   }, [draft]);
+
+   useEffect(() => {
+      if (isActive) {
+         setDoStart(true);
+      } else {
+         setDoStart(false);
+      }
+   }, [isActive]);
+
+   useEffect(() => {
+      leagues?.forEach((league: League) => {
+         if (league.league_id === leagueID) {
+            if (league.owner === user?.id) {
+               setOwner(true);
+            }
+         }
+      });
+      setLeague(
+         leagues?.filter((league: League) => {
+            return league.league_id === leagueID;
+         })
+      );
+   }, [leagues]);
+
+   useEffect(() => {
+      const getTurnOrder = async () => {
+         if (league) {
+            const { data } = await supabase
+               .from('league_rules')
+               .select('draft_picks')
+               .match({ id: league[0].league_rules });
+            data && setTurnOrder(data?.[0]?.draft_picks);
+         }
+      };
+      const getNumberOfTeams = async () => {
+         if (league) {
+            const { data } = await supabase
+               .from('league_rules')
+               .select('number_of_teams')
+               .match({ id: league[0].league_rules });
+            data && setNumberOfTeams(Number(data?.[0]?.number_of_teams));
+         }
+      };
+      turnOrder.length === 0 && getTurnOrder();
+   }, [league]);
+
+   useEffect(() => {
+      if (team) {
+         if (turnOrder[team.id] !== undefined) {
+            setIsYourTurn(turnOrder[team.id].includes(currentPick) && isActive);
+         }
+      }
+   }, [turnOrder, team, currentPick, isActive]);
+
+   useEffect(() => {
+      const draftStatusChannel = supabase
+         .channel('draft-is-active-channel')
+         .on(
+            'postgres_changes',
+            {
+               event: '*',
+               schema: 'public',
+               table: 'draft',
+               filter: `id=eq.${draft ? draft.id : ''}`,
+            },
+            (payload: any) => {
+               setIsActive(payload.new.is_active);
+            }
+         )
+         .subscribe();
+
+      return () => {
+         if (isActive) {
+            supabase.removeChannel(draftStatusChannel);
+         }
+      };
    }, [supabase, draft]);
 
    const timerProps: TimerProps = {
       owner: owner,
       currentPick: currentPick,
-      status: timerStatus,
+      doStart: doStart,
+      currentRound: currentRound,
+      isActive: isActive,
    };
    const tabs: TabProps = {
       tabs: [],
    };
+
    return (
       <div className={classNames('w-full flex flex-row')}>
+         {owner && !isActive && (
+            <button type="button" onClick={startDraft}>
+               Start Draft
+            </button>
+         )}
          {!isMobile ? (
             <>
                <div className="flex flex-col lg:max-w-[15vw] w-full">

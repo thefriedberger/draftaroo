@@ -1,4 +1,3 @@
-import { TIMER_STATUS } from '@/components/board';
 import { formStatus, formType } from '@/components/modals/auth';
 import { AnchorHTMLAttributes, ReactNode } from 'react';
 
@@ -74,7 +73,9 @@ export interface AuthFormProps {
 export interface TimerProps {
    owner?: string | any;
    currentPick: number | string;
-   status: TIMER_STATUS;
+   currentRound: number | string;
+   doStart: boolean;
+   isActive: boolean;
 }
 
 export interface BoardProps {

@@ -2,16 +2,27 @@
 
 import { TimerProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useEffect, useState } from 'react';
-import { TIMER_STATUS } from '../board';
+import { useEffect, useRef, useState } from 'react';
 
-const Timer = ({ owner, currentPick, status }: TimerProps) => {
+export enum TIMER_STATUS {
+   START = 'start',
+   STOP = 'stop',
+   RESET = 'reset',
+}
+
+const Timer = ({
+   owner,
+   currentPick,
+   doStart,
+   currentRound,
+   isActive,
+}: TimerProps) => {
    const TIMER_DURATION = 120;
    const [pick, setPick] = useState();
    const [round, setRound] = useState();
-   const [hostTimer, setHostTimer] = useState<number>(TIMER_DURATION);
-   const [timer, setTimer] = useState<string | number>();
-   const [timerInterval, setTimerInterval] = useState<any>();
+   const [status, setStatus] = useState<TIMER_STATUS>(TIMER_STATUS.STOP);
+   const [timer, setTimer] = useState<number>(TIMER_DURATION);
+   const timerRef = useRef<any>();
    const [userPick, setUserPick] = useState();
    const supabase = createClientComponentClient<Database>();
 
@@ -19,65 +30,72 @@ const Timer = ({ owner, currentPick, status }: TimerProps) => {
       new Date(num * 1000).toISOString().substring(14, 19);
 
    const startTimer = () => {
-      if (hostTimer === 0) setHostTimer(TIMER_DURATION);
-      if (status === TIMER_STATUS.START)
-         setTimerInterval(
-            setInterval(() => setHostTimer((hostTimer) => hostTimer - 1), 1000)
-         );
+      if (timer === 0) setStatus(TIMER_STATUS.RESET);
+      timerRef.current = setInterval(
+         () => setTimer((timer) => timer - 1),
+         1000
+      );
    };
 
    useEffect(() => {
-      startTimer();
+      if (status === TIMER_STATUS.START) startTimer();
+      if (status === TIMER_STATUS.STOP) handleStop();
+      if (status === TIMER_STATUS.RESET) handleReset();
       return () => {
-         clearInterval;
+         clearInterval(timerRef.current);
       };
    }, [status]);
 
-   const handleStart = () => {
-      const timeout = startTimer();
-      setTimerInterval(timeout);
-   };
-
    const handleStop = () => {
-      setTimerInterval(clearInterval(timerInterval));
+      clearInterval(timerRef.current);
    };
 
    const handleReset = () => {
-      setTimerInterval(clearInterval(timerInterval));
-      setHostTimer(TIMER_DURATION);
+      clearInterval(timerRef.current);
+      setTimer(TIMER_DURATION);
+      isActive &&
+         setTimeout(() => {
+            setStatus(TIMER_STATUS.START);
+         }, 500);
    };
 
    useEffect(() => {
-      const channelC = supabase.channel('timer-channel', {
+      const timerChannel = supabase.channel('timer-channel', {
          config: {
             broadcast: {
                self: true,
             },
          },
       });
-      channelC.on('broadcast', { event: 'timer' }, (payload) => {
-         if (payload) setTimer(twoDigits(payload.payload.message));
+      timerChannel.on('broadcast', { event: 'timer' }, (payload) => {
+         if (payload) {
+            if (payload.payload.message) {
+               setStatus(TIMER_STATUS.START);
+            } else {
+               setStatus(TIMER_STATUS.RESET);
+            }
+         }
       });
 
-      channelC.subscribe((status) => {
+      timerChannel.subscribe((status) => {
          if (status === 'SUBSCRIBED') {
-            channelC.send({
+            timerChannel.send({
                type: 'broadcast',
                event: 'timer',
-               payload: { message: hostTimer },
+               payload: { message: doStart },
             });
          }
       });
-   }, [hostTimer]);
+   }, [doStart]);
 
    return (
       <div className="">
          <div className="dark:text-white">
             <h1 id="timer"></h1>
             <div className="">
-               <p>{timer}</p>
-               <p>{round}&nbsp;Round</p>
-               <p>{pick}&nbsp;Pick</p>
+               <p>{twoDigits(timer)}</p>
+               <p>{currentRound}&nbsp;Round</p>
+               <p>{currentPick}&nbsp;Pick</p>
                <p>{currentPick}&nbsp;Overall</p>
             </div>
          </div>
@@ -93,13 +111,24 @@ const Timer = ({ owner, currentPick, status }: TimerProps) => {
             )} */}
             {owner && (
                <div className="flex flex-col items-start">
-                  <button onClick={handleStart} type="button">
+                  <button
+                     onClick={() => setStatus(TIMER_STATUS.START)}
+                     type="button"
+                  >
                      Start Timer
                   </button>
-                  <button onClick={handleStop} type="button">
+                  <button
+                     onClick={() => setStatus(TIMER_STATUS.STOP)}
+                     type="button"
+                  >
                      Pause Timer
                   </button>
-                  <button onClick={handleReset} type="button">
+                  <button
+                     onClick={() => {
+                        setStatus(TIMER_STATUS.RESET);
+                     }}
+                     type="button"
+                  >
                      Reset Timer
                   </button>
                </div>

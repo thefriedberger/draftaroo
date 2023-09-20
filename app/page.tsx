@@ -9,7 +9,7 @@ export default function Home() {
    return (
       <div className="pt-5 text-white text-center">
          <h1 className="text-3xl">Welcome to Draftaroo!</h1>
-         <div className="grid grid-flow-row">
+         <div className="flex flex-col items-stretch">
             <Callout
                {...{
                   calloutText: 'Want to create a new league?',
@@ -27,7 +27,6 @@ export default function Home() {
                      league.owner === user?.id;
                })
                .map((league: League, index: number) => {
-                  console.log(league);
                   <Callout
                      key={index}
                      {...{
