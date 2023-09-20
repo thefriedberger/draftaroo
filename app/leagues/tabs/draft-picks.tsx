@@ -5,7 +5,7 @@ import { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 
 const DraftPicksTab = ({ league }: { league: League }) => {
    const [teams, setTeams] = useState<Team[]>();
-   const [draftPicks, setDraftPicks] = useState<any[] | any>();
+   const [draftPicks, setDraftPicks] = useState<any[] | any>({});
    const [numberOfRounds, setNumberOfRounds] = useState<number>();
    const [draftPositions, setDraftPositions] = useState<number[] | any[]>([]);
    const [options, setOptions] = useState<ReactElement<HTMLOptionElement>[]>(
@@ -42,10 +42,8 @@ const DraftPicksTab = ({ league }: { league: League }) => {
 
    const handleSetDraftPicks = (team: Team, pick: number) => {
       setDraftPositions((prev) => [...prev, pick]);
-      console.log(numberOfRounds, draftPicks);
       if (numberOfRounds && teams) {
          let tempPicks: number[] = [];
-         let hasPicked = false;
          const numberOfPicks = teams.length * numberOfRounds;
          for (let i = 1; i <= teams.length; i++) {
             if (i === pick) {
@@ -59,15 +57,18 @@ const DraftPicksTab = ({ league }: { league: League }) => {
    };
 
    const handleSubmit = async () => {
-      if (draftPositions.length !== teams?.length) return;
+      // if (draftPicks.length !== teams?.length) return;
 
-      // const {error} = await supabase.from('league_rules').update({draft_picks: })
+      const { error } = await supabase
+         .from('league_rules')
+         .update({ draft_picks: draftPicks })
+         .match({ id: league_rules });
    };
 
    const updateSelectedOptions = (optionValue: string | number) => {};
 
    useEffect(() => {
-      fetchLeagueDraftRules();
+      // fetchLeagueDraftRules();
       fetchLeagueTeams();
       fetchNumberOfRounds();
    }, []);
@@ -111,10 +112,6 @@ const DraftPicksTab = ({ league }: { league: League }) => {
       // }
    }, [teams, draftPicks, shouldSetDraftPicks]);
 
-   useEffect(() => {
-      console.log(draftPicks);
-   }, [draftPicks]);
-
    return (
       <>
          {teams?.map((team: Team) => {
@@ -128,7 +125,7 @@ const DraftPicksTab = ({ league }: { league: League }) => {
                />
             );
          })}
-         <button type="button" onClick={() => handleSubmit}>
+         <button type="button" onClick={handleSubmit}>
             Submit
          </button>
       </>
