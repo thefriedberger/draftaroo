@@ -16,7 +16,6 @@ export interface Database {
                id: string;
                is_active: boolean;
                league_id: string;
-               timer: number | null;
             };
             Insert: {
                created_at?: string | null;
@@ -24,7 +23,6 @@ export interface Database {
                id?: string;
                is_active?: boolean;
                league_id: string;
-               timer?: number | null;
             };
             Update: {
                created_at?: string | null;
@@ -32,7 +30,6 @@ export interface Database {
                id?: string;
                is_active?: boolean;
                league_id?: string;
-               timer?: number | null;
             };
             Relationships: [
                {
@@ -330,21 +327,21 @@ export interface Database {
                created_at: string | null;
                id: string;
                league_id: string;
-               owner: string;
+               owner: string | null;
                team_name: string;
             };
             Insert: {
                created_at?: string | null;
                id?: string;
                league_id: string;
-               owner: string;
+               owner?: string | null;
                team_name: string;
             };
             Update: {
                created_at?: string | null;
                id?: string;
                league_id?: string;
-               owner?: string;
+               owner?: string | null;
                team_name?: string;
             };
             Relationships: [

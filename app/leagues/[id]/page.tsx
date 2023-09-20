@@ -20,7 +20,7 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
    const [owner, setOwner] = useState<User>();
    const [hasTeam, setHasTeam] = useState<Boolean>(false);
 
-   const { session, user, team, teams, leagues, fetchTeams } =
+   const { session, user, userTeams, teams, leagues, fetchTeams } =
       useContext(PageContext);
 
    useEffect(() => {
@@ -33,11 +33,11 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
    }, [leagues]);
 
    useEffect(() => {
-      setHasTeam(team ? true : false);
+      setHasTeam(userTeams ? true : false);
       return () => {
          setIsLoading(false);
       };
-   }, [team]);
+   }, [userTeams]);
 
    useEffect(() => {
       const channel = supabase
@@ -57,12 +57,12 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
          )
          .subscribe();
       if (hasTeam) supabase.removeChannel(channel);
-   }, [team, user]);
+   }, [userTeams, user]);
 
    const tabs: Tab[] = [
       {
          tabButton: 'Your Team',
-         tabPane: <TeamView {...team} />,
+         tabPane: <TeamView team={userTeams} id={id} />,
       },
       {
          tabButton: 'League Management',
@@ -105,18 +105,18 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
                ) : (
                   !owner && (
                      <>
-                        <TeamView {...team} />
+                        <TeamView {...userTeams} />
+                        <Link
+                           className={'bg-emerald-primary p-2 rounded-md mt-2'}
+                           href={`/leagues/${id}/draft`}
+                        >
+                           Join Draft
+                        </Link>
                      </>
                   )
                )}
             </>
          )}
-         <Link
-            className={'bg-emerald-primary p-2 rounded-md mt-2'}
-            href={`/leagues/${id}/draft`}
-         >
-            Join Draft
-         </Link>
       </>
    );
 };

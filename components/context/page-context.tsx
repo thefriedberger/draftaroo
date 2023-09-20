@@ -10,7 +10,7 @@ export type PageContextType = {
    updateSession?: (newSession: Session) => void;
    user?: User;
    updateUser?: (newUser: User) => void;
-   team?: Team | any;
+   userTeams?: Team[] | any;
    updateTeam?: (newTeam: Team | any) => void;
    teams?: Team | any;
    updateTeams?: (newTeams: Team | any) => void;
@@ -42,7 +42,7 @@ export const PageContext = React.createContext<PageContextType>(initialValues);
 export const PageContextProvider: React.FC<Props> = ({ children }) => {
    const [session, setSession] = React.useState<Session | any>();
    const [user, setUser] = React.useState<User | any>();
-   const [team, setTeam] = React.useState<Team | any>();
+   const [userTeams, setUserTeams] = React.useState<Team | any>();
    const [teams, setTeams] = React.useState<Team | any>();
    const [leagues, setLeagues] = React.useState<League | any>();
    const [profile, setProfile] = React.useState<Profile | any>();
@@ -65,7 +65,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
       router.refresh();
    };
    const updateTeam = (newTeam: Team) => {
-      setTeam(newTeam);
+      setUserTeams(newTeam);
    };
    const updateTeams = (newTeams: Team) => {
       setTeams(newTeams);
@@ -95,7 +95,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
          .from('teams')
          .select('*')
          .match({ owner: user?.id });
-      if (data) setTeam(data as Team);
+      if (data) setUserTeams(data as Team);
    };
 
    const fetchTeams = async () => {
@@ -103,7 +103,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
       const { data, error } = await supabase.from('teams').select('*');
       if (data && data.length !== 0) {
          setTeams(data as Team);
-         setTeam(data.filter((team) => team.owner === user.id));
+         setUserTeams(data.filter((team) => team.owner === user.id));
       }
       if (error) setShouldFetchTeams(false);
    };
@@ -158,7 +158,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
    const userSignout = () => {
       setSession(null);
       setUser(null);
-      setTeam(null);
+      setUserTeams(null);
       setTeams(null);
       setLeagues(null);
       setProfile(null);
@@ -173,7 +173,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
    useEffect(() => {
       if (user?.id && user !== undefined && teams) fetchLeagues();
       if (user?.id && user !== undefined && watchlist) fetchWatchlist();
-   }, [team, teams]);
+   }, [userTeams, teams]);
 
    useEffect(() => {
       const addWatchlist = async () => {
@@ -214,7 +214,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
             updateUser,
             session,
             updateSession,
-            team,
+            userTeams,
             updateTeam,
             teams,
             updateTeams,

@@ -131,6 +131,11 @@ const createLeague = async (
          })
          .select();
       if (error) return;
+      // for (let i = 1; i <= number_of_teams; i++) {
+      //    await supabase
+      //       .from('teams')
+      //       .insert({ team_name: `Team ${i}`, league_id: leagueId });
+      // }
       await supabase.from('draft').insert({ league_id: leagueId });
       redirect(`/leagues/${data?.[0].league_id}`);
    }

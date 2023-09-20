@@ -1,0 +1,3 @@
+.team-row {
+   grid-auto-columns: repeat(3, minxmax(min-content, 1fr));
+}

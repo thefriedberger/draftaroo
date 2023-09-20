@@ -49,7 +49,6 @@ const getPlayers = async (leagueID: string) => {
                      }
                   }
                }
-
                if (stats && tempPoints > 0) {
                   stats.score = Math.round(tempPoints * 100) / 100;
                   stats.averageScore =

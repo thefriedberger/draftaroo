@@ -5,7 +5,7 @@ import { PageContext } from '@/components/context/page-context';
 import { useContext } from 'react';
 
 export default function Home() {
-   const { user, team, leagues } = useContext(PageContext);
+   const { user, userTeams, leagues } = useContext(PageContext);
    return (
       <div className="pt-5 text-white text-center">
          <h1 className="text-3xl">Welcome to Draftaroo!</h1>
@@ -21,8 +21,28 @@ export default function Home() {
                   ],
                }}
             />
-            {team &&
-               team?.map((team: Team, index: number) => {
+            {leagues
+               ?.filter((league: League) => {
+                  userTeams.league_id !== league.league_id &&
+                     league.owner === user?.id;
+               })
+               .map((league: League, index: number) => {
+                  console.log(league);
+                  <Callout
+                     key={index}
+                     {...{
+                        calloutText: `${league.league_name}`,
+                        links: [
+                           {
+                              href: `/leagues/${league.league_id}`,
+                              text: 'View league',
+                           },
+                        ],
+                     }}
+                  />;
+               })}
+            {userTeams &&
+               userTeams?.map((team: Team, index: number) => {
                   leagues?.filter((league: League) => {
                      {
                         if (league.league_id)

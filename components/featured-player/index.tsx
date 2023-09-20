@@ -1,6 +1,7 @@
 'use client';
 
-import { useContext } from 'react';
+import classNames from 'classnames';
+import { useContext, useEffect } from 'react';
 import { PageContext } from '../context/page-context';
 import { teamAbreviations } from '../player';
 import WatchlistStar, { WatchlistStarProps } from '../watchlist/watchlist-star';
@@ -12,7 +13,7 @@ const FeaturedPlayer = ({
    draftedPlayers,
 }: {
    featuredPlayer: Player | null;
-   yourTurn?: boolean;
+   yourTurn: boolean;
    handleDraftSelection: (player: Player) => void;
    draftedPlayers: number[];
 }) => {
@@ -23,6 +24,9 @@ const FeaturedPlayer = ({
       className:
          'flex flex-row bg-gray-primary text-white fill-emerald-700 p-2 rounded-md',
    };
+   useEffect(() => {
+      console.log(yourTurn);
+   }, [yourTurn]);
    return (
       <div className="md:h-[15vh]">
          {featuredPlayer && !draftedPlayers.includes(featuredPlayer.id) ? (
@@ -40,11 +44,15 @@ const FeaturedPlayer = ({
                </div>
                <div className="flex flex-row h-10">
                   <button
-                     className="bg-fuscia p-2 rounded-md md:mr-2"
+                     className={classNames(
+                        'bg-fuscia p-2 rounded-md md:mr-2 disabled:cursor-not-allowed',
+                        !yourTurn && 'opacity-50'
+                     )}
                      onClick={() => {
                         handleDraftSelection(featuredPlayer);
                      }}
                      type="button"
+                     disabled={!yourTurn}
                   >
                      Draft{' '}
                      {featuredPlayer.first_name
@@ -55,10 +63,11 @@ const FeaturedPlayer = ({
                   </button>
                   <WatchlistStar {...watchlistStarProps} />
                </div>
+               <p>{yourTurn}</p>
             </>
          ) : (
             <>
-               <p>Your turn in</p>
+               <p>Your turn in {yourTurn}</p>
             </>
          )}
       </div>

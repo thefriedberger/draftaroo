@@ -6,6 +6,30 @@ import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { PageContext } from '../context/page-context';
 import PlayerComponent from '../player';
 
+type SortValue =
+   | 'score'
+   | 'averageScore'
+   | 'timeOnIcePerGame'
+   | 'games'
+   | 'goals'
+   | 'assists'
+   | 'plusMinus'
+   | 'pim'
+   | 'powerPlayGoals'
+   | 'powerPlayAssists'
+   | 'shortHandedGoals'
+   | 'shortHandedAssists'
+   | 'shots'
+   | 'hits'
+   | 'blocked'
+   | 'goalsAgainst'
+   | 'wins'
+   | 'saves'
+   | 'shutouts'
+   | 'goalAgainstAverage'
+   | 'losses'
+   | '';
+
 const PlayerList = ({
    updateFeaturedPlayer,
    leagueID,
@@ -19,14 +43,14 @@ const PlayerList = ({
    const [players, setPlayers] = useState<Player[]>([]);
    const [leagueScoring, setLeagueScoring] = useState<LeagueScoring | any>();
    const [league, setLeague] = useState<League | any>();
-   const [sort, setSort] = useState<string>('score');
+   const [sort, setSort] = useState<SortValue>('score');
    const [positionFilter, setPositionFilter] = useState<string>('Skaters');
    const [teamFilter, setTeamFilter] = useState<string>('Team');
    const [playerSearch, setPlayerSearch] = useState<string>('');
    const [season, setSeason] = useState<number>(1);
-   const [shouldGetPlayerPoints, setShouldGetPlayerPoints] =
-      useState<boolean>(true);
+   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
    const supabase = createClientComponentClient<Database>();
+   const [hasPlayers, setHasPlayers] = useState<boolean>(false);
 
    useEffect(() => {
       const fetchPlayers = async () => {
@@ -129,6 +153,7 @@ const PlayerList = ({
    };
 
    const filterDraftedPlayers = () => {
+      console.log(draftedPlayers);
       const updatedPlayers: Player[] = players.filter((player: Player) => {
          return !draftedPlayers.includes(player.id);
       });
@@ -136,13 +161,36 @@ const PlayerList = ({
    };
 
    useEffect(() => {
-      !shouldGetPlayerPoints && filterDraftedPlayers();
-   }, [draftedPlayers]);
+      players.length !== 0 && !hasPlayers && setHasPlayers(true);
+   }, [players]);
+
+   useEffect(() => {
+      players.length > 0 && hasPlayers && filterDraftedPlayers();
+   }, [draftedPlayers, hasPlayers]);
 
    const sortPlayers = (players: Player[]) => {
       players.sort((a: Player, b: Player) => {
          const statForA = getStatFromLastSeason(a.stats, sort);
          const statForB = getStatFromLastSeason(b.stats, sort);
+         if (sort === 'timeOnIcePerGame') {
+            const timeA = String(statForA);
+            const timeB = String(statForB);
+
+            if (timeA.split(':').length > 1) {
+               if (timeB.split(':').length > 1) {
+                  return (
+                     Number(timeB.split(':')?.[0] + timeB.split(':')?.[1]) -
+                     Number(timeA.split(':')?.[0] + timeA.split(':')?.[1])
+                  );
+               } else {
+                  return (
+                     Number(timeB.split(':')[0]) -
+                     Number(timeA.split(':')[0] + timeA.split(':')[1])
+                  );
+               }
+            }
+            return Number(timeB.split(':')[0]) - Number(timeA.split(':')[0]);
+         }
          return statForB - statForA;
       });
 
@@ -160,7 +208,7 @@ const PlayerList = ({
       <>
          {!isLoading && (
             <div className="flex flex-col items-center md:h-[75vh] w-full">
-               <div className="flex flex-row justify-start self-start items-end">
+               <div className="flex flex-col md:flex-row w-full md:w-auto justify-start self-start items-stretch md:items-end">
                   <Filter values={positions} filterFun={setPositionFilter} />
                   <Filter values={teams} filterFun={setTeamFilter} />
                   <div className="flex flex-col">
@@ -186,7 +234,7 @@ const PlayerList = ({
                </div>
                <div className=" w-full max-h-[75vh] overflow-y-scroll relative">
                   <table className="w-full text-sm">
-                     <thead className="w-full">
+                     <thead className="w-full sticky top-0">
                         <tr className="bg-gray-700 text-white dark:bg-gold min-w-full text-left">
                            <th></th>
                            <th className="my-2" onClick={(e) => setSort('')}>

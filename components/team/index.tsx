@@ -17,9 +17,9 @@ const Team = (props: Team) => {
       if (props) getOwner();
    }, [owner]);
    return (
-      <div className="grid grid-cols-2">
+      <div className="">
          <p className="mr-3">{team_name}</p>
-         <p>{user?.first_name}</p>
+         {/* <p>{user?.first_name}</p> */}
       </div>
    );
 };

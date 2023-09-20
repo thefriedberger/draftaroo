@@ -1,10 +1,10 @@
 'use server';
 
-import { EmailInvite } from '@/app/leagues/tabs/teams';
+import { UserInvite } from '@/components/team/admin';
 import { User, createClient } from '@supabase/supabase-js';
 
-const inviteUser = async (formData: EmailInvite) => {
-   const { email, callback, leagueId, teamName } = formData;
+const inviteUser = async (formData: UserInvite) => {
+   const { email, callback, teamId } = formData;
 
    const supabase = createClient(
       String(process.env.NEXT_PUBLIC_SUPABASE_URL),
@@ -23,17 +23,14 @@ const inviteUser = async (formData: EmailInvite) => {
       error,
    } = await adminAuthClient.inviteUserByEmail(email, { redirectTo: callback });
 
-   const createTeam = async (user: User) => {
-      const { data: teams } = await supabase
+   const addUserToTeam = async (user: User) => {
+      const { data: teams, error } = await supabase
          .from('teams')
-         .select('*')
-         .match({ owner: user.id });
-      console.log(teams);
-      await supabase.from('teams').insert({
-         owner: user.id,
-         team_name: teamName,
-         league_id: leagueId,
-      });
+         .update({ owner: user.id })
+         .match({ id: teamId });
+      console.log(error);
+      if (error) return 204;
+      return 200;
    };
    const createProfile = async (user: User, email: string) => {
       await supabase.from('profiles').insert({
@@ -47,22 +44,19 @@ const inviteUser = async (formData: EmailInvite) => {
       'A user with this email address has already been registered'
    ) {
       const { data: users } = await supabase.auth.admin.listUsers();
-      console.log(users);
       users.users.forEach((user) => {
-         if (user.id === user.id) {
-            createTeam(user);
+         if (user.email === email) {
+            addUserToTeam(user);
             createProfile(user, email);
          }
       });
    }
 
-   if (error) return { error };
-
    if (user) {
-      createTeam(user);
+      addUserToTeam(user);
       createProfile(user, email);
    }
-   return { user };
+   return 200;
 };
 
 export default inviteUser;
