@@ -24,31 +24,7 @@ const Draft = ({ params }: { params: { id: string } }) => {
    };
    useEffect(() => {
       if (!draft) getDraft();
-   }, [createDraft]);
-
-   // useEffect(() => {
-   //    const channelC = supabase.channel('room-2', {
-   //       config: {
-   //          broadcast: {
-   //             self: true,
-   //          },
-   //       },
-   //    });
-   //    channelC.on('broadcast', { event: 'timer' }, (payload) => {
-   //       console.log(payload);
-   //       if (payload) setTimer(payload.payload.message);
-   //    });
-
-   //    channelC.subscribe((status) => {
-   //       if (status === 'SUBSCRIBED') {
-   //          channelC.send({
-   //             type: 'broadcast',
-   //             event: 'timer',
-   //             payload: { message: hostTimer },
-   //          });
-   //       }
-   //    });
-   // }, [hostTimer]);
+   }, [draft, createDraft]);
 
    const boardProps: BoardProps = {
       leagueID: params.id,

@@ -71,7 +71,6 @@ const Timer = ({
    useEffect(() => {
       timerChannel.on('broadcast', { event: 'timer' }, (payload) => {
          if (payload) {
-            console.log(payload);
             payload.payload.message && setTimer(payload.payload.message);
             payload.payload.status && setStatus(payload.payload.status);
          }

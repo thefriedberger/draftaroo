@@ -1,10 +1,10 @@
 'use server';
 
-import { UserInvite } from '@/components/team/admin';
+import { UserInvite } from '@/app/leagues/tabs/teams';
 import { User, createClient } from '@supabase/supabase-js';
 
 const inviteUser = async (formData: UserInvite) => {
-   const { email, callback, teamId } = formData;
+   const { email, callback, teamId, leagueID } = formData;
 
    const supabase = createClient(
       String(process.env.NEXT_PUBLIC_SUPABASE_URL),
@@ -21,7 +21,9 @@ const inviteUser = async (formData: UserInvite) => {
    const {
       data: { user },
       error,
-   } = await adminAuthClient.inviteUserByEmail(email, { redirectTo: callback });
+   } = await adminAuthClient.inviteUserByEmail(email, {
+      redirectTo: `${callback}?email=${email}&leagueID=${leagueID}`,
+   });
 
    const addUserToTeam = async (user: User) => {
       const { data: teams, error } = await supabase

@@ -6,7 +6,6 @@ import { useContext } from 'react';
 
 export default function Home() {
    const { user, userTeams, leagues } = useContext(PageContext);
-   console.log(user, leagues, userTeams);
    return (
       <div className="pt-5 text-white text-center">
          <h1 className="text-3xl">Welcome to Draftaroo!</h1>
@@ -50,11 +49,15 @@ export default function Home() {
                      }
                   });
 
+                  const league: League = leagues.filter((league: League) => {
+                     return league.league_id === team.league_id;
+                  })[0];
+
                   return (
                      <Callout
                         key={index}
                         {...{
-                           calloutText: `${team.team_name} - ${leagues?.[0]?.league_name}`,
+                           calloutText: `${team.team_name} - ${league?.league_name}`,
                            links: [
                               {
                                  href: `/leagues/${team.league_id}`,
@@ -69,38 +72,6 @@ export default function Home() {
                      />
                   );
                })}
-            {/* {team?.length === 0 &&
-               leagues?.filter((league: League) => {
-                  {
-                     if (league.owner === user?.id) {
-                        return (
-                           <div className="">
-                              <h1>Looks like you need to create a team</h1>
-                              <p>Let&apos;s get started!</p>
-                              <form
-                                 action={(formData: FormData) =>
-                                    addTeam(formData, league.league_id)
-                                 }
-                                 className="flex flex-col"
-                              >
-                                 <input
-                                    hidden
-                                    defaultValue={league.league_id}
-                                    name="league_id"
-                                 />
-                                 <label htmlFor="team-name">Team name</label>
-                                 <input
-                                    required
-                                    name="team_name"
-                                    id="team-name"
-                                 />
-                                 <button type="submit">Submit</button>
-                              </form>
-                           </div>
-                        );
-                     }
-                  }
-               })} */}
          </div>
       </div>
    );

@@ -158,7 +158,6 @@ const PlayerList = ({
    }, [players]);
 
    useEffect(() => {
-      console.log(draftedIDs);
       players.length > 0 && hasPlayers && filterDraftedPlayers();
    }, [draftedIDs, hasPlayers]);
 
@@ -376,7 +375,7 @@ const PlayerList = ({
                         </tr>
                      </thead>
                      <tbody>
-                        {players.length > 0 &&
+                        {players?.length > 0 &&
                            filterPlayers().map((player: Player) => {
                               return (
                                  <PlayerComponent

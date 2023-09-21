@@ -16,11 +16,6 @@ const SignInForm = (props: AuthFormProps) => {
 
    const { setFormType, setView } = props;
 
-   const getSession = async () => {
-      const { data: session } = await supabase.auth.getSession();
-      return session;
-   };
-
    const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -33,8 +28,7 @@ const SignInForm = (props: AuthFormProps) => {
       } else {
          setInvalidCredentials(false);
          updateUser?.(data.user);
-         const session = await getSession();
-         if (session.session) updateSession?.(session.session);
+         if (data.session) updateSession?.(data.session);
       }
    };
    return (

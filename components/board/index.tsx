@@ -153,7 +153,6 @@ const Board = (props: BoardProps) => {
                .select('*')
                .match({ draft_id: draft.id });
             if (data) {
-               console.log(data);
                data.forEach((draftPick) => {
                   setDraftedPlayers((prev) => [...prev, draftPick]);
                });

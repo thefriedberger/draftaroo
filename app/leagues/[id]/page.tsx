@@ -74,6 +74,10 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
       className: 'flex flex-col w-full lg:max-w-screen-xl text-white mt-5',
    };
 
+   useEffect(() => {
+      if (userTeams === undefined) fetchTeams?.();
+   }, [session, user, userTeams]);
+
    return (
       <>
          {!session || session === undefined || !user || user === undefined ? (

@@ -101,7 +101,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
    const fetchTeams = async () => {
       const supabase = createClientComponentClient<Database>();
       const { data, error } = await supabase.from('teams').select('*');
-      if (data && data.length !== 0) {
+      if (data && data.length !== 0 && user) {
          setTeams(data as Team);
          setUserTeams(data.filter((team) => team.owner === user.id));
       }
@@ -196,7 +196,6 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
                      .select('*')
                      .match({ id: player });
 
-                  // console.log(players?.data?.[0]);
                   newWatchlist.push(players?.data?.[0] as Player);
                }
                setShouldUpdateWatchlist(false);

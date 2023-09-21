@@ -7,10 +7,10 @@ import { ChangeEvent, useState } from 'react';
 const SignUpForm = (props: AuthFormProps) => {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
-   const [verifyPassword, setVerifyPassword] = useState('');
    const [firstName, setFirstName] = useState('');
    const [lastName, setLastName] = useState('');
    const [username, setUsername] = useState('');
+   const [verifyPassword, setVerifyPassword] = useState('');
    const [passwordsMatch, setPasswordsMatch] = useState(true);
 
    const { setView, setFormType } = props;
