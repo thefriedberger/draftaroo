@@ -1,5 +1,6 @@
 'use client';
 
+import { FeaturedPlayerProps } from '@/lib/types';
 import classNames from 'classnames';
 import { useContext } from 'react';
 import { PageContext } from '../context/page-context';
@@ -10,13 +11,8 @@ const FeaturedPlayer = ({
    featuredPlayer,
    yourTurn,
    handleDraftSelection,
-   draftedPlayers,
-}: {
-   featuredPlayer: Player | null;
-   yourTurn: boolean;
-   handleDraftSelection: (player: Player) => void;
-   draftedPlayers: number[];
-}) => {
+   draftedIDs,
+}: FeaturedPlayerProps) => {
    const { watchlist } = useContext(PageContext);
    const watchlistStarProps: WatchlistStarProps = {
       player: featuredPlayer as Player,
@@ -27,7 +23,7 @@ const FeaturedPlayer = ({
 
    return (
       <div className="md:h-[15vh]">
-         {featuredPlayer && !draftedPlayers.includes(featuredPlayer.id) ? (
+         {featuredPlayer && !draftedIDs.includes(featuredPlayer.id) ? (
             <>
                <div className="dark:text-white text-xl">
                   {featuredPlayer.first_name} {featuredPlayer.last_name}

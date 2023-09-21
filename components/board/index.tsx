@@ -1,6 +1,14 @@
 'use client';
 
-import { BoardProps, TabProps, TimerProps } from '@/lib/types';
+import {
+   BoardProps,
+   DraftOrderProps,
+   FeaturedPlayerProps,
+   PlayerListProps,
+   TabProps,
+   TimerProps,
+   WatchlistProps,
+} from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
 import { useContext, useEffect, useState } from 'react';
@@ -20,17 +28,20 @@ const Board = (props: BoardProps) => {
    const [featuredPlayer, setFeaturedPlayer] = useState<Player>();
    const [isYourTurn, setIsYourTurn] = useState<boolean>(false);
    const [doStart, setDoStart] = useState<boolean>(false);
+   const [doReset, setDoReset] = useState<boolean>(false);
    const [currentPick, setCurrentPick] = useState<number>(1);
    const [currentRound, setCurrentRound] = useState<number>(1);
    const [owner, setOwner] = useState<boolean>(false);
-   const [draftedPlayers, setDraftedPlayers] = useState<number[]>([]);
+   const [draftedPlayers, setDraftedPlayers] = useState<DraftSelection[]>([]);
    const [league, setLeague] = useState<League | any>();
    const [turnOrder, setTurnOrder] = useState<any>([]);
    const [team, setTeam] = useState<Team | any>(null);
    const [numberOfTeams, setNumberOfTeams] = useState<number>();
+   const [teams, setTeams] = useState<Team[] | any>([]);
    const [shouldFetchDraftedPlayers, setShouldFetchDraftedPlayers] =
       useState<boolean>(true);
    const [isActive, setIsActive] = useState<boolean>(draft?.is_active);
+   const [draftedIDs, setDraftedIDs] = useState<number[]>([]);
    const { user, userTeams, leagues } = useContext(PageContext);
 
    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
@@ -56,8 +67,8 @@ const Board = (props: BoardProps) => {
                player_id: player.id,
                team_id: team.id,
                draft_id: draft.id,
-               round: currentPick,
-               pick: currentRound,
+               round: currentRound,
+               pick: currentPick,
             });
          if (error) {
             console.log(error);
@@ -70,9 +81,37 @@ const Board = (props: BoardProps) => {
             .update({ current_pick: currentPick + 1 })
             .match({ league_id: leagueID });
 
-         setDoStart(false);
+         setDoReset(true);
       }
    };
+
+   useEffect(() => {
+      if (draftedPlayers.length > 0) {
+         for (const player of draftedPlayers) {
+            setDraftedIDs((prev) => [...prev, Number(player.player_id)]);
+         }
+      }
+   }, [draftedPlayers]);
+
+   useEffect(() => {
+      const handleHasDrafted = async () => {
+         setCurrentPick(currentPick + 1);
+
+         await supabase
+            .from('draft')
+            .update({ current_pick: currentPick + 1 })
+            .match({ league_id: leagueID });
+
+         setDoReset(true);
+      };
+      if (draftedPlayers.length > 0) {
+         for (const player of draftedPlayers) {
+            if (player.pick === currentPick) {
+               handleHasDrafted();
+            }
+         }
+      }
+   }, [draftedPlayers, currentPick]);
 
    useEffect(() => {
       userTeams &&
@@ -86,17 +125,13 @@ const Board = (props: BoardProps) => {
 
    useEffect(() => {
       if (numberOfTeams) {
-         if (currentPick < numberOfTeams) {
-            setCurrentRound(Math.floor(currentPick / numberOfTeams));
+         if (currentPick >= numberOfTeams) {
+            setCurrentRound(Math.ceil(currentPick / numberOfTeams));
          } else {
             setCurrentRound(1);
          }
       }
    }, [currentPick, numberOfTeams]);
-
-   useEffect(() => {
-      console.log(draftedPlayers);
-   }, [draftedPlayers]);
 
    useEffect(() => {
       const getCurrentPick = async () => {
@@ -118,11 +153,9 @@ const Board = (props: BoardProps) => {
                .select('*')
                .match({ draft_id: draft.id });
             if (data) {
+               console.log(data);
                data.forEach((draftPick) => {
-                  setDraftedPlayers((prev) => [
-                     ...prev,
-                     Number(draftPick.player_id),
-                  ]);
+                  setDraftedPlayers((prev) => [...prev, draftPick]);
                });
             }
             setShouldFetchDraftedPlayers(false);
@@ -184,7 +217,7 @@ const Board = (props: BoardProps) => {
       setLeague(
          leagues?.filter((league: League) => {
             return league.league_id === leagueID;
-         })
+         })[0]
       );
    }, [leagues]);
 
@@ -194,7 +227,7 @@ const Board = (props: BoardProps) => {
             const { data } = await supabase
                .from('league_rules')
                .select('draft_picks')
-               .match({ id: league[0].league_rules });
+               .match({ id: league.league_rules });
             data && setTurnOrder(data?.[0]?.draft_picks);
          }
       };
@@ -203,11 +236,22 @@ const Board = (props: BoardProps) => {
             const { data } = await supabase
                .from('league_rules')
                .select('number_of_teams')
-               .match({ id: league[0].league_rules });
+               .match({ id: league.league_rules });
             data && setNumberOfTeams(Number(data?.[0]?.number_of_teams));
          }
       };
+      const getTeams = async () => {
+         if (league) {
+            const { data } = await supabase
+               .from('teams')
+               .select('*')
+               .match({ league_id: leagueID });
+            data && setTeams(data);
+         }
+      };
       turnOrder.length === 0 && getTurnOrder();
+      numberOfTeams === undefined && getNumberOfTeams();
+      teams.length === 0 && getTeams();
    }, [league]);
 
    useEffect(() => {
@@ -242,15 +286,45 @@ const Board = (props: BoardProps) => {
       };
    }, [supabase, draft]);
 
+   const tabs: TabProps = {
+      tabs: [],
+   };
+
    const timerProps: TimerProps = {
       owner: owner,
       currentPick: currentPick,
       doStart: doStart,
+      doReset: doReset,
+      setDoReset: setDoReset,
       currentRound: currentRound,
       isActive: isActive,
    };
-   const tabs: TabProps = {
-      tabs: [],
+
+   const draftOrderProps: DraftOrderProps = {
+      draftedPlayers: draftedPlayers,
+      currentPick: currentPick,
+      teams: teams,
+      isYourTurn: isYourTurn,
+      turnOrder: turnOrder,
+      league: league,
+   };
+
+   const watchlistProps: WatchlistProps = {
+      updateFeaturedPlayer: updateFeaturedPlayer,
+      draftedIDs: draftedIDs,
+   };
+
+   const featuredPlayerProps: FeaturedPlayerProps = {
+      draftedIDs: draftedIDs,
+      featuredPlayer: featuredPlayer || null,
+      yourTurn: isYourTurn,
+      handleDraftSelection: handleDraftSelection,
+   };
+
+   const playerListProps: PlayerListProps = {
+      leagueID: leagueID,
+      draftedIDs: draftedIDs,
+      updateFeaturedPlayer: updateFeaturedPlayer,
    };
 
    return (
@@ -264,26 +338,14 @@ const Board = (props: BoardProps) => {
             <>
                <div className="flex flex-col lg:max-w-[15vw] w-full">
                   <Timer {...timerProps} />
-                  <DraftOrder />
+                  <DraftOrder {...draftOrderProps} />
                </div>
                <div className="flex flex-col lg:max-w-[70vw] w-full">
-                  <FeaturedPlayer
-                     featuredPlayer={featuredPlayer || null}
-                     yourTurn={isYourTurn}
-                     handleDraftSelection={handleDraftSelection}
-                     draftedPlayers={draftedPlayers}
-                  />
-                  <PlayerList
-                     leagueID={leagueID}
-                     updateFeaturedPlayer={updateFeaturedPlayer}
-                     draftedPlayers={draftedPlayers}
-                  />
+                  <FeaturedPlayer {...featuredPlayerProps} />
+                  <PlayerList {...playerListProps} />
                </div>
                <div className="flex flex-col lg:max-w-[15vw] w-full">
-                  <Watchlist
-                     updateFeaturedPlayer={updateFeaturedPlayer}
-                     draftedPlayers={draftedPlayers}
-                  />
+                  <Watchlist {...watchlistProps} />
                   <MyTeam />
                </div>{' '}
             </>

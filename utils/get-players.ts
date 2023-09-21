@@ -27,6 +27,8 @@ const getPlayers = async (leagueID: string) => {
             if (playerStats?.[season] !== undefined) {
                const { stats } = playerStats?.[season];
                let tempPoints: number = 0;
+               let powerPlayAssists = 0;
+               let shortHandedAssists = 0;
                for (const key in stats) {
                   const stat = key as keyof PlayerStats;
                   if (
@@ -35,19 +37,39 @@ const getPlayers = async (leagueID: string) => {
                      (stats?.[key] || null !== undefined || stats?.[key])
                   ) {
                      if (key === 'powerPlayPoints') {
-                        tempPoints +=
-                           leagueScoring?.['powerPlayAssists'] *
-                           (stats?.['powerPlayPoints'] ||
-                              0 - (stats?.['powerPlayGoals'] || 0));
+                        if (
+                           stats?.['powerPlayPoints'] !== undefined &&
+                           stats?.['powerPlayGoals'] !== undefined
+                        ) {
+                           powerPlayAssists =
+                              stats?.['powerPlayPoints'] -
+                              stats?.['powerPlayGoals'];
+                           tempPoints +=
+                              leagueScoring?.['powerPlayAssists'] *
+                              (stats?.['powerPlayPoints'] -
+                                 stats?.['powerPlayGoals']);
+                        }
                      } else if (key === 'shortHandedPoints') {
-                        tempPoints +=
-                           leagueScoring?.['shortHandedAssists'] *
-                           (stats?.['shortHandedPoints'] ||
-                              0 - (stats?.['shortHandedGoals'] || 0));
+                        if (
+                           stats?.['shortHandedPoints'] !== undefined &&
+                           stats?.['shortHandedGoals'] !== undefined
+                        ) {
+                           shortHandedAssists =
+                              stats['shortHandedPoints'] -
+                              stats['shortHandedGoals'];
+                           tempPoints +=
+                              leagueScoring?.['shortHandedAssists'] *
+                              (stats['shortHandedPoints'] -
+                                 stats['shortHandedGoals']);
+                        }
                      } else {
                         tempPoints += leagueScoring?.[stat] * stats?.[stat];
                      }
                   }
+               }
+               if (stats) {
+                  stats.powerPlayAssists = powerPlayAssists;
+                  stats.shortHandedAssists = shortHandedAssists;
                }
                if (stats && tempPoints > 0) {
                   stats.score = Math.round(tempPoints * 100) / 100;

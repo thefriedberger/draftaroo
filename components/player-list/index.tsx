@@ -1,7 +1,7 @@
 'use client';
 
+import { PlayerListProps } from '@/lib/types';
 import getPlayers from '@/utils/get-players';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { PageContext } from '../context/page-context';
 import PlayerComponent from '../player';
@@ -33,12 +33,8 @@ type SortValue =
 const PlayerList = ({
    updateFeaturedPlayer,
    leagueID,
-   draftedPlayers,
-}: {
-   updateFeaturedPlayer: (player: Player | any) => void;
-   leagueID: string;
-   draftedPlayers: number[];
-}) => {
+   draftedIDs,
+}: PlayerListProps) => {
    const [isLoading, setIsLoading] = useState(true);
    const [players, setPlayers] = useState<Player[]>([]);
    const [leagueScoring, setLeagueScoring] = useState<LeagueScoring | any>();
@@ -49,7 +45,6 @@ const PlayerList = ({
    const [playerSearch, setPlayerSearch] = useState<string>('');
    const [season, setSeason] = useState<number>(1);
    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-   const supabase = createClientComponentClient<Database>();
    const [hasPlayers, setHasPlayers] = useState<boolean>(false);
 
    useEffect(() => {
@@ -60,7 +55,6 @@ const PlayerList = ({
       };
       fetchPlayers();
    }, []);
-
    const { leagues } = useContext(PageContext);
 
    const teams = [
@@ -154,7 +148,7 @@ const PlayerList = ({
 
    const filterDraftedPlayers = () => {
       const updatedPlayers: Player[] = players.filter((player: Player) => {
-         return !draftedPlayers.includes(player.id);
+         return !draftedIDs.includes(player.id);
       });
       setPlayers(updatedPlayers);
    };
@@ -164,8 +158,9 @@ const PlayerList = ({
    }, [players]);
 
    useEffect(() => {
+      console.log(draftedIDs);
       players.length > 0 && hasPlayers && filterDraftedPlayers();
-   }, [draftedPlayers, hasPlayers]);
+   }, [draftedIDs, hasPlayers]);
 
    const sortPlayers = (players: Player[]) => {
       players.sort((a: Player, b: Player) => {

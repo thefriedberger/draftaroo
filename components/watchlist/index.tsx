@@ -1,18 +1,13 @@
 'use client';
 
-import { useContext, useEffect } from 'react';
+import { WatchlistProps } from '@/lib/types';
+import { useContext } from 'react';
 import { PageContext } from '../context/page-context';
 import WatchlistStar from './watchlist-star';
 
-const Watchlist = ({
-   updateFeaturedPlayer,
-   draftedPlayers,
-}: {
-   updateFeaturedPlayer: (player: Player | any) => void;
-   draftedPlayers: number[];
-}) => {
+const Watchlist = ({ updateFeaturedPlayer, draftedIDs }: WatchlistProps) => {
    const { watchlist } = useContext(PageContext);
-   useEffect(() => {}, [watchlist]);
+
    const handleUpdateFeaturedPlayer = (player: Player, e: any) => {
       const target: HTMLElement = e.target;
       !['svg', 'path'].includes(target.localName) &&
@@ -22,7 +17,7 @@ const Watchlist = ({
       <>
          <h3 className="text-xl font-bold">Watchlist</h3>
          {watchlist
-            .filter((player: Player) => !draftedPlayers.includes(player.id))
+            .filter((player: Player) => !draftedIDs.includes(player.id))
             .map((player: Player) => {
                return (
                   <div

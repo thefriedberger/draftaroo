@@ -1,3 +1,4 @@
+import { Pick } from '@/components/draft-order';
 import { formStatus, formType } from '@/components/modals/auth';
 import { AnchorHTMLAttributes, ReactNode } from 'react';
 
@@ -18,6 +19,39 @@ export interface TabProps {
    text?: string;
    linkType?: string;
    link?: string;
+}
+
+export interface DraftOrderProps {
+   draftedPlayers: DraftSelection[];
+   currentPick: number;
+   teams: Team[] | any;
+   turnOrder: any;
+   isYourTurn: boolean;
+   league?: League | any;
+}
+
+export interface WatchlistProps {
+   updateFeaturedPlayer: (player: Player | any) => void;
+   draftedIDs: number[];
+}
+
+export interface FeaturedPlayerProps {
+   featuredPlayer: Player | null;
+   yourTurn: boolean;
+   handleDraftSelection: (player: Player) => void;
+   draftedIDs: number[];
+}
+
+export interface PlayerListProps {
+   updateFeaturedPlayer: (player: Player | any) => void;
+   leagueID: string;
+   draftedIDs: number[];
+}
+
+export interface DraftTileProps {
+   pick: Pick;
+   currentPick: number;
+   playerSelected: any;
 }
 
 export interface TeamProps {
@@ -74,7 +108,9 @@ export interface TimerProps {
    owner?: string | any;
    currentPick: number | string;
    currentRound: number | string;
-   doStart: boolean;
+   doStart?: boolean;
+   doReset: boolean;
+   setDoReset: (val: boolean) => void;
    isActive: boolean;
 }
 

@@ -155,10 +155,7 @@ const PlayerComponent = ({
                      </td>
                      <td className="py-2 px-1">
                         <span className="cursor-pointer">
-                           {playerStats?.[season]?.stats?.powerPlayPoints ||
-                              0 -
-                                 (playerStats?.[season]?.stats
-                                    ?.powerPlayGoals || 0)}
+                           {playerStats?.[season]?.stats?.powerPlayAssists || 0}
                         </span>
                      </td>
                      <td className="py-2 px-1">
@@ -168,10 +165,8 @@ const PlayerComponent = ({
                      </td>
                      <td className="py-2 px-1">
                         <span className="cursor-pointer">
-                           {playerStats?.[season]?.stats?.shortHandedPoints ||
-                              0 -
-                                 (playerStats?.[season]?.stats
-                                    ?.shortHandedGoals || 0)}
+                           {playerStats?.[season]?.stats?.shortHandedAssists ||
+                              0}
                         </span>
                      </td>
                      <td className="py-2 px-1">

@@ -6,6 +6,7 @@ import { useContext } from 'react';
 
 export default function Home() {
    const { user, userTeams, leagues } = useContext(PageContext);
+   console.log(user, leagues, userTeams);
    return (
       <div className="pt-5 text-white text-center">
          <h1 className="text-3xl">Welcome to Draftaroo!</h1>
