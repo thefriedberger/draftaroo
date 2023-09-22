@@ -28,6 +28,7 @@ export interface DraftOrderProps {
    turnOrder: any;
    isYourTurn: boolean;
    league?: League | any;
+   players: Player[];
 }
 
 export interface WatchlistProps {
@@ -46,6 +47,7 @@ export interface PlayerListProps {
    updateFeaturedPlayer: (player: Player | any) => void;
    leagueID: string;
    draftedIDs: number[];
+   players: Player[];
 }
 
 export interface DraftTileProps {

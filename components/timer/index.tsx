@@ -107,7 +107,7 @@ const Timer = ({
    }, [hostTimer, isActive, doReset]);
 
    return (
-      <div className="">
+      <div className="max-h-[25vh] h-[25vh] overflow-hidden">
          <div className="dark:text-white">
             <h1 id="timer"></h1>
             <div className="">
@@ -127,7 +127,7 @@ const Timer = ({
                   } until your turn`}
                </p>
             )} */}
-            {owner && (
+            {/* {owner && (
                <div className="flex flex-col items-start">
                   <button
                      onClick={() => setStatus(TIMER_STATUS.START)}
@@ -150,7 +150,7 @@ const Timer = ({
                      Reset Timer
                   </button>
                </div>
-            )}
+            )} */}
          </div>
       </div>
    );

@@ -1,7 +1,6 @@
 'use client';
 
 import { PlayerListProps } from '@/lib/types';
-import getPlayers from '@/utils/get-players';
 import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { PageContext } from '../context/page-context';
 import PlayerComponent from '../player';
@@ -33,10 +32,8 @@ type SortValue =
 const PlayerList = ({
    updateFeaturedPlayer,
    leagueID,
-   draftedIDs,
+   players,
 }: PlayerListProps) => {
-   const [isLoading, setIsLoading] = useState(true);
-   const [players, setPlayers] = useState<Player[]>([]);
    const [leagueScoring, setLeagueScoring] = useState<LeagueScoring | any>();
    const [league, setLeague] = useState<League | any>();
    const [sort, setSort] = useState<SortValue>('score');
@@ -45,16 +42,7 @@ const PlayerList = ({
    const [playerSearch, setPlayerSearch] = useState<string>('');
    const [season, setSeason] = useState<number>(1);
    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-   const [hasPlayers, setHasPlayers] = useState<boolean>(false);
 
-   useEffect(() => {
-      const fetchPlayers = async () => {
-         const playersArray = await getPlayers(leagueID);
-         setPlayers(playersArray as Player[]);
-         setIsLoading(false);
-      };
-      fetchPlayers();
-   }, []);
    const { leagues } = useContext(PageContext);
 
    const teams = [
@@ -146,21 +134,6 @@ const PlayerList = ({
       }
    };
 
-   const filterDraftedPlayers = () => {
-      const updatedPlayers: Player[] = players.filter((player: Player) => {
-         return !draftedIDs.includes(player.id);
-      });
-      setPlayers(updatedPlayers);
-   };
-
-   useEffect(() => {
-      players.length !== 0 && !hasPlayers && setHasPlayers(true);
-   }, [players]);
-
-   useEffect(() => {
-      players.length > 0 && hasPlayers && filterDraftedPlayers();
-   }, [draftedIDs, hasPlayers]);
-
    const sortPlayers = (players: Player[]) => {
       players.sort((a: Player, b: Player) => {
          const statForA = getStatFromLastSeason(a.stats, sort);
@@ -198,7 +171,7 @@ const PlayerList = ({
 
    return (
       <>
-         {!isLoading && (
+         {players && (
             <div className="flex flex-col items-center md:h-[75vh] w-full">
                <div className="flex flex-col md:flex-row w-full md:w-auto justify-start self-start items-stretch md:items-end">
                   <Filter values={positions} filterFun={setPositionFilter} />

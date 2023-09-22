@@ -41,6 +41,7 @@ export default function Home() {
                   />;
                })}
             {userTeams &&
+               leagues &&
                userTeams?.map((team: Team, index: number) => {
                   leagues?.filter((league: League) => {
                      {

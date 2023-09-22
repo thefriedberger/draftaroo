@@ -9,6 +9,7 @@ import {
    TimerProps,
    WatchlistProps,
 } from '@/lib/types';
+import getPlayers from '@/utils/get-players';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
 import { useContext, useEffect, useState } from 'react';
@@ -33,6 +34,7 @@ const Board = (props: BoardProps) => {
    const [currentRound, setCurrentRound] = useState<number>(1);
    const [owner, setOwner] = useState<boolean>(false);
    const [draftedPlayers, setDraftedPlayers] = useState<DraftSelection[]>([]);
+   const [originalPlayers, setOriginalPlayers] = useState<Player[]>([]);
    const [league, setLeague] = useState<League | any>();
    const [turnOrder, setTurnOrder] = useState<any>([]);
    const [team, setTeam] = useState<Team | any>(null);
@@ -42,6 +44,9 @@ const Board = (props: BoardProps) => {
       useState<boolean>(true);
    const [isActive, setIsActive] = useState<boolean>(draft?.is_active);
    const [draftedIDs, setDraftedIDs] = useState<number[]>([]);
+   const [players, setPlayers] = useState<Player[]>([]);
+   const [shouldFilterPlayers, setShouldFilterPlayers] =
+      useState<boolean>(false);
    const { user, userTeams, leagues } = useContext(PageContext);
 
    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
@@ -59,6 +64,18 @@ const Board = (props: BoardProps) => {
 
    const autoDraft = async () => {};
 
+   const handlePick = async () => {
+      setCurrentPick(currentPick + 1);
+
+      await supabase
+         .from('draft')
+         .update({ current_pick: currentPick + 1 })
+         .match({ league_id: leagueID });
+
+      setDoReset(true);
+      filterDraftedPlayers();
+   };
+
    const handleDraftSelection = async (player: Player) => {
       if (team && player && draft) {
          const { data, error } = await supabase
@@ -74,14 +91,7 @@ const Board = (props: BoardProps) => {
             console.log(error);
             return;
          }
-         setCurrentPick(currentPick + 1);
-
-         await supabase
-            .from('draft')
-            .update({ current_pick: currentPick + 1 })
-            .match({ league_id: leagueID });
-
-         setDoReset(true);
+         handlePick();
       }
    };
 
@@ -94,24 +104,16 @@ const Board = (props: BoardProps) => {
    }, [draftedPlayers]);
 
    useEffect(() => {
-      const handleHasDrafted = async () => {
-         setCurrentPick(currentPick + 1);
-
-         await supabase
-            .from('draft')
-            .update({ current_pick: currentPick + 1 })
-            .match({ league_id: leagueID });
-
-         setDoReset(true);
-      };
-      if (draftedPlayers.length > 0) {
-         for (const player of draftedPlayers) {
-            if (player.pick === currentPick) {
-               handleHasDrafted();
+      if (isActive) {
+         if (draftedPlayers.length > 0) {
+            for (const player of draftedPlayers) {
+               if (player.pick === currentPick) {
+                  handlePick();
+               }
             }
          }
       }
-   }, [draftedPlayers, currentPick]);
+   }, [isActive, draftedPlayers, currentPick]);
 
    useEffect(() => {
       userTeams &&
@@ -285,6 +287,28 @@ const Board = (props: BoardProps) => {
       };
    }, [supabase, draft]);
 
+   const filterDraftedPlayers = () => {
+      setPlayers(
+         players.filter((player: Player) => {
+            return !draftedIDs.includes(player.id);
+         })
+      );
+   };
+
+   useEffect(() => {
+      const fetchPlayers = async () => {
+         const playersArray = await getPlayers(leagueID);
+         setPlayers(playersArray as Player[]);
+         setOriginalPlayers(playersArray as Player[]);
+         setShouldFilterPlayers(true);
+      };
+      players.length === 0 && fetchPlayers();
+   }, []);
+
+   useEffect(() => {
+      shouldFilterPlayers && filterDraftedPlayers();
+   }, [shouldFilterPlayers]);
+
    const tabs: TabProps = {
       tabs: [],
    };
@@ -306,6 +330,7 @@ const Board = (props: BoardProps) => {
       isYourTurn: isYourTurn,
       turnOrder: turnOrder,
       league: league,
+      players: originalPlayers,
    };
 
    const watchlistProps: WatchlistProps = {
@@ -324,6 +349,7 @@ const Board = (props: BoardProps) => {
       leagueID: leagueID,
       draftedIDs: draftedIDs,
       updateFeaturedPlayer: updateFeaturedPlayer,
+      players: players,
    };
 
    return (
