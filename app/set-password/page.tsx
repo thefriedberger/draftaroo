@@ -1,61 +1,66 @@
 'use client';
 
+import { PageContext } from '@/components/context/page-context';
+import { createClient } from '@supabase/supabase-js';
+import { useRouter } from 'next/navigation';
+import { ChangeEvent, useContext, useState } from 'react';
+
 const SetPassword = () => {
-   // const supabase = createClient(
-   //    String(process.env.NEXT_PUBLIC_SUPABASE_URL),
-   //    String(process.env.NEXT_PUBLIC_SERVICE_ROLE_KEY),
-   //    {
-   //       auth: {
-   //          autoRefreshToken: false,
-   //          persistSession: false,
-   //       },
-   //    }
-   // );
-   // // Access auth admin api
-   // const adminAuthClient = supabase.auth.admin;
-   // const [password, setPassword] = useState<string>('');
-   // const [verifyPassword, setVerifyPassword] = useState('');
-   // const [passwordsMatch, setPasswordsMatch] = useState(true);
-   // const router = useRouter();
-   // const {
-   //    user,
-   //    updateUser,
-   //    updateSession,
-   //    fetchLeagues,
-   //    fetchTeam,
-   //    fetchTeams,
-   // } = useContext(PageContext);
+   const supabase = createClient(
+      String(process.env.NEXT_PUBLIC_SUPABASE_URL),
+      String(process.env.NEXT_PUBLIC_SERVICE_ROLE_KEY),
+      {
+         auth: {
+            autoRefreshToken: false,
+            persistSession: false,
+         },
+      }
+   );
+   // Access auth admin api
+   const adminAuthClient = supabase.auth.admin;
+   const [password, setPassword] = useState<string>('');
+   const [verifyPassword, setVerifyPassword] = useState('');
+   const [passwordsMatch, setPasswordsMatch] = useState(true);
+   const router = useRouter();
+   const {
+      user,
+      updateUser,
+      updateSession,
+      fetchLeagues,
+      fetchTeam,
+      fetchTeams,
+   } = useContext(PageContext);
 
-   // const checkPassword = (e: ChangeEvent<HTMLInputElement>) => {
-   //    if (e?.target?.value === password) {
-   //       setPasswordsMatch(true);
-   //    } else {
-   //       setPasswordsMatch(false);
-   //    }
-   // };
+   const checkPassword = (e: ChangeEvent<HTMLInputElement>) => {
+      if (e?.target?.value === password) {
+         setPasswordsMatch(true);
+      } else {
+         setPasswordsMatch(false);
+      }
+   };
 
-   // const handleUpdatePassword = async () => {
-   //    const leagueID = new URL(location.href).searchParams.get('leagueID');
-   //    if (user) {
-   //       const email = String(user.email);
-   //       await adminAuthClient.updateUserById(user.id, {
-   //          password: password,
-   //       });
-   //       const { data } = await supabase.auth.signInWithPassword({
-   //          email,
-   //          password,
-   //       });
-   //       //   data.user && updateUser?.(data.user);
-   //       //   data.session && updateSession?.(data.session);
+   const handleUpdatePassword = async () => {
+      const leagueID = new URL(location.href).searchParams.get('leagueID');
+      if (user) {
+         const email = String(user.email);
+         await adminAuthClient.updateUserById(user.id, {
+            password: password,
+         });
+         const { data } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+         });
+         //   data.user && updateUser?.(data.user);
+         //   data.session && updateSession?.(data.session);
 
-   //       setTimeout(() => {
-   //          router.push(`${location.origin}/leagues/${leagueID}`);
-   //       }, 500);
-   //    }
-   // };
+         setTimeout(() => {
+            router.push(`${location.origin}/leagues/${leagueID}`);
+         }, 500);
+      }
+   };
    return (
       <>
-         {/* {user && (
+         {user && (
             <>
                <div className="flex flex-col">
                   <label htmlFor={'password'}>Set your password:</label>
@@ -100,7 +105,7 @@ const SetPassword = () => {
                   </button>
                </div>
             </>
-         )} */}
+         )}
       </>
    );
 };
