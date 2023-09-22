@@ -24,27 +24,28 @@ export default function ContextWrapper({
       if (session.session) updateSession?.(session.session);
    };
 
-   const getSession = async (hashParams: URLSearchParams) => {
-      const supabase = createClientComponentClient<Database>();
-      const access_token = hashParams.get('access_token') || '';
-      const refresh_token = hashParams.get('refresh_token') || '';
-      const { data, error } = await supabase.auth.setSession({
-         access_token,
-         refresh_token,
-      });
-      const { user, session } = data;
-      user && updateUser?.(user);
-      session && updateSession?.(session);
-   };
+   // const getSession = async (hashParams: URLSearchParams) => {
+   //    const supabase = createClientComponentClient<Database>();
+   //    const access_token = hashParams.get('access_token') || '';
+   //    const refresh_token = hashParams.get('refresh_token') || '';
+   //    const { data, error } = await supabase.auth.setSession({
+   //       access_token,
+   //       refresh_token,
+   //    });
+   //    const { user, session } = data;
+   //    user && updateUser?.(user);
+   //    session && updateSession?.(session);
+   // };
 
-   useEffect(() => {
-      const hashParams = new URLSearchParams(window.location.hash.substring(1));
-      hashParams !== undefined && getSession(hashParams);
-   }, []);
+   // useEffect(() => {
+   //    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+   //    hashParams !== undefined && getSession(hashParams);
+   // }, []);
+
    useEffect(() => {
       if (user === undefined) fetchUser();
       if (session === undefined) fetchSession();
-   }, [user, session]);
+   }, []);
 
    return <>{children}</>;
 }
