@@ -29,6 +29,7 @@ export interface DraftOrderProps {
    isYourTurn: boolean;
    league?: League | any;
    players: Player[];
+   teamID: string;
 }
 
 export interface WatchlistProps {
@@ -54,6 +55,7 @@ export interface DraftTileProps {
    pick: Pick;
    currentPick: number;
    playerSelected: any;
+   isYourTurn: boolean;
 }
 
 export interface TeamProps {
@@ -114,6 +116,7 @@ export interface TimerProps {
    doReset: boolean;
    setDoReset: (val: boolean) => void;
    isActive: boolean;
+   autopick: () => void;
 }
 
 export interface BoardProps {

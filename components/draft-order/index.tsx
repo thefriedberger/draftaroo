@@ -18,6 +18,7 @@ const DraftOrder = ({
    turnOrder,
    league,
    players,
+   teamID,
 }: DraftOrderProps) => {
    const [numberOfRounds, setNumberOfRounds] = useState<number>(0);
    const [picks, setPicks] = useState<Pick[] | any[]>([]);
@@ -55,13 +56,11 @@ const DraftOrder = ({
                   pick.username = teams.filter((team: Team) => {
                      return team.id === turn;
                   })[0]?.team_name;
+                  if (turn === teamID) {
+                     pick.yourPick = true;
+                  }
                }
             }
-            // for (const draftedPlayer of draftedPlayers) {
-            //    if (draftedPlayer.pick === draftPosition)
-            //       pick.playerID === draftedPlayer.player_id;
-            // }
-
             tempPicksArray.push(pick);
          }
          setPicks(tempPicksArray);
@@ -75,7 +74,6 @@ const DraftOrder = ({
    useEffect(() => {
       draftedPlayers.forEach((draftedPlayer) => {
          const foundPlayer = players.filter((player) => {
-            console.log(player.id === draftedPlayer.player_id);
             return player.id === draftedPlayer.player_id;
          })[0];
          picks.forEach((pick: Pick) => {
@@ -90,12 +88,12 @@ const DraftOrder = ({
    }, [draftedPlayers, players, picks]);
 
    return (
-      <div className="max-h-[65vh] overflow-y-scroll">
-         {picks?.map((pick: Pick) => {
+      <div className="max-h-[65vh] overflow-y-scroll lg:border-l lg:border-gray-300">
+         {picks?.map((pick: Pick, index: number) => {
             return (
-               <>
+               <div key={index}>
                   {pick.draftPosition % teams?.length === 1 && (
-                     <div className={'dark:bg-gray-300 dark:text-black'}>
+                     <div className={'dark:bg-gray-300 dark:text-black p-2'}>
                         Round&nbsp;
                         {pick.draftPosition === 1
                            ? 1
@@ -103,12 +101,12 @@ const DraftOrder = ({
                      </div>
                   )}
                   <DraftTile
-                     key={pick.playerID}
                      pick={pick}
                      currentPick={currentPick}
                      playerSelected={draftedPlayers[pick.playerID || 0]}
+                     isYourTurn={isYourTurn}
                   />
-               </>
+               </div>
             );
          })}
       </div>

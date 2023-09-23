@@ -29,6 +29,47 @@ type SortValue =
    | 'losses'
    | '';
 
+export const getStatFromLastSeason = (
+   player_stats: any,
+   stat: string,
+   season: number
+) => {
+   return !player_stats?.[season]?.['stats']?.[stat]
+      ? 0
+      : player_stats[season]['stats'][stat];
+};
+export const sortPlayers = (
+   players: Player[],
+   sort: string,
+   season: number
+) => {
+   players.sort((a: Player, b: Player) => {
+      const statForA = getStatFromLastSeason(a.stats, sort, season);
+      const statForB = getStatFromLastSeason(b.stats, sort, season);
+      if (sort === 'timeOnIcePerGame') {
+         const timeA = String(statForA);
+         const timeB = String(statForB);
+
+         if (timeA.split(':').length > 1) {
+            if (timeB.split(':').length > 1) {
+               return (
+                  Number(timeB.split(':')?.[0] + timeB.split(':')?.[1]) -
+                  Number(timeA.split(':')?.[0] + timeA.split(':')?.[1])
+               );
+            } else {
+               return (
+                  Number(timeB.split(':')[0]) -
+                  Number(timeA.split(':')[0] + timeA.split(':')[1])
+               );
+            }
+         }
+         return Number(timeB.split(':')[0]) - Number(timeA.split(':')[0]);
+      }
+      return statForB - statForA;
+   });
+
+   return players;
+};
 const PlayerList = ({
    updateFeaturedPlayer,
    leagueID,
@@ -128,45 +169,10 @@ const PlayerList = ({
       });
 
       if (sort != '') {
-         return sortPlayers(playersSearched);
+         return sortPlayers(playersSearched, sort, season);
       } else {
          return playersSearched;
       }
-   };
-
-   const sortPlayers = (players: Player[]) => {
-      players.sort((a: Player, b: Player) => {
-         const statForA = getStatFromLastSeason(a.stats, sort);
-         const statForB = getStatFromLastSeason(b.stats, sort);
-         if (sort === 'timeOnIcePerGame') {
-            const timeA = String(statForA);
-            const timeB = String(statForB);
-
-            if (timeA.split(':').length > 1) {
-               if (timeB.split(':').length > 1) {
-                  return (
-                     Number(timeB.split(':')?.[0] + timeB.split(':')?.[1]) -
-                     Number(timeA.split(':')?.[0] + timeA.split(':')?.[1])
-                  );
-               } else {
-                  return (
-                     Number(timeB.split(':')[0]) -
-                     Number(timeA.split(':')[0] + timeA.split(':')[1])
-                  );
-               }
-            }
-            return Number(timeB.split(':')[0]) - Number(timeA.split(':')[0]);
-         }
-         return statForB - statForA;
-      });
-
-      return players;
-   };
-
-   const getStatFromLastSeason = (player_stats: any, stat: string) => {
-      return !player_stats?.[season]?.['stats']?.[stat]
-         ? 0
-         : player_stats[season]['stats'][stat];
    };
 
    return (

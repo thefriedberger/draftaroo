@@ -18,7 +18,7 @@ import { PageContext } from '../context/page-context';
 import DraftOrder from '../draft-order';
 import FeaturedPlayer from '../featured-player';
 import MyTeam from '../my-team';
-import PlayerList from '../player-list';
+import PlayerList, { sortPlayers } from '../player-list';
 import Timer from '../timer';
 import Watchlist from '../watchlist';
 
@@ -62,7 +62,14 @@ const Board = (props: BoardProps) => {
          .match({ league_id: leagueID });
    };
 
-   const autoDraft = async () => {};
+   const filterDraftedPlayers = () => {
+      setPlayers(
+         players.filter((player: Player) => {
+            return !draftedIDs.includes(player.id);
+         })
+      );
+      setShouldFilterPlayers(false);
+   };
 
    const handlePick = async () => {
       setCurrentPick(currentPick + 1);
@@ -73,16 +80,16 @@ const Board = (props: BoardProps) => {
          .match({ league_id: leagueID });
 
       setDoReset(true);
-      filterDraftedPlayers();
+      setShouldFilterPlayers(true);
    };
 
-   const handleDraftSelection = async (player: Player) => {
+   const handleDraftSelection = async (player: Player, teamID?: string) => {
       if (team && player && draft) {
          const { data, error } = await supabase
             .from('draft_selections')
             .insert({
                player_id: player.id,
-               team_id: team.id,
+               team_id: teamID || team.id,
                draft_id: draft.id,
                round: currentRound,
                pick: currentPick,
@@ -92,6 +99,14 @@ const Board = (props: BoardProps) => {
             return;
          }
          handlePick();
+      }
+   };
+
+   const autoDraft = () => {
+      const playerToDraft = sortPlayers(players, 'score', 1)[0] || null;
+      for (const team in turnOrder) {
+         if (turnOrder[team].includes(currentPick))
+            playerToDraft && handleDraftSelection(playerToDraft, team);
       }
    };
 
@@ -148,6 +163,25 @@ const Board = (props: BoardProps) => {
 
    // add logic for updating after draft pick
    useEffect(() => {
+      const draftChannel = supabase
+         .channel('draft-channel')
+         .on(
+            'postgres_changes',
+            {
+               event: 'INSERT',
+               schema: 'public',
+               table: 'draft_selections',
+               filter: `draft_id=eq.${draft?.id}`,
+            },
+            (payload) => {
+               setDraftedPlayers((prev) => [
+                  ...prev,
+                  payload.new as DraftSelection,
+               ]);
+            }
+         )
+         .subscribe();
+
       const fetchDraftedPlayers = async () => {
          if (draft) {
             const { data } = await supabase
@@ -163,21 +197,6 @@ const Board = (props: BoardProps) => {
          }
       };
       if (shouldFetchDraftedPlayers) fetchDraftedPlayers();
-      const draftChannel = supabase
-         .channel('draft-channel')
-         .on(
-            'postgres_changes',
-            {
-               event: 'INSERT',
-               schema: 'public',
-               table: 'draft_selections',
-               filter: `draft_id=eq.${draft?.id}`,
-            },
-            (payload) => {
-               setDraftedPlayers((prev) => [...prev, payload.new.player_id]);
-            }
-         )
-         .subscribe();
       const pickChanel = supabase
          .channel('pick-channel')
          .on(
@@ -195,6 +214,9 @@ const Board = (props: BoardProps) => {
          .subscribe();
    }, [supabase, draft, leagueID]);
 
+   useEffect(() => {
+      console.log(draftedPlayers);
+   }, [draftedPlayers]);
    useEffect(() => {
       isActive === undefined && draft && setIsActive(draft.is_active);
    }, [draft]);
@@ -287,14 +309,6 @@ const Board = (props: BoardProps) => {
       };
    }, [supabase, draft]);
 
-   const filterDraftedPlayers = () => {
-      setPlayers(
-         players.filter((player: Player) => {
-            return !draftedIDs.includes(player.id);
-         })
-      );
-   };
-
    useEffect(() => {
       const fetchPlayers = async () => {
          const playersArray = await getPlayers(leagueID);
@@ -321,6 +335,7 @@ const Board = (props: BoardProps) => {
       setDoReset: setDoReset,
       currentRound: currentRound,
       isActive: isActive,
+      autopick: autoDraft,
    };
 
    const draftOrderProps: DraftOrderProps = {
@@ -331,6 +346,7 @@ const Board = (props: BoardProps) => {
       turnOrder: turnOrder,
       league: league,
       players: originalPlayers,
+      teamID: team?.id || '',
    };
 
    const watchlistProps: WatchlistProps = {

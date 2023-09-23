@@ -15,8 +15,10 @@ const Timer = ({
    currentPick,
    doStart,
    doReset,
+   setDoReset,
    currentRound,
    isActive,
+   autopick,
 }: TimerProps) => {
    const TIMER_DURATION = 120;
    const [pick, setPick] = useState();
@@ -37,10 +39,10 @@ const Timer = ({
    });
 
    const twoDigits = (num: number) =>
-      new Date(num * 1000).toISOString().substring(14, 19);
-
+      num === 0
+         ? '00:00'
+         : new Date(num * 1000).toISOString().substring(14, 19);
    const startTimer = () => {
-      if (timer === 0) setStatus(TIMER_STATUS.RESET);
       timerRef.current = setInterval(() => {
          setHostTimer((hostTimer) => hostTimer - 1);
       }, 1000);
@@ -55,11 +57,19 @@ const Timer = ({
       };
    }, [status, isActive]);
 
+   useEffect(() => {
+      if (owner && hostTimer === 0) {
+         // setStatus(TIMER_STATUS.STOP);
+         autopick();
+      }
+   }, [hostTimer, owner]);
+
    const handleStop = () => {
       clearInterval(timerRef.current);
    };
 
    const handleReset = () => {
+      setDoReset(false);
       clearInterval(timerRef.current);
       setHostTimer(TIMER_DURATION);
       isActive &&
@@ -89,18 +99,18 @@ const Timer = ({
 
       owner &&
          timerChannel.subscribe((channelStatus) => {
-            if (channelStatus === 'SUBSCRIBED') {
-               timerChannel.send({
-                  type: 'broadcast',
-                  event: 'timer',
-                  payload: { message: hostTimer },
-               });
-            }
             if (doReset) {
                timerChannel.send({
                   type: 'broadcast',
                   event: 'timer',
                   payload: { status: TIMER_STATUS.RESET },
+               });
+            }
+            if (channelStatus === 'SUBSCRIBED') {
+               timerChannel.send({
+                  type: 'broadcast',
+                  event: 'timer',
+                  payload: { message: hostTimer },
                });
             }
          });
@@ -127,7 +137,7 @@ const Timer = ({
                   } until your turn`}
                </p>
             )} */}
-            {/* {owner && (
+            {owner && (
                <div className="flex flex-col items-start">
                   <button
                      onClick={() => setStatus(TIMER_STATUS.START)}
@@ -150,7 +160,7 @@ const Timer = ({
                      Reset Timer
                   </button>
                </div>
-            )} */}
+            )}
          </div>
       </div>
    );
