@@ -20,7 +20,7 @@ const Timer = ({
    isActive,
    autopick,
 }: TimerProps) => {
-   const TIMER_DURATION = 5;
+   const TIMER_DURATION = 120;
    const [pick, setPick] = useState();
    const [round, setRound] = useState();
    const [status, setStatus] = useState<TIMER_STATUS>(TIMER_STATUS.STOP);
