@@ -8,7 +8,7 @@ const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
             currentPick === pick.draftPosition && 'bg-purple',
             pick.yourPick &&
                currentPick !== pick.draftPosition &&
-               'dark:bg-gray-700',
+               'dark:bg-gray-light',
             'flex flex-row border-b border-gray-300 p-1'
          )}
       >

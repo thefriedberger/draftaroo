@@ -70,7 +70,7 @@ const Team = ({ players }: TeamViewProps) => {
    }, [players]);
    return (
       <table className="w-full">
-         <thead>
+         <thead className="bg-gold text-left">
             <tr>
                <th>Pos</th>
                <th>Player</th>

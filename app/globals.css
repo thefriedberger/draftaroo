@@ -4,7 +4,6 @@
 
 @layer base {
    :root {
-      --background: 200 20% 98%;
       --btn-background: 200 10% 91%;
       --btn-background-hover: 200 10% 89%;
       --foreground: 200 50% 3%;
@@ -12,7 +11,6 @@
 
    @media (prefers-color-scheme: dark) {
       :root {
-         --background: 200 50% 3%;
          --btn-background: 200 10% 9%;
          --btn-background-hover: 200 10% 12%;
          --foreground: 200 20% 96%;
@@ -24,6 +22,10 @@
       color: black;
    }
    @media (prefers-color-scheme: dark) {
+      :root,
+      body {
+         background: theme(colors.gray.dark);
+      }
       body {
          color: white;
       }
@@ -63,4 +65,41 @@ table tr th {
 }
 table tr:nth-of-type(even) {
    @apply bg-gray-300 dark:bg-gray-primary;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+   background: white;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+   background: #414345;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+   background: #505050;
+}
+
+@media (prefers-color-scheme: dark) {
+   ::-webkit-scrollbar {
+      width: 10px;
+   }
+
+   /* Track */
+   ::-webkit-scrollbar-track {
+      background: theme(colors.gray.dark);
+   }
+
+   /* Handle */
+   ::-webkit-scrollbar-thumb {
+      background: theme(colors.gray.light);
+      border-radius: 5px;
+   }
+
+   /* Handle on hover */
+   ::-webkit-scrollbar-thumb:hover {
+      background: theme(colors.gray.scrollhover);
+   }
 }

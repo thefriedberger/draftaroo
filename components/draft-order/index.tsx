@@ -56,7 +56,7 @@ const DraftOrder = ({
                if (turnOrder[turn].includes(draftPosition)) {
                   pick.username = teams.filter((team: Team) => {
                      return team.id === turn;
-                  })[0]?.team_name;
+                  })?.[0]?.team_name;
                   if (turn === teamID) {
                      pick.yourPick = true;
                   }
@@ -90,7 +90,7 @@ const DraftOrder = ({
    }, [draftedPlayers, players, picks]);
 
    return (
-      <div className="max-h-[65vh] overflow-y-scroll lg:border-l lg:border-gray-300">
+      <div className="max-h-[65vh] overflow-y-scroll lg:border-x lg:border-gray-300">
          {!isLoading &&
             picks?.map((pick: Pick, index: number) => {
                return (

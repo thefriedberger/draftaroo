@@ -48,7 +48,10 @@ const Timer = ({
 
    useEffect(() => {
       if (turnOrder !== undefined && userTeam?.id !== undefined) {
-         setUserPick(Math.abs(Number(currentPick) - turnOrder[userTeam.id][0]));
+         turnOrder[userTeam.id] !== undefined &&
+            setUserPick(
+               Math.abs(Number(currentPick) - turnOrder[userTeam.id][0])
+            );
       }
    }, [turnOrder, userTeam, currentPick]);
 
@@ -146,7 +149,7 @@ const Timer = ({
                   } until your turn`}
                </p>
             )}
-            {/* {owner && (
+            {owner && (
                <div className="flex flex-col items-start">
                   <button
                      onClick={() => setStatus(TIMER_STATUS.START)}
@@ -169,7 +172,7 @@ const Timer = ({
                      Reset Timer
                   </button>
                </div>
-            )} */}
+            )}
          </div>
       </div>
    );

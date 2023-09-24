@@ -183,7 +183,6 @@ const PlayerList = ({
                   <Filter values={positions} filterFun={setPositionFilter} />
                   <Filter values={teams} filterFun={setTeamFilter} />
                   <div className="flex flex-col">
-                     <label htmlFor="season">Season:</label>
                      <select
                         defaultValue={1}
                         className="text-black p-1 mr-2"

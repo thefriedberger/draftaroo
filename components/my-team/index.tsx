@@ -16,10 +16,10 @@ const MyTeam = ({ playerIDs, players }: MyTeamProps) => {
       players: draftedPlayers,
    };
    return (
-      <>
-         <h2>My Team</h2>
+      <div className="lg:max-h-[65vh] overflow-y-scroll lg:border-l lg:border-gray-300">
+         <h2 className="text-black bg-gray-300 p-2">My Team</h2>
          <Team {...teamProps} />
-      </>
+      </div>
    );
 };
 
