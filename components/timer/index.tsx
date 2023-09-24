@@ -20,10 +20,10 @@ const Timer = ({
    isActive,
    autopick,
 }: TimerProps) => {
-   const TIMER_DURATION = 120;
+   const TIMER_DURATION = 5;
    const [pick, setPick] = useState();
    const [round, setRound] = useState();
-   const [status, setStatus] = useState<TIMER_STATUS>(TIMER_STATUS.RESET);
+   const [status, setStatus] = useState<TIMER_STATUS>(TIMER_STATUS.STOP);
    const [hostTimer, setHostTimer] = useState<number>(TIMER_DURATION);
    const [timer, setTimer] = useState<number>(TIMER_DURATION);
    const timerRef = useRef<any>();
@@ -39,30 +39,31 @@ const Timer = ({
    });
 
    const twoDigits = (num: number) =>
-      num === 0
-         ? '00:00'
-         : new Date(num * 1000).toISOString().substring(14, 19);
-   const startTimer = () => {
+      new Date(num * 1000).toISOString().substring(14, 19);
+   const handleStart = () => {
       timerRef.current = setInterval(() => {
-         setHostTimer((hostTimer) => hostTimer - 1);
+         setTimer((timer) => timer - 1);
       }, 1000);
    };
 
    useEffect(() => {
-      if (status === TIMER_STATUS.START) startTimer();
+      if (status === TIMER_STATUS.START && owner) handleStart();
       if (status === TIMER_STATUS.STOP) handleStop();
       if (status === TIMER_STATUS.RESET) handleReset();
       return () => {
          clearInterval(timerRef.current);
       };
-   }, [status, isActive]);
+   }, [status, isActive, owner]);
 
    useEffect(() => {
-      if (owner && hostTimer === 0) {
-         // setStatus(TIMER_STATUS.STOP);
+      if (owner && timer === 0) {
+         setStatus(TIMER_STATUS.STOP);
          autopick();
+         setTimeout(() => {
+            setStatus(TIMER_STATUS.RESET);
+         }, 500);
       }
-   }, [hostTimer, owner]);
+   }, [timer, owner]);
 
    const handleStop = () => {
       clearInterval(timerRef.current);
@@ -71,50 +72,49 @@ const Timer = ({
    const handleReset = () => {
       setDoReset(false);
       clearInterval(timerRef.current);
-      setHostTimer(TIMER_DURATION);
+      setTimer(TIMER_DURATION);
       isActive &&
          setTimeout(() => {
             setStatus(TIMER_STATUS.START);
          }, 500);
    };
+   useEffect(() => {
+      doStart && setStatus(TIMER_STATUS.START);
+   }, [doStart]);
 
    useEffect(() => {
       timerChannel.on('broadcast', { event: 'timer' }, (payload) => {
-         if (payload) {
+         if (payload && !owner) {
             payload.payload.message && setTimer(payload.payload.message);
             payload.payload.status && setStatus(payload.payload.status);
          }
       });
-      doReset &&
-         !owner &&
-         timerChannel.subscribe((channelStatus) => {
-            if (channelStatus === 'SUBSCRIBED') {
+      timerChannel.subscribe((channelStatus) => {
+         if (channelStatus === 'SUBSCRIBED') {
+            if (status === TIMER_STATUS.START) {
                timerChannel.send({
                   type: 'broadcast',
                   event: 'timer',
-                  payload: { status: TIMER_STATUS.RESET },
+                  payload: { status: TIMER_STATUS.START, message: timer },
                });
             }
-         });
-
-      owner &&
-         timerChannel.subscribe((channelStatus) => {
+            if (status === TIMER_STATUS.STOP) {
+               timerChannel.send({
+                  type: 'broadcast',
+                  event: 'timer',
+                  payload: { status: TIMER_STATUS.STOP, message: timer },
+               });
+            }
             if (doReset) {
                timerChannel.send({
                   type: 'broadcast',
                   event: 'timer',
-                  payload: { status: TIMER_STATUS.RESET },
+                  payload: { status: TIMER_STATUS.RESET, message: timer },
                });
             }
-            if (channelStatus === 'SUBSCRIBED') {
-               timerChannel.send({
-                  type: 'broadcast',
-                  event: 'timer',
-                  payload: { message: hostTimer },
-               });
-            }
-         });
-   }, [hostTimer, isActive, doReset]);
+         }
+      });
+   }, [timer, isActive, doReset, status, timerChannel, owner]);
 
    return (
       <div className="max-h-[25vh] h-[25vh] overflow-hidden">

@@ -215,9 +215,6 @@ const Board = (props: BoardProps) => {
    }, [supabase, draft, leagueID]);
 
    useEffect(() => {
-      console.log(draftedPlayers);
-   }, [draftedPlayers]);
-   useEffect(() => {
       isActive === undefined && draft && setIsActive(draft.is_active);
    }, [draft]);
 
