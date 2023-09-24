@@ -178,7 +178,7 @@ const PlayerList = ({
    return (
       <>
          {players && (
-            <div className="flex flex-col items-center md:h-[75vh] w-full">
+            <div className="flex flex-col items-center md:h-full md:max-h-full w-full">
                <div className="flex flex-col md:flex-row w-full md:w-auto justify-start self-start items-stretch md:items-end">
                   <Filter values={positions} filterFun={setPositionFilter} />
                   <Filter values={teams} filterFun={setTeamFilter} />
@@ -203,7 +203,7 @@ const PlayerList = ({
                      onChange={(e) => setPlayerSearch(e.target.value)}
                   />
                </div>
-               <div className=" w-full max-h-[75vh] overflow-y-scroll relative">
+               <div className=" w-full md:h-full overflow-y-scroll relative">
                   <table className="w-full text-sm">
                      <thead className="w-full sticky top-0">
                         <tr className="bg-gray-700 text-white dark:bg-gold min-w-full text-left">

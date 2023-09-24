@@ -12,5 +12,6 @@
    border-radius: 6px;
 }
 .tabpanes {
-   @apply max-w-screen-2xl flex items-center mx-auto text-left;
+   @apply flex items-center text-left;
+   height: calc(100% - 50px);
 }

@@ -5,9 +5,18 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import styles from './tabs.module.css';
 
-const Tabs = (props: TabProps) => {
+const Tabs = ({
+   tabs,
+   activeTabName,
+   centerTabs,
+   className,
+   link,
+   linkType,
+   tabBgColor,
+   text,
+   useHash,
+}: TabProps) => {
    const [activeTabIndex, setActiveTabIndex] = useState(0);
-   const { tabs } = props;
 
    const navList = () =>
       tabs.map((tab, index) => {
@@ -37,10 +46,13 @@ const Tabs = (props: TabProps) => {
    const panes = () =>
       tabs.map((tab, index) => (
          <div
-            className={classNames({
-               isActive: index === activeTabIndex,
-               hidden: index !== activeTabIndex,
-            })}
+            className={classNames(
+               {
+                  isActive: index === activeTabIndex,
+                  hidden: index !== activeTabIndex,
+               },
+               'h-full w-full'
+            )}
             id={`tab-panel-${index}`}
             key={index}
          >
@@ -50,17 +62,18 @@ const Tabs = (props: TabProps) => {
 
    return (
       <>
-         <div className={classNames(props.className)}>
+         <div className={classNames(className)}>
             <ul
                className={classNames(
                   styles['tablist'],
-                  props.tabBgColor ? props.tabBgColor : 'bg-emerald-primary',
-                  'flex flex-row justify-between rounded-t-sm lg:max-w-fit mx-auto'
+                  centerTabs && 'mx-auto',
+                  tabBgColor ? tabBgColor : 'lg:h-[50px] bg-emerald-primary',
+                  'flex flex-row justify-between rounded-t-sm lg:max-w-fit'
                )}
             >
                {navList()}
             </ul>
-            <div className={`${styles['tabpanes']}`}>{panes()}</div>
+            <div className={classNames(`${styles['tabpanes']}`)}>{panes()}</div>
          </div>
       </>
    );

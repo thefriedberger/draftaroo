@@ -1,5 +1,6 @@
 import { Pick } from '@/components/draft-order';
 import { formStatus, formType } from '@/components/modals/auth';
+import { User } from '@supabase/supabase-js';
 import { AnchorHTMLAttributes, ReactNode } from 'react';
 
 export interface BaseProps {
@@ -19,6 +20,7 @@ export interface TabProps {
    text?: string;
    linkType?: string;
    link?: string;
+   centerTabs?: boolean;
 }
 
 export interface DraftOrderProps {
@@ -117,11 +119,29 @@ export interface TimerProps {
    setDoReset: (val: boolean) => void;
    isActive: boolean;
    autopick: () => void;
+   yourTurn: boolean;
+   turnOrder: any;
+   userTeam: Team;
 }
 
 export interface BoardProps {
    leagueID: string | any;
    draft: Draft | any;
+}
+
+export interface TeamViewProps {
+   players: Player[];
+}
+
+export interface MyTeamProps extends TeamViewProps {
+   playerIDs: number[];
+}
+
+export interface TeamsListProps extends TeamViewProps {
+   playerIDs: number[];
+   setTeamsViewPlayers: (teamID: string) => void;
+   teams: Team[];
+   user: User | undefined;
 }
 
 export type stats = {

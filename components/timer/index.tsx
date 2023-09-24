@@ -19,15 +19,15 @@ const Timer = ({
    currentRound,
    isActive,
    autopick,
+   yourTurn,
+   turnOrder,
+   userTeam,
 }: TimerProps) => {
    const TIMER_DURATION = 120;
-   const [pick, setPick] = useState();
-   const [round, setRound] = useState();
    const [status, setStatus] = useState<TIMER_STATUS>(TIMER_STATUS.STOP);
-   const [hostTimer, setHostTimer] = useState<number>(TIMER_DURATION);
    const [timer, setTimer] = useState<number>(TIMER_DURATION);
    const timerRef = useRef<any>();
-   const [userPick, setUserPick] = useState();
+   const [userPick, setUserPick] = useState<number>();
    const supabase = createClientComponentClient<Database>();
 
    const timerChannel = supabase.channel('timer-channel', {
@@ -45,6 +45,12 @@ const Timer = ({
          setTimer((timer) => timer - 1);
       }, 1000);
    };
+
+   useEffect(() => {
+      if (turnOrder !== undefined && userTeam?.id !== undefined) {
+         setUserPick(Math.abs(Number(currentPick) - turnOrder[userTeam.id][0]));
+      }
+   }, [turnOrder, userTeam, currentPick]);
 
    useEffect(() => {
       if (status === TIMER_STATUS.START && owner) handleStart();
@@ -109,7 +115,6 @@ const Timer = ({
                });
             }
             if (status === TIMER_STATUS.RESET) {
-               console.log('doReset');
                timerChannel.send({
                   type: 'broadcast',
                   event: 'timer',
@@ -132,7 +137,7 @@ const Timer = ({
             </div>
          </div>
          <div className="">
-            {/* {yourTurn ? (
+            {yourTurn ? (
                <p>Draft now!</p>
             ) : (
                <p>
@@ -140,8 +145,8 @@ const Timer = ({
                      userPick === 1 ? '' : 's'
                   } until your turn`}
                </p>
-            )} */}
-            {owner && (
+            )}
+            {/* {owner && (
                <div className="flex flex-col items-start">
                   <button
                      onClick={() => setStatus(TIMER_STATUS.START)}
@@ -164,7 +169,7 @@ const Timer = ({
                      Reset Timer
                   </button>
                </div>
-            )}
+            )} */}
          </div>
       </div>
    );

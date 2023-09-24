@@ -23,7 +23,7 @@ const FeaturedPlayer = ({
 
    return (
       <div className="md:h-[15vh]">
-         {featuredPlayer && !draftedIDs.includes(featuredPlayer.id) ? (
+         {featuredPlayer && !draftedIDs.includes(featuredPlayer.id) && (
             <>
                <div className="dark:text-white text-xl">
                   {featuredPlayer.first_name} {featuredPlayer.last_name}
@@ -58,10 +58,6 @@ const FeaturedPlayer = ({
                   <WatchlistStar {...watchlistStarProps} />
                </div>
                <p>{yourTurn}</p>
-            </>
-         ) : (
-            <>
-               <p>Your turn in {yourTurn}</p>
             </>
          )}
       </div>

@@ -4,8 +4,11 @@ import {
    BoardProps,
    DraftOrderProps,
    FeaturedPlayerProps,
+   MyTeamProps,
    PlayerListProps,
+   Tab,
    TabProps,
+   TeamsListProps,
    TimerProps,
    WatchlistProps,
 } from '@/lib/types';
@@ -19,6 +22,8 @@ import DraftOrder from '../draft-order';
 import FeaturedPlayer from '../featured-player';
 import MyTeam from '../my-team';
 import PlayerList, { sortPlayers } from '../player-list';
+import Tabs from '../tabs';
+import TeamsList from '../teams-list';
 import Timer from '../timer';
 import Watchlist from '../watchlist';
 
@@ -39,7 +44,7 @@ const Board = (props: BoardProps) => {
    const [turnOrder, setTurnOrder] = useState<any>([]);
    const [team, setTeam] = useState<Team | any>(null);
    const [numberOfTeams, setNumberOfTeams] = useState<number>();
-   const [teams, setTeams] = useState<Team[] | any>([]);
+   const [teams, setTeams] = useState<Team[]>([]);
    const [shouldFetchDraftedPlayers, setShouldFetchDraftedPlayers] =
       useState<boolean>(true);
    const [isActive, setIsActive] = useState<boolean>(draft?.is_active);
@@ -47,6 +52,9 @@ const Board = (props: BoardProps) => {
    const [players, setPlayers] = useState<Player[]>([]);
    const [shouldFilterPlayers, setShouldFilterPlayers] =
       useState<boolean>(false);
+   const [yourPlayers, setYourPlayers] = useState<number[]>([]);
+   const [teamsViewPlayers, setTeamsViewPlayers] = useState<number[]>([]);
+   const [teamViewToShow, setTeamViewToShow] = useState<string>('');
    const { user, userTeams, leagues } = useContext(PageContext);
 
    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
@@ -110,6 +118,13 @@ const Board = (props: BoardProps) => {
       }
    };
 
+   const updateTeamsViewPlayers = (teamID: string) => {
+      const teamPlayers = draftedPlayers.filter((player: DraftSelection) => {
+         return player.team_id === teamID;
+      });
+      return teamPlayers;
+   };
+
    useEffect(() => {
       if (draftedPlayers.length > 0) {
          for (const player of draftedPlayers) {
@@ -117,6 +132,39 @@ const Board = (props: BoardProps) => {
          }
       }
    }, [draftedPlayers]);
+   useEffect(() => {
+      if (user?.id && teams.length > 0 && draftedPlayers.length > 0) {
+         if (teams[0]?.owner !== user.id && teams[0].id) {
+            setTeamViewToShow(teams[0].id);
+         } else if (teams[1].id) {
+            setTeamViewToShow(teams[1].id);
+         }
+      }
+   }, [teams, user, draftedPlayers]);
+   useEffect(() => {
+      team &&
+         updateTeamsViewPlayers(team.id).forEach(
+            (player: DraftSelection) =>
+               player.player_id &&
+               !yourPlayers.includes(player.player_id) &&
+               setYourPlayers((prev) => [...prev, player.player_id])
+         );
+      if (teamViewToShow !== '') {
+         if (updateTeamsViewPlayers(teamViewToShow).length === 0) {
+            setTeamsViewPlayers([]);
+         } else {
+            let tempTeams: number[] = [];
+            updateTeamsViewPlayers(teamViewToShow).forEach(
+               (player: DraftSelection) => {
+                  player.player_id &&
+                     !teamsViewPlayers.includes(player.player_id) &&
+                     tempTeams.push(player.player_id);
+               }
+            );
+            setTeamsViewPlayers(tempTeams);
+         }
+      }
+   }, [draftedPlayers, teamViewToShow]);
 
    useEffect(() => {
       if (isActive) {
@@ -320,10 +368,6 @@ const Board = (props: BoardProps) => {
       shouldFilterPlayers && filterDraftedPlayers();
    }, [shouldFilterPlayers]);
 
-   const tabs: TabProps = {
-      tabs: [],
-   };
-
    const timerProps: TimerProps = {
       owner: owner,
       currentPick: currentPick,
@@ -333,6 +377,9 @@ const Board = (props: BoardProps) => {
       currentRound: currentRound,
       isActive: isActive,
       autopick: autoDraft,
+      yourTurn: isYourTurn,
+      turnOrder: turnOrder,
+      userTeam: team,
    };
 
    const draftOrderProps: DraftOrderProps = {
@@ -365,6 +412,35 @@ const Board = (props: BoardProps) => {
       players: players,
    };
 
+   const myTeamProps: MyTeamProps = {
+      playerIDs: yourPlayers,
+      players: originalPlayers,
+   };
+
+   const teamsViewProps: TeamsListProps = {
+      playerIDs: teamsViewPlayers,
+      setTeamsViewPlayers: setTeamViewToShow,
+      teams: teams,
+      players: originalPlayers,
+      user: user,
+   };
+   const tabs: Tab[] = [
+      {
+         tabButton: 'Draft Board',
+         tabPane: <PlayerList {...playerListProps} />,
+      },
+      {
+         tabButton: 'View Teams',
+         tabPane: <TeamsList {...teamsViewProps} />,
+      },
+   ];
+   const tabProps: TabProps = {
+      tabs,
+      centerTabs: false,
+      className:
+         'flex flex-col w-full lg:max-w-screen-xl lg:h-[75vh] lg:max-h-[75vh] text-white',
+   };
+
    return (
       <div className={classNames('w-full flex flex-row')}>
          {owner && !isActive && (
@@ -380,11 +456,11 @@ const Board = (props: BoardProps) => {
                </div>
                <div className="flex flex-col lg:max-w-[70vw] w-full">
                   <FeaturedPlayer {...featuredPlayerProps} />
-                  <PlayerList {...playerListProps} />
+                  <Tabs {...tabProps} />
                </div>
                <div className="flex flex-col lg:max-w-[15vw] w-full">
                   <Watchlist {...watchlistProps} />
-                  <MyTeam />
+                  <MyTeam {...myTeamProps} />
                </div>{' '}
             </>
          ) : (
