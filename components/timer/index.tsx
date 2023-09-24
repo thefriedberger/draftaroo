@@ -70,7 +70,6 @@ const Timer = ({
    };
 
    const handleReset = () => {
-      setDoReset(false);
       clearInterval(timerRef.current);
       setTimer(TIMER_DURATION);
       isActive &&
@@ -81,6 +80,10 @@ const Timer = ({
    useEffect(() => {
       doStart && setStatus(TIMER_STATUS.START);
    }, [doStart]);
+
+   useEffect(() => {
+      doReset && setStatus(TIMER_STATUS.RESET);
+   }, [doReset]);
 
    useEffect(() => {
       timerChannel.on('broadcast', { event: 'timer' }, (payload) => {
@@ -105,7 +108,8 @@ const Timer = ({
                   payload: { status: TIMER_STATUS.STOP, message: timer },
                });
             }
-            if (doReset) {
+            if (status === TIMER_STATUS.RESET) {
+               console.log('doReset');
                timerChannel.send({
                   type: 'broadcast',
                   event: 'timer',
