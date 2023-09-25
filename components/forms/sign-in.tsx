@@ -41,7 +41,7 @@ const SignInForm = (props: AuthFormProps) => {
                Email
             </label>
             <input
-               className="rounded-md px-4 py-2 bg-inherit border mb-3"
+               className="rounded-md dark:text-white px-4 py-2 bg-inherit border mb-3"
                type="email"
                name="email"
                autoComplete="email"
@@ -53,7 +53,7 @@ const SignInForm = (props: AuthFormProps) => {
                Password
             </label>
             <input
-               className="rounded-md px-4 py-2 bg-inherit border mb-3"
+               className="rounded-md px-4 py-2 dark:text-white  bg-inherit border mb-3"
                type="password"
                name="password"
                onChange={(e) => setPassword(e.target.value)}
