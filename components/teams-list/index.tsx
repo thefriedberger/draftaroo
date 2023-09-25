@@ -30,7 +30,7 @@ const TeamsList = ({
          {user && (
             <>
                <select
-                  className="text-black"
+                  className="text-black p-1"
                   onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                      setTeamsViewPlayers(e.target.value)
                   }
