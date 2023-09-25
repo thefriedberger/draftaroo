@@ -134,6 +134,7 @@ const Board = (props: BoardProps) => {
          }
       }
    }, [draftedPlayers]);
+
    useEffect(() => {
       if (user?.id && teams.length > 0 && draftedPlayers.length > 0) {
          if (teams[0]?.owner !== user.id && teams[0].id) {
@@ -143,6 +144,7 @@ const Board = (props: BoardProps) => {
          }
       }
    }, [teams, user, draftedPlayers]);
+
    useEffect(() => {
       team &&
          updateTeamsViewPlayers(team.id).forEach(
@@ -158,8 +160,10 @@ const Board = (props: BoardProps) => {
             let tempTeams: number[] = [];
             updateTeamsViewPlayers(teamViewToShow).forEach(
                (player: DraftSelection) => {
-                  player.player_id &&
-                     !teamsViewPlayers.includes(player.player_id) &&
+                  if (
+                     player.player_id &&
+                     !teamsViewPlayers.includes(player.player_id)
+                  )
                      tempTeams.push(player.player_id);
                }
             );

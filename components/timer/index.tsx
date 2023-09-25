@@ -171,7 +171,7 @@ const Timer = ({
             </div>
          )}
          <div className="">
-            {/* {owner && (
+            {owner && (
                <div className="flex flex-col items-start">
                   <button
                      onClick={() => setStatus(TIMER_STATUS.START)}
@@ -194,7 +194,7 @@ const Timer = ({
                      Reset Timer
                   </button>
                </div>
-            )} */}
+            )}
          </div>
       </div>
    );

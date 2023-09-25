@@ -15,10 +15,11 @@ const TeamsList = ({
       if (playerIDs.length === 0) {
          setDraftedPlayers([]);
       } else {
+         const tempPlayers: Player[] = [];
          players.forEach((player: Player) => {
-            playerIDs.includes(player.id) &&
-               setDraftedPlayers((prev: Player[]) => [...prev, player]);
+            playerIDs.includes(player.id) && tempPlayers.push(player);
          });
+         setDraftedPlayers(tempPlayers);
       }
    }, [playerIDs, players]);
 
@@ -27,7 +28,7 @@ const TeamsList = ({
    };
    return (
       <div className="w-full">
-         {user && (
+         {user && teams && (
             <>
                <select
                   className="text-black p-1"
@@ -36,7 +37,7 @@ const TeamsList = ({
                   }
                >
                   {teams
-                     ?.filter((team: Team) => {
+                     .filter((team: Team) => {
                         return team.owner !== user.id;
                      })
                      .map((team: Team) => {
