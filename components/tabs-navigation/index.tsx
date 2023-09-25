@@ -65,7 +65,9 @@ const TabsNavigation = ({
    return (
       <>
          <div className={classNames(className)}>
-            <div className={classNames(`${styles['tabpanes']}`)}>{panes()}</div>
+            <div className={classNames(styles['tabpanes'], 'h-full')}>
+               {panes()}
+            </div>
             <ul
                className={classNames(
                   styles['tablist'],

@@ -573,7 +573,7 @@ const Board = (props: BoardProps) => {
                <Timer {...timerProps} />
                <TabsNavigation {...mobileTabProps} />
                {featuredPlayer && (
-                  <div className="absolute bottom-[66px] dark:bg-gray-primary w-full h-[10vh] p-2">
+                  <div className="absolute bottom-[66px] dark:bg-gray-primary w-full h-[90px] p-2">
                      <FeaturedPlayer {...featuredPlayerProps} />
                   </div>
                )}

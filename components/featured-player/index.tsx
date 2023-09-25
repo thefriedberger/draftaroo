@@ -40,7 +40,7 @@ const FeaturedPlayer = ({
                   <button
                      className={classNames(
                         'bg-fuscia p-2 rounded-md md:mr-2 disabled:cursor-not-allowed',
-                        !yourTurn && 'opacity-50'
+                        !yourTurn && 'saturate-[25%]'
                      )}
                      onClick={() => {
                         handleDraftSelection(featuredPlayer);

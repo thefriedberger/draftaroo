@@ -4,7 +4,3 @@
 .nav-active svg {
    @apply !fill-white;
 }
-.tabpanes {
-   @apply flex items-center text-left;
-   height: calc(100% - 50px);
-}
