@@ -15,7 +15,7 @@ const Watchlist = ({ updateFeaturedPlayer, draftedIDs }: WatchlistProps) => {
    };
    return (
       <div className="lg:min-h-[25vh] lg:max-h-[25vh] overflow-y-scroll px-1">
-         <h3 className="text-xl font-bold">Watchlist</h3>
+         <h3 className="hidden lg:block text-xl font-bold">Watchlist</h3>
          {watchlist
             .filter((player: Player) => !draftedIDs.includes(player.id))
             .map((player: Player) => {
@@ -28,7 +28,7 @@ const Watchlist = ({ updateFeaturedPlayer, draftedIDs }: WatchlistProps) => {
                      <div className="fill-emerald-500 w-[30px] flex items-center">
                         <WatchlistStar player={player} />
                      </div>
-                     <p className="ml-2">
+                     <p className="ml-2 pt-1">
                         {player.first_name} {player.last_name}
                      </p>
                   </div>

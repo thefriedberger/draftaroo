@@ -36,7 +36,7 @@ const TabsNavigation = ({
                      setActiveTabIndex(index);
                   }}
                   className={classNames(
-                     'text-center flex flex-col items-center'
+                     'text-center flex flex-col items-center pb-1'
                   )}
                >
                   {tab.tabButton}
@@ -75,7 +75,7 @@ const TabsNavigation = ({
                   tabBgColor
                      ? tabBgColor
                      : 'bg-emerald-primary w-[100vw] fixed bottom-0',
-                  'grid grid-cols-4 rounded-t-sm lg:max-w-fit'
+                  'grid grid-cols-5 rounded-t-sm lg:max-w-fit'
                )}
             >
                {navList()}

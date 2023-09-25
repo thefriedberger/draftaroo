@@ -36,6 +36,7 @@ const AuthModal = (props: ModalProps) => {
          maxWidth: '80vw',
          backgroundColor: 'rgb(50,50,50)',
          opacity: '1',
+         zIndex: '100',
       },
    };
 
