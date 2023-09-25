@@ -59,6 +59,16 @@
       transform: translateY(0);
    }
 }
+
+.mobile-tabs {
+   max-height: calc(100vh - 74px - 10vh);
+   overflow-y: scroll;
+}
+.mobile-tabs.featured-player-visible {
+   max-height: calc(100vh - 74px - 10vh - 153px);
+   overflow-y: scroll;
+}
+
 table tr td,
 table tr th {
    @apply p-1;
@@ -67,39 +77,41 @@ table tr:nth-of-type(even) {
    @apply bg-gray-300 dark:bg-gray-primary;
 }
 
-/* Track */
-::-webkit-scrollbar-track {
-   background: white;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-   background: #414345;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-   background: #505050;
-}
-
-@media (prefers-color-scheme: dark) {
-   ::-webkit-scrollbar {
-      width: 10px;
-   }
-
+@media screen and (min-width: theme(screens.md)) {
    /* Track */
    ::-webkit-scrollbar-track {
-      background: theme(colors.gray.dark);
+      background: white;
    }
 
    /* Handle */
    ::-webkit-scrollbar-thumb {
-      background: theme(colors.gray.light);
-      border-radius: 5px;
+      background: #414345;
    }
 
    /* Handle on hover */
    ::-webkit-scrollbar-thumb:hover {
-      background: theme(colors.gray.scrollhover);
+      background: #505050;
+   }
+
+   @media (prefers-color-scheme: dark) {
+      ::-webkit-scrollbar {
+         width: 10px;
+      }
+
+      /* Track */
+      ::-webkit-scrollbar-track {
+         background: theme(colors.gray.dark);
+      }
+
+      /* Handle */
+      ::-webkit-scrollbar-thumb {
+         background: theme(colors.gray.light);
+         border-radius: 5px;
+      }
+
+      /* Handle on hover */
+      ::-webkit-scrollbar-thumb:hover {
+         background: theme(colors.gray.scrollhover);
+      }
    }
 }

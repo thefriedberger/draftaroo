@@ -178,14 +178,14 @@ const PlayerList = ({
    return (
       <>
          {players && (
-            <div className="flex flex-col items-center md:h-full md:max-h-full w-full">
-               <div className="flex flex-col md:flex-row w-full md:w-auto justify-start self-start items-stretch md:items-end">
+            <div className="flex flex-col items-center lg:h-full lg:max-h-full w-full">
+               <div className="flex flex-col sticky top-0 z-10 bg-gray-primary lg:z-0 lg:bg-transparent lg:static lg:flex-row w-full lg:w-auto justify-start self-start items-stretch lg:items-end">
                   <Filter values={positions} filterFun={setPositionFilter} />
                   <Filter values={teams} filterFun={setTeamFilter} />
                   <div className="flex flex-col">
                      <select
                         defaultValue={1}
-                        className="text-black p-1 mr-2"
+                        className="text-black p-1 lg:mr-2"
                         onChange={(e: ChangeEvent) => {
                            const target = e.target as HTMLSelectElement;
                            setSeason(Number(target?.value));
@@ -197,13 +197,14 @@ const PlayerList = ({
                   </div>
                   <input
                      className="text-black p-1"
-                     type="text"
+                     type="search"
+                     placeholder="Search players"
                      value={playerSearch}
                      onChange={(e) => setPlayerSearch(e.target.value)}
                   />
                </div>
                <div className=" w-full md:h-full overflow-y-scroll relative">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm relative">
                      <thead className="w-full sticky top-0">
                         <tr className="bg-gray-700 text-white dark:bg-gold min-w-full text-left">
                            <th></th>
@@ -378,7 +379,7 @@ const Filter = ({ values, filterFun }: any) => {
    return (
       <select
          onChange={(e) => filterFun(e.target.value)}
-         className="text-black p-1 mr-2"
+         className="text-black p-1 lg:mr-2"
       >
          {values.map((x: any) => {
             return (

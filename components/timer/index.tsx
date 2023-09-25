@@ -3,6 +3,7 @@
 import { TimerProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useRef, useState } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
 export enum TIMER_STATUS {
    START = 'start',
@@ -29,6 +30,8 @@ const Timer = ({
    const timerRef = useRef<any>();
    const [userPick, setUserPick] = useState<number>();
    const supabase = createClientComponentClient<Database>();
+
+   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
    const timerChannel = supabase.channel('timer-channel', {
       config: {
@@ -129,27 +132,46 @@ const Timer = ({
    }, [timer, isActive, doReset, status, timerChannel, owner]);
 
    return (
-      <div className="max-h-[25vh] h-[25vh] overflow-hidden">
-         <div className="dark:text-white">
-            <h1 id="timer"></h1>
-            <div className="">
-               <p>{twoDigits(timer)}</p>
-               <p>{currentRound}&nbsp;Round</p>
-               <p>{currentPick}&nbsp;Pick</p>
-               <p>{currentPick}&nbsp;Overall</p>
+      <div className="max-h-[10vh] h-[10vh] lg:max-h-[25vh] lg:h-[25vh] lg:overflow-hidden dark:text-white">
+         {!isMobile ? (
+            <>
+               <p className="">{twoDigits(timer)}</p>
+               <p className="">{currentRound}&nbsp;Round</p>
+               <p className="">{currentPick}&nbsp;Pick</p>
+               <p className="">{currentPick}&nbsp;Overall</p>
+               {yourTurn ? (
+                  <p>Draft now!</p>
+               ) : (
+                  <p>
+                     {`${userPick} pick${
+                        userPick === 1 ? '' : 's'
+                     } until your turn`}
+                  </p>
+               )}
+            </>
+         ) : (
+            <div className="flex flex-row items-center h-full">
+               <div className="flex items-center justify-center mr-2 text-xl w-[100px] bg-purple min-h-full">
+                  <p className="p-2 text-2xl">{twoDigits(timer)}</p>
+               </div>
+               <div className="flex flex-col py-2">
+                  <p className="">{currentRound}&nbsp;Round</p>
+                  <p className="">{currentPick}&nbsp;Pick</p>
+                  <p className="">{currentPick}&nbsp;Overall</p>
+               </div>
+               {yourTurn ? (
+                  <p>Draft now!</p>
+               ) : (
+                  <p className="self-end ml-auto pr-2 pb-1 text-lg">
+                     {`${userPick} pick${
+                        userPick === 1 ? '' : 's'
+                     } until your turn`}
+                  </p>
+               )}
             </div>
-         </div>
+         )}
          <div className="">
-            {yourTurn ? (
-               <p>Draft now!</p>
-            ) : (
-               <p>
-                  {`${userPick} pick${
-                     userPick === 1 ? '' : 's'
-                  } until your turn`}
-               </p>
-            )}
-            {owner && (
+            {/* {owner && (
                <div className="flex flex-col items-start">
                   <button
                      onClick={() => setStatus(TIMER_STATUS.START)}
@@ -172,7 +194,7 @@ const Timer = ({
                      Reset Timer
                   </button>
                </div>
-            )}
+            )} */}
          </div>
       </div>
    );

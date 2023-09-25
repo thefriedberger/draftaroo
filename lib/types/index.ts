@@ -22,7 +22,6 @@ export interface TabProps {
    link?: string;
    centerTabs?: boolean;
 }
-
 export interface DraftOrderProps {
    draftedPlayers: DraftSelection[];
    currentPick: number;

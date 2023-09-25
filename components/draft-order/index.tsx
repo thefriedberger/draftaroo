@@ -40,37 +40,36 @@ const DraftOrder = ({
    }, [league]);
 
    const populatePicks = () => {
-      if (teams.length > 0) {
-         const numberOfPicks = teams.length * numberOfRounds;
-         const tempPicksArray = [];
-         for (let j = 1; j <= numberOfPicks; j++) {
-            const draftPosition = j;
-            const pick: Pick = {
-               draftPosition: draftPosition,
-               username: '',
-               playerID: null,
-               yourPick: false,
-               playerName: null,
-            };
-            for (const turn in turnOrder) {
-               if (turnOrder[turn].includes(draftPosition)) {
-                  pick.username = teams.filter((team: Team) => {
-                     return team.id === turn;
-                  })?.[0]?.team_name;
-                  if (turn === teamID) {
-                     pick.yourPick = true;
-                  }
+      const numberOfPicks = teams.length * numberOfRounds;
+      const tempPicksArray = [];
+      for (let j = 1; j <= numberOfPicks; j++) {
+         const draftPosition = j;
+         const pick: Pick = {
+            draftPosition: draftPosition,
+            username: '',
+            playerID: null,
+            yourPick: false,
+            playerName: null,
+         };
+         for (const turn in turnOrder) {
+            if (turnOrder[turn].includes(draftPosition)) {
+               pick.username = teams.filter((team: Team) => {
+                  return team.id === turn;
+               })?.[0]?.team_name;
+               if (turn === teamID) {
+                  pick.yourPick = true;
                }
             }
-            tempPicksArray.push(pick);
          }
-         setPicks(tempPicksArray);
+         tempPicksArray.push(pick);
       }
+      setPicks(tempPicksArray);
    };
 
    useEffect(() => {
-      populatePicks();
-   }, [teams, numberOfRounds]);
+      if (teams.length > 0 && (turnOrder !== undefined || turnOrder.length > 0))
+         populatePicks();
+   }, [teams, numberOfRounds, turnOrder]);
 
    useEffect(() => {
       draftedPlayers.forEach((draftedPlayer) => {

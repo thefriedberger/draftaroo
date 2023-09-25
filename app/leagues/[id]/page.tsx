@@ -71,7 +71,8 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
    ];
    const tabProps: TabProps = {
       tabs,
-      className: 'flex flex-col w-full lg:max-w-screen-xl text-white mt-5',
+      className:
+         'flex flex-col w-full lg:max-w-screen-xl text-white mt-5 items-center',
    };
 
    useEffect(() => {
