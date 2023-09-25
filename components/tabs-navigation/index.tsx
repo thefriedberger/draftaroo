@@ -74,7 +74,7 @@ const TabsNavigation = ({
                   centerTabs && 'mx-auto',
                   tabBgColor
                      ? tabBgColor
-                     : 'bg-emerald-primary w-[100vw] absolute bottom-0',
+                     : 'bg-emerald-primary w-[100vw] fixed bottom-0',
                   'grid grid-cols-4 rounded-t-sm lg:max-w-fit'
                )}
             >

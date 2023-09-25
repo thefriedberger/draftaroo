@@ -61,14 +61,13 @@
 }
 
 .mobile-tabs {
-   height: calc(100vh - 74px - 90px);
-   max-height: calc(100vh - 74px - 90px);
+   height: calc(100vh - 74px - 84px);
+   max-height: calc(100vh - 74px - 84px);
    overflow-y: scroll;
 }
 .mobile-tabs.featured-player-visible {
-   height: calc(100vh - 74px - 90px - 153px);
-   max-height: calc(100vh - 74px - 90px - 153px);
-   overflow-y: scroll;
+   height: calc(100vh - 74px - 84px - 166px);
+   max-height: calc(100vh - 74px - 84px - 166px);
 }
 table tr td,
 table tr th {

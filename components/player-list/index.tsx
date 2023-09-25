@@ -180,20 +180,22 @@ const PlayerList = ({
          {players && (
             <div className="flex flex-col items-center h-full max-h-full w-full">
                <div className="flex flex-col sticky top-0 z-10 bg-gray-primary lg:z-0 lg:bg-transparent lg:static lg:flex-row w-full lg:w-auto justify-start self-start items-stretch lg:items-end">
-                  <Filter values={positions} filterFun={setPositionFilter} />
-                  <Filter values={teams} filterFun={setTeamFilter} />
-                  <div className="flex flex-col">
-                     <select
-                        defaultValue={1}
-                        className="text-black p-1 lg:mr-2"
-                        onChange={(e: ChangeEvent) => {
-                           const target = e.target as HTMLSelectElement;
-                           setSeason(Number(target?.value));
-                        }}
-                     >
-                        <option value="0">2021-2022</option>
-                        <option value="1">2022-2023</option>
-                     </select>
+                  <div className="grid grid-cols-3">
+                     <Filter values={positions} filterFun={setPositionFilter} />
+                     <Filter values={teams} filterFun={setTeamFilter} />
+                     <div className="flex flex-col">
+                        <select
+                           defaultValue={1}
+                           className="text-black p-1 lg:mr-2"
+                           onChange={(e: ChangeEvent) => {
+                              const target = e.target as HTMLSelectElement;
+                              setSeason(Number(target?.value));
+                           }}
+                        >
+                           <option value="0">2021-2022</option>
+                           <option value="1">2022-2023</option>
+                        </select>
+                     </div>
                   </div>
                   <input
                      className="text-black p-1"
