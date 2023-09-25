@@ -22,13 +22,13 @@ const Watchlist = ({ updateFeaturedPlayer, draftedIDs }: WatchlistProps) => {
                return (
                   <div
                      key={player.id}
-                     className="flex flex-row "
+                     className="flex flex-row items-center"
                      onClick={(e) => handleUpdateFeaturedPlayer(player, e)}
                   >
-                     <div className="fill-emerald-500 w-[20px] flex items-center mr-1">
+                     <div className="fill-emerald-500 w-[30px] flex items-center">
                         <WatchlistStar player={player} />
                      </div>
-                     <p>
+                     <p className="ml-2">
                         {player.first_name} {player.last_name}
                      </p>
                   </div>
