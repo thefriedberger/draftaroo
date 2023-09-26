@@ -178,7 +178,7 @@ const PlayerList = ({
    return (
       <>
          {players && (
-            <div className="flex flex-col items-center h-full max-h-full w-full text-black">
+            <div className="flex flex-col items-center h-full max-h-full w-full text-black dark:text-white">
                <div className="flex flex-col sticky top-0 z-10 bg-gray-primary lg:z-0 lg:bg-transparent lg:static lg:flex-row w-full lg:w-auto justify-start self-start items-stretch lg:items-end">
                   <div className="grid grid-cols-3">
                      <Filter values={positions} filterFun={setPositionFilter} />
