@@ -8,34 +8,40 @@ const TeamsList = ({
    teams,
    players,
    user,
+   updateFeaturedPlayer,
 }: TeamsListProps) => {
    const [draftedPlayers, setDraftedPlayers] = useState<Player[]>([]);
+   const [doReset, setDoReset] = useState<boolean>(false);
 
    useEffect(() => {
-      if (playerIDs.length === 0) {
-         setDraftedPlayers([]);
-      } else {
-         const tempPlayers: Player[] = [];
-         players.forEach((player: Player) => {
-            playerIDs.includes(player.id) && tempPlayers.push(player);
-         });
-         setDraftedPlayers(tempPlayers);
-      }
+      const tempPlayers: Player[] = [];
+      players.forEach((player: Player) => {
+         playerIDs.includes(player.id) && tempPlayers.push(player);
+      });
+      setDraftedPlayers(tempPlayers);
    }, [playerIDs, players]);
 
    const teamProps: TeamViewProps = {
       players: draftedPlayers,
+      doReset: doReset,
+      setDoReset: setDoReset,
+      updateFeaturedPlayer: updateFeaturedPlayer,
    };
    return (
-      <div className="w-full">
+      <div className="w-full h-full overflow-y-scroll">
          {user && teams && (
             <>
                <select
                   className="text-black p-1"
-                  onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                     setTeamsViewPlayers(e.target.value)
-                  }
+                  onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                     setTeamsViewPlayers(e.target.value);
+                     setDoReset(true);
+                  }}
+                  defaultValue={''}
                >
+                  <option value="" disabled>
+                     Select team
+                  </option>
                   {teams
                      .filter((team: Team) => {
                         return team.owner !== user.id;

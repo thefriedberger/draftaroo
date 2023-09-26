@@ -2,7 +2,7 @@ import { MyTeamProps, TeamViewProps } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import Team from '../team';
 
-const MyTeam = ({ playerIDs, players }: MyTeamProps) => {
+const MyTeam = ({ playerIDs, players, updateFeaturedPlayer }: MyTeamProps) => {
    const [draftedPlayers, setDraftedPlayers] = useState<Player[]>([]);
 
    useEffect(() => {
@@ -14,6 +14,7 @@ const MyTeam = ({ playerIDs, players }: MyTeamProps) => {
 
    const teamProps: TeamViewProps = {
       players: draftedPlayers,
+      updateFeaturedPlayer: updateFeaturedPlayer,
    };
    return (
       <div className="lg:max-h-[65vh] overflow-y-scroll lg:border-l lg:border-gray-300">

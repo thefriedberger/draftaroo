@@ -31,8 +31,8 @@ const inviteUser = async (formData: UserInvite) => {
          .update({ owner: user.id })
          .match({ id: teamId });
       console.log(error);
-      if (error) return 204;
-      return 200;
+      if (error) return error;
+      return;
    };
    const createProfile = async (user: User, email: string) => {
       await supabase.from('profiles').insert({
@@ -52,13 +52,15 @@ const inviteUser = async (formData: UserInvite) => {
             createProfile(user, email);
          }
       });
+   } else if (error) {
+      return error;
    }
 
    if (user) {
       addUserToTeam(user);
       createProfile(user, email);
    }
-   return 200;
+   return;
 };
 
 export default inviteUser;

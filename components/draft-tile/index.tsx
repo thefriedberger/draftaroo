@@ -11,6 +11,7 @@ const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
                'dark:bg-gray-light',
             'flex flex-row border-b border-gray-300 p-1'
          )}
+         tabIndex={1}
       >
          <span className={'border-r border-gray-300 p-1 pr-2 self-center'}>
             {pick.draftPosition}

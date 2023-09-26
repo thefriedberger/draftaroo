@@ -130,6 +130,9 @@ export interface BoardProps {
 
 export interface TeamViewProps {
    players: Player[];
+   doReset?: boolean;
+   setDoReset?: (reset: boolean) => void;
+   updateFeaturedPlayer: (player: Player | any) => void;
 }
 
 export interface MyTeamProps extends TeamViewProps {

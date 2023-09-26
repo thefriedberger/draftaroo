@@ -1,7 +1,12 @@
 import { TeamViewProps } from '@/lib/types';
 import { useEffect, useState } from 'react';
 
-const Team = ({ players }: TeamViewProps) => {
+const Team = ({
+   players,
+   doReset,
+   setDoReset,
+   updateFeaturedPlayer,
+}: TeamViewProps) => {
    const [centers, setCenters] = useState<Player[]>([]);
    const [leftWings, setLeftWings] = useState<Player[]>([]);
    const [rightWings, setRightWings] = useState<Player[]>([]);
@@ -9,6 +14,8 @@ const Team = ({ players }: TeamViewProps) => {
    const [goalies, setGoalies] = useState<Player[]>([]);
    const [goaliesBench, setGoaliesBench] = useState<Player[]>([]);
    const [bench, setBench] = useState<Player[]>([]);
+
+   const [playersArray, setPlayersArray] = useState<Player[]>([]);
 
    const setDisplayName = (player: Player) => {
       const displayName =
@@ -28,46 +35,100 @@ const Team = ({ players }: TeamViewProps) => {
       setBench([]);
    };
    useEffect(() => {
+      if (doReset) {
+         resetPlayers();
+         setPlayersArray([]);
+         setTimeout(() => {
+            setDoReset?.(false);
+         }, 250);
+      }
+   }, [doReset]);
+   useEffect(() => {
       players.length === 0 && resetPlayers();
-      if (players.length > 0) {
-         let tempC: Player[] = [];
-         let tempLW: Player[] = [];
-         let tempRW: Player[] = [];
-         let tempD: Player[] = [];
-         let tempG: Player[] = [];
-         let tempGB: Player[] = [];
-         let tempB: Player[] = [];
-         players?.forEach((player: Player) => {
-            const { primary_position } = player;
-            if (primary_position === 'Center' && tempC.length < 3) {
-               !tempC.includes(player) && tempC.push(player);
-            } else if (primary_position === 'Left Wing' && tempLW.length < 3) {
-               !tempLW.includes(player) && tempLW.push(player);
-            } else if (primary_position === 'Right Wing' && tempRW.length < 3) {
-               !tempRW.includes(player) && tempRW.push(player);
-            } else if (primary_position === 'Defenseman' && tempD.length < 3) {
-               !tempD.includes(player) && tempD.push(player);
-            } else if (primary_position === 'Goalie') {
-               if (tempG.length < 2 && !tempG.includes(player)) {
-                  tempG.push(player);
+      if (players.length > 0 && !doReset) {
+         const tempCenters: Player[] = [];
+         const tempLeftWings: Player[] = [];
+         const tempRightWings: Player[] = [];
+         const tempDefenseman: Player[] = [];
+         const tempBench: Player[] = [];
+         const tempGoalies: Player[] = [];
+         const tempGoaliesBench: Player[] = [];
+         players.forEach((player: Player) => {
+            if (!playersArray.includes(player)) {
+               const { primary_position } = player;
+               if (primary_position === 'Center' && tempCenters.length < 3) {
+                  if (!centers.includes(player)) {
+                     tempCenters.push(player);
+                     setCenters((prev) => {
+                        return [...prev, player];
+                     });
+                  }
+               } else if (
+                  primary_position === 'Left Wing' &&
+                  tempLeftWings.length < 3
+               ) {
+                  if (!leftWings.includes(player)) {
+                     tempLeftWings.push(player);
+                     setLeftWings((prev) => {
+                        return [...prev, player];
+                     });
+                  }
+               } else if (
+                  primary_position === 'Right Wing' &&
+                  tempRightWings.length < 3
+               ) {
+                  if (!rightWings.includes(player)) {
+                     tempRightWings.push(player);
+                     setRightWings((prev) => {
+                        return [...prev, player];
+                     });
+                  }
+               } else if (
+                  primary_position === 'Defenseman' &&
+                  tempDefenseman.length < 5
+               ) {
+                  if (!defenseman.includes(player)) {
+                     tempDefenseman.push(player);
+                     setDefenseman((prev) => {
+                        return [...prev, player];
+                     });
+                  }
+               } else if (
+                  primary_position === 'Goalie' &&
+                  tempGoalies.length < 2
+               ) {
+                  if (!goalies.includes(player)) {
+                     tempGoalies.push(player);
+                     setGoalies((prev) => {
+                        return [...prev, player];
+                     });
+                  }
                } else {
-                  !tempGB.includes(player) &&
-                     !tempG.includes(player) &&
-                     tempGB.push(player);
+                  if (primary_position === 'Goalie') {
+                     !goaliesBench.includes(player) &&
+                        setGoaliesBench((prev) => {
+                           return [...prev, player];
+                        });
+                  } else {
+                     if (!bench.includes(player)) {
+                        setBench((prev) => {
+                           return [...prev, player];
+                        });
+                     }
+                  }
                }
-            } else {
-               !tempB.includes(player) && tempB.push(player);
+               setPlayersArray((prev) => [...prev, player]);
             }
          });
-         setCenters(tempC);
-         setLeftWings(tempLW);
-         setRightWings(tempRW);
-         setDefenseman(tempD);
-         setGoalies(tempG);
-         setGoaliesBench(tempGB);
-         setBench(tempB);
       }
-   }, [players]);
+   }, [players, doReset, playersArray]);
+
+   const getPlayer = (position: string, index: number) => {
+      const playerToDisplay: Player = players.filter((player: Player) => {
+         return player.primary_position === position;
+      })[index];
+      return setDisplayName(playerToDisplay);
+   };
    return (
       <table className="w-full">
          <thead className="bg-gold text-left">
@@ -77,81 +138,87 @@ const Team = ({ players }: TeamViewProps) => {
             </tr>
          </thead>
          <tbody>
-            <tr>
+            <tr onClick={() => updateFeaturedPlayer(centers[0])}>
                <td>C</td>
                <td>{setDisplayName(centers[0])}</td>
             </tr>
-            <tr>
+            <tr onClick={() => updateFeaturedPlayer(centers[1])}>
                <td>C</td>
                <td>{setDisplayName(centers[1])}</td>
             </tr>
-            <tr>
+            <tr onClick={() => updateFeaturedPlayer(centers[2])}>
                <td>C</td>
                <td>{setDisplayName(centers[2])}</td>
             </tr>
-            <tr>
+            <tr onClick={() => updateFeaturedPlayer(leftWings[0])}>
                <td>LW</td>
                <td>{setDisplayName(leftWings[0])}</td>
             </tr>
-            <tr>
+            <tr onClick={() => updateFeaturedPlayer(leftWings[1])}>
                <td>LW</td>
                <td>{setDisplayName(leftWings[1])}</td>
             </tr>
-            <tr>
+            <tr onClick={() => updateFeaturedPlayer(leftWings[2])}>
                <td>LW</td>
                <td>{setDisplayName(leftWings[2])}</td>
             </tr>
-            <tr>
+            <tr onClick={() => updateFeaturedPlayer(rightWings[0])}>
                <td>RW</td>
                <td>{setDisplayName(rightWings[0])}</td>
             </tr>
-            <tr>
+            <tr onClick={() => updateFeaturedPlayer(rightWings[1])}>
                <td>RW</td>
                <td>{setDisplayName(rightWings[1])}</td>
             </tr>
-            <tr>
+            <tr onClick={() => updateFeaturedPlayer(rightWings[2])}>
                <td>RW</td>
                <td>{setDisplayName(rightWings[2])}</td>
             </tr>
-            <tr>
+            <tr onClick={() => updateFeaturedPlayer(defenseman[0])}>
                <td>D</td>
                <td>{setDisplayName(defenseman[0])}</td>
             </tr>
-            <tr>
+            <tr onClick={() => updateFeaturedPlayer(defenseman[1])}>
                <td>D</td>
                <td>{setDisplayName(defenseman[1])}</td>
             </tr>
-            <tr>
+            <tr onClick={() => updateFeaturedPlayer(defenseman[2])}>
                <td>D</td>
                <td>{setDisplayName(defenseman[2])}</td>
             </tr>
-            <tr>
+            <tr onClick={() => updateFeaturedPlayer(defenseman[3])}>
                <td>D</td>
                <td>{setDisplayName(defenseman[3])}</td>
             </tr>
-            <tr>
+            <tr onClick={() => updateFeaturedPlayer(defenseman[4])}>
                <td>D</td>
                <td>{setDisplayName(defenseman[4])}</td>
             </tr>
             {bench.map((player: Player) => {
                return (
-                  <tr key={player.id}>
+                  <tr
+                     key={player.id}
+                     onClick={() => updateFeaturedPlayer(player)}
+                  >
                      <td>Bench</td>
                      <td>{setDisplayName(player)}</td>
                   </tr>
                );
             })}
-            <tr>
+            <tr onClick={() => updateFeaturedPlayer(goalies[0])}>
                <td>G</td>
                <td>{setDisplayName(goalies[0])}</td>
             </tr>
-            <tr>
+            <tr onClick={() => updateFeaturedPlayer(goalies[1])}>
                <td>G</td>
                <td>{setDisplayName(goalies[1])}</td>
             </tr>
             {goaliesBench.map((player) => {
                return (
-                  <tr key={player.id}>
+                  <tr
+                     key={player.id}
+                     onClick={() => updateFeaturedPlayer(player)}
+                  >
                      <td>Bench</td>
                      <td>{setDisplayName(player)}</td>
                   </tr>

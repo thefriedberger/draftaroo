@@ -111,7 +111,9 @@ const TeamAdmin = ({
             leagueID: league_id,
          };
          const response = await inviteUser(formData);
-         if (response === 200) {
+         if (response) {
+            console.log(response);
+         } else {
             setShouldFetchTeams(true);
             router.refresh();
          }

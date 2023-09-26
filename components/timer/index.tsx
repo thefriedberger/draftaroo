@@ -51,10 +51,18 @@ const Timer = ({
 
    useEffect(() => {
       if (turnOrder !== undefined && userTeam?.id !== undefined) {
-         turnOrder[userTeam.id] !== undefined &&
-            setUserPick(
-               Math.abs(Number(currentPick) - turnOrder[userTeam.id][0])
-            );
+         if (turnOrder[userTeam.id] !== undefined) {
+            for (const turn of turnOrder[userTeam.id]) {
+               if (turn === currentPick) {
+                  setUserPick(0);
+                  break;
+               }
+               if (turn > currentPick) {
+                  setUserPick(Math.abs(Number(currentPick) - Number(turn)));
+                  break;
+               }
+            }
+         }
       }
    }, [turnOrder, userTeam, currentPick]);
 
@@ -72,6 +80,7 @@ const Timer = ({
          setStatus(TIMER_STATUS.STOP);
          autopick();
          setTimeout(() => {
+            setDoReset(false);
             setStatus(TIMER_STATUS.RESET);
          }, 500);
       }
@@ -132,7 +141,7 @@ const Timer = ({
    }, [timer, isActive, doReset, status, timerChannel, owner]);
 
    return (
-      <div className="max-h-[10vh] h-[10vh] lg:max-h-[25vh] lg:h-[25vh] lg:overflow-hidden dark:text-white">
+      <div className="max-h-[10vh] h-[10vh] lg:min-h-[180px] lg:max-h-[25vh] lg:h-[25vh] lg:overflow-hidden dark:text-white">
          {!isMobile ? (
             <>
                <p className="">{twoDigits(timer)}</p>
