@@ -3,6 +3,7 @@ import { ChangeEvent, useState } from 'react';
 
 const TeamView = ({ teams, id }: { teams: Team[]; id: string }) => {
    const [newTeamName, setNewTeamName] = useState<string>('');
+   const [teamName, setTeamName] = useState<string>();
    const supabase = createClientComponentClient<Database>();
    const updateTeamName = (e: ChangeEvent<HTMLInputElement>) => {
       setNewTeamName(e.target.value);
@@ -16,6 +17,7 @@ const TeamView = ({ teams, id }: { teams: Team[]; id: string }) => {
          .from('teams')
          .update({ team_name: newTeamName })
          .match({ id: teamID });
+      setTeamName(newTeamName);
    };
    return (
       <>
@@ -30,7 +32,7 @@ const TeamView = ({ teams, id }: { teams: Team[]; id: string }) => {
                         className="font-bold text-xl text-black dark:text-white mb-2"
                         key={team.id}
                      >
-                        {team.team_name}
+                        {teamName || team.team_name}
                      </h2>
                   );
                })}
