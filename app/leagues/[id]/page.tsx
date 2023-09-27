@@ -62,7 +62,7 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
    const tabs: Tab[] = [
       {
          tabButton: 'Your Team',
-         tabPane: <TeamView team={userTeams} id={id} />,
+         tabPane: <TeamView teams={userTeams} id={id} />,
       },
       {
          tabButton: 'League Management',

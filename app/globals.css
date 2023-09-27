@@ -6,7 +6,7 @@
    :root {
       --btn-background: 200 10% 61%;
       --btn-background-hover: 200 10% 89%;
-      --foreground: 200 50% 88%;
+      --foreground: 200 50% 3%;
    }
 
    @media (prefers-color-scheme: dark) {
@@ -21,13 +21,14 @@
    body {
       color: black;
    }
+   input {
+      color: black;
+   }
    @media (prefers-color-scheme: dark) {
       :root,
       body {
          background: theme(colors.gray.dark);
-      }
-      body {
-         color: #d1d1d1;
+         color: black;
       }
       input {
          color: black;
@@ -73,8 +74,11 @@ table tr td,
 table tr th {
    @apply p-1;
 }
+table tr td {
+   @apply text-black dark:text-white;
+}
 table tr:nth-of-type(even) {
-   @apply bg-gray-300 dark:bg-gray-primary;
+   @apply bg-gray-300 bg-paper-light dark:bg-gray-primary;
 }
 
 @media screen and (min-width: theme(screens.md)) {

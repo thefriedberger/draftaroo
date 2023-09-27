@@ -14,7 +14,7 @@ module.exports = {
                background: 'hsl(var(--btn-background))',
                'background-hover': 'hsl(var(--btn-background-hover))',
             },
-            emerald: { primary: '#047857' },
+            emerald: { primary: '#059669' },
             purple: '#570478',
             gold: '#785704',
             fuscia: '#bb4467',
@@ -26,6 +26,11 @@ module.exports = {
             },
             blue: {
                muted: '#5065ad',
+            },
+            paper: {
+               primary: '#cecdc2',
+               dark: '#91907e',
+               light: '#f4f3e1',
             },
          },
          gridTemplateColumns: {

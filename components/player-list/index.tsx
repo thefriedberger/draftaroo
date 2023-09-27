@@ -123,6 +123,7 @@ const PlayerList = ({
    const positions = [
       'Skaters',
       'Goalie',
+      'Forwards',
       'Center',
       'Left Wing',
       'Right Wing',
@@ -144,6 +145,11 @@ const PlayerList = ({
       const playersByPostion = players.filter((player: Player) => {
          if (positionFilter === 'Skaters')
             return player.primary_position !== 'Goalie';
+         if (positionFilter === 'Forwards')
+            if (player.primary_position)
+               return ['Center', 'Left Wing', 'Right Wing'].includes(
+                  player.primary_position
+               );
          if (positionFilter != '') {
             return player.primary_position === positionFilter;
          } else {

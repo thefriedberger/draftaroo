@@ -7,7 +7,7 @@ import { useContext } from 'react';
 export default function Home() {
    const { user, userTeams, leagues } = useContext(PageContext);
    return (
-      <div className="pt-5 text-white text-center">
+      <div className="pt-5 dark:text-white text-center">
          <h1 className="text-3xl">Welcome to Draftaroo!</h1>
          <div className="flex flex-col items-stretch">
             <Callout

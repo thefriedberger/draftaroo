@@ -9,7 +9,7 @@ const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
             pick.yourPick &&
                currentPick !== pick.draftPosition &&
                'dark:bg-gray-light',
-            'flex flex-row border-b border-gray-300 p-1'
+            'flex flex-row border-b border-gray-300 p-1 text-black dark:text-white'
          )}
          tabIndex={1}
       >

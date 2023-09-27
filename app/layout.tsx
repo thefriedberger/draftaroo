@@ -20,7 +20,10 @@ export default function RootLayout({
       <PageContextProvider>
          <ContextWrapper>
             <html lang="en">
-               <body id="DraftarooApp" className="min-h-screen bg-background ">
+               <body
+                  id="DraftarooApp"
+                  className="min-h-screen bg-paper-primary dark:bg-gray-dark"
+               >
                   <header>
                      <Nav />
                   </header>
