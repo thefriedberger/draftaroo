@@ -117,7 +117,9 @@ const Board = (props: BoardProps) => {
       const playerToDraft = sortPlayers(players, 'score', 1)[0] || null;
       for (const team in turnOrder) {
          if (turnOrder[team].includes(currentPick))
-            playerToDraft && handleDraftSelection(playerToDraft, team);
+            setTimeout(() => {
+               playerToDraft && handleDraftSelection(playerToDraft, team);
+            }, 1000);
       }
    };
 
