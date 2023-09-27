@@ -9,10 +9,13 @@ const TeamView = ({ teams, id }: { teams: Team[]; id: string }) => {
    };
 
    const handleChangeName = async () => {
+      const teamID = teams.filter((team: Team) => {
+         return team.league_id === id;
+      })[0].id;
       await supabase
          .from('teams')
          .update({ team_name: newTeamName })
-         .match({ league_id: id });
+         .match({ id: teamID });
    };
    return (
       <>
