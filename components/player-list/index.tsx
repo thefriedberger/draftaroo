@@ -191,7 +191,7 @@ const PlayerList = ({
                      <Filter values={teams} filterFun={setTeamFilter} />
                      <div className="flex flex-col">
                         <select
-                           defaultValue={1}
+                           defaultValue={'1'}
                            className="text-black p-1 lg:mr-2"
                            onChange={(e: ChangeEvent) => {
                               const target = e.target as HTMLSelectElement;
@@ -199,7 +199,9 @@ const PlayerList = ({
                            }}
                         >
                            <option value="0">2021-2022</option>
-                           <option value="1">2022-2023</option>
+                           <option value="1" selected>
+                              2022-2023
+                           </option>
                         </select>
                      </div>
                   </div>

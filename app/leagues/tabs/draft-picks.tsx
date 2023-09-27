@@ -76,7 +76,7 @@ const DraftPicksTab = ({ league }: { league: League }) => {
    useEffect(() => {
       if (teams && options.length === 0) {
          const defaultOption: ReactElement<HTMLOptionElement> = (
-            <option value={0} className="text-black" disabled selected>
+            <option value={0} className="text-black" disabled>
                Pick
             </option>
          );
@@ -157,6 +157,7 @@ const TeamPicks = ({
             required
             name="draft_position"
             className="text-black"
+            defaultValue={0}
          >
             {options}
          </select>

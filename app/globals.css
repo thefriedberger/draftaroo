@@ -66,9 +66,13 @@
    max-height: calc(100vh - 74px - 84px);
    overflow-y: scroll;
 }
+.mobile-tabs > div {
+   height: calc(100% - -66px);
+   max-height: calc(100% - 66px);
+}
 .mobile-tabs.featured-player-visible {
-   height: calc(100vh - 74px - 84px - 166px);
-   max-height: calc(100vh - 74px - 84px - 166px);
+   height: calc(100vh - 74px - 84px - 190px);
+   max-height: calc(100vh - 74px - 84px - 190px);
 }
 table tr td,
 table tr th {

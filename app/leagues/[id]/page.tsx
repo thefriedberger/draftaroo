@@ -57,6 +57,7 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
          )
          .subscribe();
       if (hasTeam) supabase.removeChannel(channel);
+      console.log(userTeams, id);
    }, [userTeams, user]);
 
    const tabs: Tab[] = [

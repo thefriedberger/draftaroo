@@ -5,15 +5,19 @@ const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
    return (
       <div
          className={classNames(
-            currentPick === pick.draftPosition && 'bg-purple',
+            currentPick === pick.draftPosition && 'bg-fuscia',
             pick.yourPick &&
                currentPick !== pick.draftPosition &&
-               'dark:bg-gray-light',
-            'flex flex-row border-b border-gray-300 p-1 text-black dark:text-white'
+               'bg-paper-light dark:bg-gray-light',
+            'flex flex-row border-b border-paper-dark dark:border-gray-300 p-1 text-black dark:text-white'
          )}
-         tabIndex={1}
+         autoFocus={currentPick === pick.draftPosition}
       >
-         <span className={'border-r border-gray-300 p-1 pr-2 self-center'}>
+         <span
+            className={
+               'border-r border-paper-dark dark:border-gray-300 p-1 pr-2 self-center'
+            }
+         >
             {pick.draftPosition}
          </span>
          <div className="flex flex-col pl-2 self-center">

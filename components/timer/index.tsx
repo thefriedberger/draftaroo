@@ -95,6 +95,7 @@ const Timer = ({
       isActive &&
          setTimeout(() => {
             setStatus(TIMER_STATUS.START);
+            setDoReset(false);
          }, 500);
    };
    useEffect(() => {
@@ -143,23 +144,23 @@ const Timer = ({
       <div className="max-h-[10vh] h-[10vh] lg:min-h-[180px] lg:max-h-[25vh] lg:h-[25vh] lg:overflow-hidden dark:text-white">
          {!isMobile ? (
             <>
-               <p className="">{twoDigits(timer)}</p>
+               <p className="bg-orange text-black text-4xl p-2 text-center font-bold">
+                  {twoDigits(timer)}
+               </p>
                <p className="">{currentRound}&nbsp;Round</p>
                <p className="">{currentPick}&nbsp;Pick</p>
                <p className="">{currentPick}&nbsp;Overall</p>
                {yourTurn ? (
-                  <p>Draft now!</p>
+                  <p className="text-xl font-bold">Draft now!</p>
                ) : (
-                  <p>
-                     {`${userPick} pick${
-                        userPick === 1 ? '' : 's'
-                     } until your turn`}
-                  </p>
+                  <div className="p-2 bg-paper-dark dark:bg-gray-primary">
+                     <p className="text-xl">{`Your turn in ${userPick}`}</p>
+                  </div>
                )}
             </>
          ) : (
             <div className="flex flex-row items-center h-full">
-               <div className="flex items-center justify-center mr-2 text-xl w-[100px] bg-purple min-h-full">
+               <div className="flex items-center justify-center mr-2 text-xl w-[100px] bg-orange min-h-full">
                   <p className="p-2 text-2xl">{twoDigits(timer)}</p>
                </div>
                <div className="flex flex-col py-2">
@@ -178,7 +179,7 @@ const Timer = ({
                )}
             </div>
          )}
-         <div className="">
+         {/* <div className="">
             {owner && (
                <div className="flex flex-col items-start">
                   <button
@@ -203,7 +204,7 @@ const Timer = ({
                   </button>
                </div>
             )}
-         </div>
+         </div> */}
       </div>
    );
 };

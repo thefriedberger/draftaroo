@@ -33,7 +33,7 @@ const Board = (props: BoardProps) => {
    const supabase = createClientComponentClient<Database>();
    const { leagueID, draft } = props;
 
-   const [featuredPlayer, setFeaturedPlayer] = useState<Player>();
+   const [featuredPlayer, setFeaturedPlayer] = useState<Player | null>();
    const [isYourTurn, setIsYourTurn] = useState<boolean>(false);
    const [doStart, setDoStart] = useState<boolean>(false);
    const [doReset, setDoReset] = useState<boolean>(false);
@@ -61,7 +61,8 @@ const Board = (props: BoardProps) => {
 
    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
-   const updateFeaturedPlayer = (player: Player) => {
+   const updateFeaturedPlayer = (player: Player | null) => {
+      if (!player) setFeaturedPlayer(null);
       setFeaturedPlayer(player);
    };
 
@@ -398,6 +399,7 @@ const Board = (props: BoardProps) => {
       draftedIDs: draftedIDs,
       featuredPlayer: featuredPlayer || null,
       yourTurn: isYourTurn,
+      updateFeaturedPlayer: updateFeaturedPlayer,
       handleDraftSelection: handleDraftSelection,
    };
 
@@ -593,9 +595,7 @@ const Board = (props: BoardProps) => {
                      <Timer {...timerProps} />
                      <TabsNavigation {...mobileTabProps} />
                      {featuredPlayer && (
-                        <div className="fixed bottom-[66px] dark:bg-gray-primary w-full h-[90px] p-2">
-                           <FeaturedPlayer {...featuredPlayerProps} />
-                        </div>
+                        <FeaturedPlayer {...featuredPlayerProps} />
                      )}
                   </>
                )}

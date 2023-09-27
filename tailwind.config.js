@@ -25,13 +25,15 @@ module.exports = {
                scrollhover: '#5c5c5c',
             },
             blue: {
-               muted: '#5065ad',
+               muted: '#6DDBFC',
+               primary: '#1AA1C9',
             },
             paper: {
                primary: '#cecdc2',
                dark: '#91907e',
                light: '#f4f3e1',
             },
+            orange: '#DE8F52',
          },
          gridTemplateColumns: {
             13: 'repeat(13, minmax(0, 1fr))',

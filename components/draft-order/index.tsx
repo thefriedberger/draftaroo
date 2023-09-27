@@ -89,13 +89,17 @@ const DraftOrder = ({
    }, [draftedPlayers, players, picks]);
 
    return (
-      <div className="max-h-[65vh] overflow-y-scroll lg:border-x lg:border-gray-300">
+      <div className="max-h-[65vh] overflow-y-scroll lg:border-x lg:border-paper-dark dark:lg:border-gray-300">
          {!isLoading &&
             picks?.map((pick: Pick, index: number) => {
                return (
                   <div key={index}>
                      {pick.draftPosition % teams?.length === 1 && (
-                        <div className={'dark:bg-gray-300 dark:text-black p-2'}>
+                        <div
+                           className={
+                              'bg-emerald-primary text-white dark:text-black p-2'
+                           }
+                        >
                            Round&nbsp;
                            {pick.draftPosition === 1
                               ? 1

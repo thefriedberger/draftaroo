@@ -42,6 +42,7 @@ export interface FeaturedPlayerProps {
    featuredPlayer: Player | null;
    yourTurn: boolean;
    handleDraftSelection: (player: Player) => void;
+   updateFeaturedPlayer: (player: Player | null) => void;
    draftedIDs: number[];
 }
 

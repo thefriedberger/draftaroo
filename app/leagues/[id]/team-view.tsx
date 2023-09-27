@@ -2,17 +2,17 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { ChangeEvent, useState } from 'react';
 
 const TeamView = ({ teams, id }: { teams: Team[]; id: string }) => {
-   console.log(teams, id);
    const [newTeamName, setNewTeamName] = useState<string>('');
    const supabase = createClientComponentClient<Database>();
    const updateTeamName = (e: ChangeEvent<HTMLInputElement>) => {
       setNewTeamName(e.target.value);
    };
+
    const handleChangeName = async () => {
       await supabase
          .from('teams')
          .update({ team_name: newTeamName })
-         .match({ id: id });
+         .match({ league_id: id });
    };
    return (
       <>
@@ -24,7 +24,7 @@ const TeamView = ({ teams, id }: { teams: Team[]; id: string }) => {
                .map((team: Team) => {
                   return (
                      <h2
-                        className="text-bold text-xl text-black dark:text-white mb-2"
+                        className="font-bold text-xl text-black dark:text-white mb-2"
                         key={team.id}
                      >
                         {team.team_name}
