@@ -62,7 +62,7 @@ const SetPassword = () => {
          //   data.session && updateSession?.(data.session);
 
          setTimeout(() => {
-            if (leagueID !== undefined) {
+            if (leagueID !== undefined || leagueID) {
                router.push(`${location.origin}/leagues/${leagueID}`);
             } else {
                router.push(`${location.origin}`);
