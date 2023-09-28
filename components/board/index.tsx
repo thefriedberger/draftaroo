@@ -2,6 +2,7 @@
 
 import {
    BoardProps,
+   ChatProps,
    DraftOrderProps,
    FeaturedPlayerProps,
    MyTeamProps,
@@ -17,6 +18,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
 import { useContext, useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
+import Chat from '../chat';
 import { PageContext } from '../context/page-context';
 import DraftOrder from '../draft-order';
 import FeaturedPlayer from '../featured-player';
@@ -568,6 +570,10 @@ const Board = (props: BoardProps) => {
       centerTabs: false,
       className: `mobile-tabs ${featuredPlayer && 'featured-player-visible'}`,
    };
+
+   const chatProps: ChatProps = {
+      user: user || null,
+   };
    return (
       <div className={classNames('w-full flex flex-col lg:flex-row')}>
          {user ? (
@@ -590,6 +596,7 @@ const Board = (props: BoardProps) => {
                      <div className="flex flex-col lg:max-w-[15vw] w-full">
                         <Watchlist {...watchlistProps} />
                         <MyTeam {...myTeamProps} />
+                        <Chat {...chatProps} />
                      </div>{' '}
                   </>
                ) : (

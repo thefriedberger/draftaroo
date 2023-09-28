@@ -61,9 +61,12 @@
    }
 }
 .draft-tabs-container,
-.draft-order,
-.my-team {
+.draft-order {
    height: calc(100vh - 180px - 74px);
+}
+
+.my-team {
+   height: calc(100vh - 180px - 74px - 300px);
 }
 .mobile-tabs {
    height: calc(100vh - 74px - 84px);
@@ -90,6 +93,9 @@ table tr:nth-of-type(even) {
 }
 
 @media screen and (min-width: theme(screens.md)) {
+   ::-webkit-scrollbar {
+      width: 10px;
+   }
    /* Track */
    ::-webkit-scrollbar-track {
       background: white;
@@ -98,6 +104,7 @@ table tr:nth-of-type(even) {
    /* Handle */
    ::-webkit-scrollbar-thumb {
       background: #414345;
+      border-radius: 5px;
    }
 
    /* Handle on hover */

@@ -60,6 +60,10 @@ export interface DraftTileProps {
    isYourTurn: boolean;
 }
 
+export interface ChatProps {
+   user: User | null;
+}
+
 export interface TeamProps {
    team_name: string;
    owner: string;

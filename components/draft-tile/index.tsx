@@ -6,7 +6,19 @@ const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
    const draftTileRef = useRef<HTMLDivElement | null>(null);
 
    const scrollCallback = () => {
-      draftTileRef.current?.scrollIntoView({ behavior: 'smooth' });
+      // lol wut is this? JS written in 2015?
+      const draftOrderContainer: HTMLDivElement | null | undefined =
+         draftTileRef.current?.offsetParent?.querySelector('.draft-order');
+
+      if (draftOrderContainer && draftTileRef.current?.offsetTop) {
+         const scrollY =
+            draftTileRef.current?.offsetTop -
+            draftOrderContainer.offsetTop -
+            40;
+         draftOrderContainer.scrollTo({
+            top: scrollY,
+         });
+      }
    };
    useEffect(() => {
       currentPick === pick.draftPosition && scrollCallback();
