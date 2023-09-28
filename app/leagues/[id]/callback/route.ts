@@ -5,6 +5,6 @@ export async function GET(request: Request) {
    const leagueID = requestUrl.searchParams.get('leagueID');
 
    return NextResponse.redirect(
-      `${requestUrl.origin}/set-password?leagueID=${leagueID}`
+      `${requestUrl.origin}/update-account?leagueID=${leagueID}`
    );
 }
