@@ -596,7 +596,9 @@ const Board = (props: BoardProps) => {
                      <div className="flex flex-col lg:max-w-[15vw] w-full">
                         <Watchlist {...watchlistProps} />
                         <MyTeam {...myTeamProps} />
-                        <Chat {...chatProps} />
+                        <span className="hidden lg:block mt-auto self-start">
+                           <Chat {...chatProps} />
+                        </span>
                      </div>{' '}
                   </>
                ) : (
