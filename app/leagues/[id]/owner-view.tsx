@@ -22,7 +22,7 @@ const OwnerView = (league: League | any) => {
       },
       {
          tabButton: 'Manage Keepers/Draft',
-         tabPane: <KeepersTab />,
+         tabPane: <KeepersTab {...league} />,
       },
       {
          tabButton: 'Manage Draft Pick',

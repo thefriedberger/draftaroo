@@ -13,30 +13,34 @@ const DraftPicksTab = ({ league }: { league: League }) => {
    );
    const [shouldSetDraftPicks, setShouldSetDraftPicks] =
       useState<boolean>(false);
-   const { league_id, league_rules } = league;
    const supabase = createClientComponentClient<Database>();
 
    const fetchLeagueDraftRules = async () => {
-      const { data } = await supabase
-         .from('league_rules')
-         .select('draft_picks')
-         .match({ id: league_rules });
+      if (league) {
+         const { data } = await supabase
+            .from('league_rules')
+            .select('draft_picks')
+            .match({ id: league?.league_rules });
 
-      data &&
-         (setDraftPicks(data?.[0]?.draft_picks), setShouldSetDraftPicks(true));
+         data &&
+            (setDraftPicks(data?.[0]?.draft_picks),
+            setShouldSetDraftPicks(true));
+      }
    };
    const fetchNumberOfRounds = async () => {
-      const { data } = await supabase
-         .from('league_rules')
-         .select('number_of_rounds')
-         .match({ id: league_rules });
-      data && setNumberOfRounds(Number(data[0].number_of_rounds));
+      if (league) {
+         const { data } = await supabase
+            .from('league_rules')
+            .select('number_of_rounds')
+            .match({ id: league?.league_rules });
+         data && setNumberOfRounds(Number(data[0].number_of_rounds));
+      }
    };
    const fetchLeagueTeams = async () => {
       const { data } = await supabase
          .from('teams')
          .select('*')
-         .match({ league_id: league_id });
+         .match({ league_id: league?.league_id });
       data && setTeams(data);
    };
 
@@ -57,12 +61,10 @@ const DraftPicksTab = ({ league }: { league: League }) => {
    };
 
    const handleSubmit = async () => {
-      // if (draftPicks.length !== teams?.length) return;
-
       const { error } = await supabase
          .from('league_rules')
          .update({ draft_picks: draftPicks })
-         .match({ id: league_rules });
+         .match({ id: league?.league_rules });
    };
 
    const updateSelectedOptions = (optionValue: string | number) => {};
@@ -71,7 +73,7 @@ const DraftPicksTab = ({ league }: { league: League }) => {
       // fetchLeagueDraftRules();
       fetchLeagueTeams();
       fetchNumberOfRounds();
-   }, []);
+   }, [league]);
 
    useEffect(() => {
       if (teams && options.length === 0) {

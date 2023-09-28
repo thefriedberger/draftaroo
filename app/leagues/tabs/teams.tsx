@@ -76,7 +76,7 @@ const TeamAdmin = ({
    };
 
    useEffect(() => {
-      owner && getUserByOwnerId();
+      getUserByOwnerId();
    }, [owner]);
 
    const updateTeamName = (e: ChangeEvent<HTMLInputElement>) => {
@@ -84,11 +84,14 @@ const TeamAdmin = ({
    };
 
    const getUserByOwnerId = async () => {
-      const { data } = await supabase
-         .from('profiles')
-         .select('*')
-         .match({ id: owner });
-      data && setOwnerEmail(data[0].email);
+      if (owner && owner !== undefined && owner.length > 0) {
+         const { data } = await supabase
+            .from('profiles')
+            .select('*')
+            .match({ id: owner });
+
+         data && data?.[0]?.email && setOwnerEmail(data[0].email);
+      }
    };
    const handleChangeName = async () => {
       const { error } = await supabase
