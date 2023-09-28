@@ -13,17 +13,8 @@ type ChatType = {
    sender: User | null;
 };
 const Chat = ({ user }: ChatProps) => {
-   const fakeUser: User = {
-      id: 'sd09t8q34-fq2349ub-a90re8t0q',
-      app_metadata: {},
-      aud: '',
-      created_at: '',
-      user_metadata: {},
-      email: 'faker@email.com',
-   };
-   const initialMessage: ChatType[] = [{ message: 'Hello', sender: fakeUser }];
    const [message, setMessage] = useState<string>();
-   const [chat, setChat] = useState<ChatType[]>(initialMessage);
+   const [chat, setChat] = useState<ChatType[]>();
    const supabase = createClientComponentClient<Database>();
 
    const chatChannel = supabase.channel('chat-channel', {
