@@ -60,7 +60,11 @@
       transform: translateY(0);
    }
 }
-
+.draft-tabs-container,
+.draft-order,
+.my-team {
+   height: calc(100vh - 180px - 74px);
+}
 .mobile-tabs {
    height: calc(100vh - 74px - 84px);
    max-height: calc(100vh - 74px - 84px);

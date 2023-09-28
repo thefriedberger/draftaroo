@@ -141,7 +141,7 @@ const Timer = ({
    }, [timer, isActive, doReset, status, timerChannel, owner]);
 
    return (
-      <div className="max-h-[10vh] h-[10vh] lg:min-h-[180px] lg:max-h-[25vh] lg:h-[25vh] lg:overflow-hidden dark:text-white">
+      <div className="flex flex-col justify-between max-h-[10vh] h-[10vh] lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white">
          {!isMobile ? (
             <>
                <p className="bg-orange text-black text-4xl p-2 text-center font-bold">

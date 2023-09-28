@@ -96,7 +96,7 @@ const FeaturedPlayer = ({
    return (
       <div
          className={classNames(
-            'lg:h-[180px] lg:relative fixed bottom-[66px] lg:bottom-auto dark:bg-gray-primary w-full p-2',
+            'lg:h-[180px] lg:relative fixed bottom-[66px] lg:bottom-auto dark:bg-gray-dark w-full p-2',
             isExpanded && 'h-[232px]',
             !isExpanded && 'h-[120px]'
          )}

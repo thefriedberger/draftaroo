@@ -560,7 +560,7 @@ const Board = (props: BoardProps) => {
       tabs,
       centerTabs: false,
       className:
-         'flex flex-col w-full lg:max-w-screen-xl lg:h-[75vh] lg:max-h-[75vh] text-white',
+         'flex flex-col w-full lg:max-w-screen-xl draft-tabs-container text-white',
    };
 
    const mobileTabProps: TabProps = {

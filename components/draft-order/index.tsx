@@ -89,7 +89,7 @@ const DraftOrder = ({
    }, [draftedPlayers, players, picks]);
 
    return (
-      <div className="max-h-[65vh] overflow-y-scroll lg:border-x lg:border-paper-dark dark:lg:border-gray-300">
+      <div className="draft-order overflow-y-scroll lg:border-r lg:border-paper-dark dark:lg:border-gray-300">
          {!isLoading &&
             picks?.map((pick: Pick, index: number) => {
                return (
