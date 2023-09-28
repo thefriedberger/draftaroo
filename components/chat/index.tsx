@@ -14,7 +14,7 @@ type ChatType = {
 };
 const Chat = ({ user }: ChatProps) => {
    const [message, setMessage] = useState<string>();
-   const [chat, setChat] = useState<ChatType[]>();
+   const [chat, setChat] = useState<ChatType[]>([]);
    const supabase = createClientComponentClient<Database>();
 
    const chatChannel = supabase.channel('chat-channel', {
