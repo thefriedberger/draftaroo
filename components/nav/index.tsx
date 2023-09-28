@@ -27,7 +27,7 @@ export default function Nav(props: NavProps) {
                   {user?.id ? (
                      <div className="flex items-center gap-4">
                         <span className="text-white hidden lg:block">
-                           Hey, {user.email}!
+                           Hey, {user.user_metadata.first_name || user.email}!
                         </span>
                         <LogoutButton />
                      </div>

@@ -199,9 +199,7 @@ const PlayerList = ({
                            }}
                         >
                            <option value="0">2021-2022</option>
-                           <option value="1" selected>
-                              2022-2023
-                           </option>
+                           <option value="1">2022-2023</option>
                         </select>
                      </div>
                   </div>

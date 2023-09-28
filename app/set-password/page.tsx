@@ -41,17 +41,19 @@ const SetPassword = () => {
       }
    };
 
-   const handleSubmit = async () => {
+   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
       const leagueID = new URL(location.href).searchParams.get('leagueID');
       if (user) {
          const email = String(user.email);
-         await adminAuthClient.updateUserById(user.id, {
+         const { error } = await adminAuthClient.updateUserById(user.id, {
             password: password,
             user_metadata: {
                first_name: firstName,
                last_name: lastName,
             },
          });
+         console.log(error);
          const { data } = await supabase.auth.signInWithPassword({
             email,
             password,
@@ -60,7 +62,11 @@ const SetPassword = () => {
          //   data.session && updateSession?.(data.session);
 
          setTimeout(() => {
-            router.push(`${location.origin}/leagues/${leagueID}`);
+            if (leagueID !== undefined) {
+               router.push(`${location.origin}/leagues/${leagueID}`);
+            } else {
+               router.push(`${location.origin}`);
+            }
          }, 500);
       }
    };
@@ -68,7 +74,12 @@ const SetPassword = () => {
       <>
          {user && (
             <>
-               <form onSubmit={() => handleSubmit} className="">
+               <form
+                  onSubmit={(e: React.FormEvent<HTMLFormElement>) =>
+                     handleSubmit(e)
+                  }
+                  className=""
+               >
                   <div className="flex flex-col">
                      <label
                         htmlFor="first_name"

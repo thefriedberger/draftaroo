@@ -65,8 +65,10 @@
    height: calc(100vh - 180px - 74px);
 }
 
-.my-team {
-   height: calc(100vh - 180px - 74px - 300px);
+.draft-board {
+   height: calc(100vh - 74px);
+   max-height: calc(100vh - 74px);
+   overflow-y: hidden;
 }
 .mobile-tabs {
    height: calc(100vh - 74px - 84px);

@@ -579,7 +579,7 @@ const Board = (props: BoardProps) => {
          {user ? (
             <>
                {!isMobile ? (
-                  <>
+                  <div className="draft-board w-full flex flex-col lg:flex-row">
                      {owner && !isActive && (
                         <button type="button" onClick={startDraft}>
                            Start Draft
@@ -596,11 +596,11 @@ const Board = (props: BoardProps) => {
                      <div className="flex flex-col lg:max-w-[15vw] w-full">
                         <Watchlist {...watchlistProps} />
                         <MyTeam {...myTeamProps} />
-                        <span className="hidden lg:block mt-auto self-start w-full">
+                        <span className="hidden lg:block mt-auto h-[28%] self-start w-full">
                            <Chat {...chatProps} />
                         </span>
                      </div>{' '}
-                  </>
+                  </div>
                ) : (
                   <>
                      <Timer {...timerProps} />

@@ -14,7 +14,7 @@ const Watchlist = ({ updateFeaturedPlayer, draftedIDs }: WatchlistProps) => {
          updateFeaturedPlayer(player);
    };
    return (
-      <div className=" lg:min-h-[180px] lg:h-[180px] overflow-y-scroll px-1 text-black dark:text-white">
+      <div className=" lg:h-[30%] overflow-y-scroll px-1 text-black dark:text-white">
          <h3 className="hidden lg:block text-xl font-bold">Watchlist</h3>
          {watchlist
             .filter((player: Player) => !draftedIDs.includes(player.id))
