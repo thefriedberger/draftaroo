@@ -576,7 +576,7 @@ const Board = (props: BoardProps) => {
    };
    return (
       <div className={classNames('w-full flex flex-col lg:flex-row')}>
-         {user ? (
+         {user && team?.league_id === leagueID ? (
             <>
                {!isMobile ? (
                   <div className="draft-board w-full flex flex-col lg:flex-row">
