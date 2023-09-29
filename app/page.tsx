@@ -10,36 +10,31 @@ export default function Home() {
       <div className="pt-5 dark:text-white text-center">
          <h1 className="text-3xl">Welcome to Draftaroo!</h1>
          <div className="flex flex-col items-stretch">
-            <Callout
-               {...{
-                  calloutText: 'Want to create a new league?',
-                  links: [
-                     {
-                        href: '/leagues/create',
-                        text: 'Create league',
-                     },
-                  ],
-               }}
-            />
-            {leagues
-               ?.filter((league: League) => {
-                  userTeams.league_id !== league.league_id &&
-                     league.owner === user?.id;
-               })
-               .map((league: League, index: number) => {
-                  <Callout
-                     key={index}
-                     {...{
-                        calloutText: `${league.league_name}`,
-                        links: [
-                           {
-                              href: `/leagues/${league.league_id}`,
-                              text: 'View league',
-                           },
-                        ],
-                     }}
-                  />;
-               })}
+            {user &&
+               leagues
+                  ?.filter((league: League) => {
+                     userTeams.filter((team: Team) => {
+                        console.log(team.owner);
+                        return (
+                           team.league_id === league.league_id &&
+                           team.owner === null
+                        );
+                     });
+                  })
+                  .map((league: League, index: number) => {
+                     <Callout
+                        key={index}
+                        {...{
+                           calloutText: `${league.league_name}`,
+                           links: [
+                              {
+                                 href: `/leagues/${league.league_id}`,
+                                 text: 'View league',
+                              },
+                           ],
+                        }}
+                     />;
+                  })}
             {userTeams &&
                leagues &&
                userTeams?.map((team: Team, index: number) => {
