@@ -91,11 +91,10 @@ const Timer = ({
    const handleReset = () => {
       clearInterval(timerRef.current);
       setTimer(TIMER_DURATION);
-      isActive &&
-         setTimeout(() => {
-            setStatus(TIMER_STATUS.START);
-            setDoReset(false);
-         }, 1000);
+      setTimeout(() => {
+         setStatus(TIMER_STATUS.START);
+         setDoReset(false);
+      }, 1000);
    };
    useEffect(() => {
       doStart && setStatus(TIMER_STATUS.START);
@@ -107,32 +106,55 @@ const Timer = ({
 
    useEffect(() => {
       timerChannel.on('broadcast', { event: 'timer' }, (payload) => {
-         if (payload && !owner) {
-            payload.payload.message && setTimer(payload.payload.message);
+         if (payload) {
+            if (!owner) {
+               payload.payload.message && setTimer(payload.payload.message);
+            }
             payload.payload.status && setStatus(payload.payload.status);
          }
       });
       timerChannel.subscribe((channelStatus) => {
          if (channelStatus === 'SUBSCRIBED') {
             if (status === TIMER_STATUS.START) {
+               if (owner) {
+                  timerChannel.send({
+                     type: 'broadcast',
+                     event: 'timer',
+                     payload: { message: timer },
+                  });
+               }
                timerChannel.send({
                   type: 'broadcast',
                   event: 'timer',
-                  payload: { status: TIMER_STATUS.START, message: timer },
+                  payload: { status: TIMER_STATUS.START },
                });
             }
             if (status === TIMER_STATUS.STOP) {
+               if (owner) {
+                  timerChannel.send({
+                     type: 'broadcast',
+                     event: 'timer',
+                     payload: { message: timer },
+                  });
+               }
                timerChannel.send({
                   type: 'broadcast',
                   event: 'timer',
-                  payload: { status: TIMER_STATUS.STOP, message: timer },
+                  payload: { status: TIMER_STATUS.STOP },
                });
             }
             if (status === TIMER_STATUS.RESET) {
+               if (owner) {
+                  timerChannel.send({
+                     type: 'broadcast',
+                     event: 'timer',
+                     payload: { message: timer },
+                  });
+               }
                timerChannel.send({
                   type: 'broadcast',
                   event: 'timer',
-                  payload: { status: TIMER_STATUS.RESET, message: timer },
+                  payload: { status: TIMER_STATUS.RESET },
                });
             }
          }
