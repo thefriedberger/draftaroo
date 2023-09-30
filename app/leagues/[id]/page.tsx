@@ -27,8 +27,10 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
       leagues?.forEach((league: League) => {
          if (league.league_id === id) {
             setLeague(league);
+            if (league.owner === user?.id) {
+               setOwner(user);
+            }
          }
-         if (league.owner === user?.id) setOwner(user);
       });
    }, [leagues]);
 

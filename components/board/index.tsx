@@ -296,6 +296,8 @@ const Board = (props: BoardProps) => {
          if (league.league_id === leagueID) {
             if (league.owner === user?.id) {
                setOwner(true);
+            } else {
+               setOwner(false);
             }
          }
       });
