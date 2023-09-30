@@ -75,17 +75,9 @@ const Board = (props: BoardProps) => {
          .match({ league_id: leagueID });
    };
 
-   const filterDraftedPlayers = () => {
-      setPlayers(
-         players.filter((player: Player) => {
-            return !draftedIDs.includes(player.id);
-         })
-      );
-      setShouldFilterPlayers(false);
-   };
-
    const handlePick = async () => {
       setCurrentPick(currentPick + 1);
+      setShouldFilterPlayers(true);
 
       await supabase
          .from('draft')
@@ -93,7 +85,6 @@ const Board = (props: BoardProps) => {
          .match({ league_id: leagueID });
 
       setDoReset(true);
-      setShouldFilterPlayers(true);
    };
 
    const handleDraftSelection = async (player: Player, teamID?: string) => {
@@ -135,9 +126,11 @@ const Board = (props: BoardProps) => {
          for (const player of draftedPlayers) {
             setDraftedIDs((prev) => [...prev, Number(player.player_id)]);
          }
+         setShouldFilterPlayers(true);
       }
    }, [draftedPlayers]);
 
+   // set my team and other teams players
    useEffect(() => {
       team &&
          updateTeamsViewPlayers(team.id).forEach(
@@ -195,6 +188,7 @@ const Board = (props: BoardProps) => {
       }
    }, [turnOrder, team, currentPick, isActive, draftedPlayers]);
 
+   // sets your team for this league, probably not efficient
    useEffect(() => {
       userTeams &&
          userTeams !== undefined &&
@@ -205,6 +199,7 @@ const Board = (props: BoardProps) => {
          );
    }, [userTeams]);
 
+   // set round
    useEffect(() => {
       if (numberOfTeams) {
          if (currentPick >= numberOfTeams) {
@@ -215,6 +210,7 @@ const Board = (props: BoardProps) => {
       }
    }, [currentPick, numberOfTeams]);
 
+   // gets current pick on page load, probably not necessary but if you join late it's nice
    useEffect(() => {
       const getCurrentPick = async () => {
          const { data } = await supabase
@@ -226,7 +222,7 @@ const Board = (props: BoardProps) => {
       getCurrentPick();
    }, [leagueID]);
 
-   // add logic for updating after draft pick
+   // logic for updating after draft pick
    useEffect(() => {
       const draftChannel = supabase
          .channel('draft-channel')
@@ -376,8 +372,16 @@ const Board = (props: BoardProps) => {
    }, []);
 
    useEffect(() => {
+      const filterDraftedPlayers = () => {
+         setPlayers(
+            players.filter((player: Player) => {
+               return !draftedIDs.includes(player.id);
+            })
+         );
+         setShouldFilterPlayers(false);
+      };
       shouldFilterPlayers && filterDraftedPlayers();
-   }, [shouldFilterPlayers]);
+   }, [shouldFilterPlayers, draftedIDs, players]);
 
    const timerProps: TimerProps = {
       owner: owner,
