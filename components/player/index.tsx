@@ -94,10 +94,10 @@ const PlayerComponent = ({
                   <WatchlistStar player={player} />
                </td>
                <td className="py-2 px-1">
-                  <span className="cursor-pointer">
+                  <span className="cursor-pointer whitespace-nowrap">
                      {player.first_name} {player.last_name}
                      &nbsp;&nbsp;&nbsp;
-                     <span className="dark:text-gray-300 text-[11px] leading-3">
+                     <span className="dark:text-gray-300 text-[11px] leading-3 whitespace-nowrap">
                         {teamAbreviations?.[player.current_team] || 'FA'} -{' '}
                         {player.primary_position &&
                            player.primary_position

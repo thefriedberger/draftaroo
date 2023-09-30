@@ -19,7 +19,7 @@ const FeaturedPlayer = ({
       player: featuredPlayer as Player,
       isButton: true,
       className:
-         'flex flex-row bg-paper-dark dark:bg-gray-primary text-white fill-emerald-700 p-2 rounded-md',
+         'flex flex-row bg-paper-dark dark:bg-gray-primary text-white fill-emerald-700 p-2 rounded-md whitespace-nowrap',
    };
    const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
@@ -50,26 +50,32 @@ const FeaturedPlayer = ({
                {player.stats?.map((seasonStats: any, index: number) => {
                   const { stats, season } = seasonStats;
                   return (
-                     <tr key={index}>
-                        <td>
-                           {season.substring(2, 4) + '-' + season.substring(6)}
-                        </td>
-                        <td>{stats.score}</td>
-                        <td>{stats.averageScore}</td>
-                        <td>{stats.games}</td>
-                        <td>{stats.timeOnIcePerGame}</td>
-                        <td>{stats.goals}</td>
-                        <td>{stats.assists}</td>
-                        <td>{stats.plusMinus}</td>
-                        <td>{stats.pim}</td>
-                        <td>{stats.powerPlayGoals}</td>
-                        <td>{stats.powerPlayAssists}</td>
-                        <td>{stats.shortHandedGoals}</td>
-                        <td>{stats.shortHandedAssists}</td>
-                        <td>{stats.shots}</td>
-                        <td>{stats.hits}</td>
-                        <td>{stats.blocked}</td>
-                     </tr>
+                     <>
+                        {season && stats && (
+                           <tr key={index}>
+                              <td>
+                                 {season.substring(2, 4) +
+                                    '-' +
+                                    season.substring(6)}
+                              </td>
+                              <td>{stats.score}</td>
+                              <td>{stats.averageScore}</td>
+                              <td>{stats.games}</td>
+                              <td>{stats.timeOnIcePerGame}</td>
+                              <td>{stats.goals}</td>
+                              <td>{stats.assists}</td>
+                              <td>{stats.plusMinus}</td>
+                              <td>{stats.pim}</td>
+                              <td>{stats.powerPlayGoals}</td>
+                              <td>{stats.powerPlayAssists}</td>
+                              <td>{stats.shortHandedGoals}</td>
+                              <td>{stats.shortHandedAssists}</td>
+                              <td>{stats.shots}</td>
+                              <td>{stats.hits}</td>
+                              <td>{stats.blocked}</td>
+                           </tr>
+                        )}
+                     </>
                   );
                })}
             </tbody>
@@ -107,7 +113,7 @@ const FeaturedPlayer = ({
                   <div className="dark:text-white text-xl">
                      {featuredPlayer.first_name} {featuredPlayer.last_name}
                      &nbsp;&nbsp;&nbsp;
-                     <span className="dark:text-gray-300 text-sm leading-3">
+                     <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap">
                         {teamAbreviations?.[featuredPlayer.current_team] ||
                            'FA'}{' '}
                         -{' '}
@@ -120,7 +126,7 @@ const FeaturedPlayer = ({
                   <div className="flex flex-row h-10">
                      <button
                         className={classNames(
-                           'bg-fuscia p-2 rounded-md mr-2 disabled:cursor-not-allowed',
+                           'bg-fuscia p-2 rounded-md mr-2 disabled:cursor-not-allowed whitespace-nowrap',
                            !yourTurn && 'saturate-[25%]'
                         )}
                         onClick={() => {
@@ -167,10 +173,10 @@ const FeaturedPlayer = ({
                </>
             ) : (
                <>
-                  <div className="dark:text-white text-xl">
+                  <div className="dark:text-white text-xl whitespace-nowrap">
                      {featuredPlayer.first_name} {featuredPlayer.last_name}
                      &nbsp;&nbsp;&nbsp;
-                     <span className="dark:text-gray-300 text-sm leading-3">
+                     <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap">
                         {teamAbreviations?.[featuredPlayer.current_team] ||
                            'FA'}{' '}
                         -{' '}
