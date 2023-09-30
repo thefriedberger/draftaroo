@@ -20,15 +20,7 @@ const WatchlistStar = (props: WatchlistStarProps) => {
       }
    };
    useEffect(() => {
-      watchlist &&
-         setIsWatched(
-            watchlist.find((watchedPlayer: Player) => {
-               if (watchedPlayer.id === player.id) {
-                  return true;
-               }
-               return false;
-            })
-         );
+      watchlist && setIsWatched(watchlist.includes(player.id));
    }, [watchlist, player]);
 
    return (

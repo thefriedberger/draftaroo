@@ -36,6 +36,7 @@ export interface DraftOrderProps {
 export interface WatchlistProps {
    updateFeaturedPlayer: (player: Player | any) => void;
    draftedIDs: number[];
+   leagueID: string;
 }
 
 export interface FeaturedPlayerProps {

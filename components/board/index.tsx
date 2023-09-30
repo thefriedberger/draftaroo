@@ -405,6 +405,7 @@ const Board = (props: BoardProps) => {
    const watchlistProps: WatchlistProps = {
       updateFeaturedPlayer: updateFeaturedPlayer,
       draftedIDs: draftedIDs,
+      leagueID: leagueID,
    };
 
    const featuredPlayerProps: FeaturedPlayerProps = {
@@ -589,7 +590,11 @@ const Board = (props: BoardProps) => {
                {!isMobile ? (
                   <div className="draft-board w-full flex flex-col lg:flex-row">
                      {owner && !isActive && (
-                        <button type="button" onClick={startDraft}>
+                        <button
+                           className="bg-gray-primary p-1"
+                           type="button"
+                           onClick={startDraft}
+                        >
                            Start Draft
                         </button>
                      )}

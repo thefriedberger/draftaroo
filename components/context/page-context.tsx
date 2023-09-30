@@ -46,7 +46,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
    const [teams, setTeams] = React.useState<Team | any>();
    const [leagues, setLeagues] = React.useState<League | any>();
    const [profile, setProfile] = React.useState<Profile | any>();
-   const [watchlist, setWatchlist] = React.useState<Player[]>([]);
+   const [watchlist, setWatchlist] = React.useState<number[]>([]);
    const [shouldUpdateWatchlist, setShouldUpdateWatchlist] =
       React.useState<boolean>(false);
    const [shouldFetchTeams, setShouldFetchTeams] =
@@ -79,11 +79,11 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
    const updateWatchlist = async (player: Player, action: WatchlistAction) => {
       if (watchlist) {
          if (action === WatchlistAction.DELETE) {
-            setWatchlist(watchlist?.filter((el) => el.id !== player.id));
+            setWatchlist(watchlist?.filter((el) => el !== player.id));
             setShouldUpdateWatchlist(true);
          }
          if (action === WatchlistAction.ADD) {
-            setWatchlist((prev) => [...prev, player]);
+            setWatchlist((prev) => [...prev, player.id]);
             setShouldUpdateWatchlist(true);
          }
       }
@@ -139,18 +139,37 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
          .from('watchlist')
          .select('*')
          .match({ owner: user?.id });
-      if (data) {
-         let newWatchlist: Player[] = [];
+      if (!data?.length) {
+         const { data } = await supabase
+            .from('watchlist')
+            .insert({ owner: user?.id, players: [] })
+            .select('*');
          if (data?.[0]?.players) {
-            for (const player of data?.[0]?.players) {
-               const players = await supabase
-                  .from('players')
-                  .select('*')
-                  .match({ id: player });
-               newWatchlist.push(players?.data?.[0] as Player);
-            }
+            // let newWatchlist: Player[] = [];
+            // for (const player of data?.[0]?.players) {
+            //    const data = await getPlayers();
+            //    const players = await supabase
+            //       .from('players')
+            //       .select('*')
+            //       .match({ id: player });
+            //    newWatchlist.push(players?.data?.[0] as Player);
+            // }
             setShouldUpdateWatchlist(false);
-            setWatchlist(newWatchlist);
+            setWatchlist(data?.[0]?.players);
+         }
+      }
+      if (data) {
+         if (data?.[0]?.players) {
+            // let newWatchlist: Player[] = [];
+            // for (const player of data?.[0]?.players) {
+            //    const players = await supabase
+            //       .from('players')
+            //       .select('*')
+            //       .match({ id: player });
+            //    newWatchlist.push(players?.data?.[0] as Player);
+            // }
+            setShouldUpdateWatchlist(false);
+            setWatchlist(data?.[0]?.players);
          }
       }
    };
@@ -179,9 +198,10 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
       const addWatchlist = async () => {
          const supabase = createClientComponentClient<Database>();
          let playerIDs: number[] = [];
-         watchlist?.forEach((player: Player) => {
-            player !== undefined && playerIDs.push(player.id);
-         });
+         for (const playerID of watchlist) {
+            playerIDs.push(playerID);
+         }
+
          const { data, error } = await supabase
             .from('watchlist')
             .update({ players: playerIDs })
@@ -189,17 +209,17 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
             .select('*');
          if (data) {
             if (data?.[0]?.players) {
-               let newWatchlist: Player[] = [];
-               for (const player of data?.[0]?.players) {
-                  const players = await supabase
-                     .from('players')
-                     .select('*')
-                     .match({ id: player });
+               // let newWatchlist: Player[] = [];
+               // for (const player of data?.[0]?.players) {
+               //    const players = await supabase
+               //       .from('players')
+               //       .select('*')
+               //       .match({ id: player });
 
-                  newWatchlist.push(players?.data?.[0] as Player);
-               }
+               //    newWatchlist.push(players?.data?.[0] as Player);
+               // }
                setShouldUpdateWatchlist(false);
-               setWatchlist(newWatchlist);
+               setWatchlist(data?.[0]?.players);
             }
          }
       };
