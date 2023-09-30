@@ -45,6 +45,7 @@ export interface Database {
                created_at: string | null;
                draft_id: string;
                id: string;
+               is_keeper: boolean;
                pick: number;
                player_id: number;
                round: number;
@@ -54,6 +55,7 @@ export interface Database {
                created_at?: string | null;
                draft_id: string;
                id?: string;
+               is_keeper?: boolean;
                pick: number;
                player_id: number;
                round: number;
@@ -63,6 +65,7 @@ export interface Database {
                created_at?: string | null;
                draft_id?: string;
                id?: string;
+               is_keeper?: boolean;
                pick?: number;
                player_id?: number;
                round?: number;
@@ -350,6 +353,12 @@ export interface Database {
                   columns: ['league_id'];
                   referencedRelation: 'leagues';
                   referencedColumns: ['league_id'];
+               },
+               {
+                  foreignKeyName: 'teams_owner_fkey';
+                  columns: ['owner'];
+                  referencedRelation: 'users';
+                  referencedColumns: ['id'];
                }
             ];
          };

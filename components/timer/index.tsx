@@ -24,7 +24,7 @@ const Timer = ({
    turnOrder,
    userTeam,
 }: TimerProps) => {
-   const TIMER_DURATION = 120;
+   const TIMER_DURATION = 10;
    const [status, setStatus] = useState<TIMER_STATUS>(TIMER_STATUS.STOP);
    const [timer, setTimer] = useState<number>(TIMER_DURATION);
    const timerRef = useRef<any>();
@@ -79,9 +79,6 @@ const Timer = ({
       if (owner && timer === 0) {
          setStatus(TIMER_STATUS.STOP);
          autopick();
-         setTimeout(() => {
-            setDoReset(false);
-         }, 1050);
       }
    }, [timer, owner]);
 
@@ -96,7 +93,7 @@ const Timer = ({
          setTimeout(() => {
             setStatus(TIMER_STATUS.START);
             setDoReset(false);
-         }, 500);
+         }, 1000);
    };
    useEffect(() => {
       doStart && setStatus(TIMER_STATUS.START);

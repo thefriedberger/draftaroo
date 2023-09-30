@@ -72,6 +72,7 @@ const KeepersTab = ({ league }: { league: League }) => {
                draft_id: draft.id,
                round: round,
                pick: pick,
+               is_keeper: true,
             });
          if (error) {
             console.log(error);
@@ -111,7 +112,7 @@ const KeepersTab = ({ league }: { league: League }) => {
    return (
       <>
          {teams.map((team: Team, index: number) => {
-            const picks = draftPicks[String(team.id)];
+            const picks = draftPicks?.[String(team.id)];
             const props = {
                picks: picks,
                team: team,
@@ -138,7 +139,7 @@ const KeeperSelector = ({
    handleSetKeeper: (playerID: number, teamID: string, pick: number) => void;
 }) => {
    const [keeper, setKeeper] = useState<number>(0);
-   const [pickUsed, setPickUsed] = useState<number>(0);
+   const [pickUsed, setPickUsed] = useState<number>(picks[0]);
    const { id } = team;
    return (
       <>

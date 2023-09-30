@@ -119,9 +119,7 @@ const Board = (props: BoardProps) => {
       const playerToDraft = sortPlayers(players, 'score', 1)[0] || null;
       for (const team in turnOrder) {
          if (turnOrder[team].includes(currentPick))
-            setTimeout(() => {
-               playerToDraft && handleDraftSelection(playerToDraft, team);
-            }, 1000);
+            playerToDraft && handleDraftSelection(playerToDraft, team);
       }
    };
 
@@ -167,17 +165,35 @@ const Board = (props: BoardProps) => {
       }
    }, [draftedPlayers, teamViewToShow]);
 
+   // checking for keepers is handled here
    useEffect(() => {
       if (isActive) {
          if (draftedPlayers.length > 0) {
             for (const player of draftedPlayers) {
-               if (player.pick === currentPick) {
-                  handlePick();
+               if (player.pick === currentPick && player.is_keeper) {
+                  setTimeout(() => {
+                     handlePick();
+                  }, 1000);
                }
             }
          }
       }
    }, [isActive, draftedPlayers, currentPick]);
+
+   // set if user can pick
+   useEffect(() => {
+      if (team && isActive) {
+         if (turnOrder[team.id] !== undefined) {
+            const draftedPlayer = draftedPlayers.filter(
+               (player: DraftSelection) => {
+                  return player.pick === currentPick;
+               }
+            );
+            if (draftedPlayer.length === 0)
+               setIsYourTurn(turnOrder[team.id].includes(currentPick));
+         }
+      }
+   }, [turnOrder, team, currentPick, isActive, draftedPlayers]);
 
    useEffect(() => {
       userTeams &&
@@ -322,14 +338,6 @@ const Board = (props: BoardProps) => {
       numberOfTeams === undefined && getNumberOfTeams();
       teams.length === 0 && getTeams();
    }, [league]);
-
-   useEffect(() => {
-      if (team) {
-         if (turnOrder[team.id] !== undefined) {
-            setIsYourTurn(turnOrder[team.id].includes(currentPick) && isActive);
-         }
-      }
-   }, [turnOrder, team, currentPick, isActive]);
 
    useEffect(() => {
       const draftStatusChannel = supabase

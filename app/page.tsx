@@ -14,7 +14,6 @@ export default function Home() {
                leagues
                   ?.filter((league: League) => {
                      userTeams.filter((team: Team) => {
-                        console.log(team.owner);
                         return (
                            team.league_id === league.league_id &&
                            team.owner === null
