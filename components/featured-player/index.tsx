@@ -19,7 +19,7 @@ const FeaturedPlayer = ({
       player: featuredPlayer as Player,
       isButton: true,
       className:
-         'flex flex-row bg-gray-primary text-white fill-emerald-700 p-2 rounded-md',
+         'flex flex-row bg-paper-dark dark:bg-gray-primary text-white fill-emerald-700 p-2 rounded-md',
    };
    const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
@@ -84,7 +84,7 @@ const FeaturedPlayer = ({
                className="block lg:hidden w-fit"
                onClick={() => setIsExpanded(!isExpanded)}
             >
-               <div className="bg-paper-dark dark:bg-gray-dark text-black dark:text-white rounded-md p-1 mt-2 w-fit">
+               <div className="bg-paper-dark dark:bg-gray-primary text-black dark:text-white rounded-md p-1 mt-2 w-fit">
                   {isExpanded ? 'Hide' : 'Show'} stats
                </div>
             </summary>
@@ -120,7 +120,7 @@ const FeaturedPlayer = ({
                   <div className="flex flex-row h-10">
                      <button
                         className={classNames(
-                           'bg-fuscia p-2 rounded-md md:mr-2 disabled:cursor-not-allowed',
+                           'bg-fuscia p-2 rounded-md mr-2 disabled:cursor-not-allowed',
                            !yourTurn && 'saturate-[25%]'
                         )}
                         onClick={() => {
@@ -144,7 +144,7 @@ const FeaturedPlayer = ({
                   {statsToggle(featuredPlayer)}
                   <p>{yourTurn}</p>
                   <button
-                     className="block lg:hidden absolute top-1 right-1"
+                     className="block lg:hidden dark:bg-dark-primary rounded-md absolute top-1 right-1"
                      type="button"
                      onClick={() => updateFeaturedPlayer(null)}
                   >
@@ -181,6 +181,27 @@ const FeaturedPlayer = ({
                      </span>
                      {statsToggle(featuredPlayer)}
                   </div>
+                  <button
+                     className="block lg:hidden absolute top-1 right-1"
+                     type="button"
+                     onClick={() => updateFeaturedPlayer(null)}
+                  >
+                     <svg
+                        width="40px"
+                        height="40px"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="stroke-white"
+                     >
+                        <path
+                           d="M9 9L15 15M15 9L9 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+                           stroke-width="2"
+                           stroke-linecap="round"
+                           stroke-linejoin="round"
+                        />
+                     </svg>
+                  </button>
                </>
             ))}
       </div>
