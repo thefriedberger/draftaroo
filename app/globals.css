@@ -4,18 +4,34 @@
 
 @layer base {
    :root {
-      --background: 200 20% 98%;
-      --btn-background: 200 10% 91%;
+      --btn-background: 200 10% 61%;
       --btn-background-hover: 200 10% 89%;
       --foreground: 200 50% 3%;
    }
 
    @media (prefers-color-scheme: dark) {
       :root {
-         --background: 200 50% 3%;
          --btn-background: 200 10% 9%;
          --btn-background-hover: 200 10% 12%;
          --foreground: 200 20% 96%;
+      }
+   }
+}
+@layer base {
+   body {
+      color: black;
+   }
+   input {
+      color: black;
+   }
+   @media (prefers-color-scheme: dark) {
+      :root,
+      body {
+         background: theme(colors.gray.dark);
+         color: black;
+      }
+      input {
+         color: black;
       }
    }
 }
@@ -30,6 +46,10 @@
    animation: animateIn 0.3s ease 0.15s both;
 }
 
+.ReactModalPortal .ReactModal__Overlay {
+   @apply !bg-black !bg-opacity-80 h-full w-full flex items-center justify-center;
+}
+
 @keyframes animateIn {
    from {
       opacity: 0;
@@ -38,5 +58,76 @@
    to {
       opacity: 1;
       transform: translateY(0);
+   }
+}
+.draft-tabs-container,
+.draft-order {
+   height: calc(100vh - 180px - 74px);
+}
+
+.draft-board {
+   height: calc(100vh - 74px);
+   max-height: calc(100vh - 74px);
+   overflow-y: hidden;
+}
+.mobile-tabs {
+   height: calc(100vh - 74px - 84px);
+   max-height: calc(100vh - 74px - 84px);
+   overflow-y: scroll;
+}
+/* .mobile-tabs > div {
+   height: calc(100% - -66px);
+   max-height: calc(100% - 66px);
+} */
+.mobile-tabs.featured-player-visible {
+   height: calc(100vh - 74px - 84px - 190px);
+   max-height: calc(100vh - 74px - 84px - 190px);
+}
+table tr td,
+table tr th {
+   @apply p-1;
+}
+table tr td {
+   @apply text-black dark:text-white;
+}
+table tr:nth-of-type(even) {
+   @apply bg-gray-300 bg-paper-light dark:bg-gray-primary;
+}
+
+@media screen and (min-width: theme(screens.md)) {
+   ::-webkit-scrollbar {
+      width: 10px;
+   }
+   /* Track */
+   ::-webkit-scrollbar-track {
+      background: white;
+   }
+
+   /* Handle */
+   ::-webkit-scrollbar-thumb {
+      background: #414345;
+      border-radius: 5px;
+   }
+
+   /* Handle on hover */
+   ::-webkit-scrollbar-thumb:hover {
+      background: #505050;
+   }
+
+   @media (prefers-color-scheme: dark) {
+      /* Track */
+      ::-webkit-scrollbar-track {
+         background: theme(colors.gray.dark);
+      }
+
+      /* Handle */
+      ::-webkit-scrollbar-thumb {
+         background: theme(colors.gray.light);
+      }
+
+      /* Handle on hover */
+      ::-webkit-scrollbar-thumb:hover {
+         background: theme(colors.gray.scrollhover);
+      }
    }
 }

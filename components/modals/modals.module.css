@@ -1,0 +1,3 @@
+.modal {
+   @apply flex flex-col p-3 w-max;
+}
