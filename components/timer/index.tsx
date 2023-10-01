@@ -169,7 +169,9 @@ const Timer = ({
          )}
          <button
             type="button"
-            className={'w-[20px] stroke-black absolute top-1 right-1 z-10'}
+            className={
+               'w-[20px] stroke-black dark:stroke-white dark:lg:stroke-black absolute top-1 right-1 z-10'
+            }
             onClick={() => setDoMute(!doMute)}
          >
             {doMute ? (
@@ -227,7 +229,9 @@ const Timer = ({
                   <p className="">{currentPick}&nbsp;Overall</p>
                </div>
                {yourTurn ? (
-                  <p>Draft now!</p>
+                  <p className="bg-fuscia flex items-center h-full ml-auto align-middle p-2 text-xl font-bold">
+                     Draft now!
+                  </p>
                ) : (
                   <p className="self-end ml-auto pr-2 pb-1 text-lg">
                      {`${userPick} pick${
