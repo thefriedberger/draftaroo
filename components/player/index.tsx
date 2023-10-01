@@ -210,8 +210,8 @@ const PlayerComponent = ({
                      <td className="py-2 px-1">
                         <span className="cursor-pointer">
                            {Math.round(
-                              playerStats?.[season]?.stats
-                                 ?.goalAgainstAverage || 0 * 100
+                              (playerStats?.[season]?.stats
+                                 ?.goalAgainstAverage || 1) * 100
                            ) / 100}
                         </span>
                      </td>
