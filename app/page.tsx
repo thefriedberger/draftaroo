@@ -1,27 +1,73 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+'use client';
 
-export default async function Home() {
-   const supabase = createServerComponentClient<Database>({ cookies });
-   //  const {
-   //     data: { session },
-   //  } = await supabase.auth.getSession();
+import Callout from '@/components/callout';
+import { PageContext } from '@/components/context/page-context';
+import { useContext } from 'react';
 
-   //  if (!session) {
-   //     redirect('/unauthenticated');
-   //  }
-
-   const { data: teams } = await supabase.from('teams').select('*');
-
+export default function Home() {
+   const { user, userTeams, leagues } = useContext(PageContext);
    return (
-      <div className="pt-5 text-white text-center">
-         <h1 className="text-3xl text-bold mb-3">
-            Hey, how&apos;d you get here?
-         </h1>
-         <p>
-            It looks like you found the site before it&apos;s ready, please
-            check back later!
-         </p>
+      <div className="pt-5 dark:text-white text-center">
+         <h1 className="text-3xl">Welcome to Draftaroo!</h1>
+         <div className="flex flex-col items-stretch">
+            {user &&
+               leagues
+                  ?.filter((league: League) => {
+                     userTeams.filter((team: Team) => {
+                        return (
+                           team.league_id === league.league_id &&
+                           team.owner === null
+                        );
+                     });
+                  })
+                  .map((league: League, index: number) => {
+                     <Callout
+                        key={index}
+                        {...{
+                           calloutText: `${league.league_name}`,
+                           links: [
+                              {
+                                 href: `/leagues/${league.league_id}`,
+                                 text: 'View league',
+                              },
+                           ],
+                        }}
+                     />;
+                  })}
+            {userTeams &&
+               leagues &&
+               userTeams?.map((team: Team, index: number) => {
+                  leagues?.filter((league: League) => {
+                     {
+                        if (league.league_id)
+                           return league.league_id === team.league_id;
+                     }
+                  });
+
+                  const league: League = leagues.filter((league: League) => {
+                     return league.league_id === team.league_id;
+                  })[0];
+
+                  return (
+                     <Callout
+                        key={index}
+                        {...{
+                           calloutText: `${team.team_name} - ${league?.league_name}`,
+                           links: [
+                              {
+                                 href: `/leagues/${team.league_id}`,
+                                 text: 'View league',
+                              },
+                              {
+                                 href: `/leagues/${team.league_id}/draft`,
+                                 text: 'View draft',
+                              },
+                           ],
+                        }}
+                     />
+                  );
+               })}
+         </div>
       </div>
    );
 }
