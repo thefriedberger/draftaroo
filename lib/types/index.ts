@@ -133,7 +133,10 @@ export interface BoardProps {
    leagueID: string | any;
    draft: Draft | any;
 }
-
+export interface LeagueTeamViewProps {
+   team: Team | undefined;
+   leagueID: string;
+}
 export interface TeamViewProps {
    players: Player[];
    doReset?: boolean;
