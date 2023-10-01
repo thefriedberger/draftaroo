@@ -90,7 +90,7 @@ const FeaturedPlayer = ({
                className="block lg:hidden w-fit"
                onClick={() => setIsExpanded(!isExpanded)}
             >
-               <div className="bg-paper-dark dark:bg-gray-primary text-black dark:text-white rounded-md p-1 mt-2 w-fit">
+               <div className="bg-paper-dark text-md dark:bg-gray-primary text-black dark:text-white rounded-md p-1 mt-2 w-fit">
                   {isExpanded ? 'Hide' : 'Show'} stats
                </div>
             </summary>
@@ -103,8 +103,14 @@ const FeaturedPlayer = ({
       <div
          className={classNames(
             'lg:h-[180px] lg:relative fixed bottom-[66px] lg:bottom-auto dark:bg-gray-dark w-full p-2',
-            isExpanded && 'h-[232px]',
-            !isExpanded && 'h-[120px]'
+            isExpanded &&
+               (featuredPlayer && !draftedIDs.includes(featuredPlayer.id)
+                  ? 'h-[232px]'
+                  : 'h-[200px]'),
+            !isExpanded &&
+               (featuredPlayer && !draftedIDs.includes(featuredPlayer.id)
+                  ? 'h-[130px]'
+                  : 'h-[90px]')
          )}
       >
          {featuredPlayer &&
@@ -185,8 +191,8 @@ const FeaturedPlayer = ({
                               .split(' ')
                               .map((char: string) => char[0])}
                      </span>
-                     {statsToggle(featuredPlayer)}
                   </div>
+                  {statsToggle(featuredPlayer)}
                   <button
                      className="block lg:hidden absolute top-1 right-1"
                      type="button"

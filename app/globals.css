@@ -83,6 +83,10 @@
    height: calc(100vh - 74px - 84px - 190px);
    max-height: calc(100vh - 74px - 84px - 190px);
 }
+.mobile-tabs.drafted-featured-player-visible {
+   height: calc(100vh - 74px - 84px - 160px);
+   max-height: calc(100vh - 74px - 84px - 160px);
+}
 table tr td,
 table tr th {
    @apply p-1;
