@@ -2,7 +2,7 @@
 import { PageContext } from '@/components/context/page-context';
 import AuthModal from '@/components/modals/auth';
 import Tabs from '@/components/tabs';
-import { Tab, TabProps } from '@/lib/types';
+import { LeagueTeamViewProps, Tab, TabProps } from '@/lib/types';
 import addTeam from '@/utils/add-team';
 import {
    User,
@@ -19,6 +19,7 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
    const [league, setLeague] = useState<League>();
    const [owner, setOwner] = useState<User>();
    const [hasTeam, setHasTeam] = useState<Boolean>(false);
+   const [teamViewTeam, setTeamViewTeam] = useState<Team>();
 
    const { session, user, userTeams, teams, leagues, fetchTeams } =
       useContext(PageContext);
@@ -61,10 +62,15 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
       if (hasTeam) supabase.removeChannel(channel);
    }, [userTeams, user]);
 
+   const leagueTeamViewProps: LeagueTeamViewProps = {
+      team: teamViewTeam,
+      leagueID: id,
+   };
+
    const tabs: Tab[] = [
       {
          tabButton: 'Your Team',
-         tabPane: <TeamView teams={userTeams} id={id} />,
+         tabPane: <TeamView {...leagueTeamViewProps} />,
       },
       {
          tabButton: 'League Management',
@@ -81,6 +87,14 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
       if (userTeams === undefined) fetchTeams?.();
    }, [session, user, userTeams]);
 
+   useEffect(() => {
+      setTeamViewTeam(
+         userTeams?.filter((team: Team) => {
+            return team.league_id === id;
+         })[0]
+      );
+   }, [userTeams]);
+
    return (
       <>
          {!session || session === undefined || !user || user === undefined ? (
@@ -92,7 +106,9 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
             <>
                {owner?.id === user?.id && (
                   <>
-                     <Tabs {...tabProps} />
+                     {userTeams !== undefined && id !== undefined && (
+                        <Tabs {...tabProps} />
+                     )}
                   </>
                )}
                {!hasTeam ? (
@@ -112,7 +128,7 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
                ) : (
                   !owner && (
                      <>
-                        <TeamView {...userTeams} />
+                        <TeamView {...leagueTeamViewProps} />
                         <Link
                            className={'bg-emerald-primary p-2 rounded-md mt-2'}
                            href={`/leagues/${id}/draft`}

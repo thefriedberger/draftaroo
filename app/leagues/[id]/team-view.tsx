@@ -1,7 +1,8 @@
+import { LeagueTeamViewProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { ChangeEvent, useState } from 'react';
 
-const TeamView = ({ teams, id }: { teams: Team[]; id: string }) => {
+const TeamView = ({ team, leagueID }: LeagueTeamViewProps) => {
    const [newTeamName, setNewTeamName] = useState<string>('');
    const [teamName, setTeamName] = useState<string>();
    const supabase = createClientComponentClient<Database>();
@@ -10,51 +11,49 @@ const TeamView = ({ teams, id }: { teams: Team[]; id: string }) => {
    };
 
    const handleChangeName = async () => {
-      const teamID = teams.filter((team: Team) => {
-         return team.league_id === id;
-      })[0].id;
-      await supabase
-         .from('teams')
-         .update({ team_name: newTeamName })
-         .match({ id: teamID });
-      setTeamName(newTeamName);
+      if (team) {
+         const { error } = await supabase
+            .from('teams')
+            .update({ team_name: newTeamName })
+            .match({ id: team.id });
+         setTeamName(newTeamName);
+         console.log(error);
+      }
    };
    return (
       <>
-         {teams &&
-            teams
-               .filter((team: Team) => {
-                  return team.league_id === id;
-               })
-               .map((team: Team) => {
-                  return (
-                     <h2
-                        className="font-bold text-xl text-black dark:text-white mb-2"
-                        key={team.id}
-                     >
-                        {teamName || team.team_name}
-                     </h2>
-                  );
-               })}
-         <div className="flex flex-col items-start">
-            <label htmlFor="team_name" className="text-black dark:text-white">
-               Change team name:
-            </label>
-            <input
-               className="p-2 my-2"
-               type="text"
-               name="team_name"
-               id="team_name"
-               onChange={updateTeamName}
-            />
-            <button
-               className="p-2 bg-white rounded-md text-black"
-               type="button"
-               onClick={handleChangeName}
-            >
-               Update
-            </button>
-         </div>
+         {team !== undefined && (
+            <>
+               <h2
+                  className="font-bold text-xl text-black dark:text-white mb-2"
+                  key={team.id}
+               >
+                  {teamName || team.team_name}
+               </h2>
+               <form className="flex flex-col items-start">
+                  <label
+                     htmlFor="team_name"
+                     className="text-black dark:text-white"
+                  >
+                     Change team name:
+                  </label>
+                  <input
+                     className="p-2 my-2"
+                     type="text"
+                     name="team_name"
+                     id="team_name"
+                     onChange={updateTeamName}
+                  />
+                  <button
+                     className="p-2 bg-white rounded-md text-black"
+                     type="submit"
+                     onClick={handleChangeName}
+                  >
+                     Update
+                  </button>
+               </form>
+            </>
+         )}
       </>
    );
 };
