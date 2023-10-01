@@ -35,13 +35,9 @@ const Timer = ({
 
    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
-   const timerChannel = supabase.channel('timer-channel', {
-      config: {
-         broadcast: {
-            self: true,
-         },
-      },
-   });
+   const timerChannelA = supabase.channel('timer-channel');
+   const timerChannelB = supabase.channel('timer-channel');
+   const timerChannelC = supabase.channel('timer-channel');
 
    const twoDigits = (num: number) =>
       new Date(num * 1000).toISOString().substring(14, 19);
@@ -105,61 +101,59 @@ const Timer = ({
    }, [doReset]);
 
    useEffect(() => {
-      timerChannel.on('broadcast', { event: 'timer' }, (payload) => {
-         if (payload) {
-            if (!owner) {
+      timerChannelA
+         .on('broadcast', { event: 'timer' }, (payload) => {
+            if (payload && !owner) {
                payload.payload.message && setTimer(payload.payload.message);
             }
-            payload.payload.status && setStatus(payload.payload.status);
-         }
-      });
-      timerChannel.subscribe((channelStatus) => {
-         if (channelStatus === 'SUBSCRIBED') {
-            if (status === TIMER_STATUS.START) {
-               if (owner) {
-                  timerChannel.send({
-                     type: 'broadcast',
-                     event: 'timer',
-                     payload: { message: timer },
-                  });
-               }
-               timerChannel.send({
+         })
+         .on('broadcast', { event: 'status' }, (payload) => {
+            if (payload) {
+               payload.payload.status && setStatus(payload.payload.status);
+            }
+         });
+   }, [timerChannelA]);
+
+   useEffect(() => {
+      if (owner)
+         timerChannelB.subscribe((channelStatus) => {
+            if (channelStatus === 'SUBSCRIBED') {
+               timerChannelB.send({
                   type: 'broadcast',
                   event: 'timer',
+                  payload: { message: timer },
+               });
+            }
+         });
+   }, [timer, timerChannelB, owner]);
+
+   useEffect(() => {
+      timerChannelC.subscribe((channelStatus) => {
+         if (channelStatus === 'SUBSCRIBED') {
+            if (status === TIMER_STATUS.START) {
+               timerChannelC.send({
+                  type: 'broadcast',
+                  event: 'status',
                   payload: { status: TIMER_STATUS.START },
                });
             }
             if (status === TIMER_STATUS.STOP) {
-               if (owner) {
-                  timerChannel.send({
-                     type: 'broadcast',
-                     event: 'timer',
-                     payload: { message: timer },
-                  });
-               }
-               timerChannel.send({
+               timerChannelC.send({
                   type: 'broadcast',
-                  event: 'timer',
+                  event: 'status',
                   payload: { status: TIMER_STATUS.STOP },
                });
             }
             if (status === TIMER_STATUS.RESET) {
-               if (owner) {
-                  timerChannel.send({
-                     type: 'broadcast',
-                     event: 'timer',
-                     payload: { message: timer },
-                  });
-               }
-               timerChannel.send({
+               timerChannelC.send({
                   type: 'broadcast',
-                  event: 'timer',
+                  event: 'status',
                   payload: { status: TIMER_STATUS.RESET },
                });
             }
          }
       });
-   }, [timer, isActive, doReset, status, timerChannel, owner]);
+   }, [status]);
 
    return (
       <div className="flex flex-col justify-between max-h-[10vh] h-[10vh] lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative">

@@ -2,7 +2,7 @@
 
 import { FeaturedPlayerProps } from '@/lib/types';
 import classNames from 'classnames';
-import { useContext, useState } from 'react';
+import { Fragment, useContext, useState } from 'react';
 import { PageContext } from '../context/page-context';
 import { teamAbreviations } from '../player';
 import WatchlistStar, { WatchlistStarProps } from '../watchlist/watchlist-star';
@@ -50,7 +50,7 @@ const FeaturedPlayer = ({
                {player.stats?.map((seasonStats: any, index: number) => {
                   const { stats, season } = seasonStats;
                   return (
-                     <>
+                     <Fragment key={index}>
                         {season && stats && (
                            <tr key={index}>
                               <td>
@@ -75,7 +75,7 @@ const FeaturedPlayer = ({
                               <td>{stats.blocked}</td>
                            </tr>
                         )}
-                     </>
+                     </Fragment>
                   );
                })}
             </tbody>
