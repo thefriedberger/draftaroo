@@ -108,10 +108,11 @@ const Board = (props: BoardProps) => {
 
    const autoDraft = () => {
       const playerToDraft = sortPlayers(players, 'score', 1)[0] || null;
-      for (const team in turnOrder) {
-         if (turnOrder[team].includes(currentPick))
-            playerToDraft && handleDraftSelection(playerToDraft, team);
-      }
+      if (playerToDraft)
+         for (const team in turnOrder) {
+            if (turnOrder[team].includes(currentPick))
+               playerToDraft && handleDraftSelection(playerToDraft, team);
+         }
    };
 
    const updateTeamsViewPlayers = (teamID: string) => {
@@ -583,7 +584,12 @@ const Board = (props: BoardProps) => {
    const mobileTabProps: TabProps = {
       tabs: mobileTabs,
       centerTabs: false,
-      className: `mobile-tabs ${featuredPlayer && 'featured-player-visible'}`,
+      className: `mobile-tabs ${
+         featuredPlayer &&
+         (!draftedIDs.includes(featuredPlayer?.id)
+            ? 'featured-player-visible'
+            : 'drafted-featured-player-visible')
+      }`,
    };
 
    const chatProps: ChatProps = {

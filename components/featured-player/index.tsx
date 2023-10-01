@@ -103,8 +103,14 @@ const FeaturedPlayer = ({
       <div
          className={classNames(
             'lg:h-[180px] lg:relative fixed bottom-[66px] lg:bottom-auto dark:bg-gray-dark w-full p-2',
-            isExpanded && 'h-[232px]',
-            !isExpanded && 'h-[120px]'
+            isExpanded &&
+               (featuredPlayer && !draftedIDs.includes(featuredPlayer.id)
+                  ? 'h-[232px]'
+                  : 'h-[200px]'),
+            !isExpanded &&
+               (featuredPlayer && !draftedIDs.includes(featuredPlayer.id)
+                  ? 'h-[130px]'
+                  : 'h-[100px]')
          )}
       >
          {featuredPlayer &&

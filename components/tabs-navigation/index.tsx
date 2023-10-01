@@ -27,7 +27,7 @@ const TabsNavigation = ({
                key={key}
                className={classNames(
                   isActive && styles['nav-active'],
-                  'h-[66px] inline-flex lg:h-auto p-2 text-center items-end justify-center border-r-2 border-r-emerald-600 last-of-type:border-none'
+                  'h-[66px] inline-flex lg:h-auto p-2 text-center items-end justify-center'
                )}
             >
                <button
