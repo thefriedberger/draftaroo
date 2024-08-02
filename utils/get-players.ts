@@ -8,7 +8,8 @@ const getPlayers = async (leagueID: string) => {
    const playersArray: Player[] = [];
    const supabase = createServerComponentClient<Database>({ cookies });
    const data = await fetch(
-      'https://mfiegmjwkqpipahwvcbz.supabase.co/storage/v1/object/sign/players/players_updated.json?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJwbGF5ZXJzL3BsYXllcnNfdXBkYXRlZC5qc29uIiwiaWF0IjoxNjk2MDg4NDQ5LCJleHAiOjE3Mjc2MjQ0NDl9.ZI6_6E93UPNhwv67XfFyj8SOaqirm8FwOD-rFnun6jI&t=2023-09-30T15%3A40%3A49.042Z'
+      'https://mfiegmjwkqpipahwvcbz.supabase.co/storage/v1/object/sign/players/players_updated.json?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJwbGF5ZXJzL3BsYXllcnNfdXBkYXRlZC5qc29uIiwiaWF0IjoxNjk2MDg4NDQ5LCJleHAiOjE3Mjc2MjQ0NDl9.ZI6_6E93UPNhwv67XfFyj8SOaqirm8FwOD-rFnun6jI&t=2023-09-30T15%3A40%3A49.042Z',
+      { cache: 'force-cache' }
    );
    const players = await data.json();
    const league = await supabase

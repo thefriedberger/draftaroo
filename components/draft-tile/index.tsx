@@ -2,7 +2,11 @@ import { DraftTileProps } from '@/lib/types';
 import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
 
-const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
+const DraftTile = ({
+   pick,
+   currentPick,
+   updateFeaturedPlayer,
+}: DraftTileProps) => {
    const draftTileRef = useRef<HTMLDivElement | null>(null);
 
    const scrollCallback = () => {
@@ -23,6 +27,10 @@ const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
    useEffect(() => {
       currentPick === pick.draftPosition && scrollCallback();
    }, [pick, currentPick]);
+
+   const handleUpdateFeaturedPlayer = () => {
+      updateFeaturedPlayer(null, pick.playerID);
+   };
    return (
       <div
          className={classNames(
@@ -33,6 +41,7 @@ const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
             'flex flex-row border-b border-paper-dark dark:border-gray-300 p-1 text-black dark:text-white'
          )}
          ref={draftTileRef}
+         onClick={handleUpdateFeaturedPlayer}
       >
          <span
             className={
@@ -42,7 +51,14 @@ const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
             {pick.draftPosition}
          </span>
          <div className="flex flex-col pl-2 self-center">
-            <p>{pick.username}</p>
+            <p className="flex items-center">
+               {pick.username}
+               {pick.isKeeper && (
+                  <span className="border border-white bg-purple text-white font-bold ml-3 px-1 text-[10px] text-center">
+                     K
+                  </span>
+               )}
+            </p>
             {pick.playerName && <p>{pick.playerName}</p>}
          </div>
       </div>

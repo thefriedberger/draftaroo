@@ -102,7 +102,7 @@ const FeaturedPlayer = ({
    return (
       <div
          className={classNames(
-            'lg:h-[180px] lg:relative fixed bottom-[66px] lg:bottom-auto dark:bg-gray-dark w-full p-2',
+            'lg:h-[180px] lg:relative fixed bottom-[66px] lg:bottom-auto bg-paper-primary dark:bg-gray-dark w-full p-2',
             isExpanded &&
                (featuredPlayer && !draftedIDs.includes(featuredPlayer.id)
                   ? 'h-[232px]'
@@ -191,6 +191,9 @@ const FeaturedPlayer = ({
                               .split(' ')
                               .map((char: string) => char[0])}
                      </span>
+                  </div>
+                  <div className="hidden lg:block">
+                     {playerStats(featuredPlayer)}
                   </div>
                   {statsToggle(featuredPlayer)}
                   <button

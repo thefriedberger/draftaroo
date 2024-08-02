@@ -79,12 +79,6 @@ export interface Database {
                   referencedColumns: ['id'];
                },
                {
-                  foreignKeyName: 'draft_selections_player_id_fkey';
-                  columns: ['player_id'];
-                  referencedRelation: 'players';
-                  referencedColumns: ['id'];
-               },
-               {
                   foreignKeyName: 'draft_selections_team_id_fkey';
                   columns: ['team_id'];
                   referencedRelation: 'teams';
@@ -258,6 +252,33 @@ export interface Database {
             };
             Relationships: [];
          };
+         players_backup: {
+            Row: {
+               current_team: string;
+               first_name: string;
+               id: number;
+               last_name: string;
+               primary_position: string | null;
+               stats: Json[] | null;
+            };
+            Insert: {
+               current_team: string;
+               first_name: string;
+               id: number;
+               last_name: string;
+               primary_position?: string | null;
+               stats?: Json[] | null;
+            };
+            Update: {
+               current_team?: string;
+               first_name?: string;
+               id?: number;
+               last_name?: string;
+               primary_position?: string | null;
+               stats?: Json[] | null;
+            };
+            Relationships: [];
+         };
          profiles: {
             Row: {
                email: string;
@@ -314,7 +335,7 @@ export interface Database {
                {
                   foreignKeyName: 'team_history_player_id_fkey';
                   columns: ['player_id'];
-                  referencedRelation: 'players';
+                  referencedRelation: 'players_backup';
                   referencedColumns: ['id'];
                },
                {

@@ -22,6 +22,7 @@ export const teamAbreviations: string | any = {
    'Los Angeles Kings': 'LAK',
    'Minnesota Wild': 'MIN',
    'Montreal Canadiens': 'MTL',
+   'Montréal Canadiens': 'MTL',
    'New Jersey Devils': 'NJD',
    'Nashville Predators': 'NSH',
    'New York Islanders': 'NYI',

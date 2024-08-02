@@ -63,7 +63,12 @@ const Board = (props: BoardProps) => {
 
    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
-   const updateFeaturedPlayer = (player: Player | null) => {
+   const updateFeaturedPlayer = (player: Player | null, playerID?: number) => {
+      if (playerID) {
+         player = originalPlayers.filter((toSearch) => {
+            return toSearch.id === playerID;
+         })?.[0];
+      }
       if (!player) setFeaturedPlayer(null);
       setFeaturedPlayer(player);
    };
@@ -407,6 +412,7 @@ const Board = (props: BoardProps) => {
       league: league,
       players: originalPlayers,
       teamID: team?.id || '',
+      updateFeaturedPlayer: updateFeaturedPlayer,
    };
 
    const watchlistProps: WatchlistProps = {

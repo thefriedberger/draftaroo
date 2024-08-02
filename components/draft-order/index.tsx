@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react';
 import DraftTile from '../draft-tile';
 
 export type Pick = {
-   playerID: number | null;
+   playerID?: number;
    username: string;
-   playerName: string | null;
+   playerName?: string;
    draftPosition: number;
    yourPick: boolean;
+   isKeeper: boolean;
 };
 const DraftOrder = ({
    teams,
@@ -19,6 +20,7 @@ const DraftOrder = ({
    league,
    players,
    teamID,
+   updateFeaturedPlayer,
 }: DraftOrderProps) => {
    const [numberOfRounds, setNumberOfRounds] = useState<number>(0);
    const [picks, setPicks] = useState<Pick[] | any[]>([]);
@@ -47,9 +49,8 @@ const DraftOrder = ({
          const pick: Pick = {
             draftPosition: draftPosition,
             username: '',
-            playerID: null,
             yourPick: false,
-            playerName: null,
+            isKeeper: false,
          };
          for (const turn in turnOrder) {
             if (turnOrder[turn].includes(draftPosition)) {
@@ -82,6 +83,7 @@ const DraftOrder = ({
                pick.playerName = `${foundPlayer?.first_name.charAt(0)}. ${
                   foundPlayer?.last_name
                }`;
+               pick.isKeeper = draftedPlayer.is_keeper;
             }
          });
       });
@@ -113,6 +115,7 @@ const DraftOrder = ({
                         currentPick={currentPick}
                         playerSelected={draftedPlayers[pick.playerID || 0]}
                         isYourTurn={isYourTurn}
+                        updateFeaturedPlayer={updateFeaturedPlayer}
                      />
                   </div>
                );

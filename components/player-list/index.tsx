@@ -5,7 +5,7 @@ import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { PageContext } from '../context/page-context';
 import PlayerComponent from '../player';
 
-type SortValue =
+export type SortValue =
    | 'score'
    | 'averageScore'
    | 'timeOnIcePerGame'
@@ -28,7 +28,49 @@ type SortValue =
    | 'goalAgainstAverage'
    | 'losses'
    | '';
-
+export const teams = [
+   'Team',
+   'Arizona Coyotes',
+   'Anaheim Ducks',
+   'Boston Bruins',
+   'Buffalo Sabres',
+   'Calgary Flames',
+   'Carolina Hurricanes',
+   'Colorado Avalanche',
+   'Columbus Blue Jackets',
+   'Dallas Stars',
+   'Detroit Red Wings',
+   'Edmonton Oilers',
+   'Florida Panthers',
+   'Los Angeles Kings',
+   'Minnesota Wild',
+   'Montréal Canadiens',
+   'Nashville Predators',
+   'New Jersey Devils',
+   'New York Islanders',
+   'New York Rangers',
+   'Ottawa Senators',
+   'Philadelphia Flyers',
+   'Pittsburgh Penguins',
+   'San Jose Sharks',
+   'Seattle Kraken',
+   'St. Louis Blues',
+   'Tampa Bay Lightning',
+   'Tornto Maple Leafs',
+   'Vancouver Canucks',
+   'Vegas Golden Knights',
+   'Washington Capitals',
+   'Winnipeg Jets',
+];
+export const positions = [
+   'Skaters',
+   'Goalie',
+   'Forwards',
+   'Center',
+   'Left Wing',
+   'Right Wing',
+   'Defenseman',
+];
 export const getStatFromLastSeason = (
    player_stats: any,
    stat: string,
@@ -85,50 +127,6 @@ const PlayerList = ({
    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
    const { leagues } = useContext(PageContext);
-
-   const teams = [
-      'Team',
-      'Arizona Coyotes',
-      'Anaheim Ducks',
-      'Boston Bruins',
-      'Buffalo Sabres',
-      'Calgary Flames',
-      'Carolina Hurricanes',
-      'Colorado Avalanche',
-      'Columbus Blue Jackets',
-      'Dallas Stars',
-      'Detroit Red Wings',
-      'Edmonton Oilers',
-      'Florida Panthers',
-      'Los Angeles Kings',
-      'Minnesota Wild',
-      'Montréal Canadiens',
-      'Nashville Predators',
-      'New Jersey Devils',
-      'New York Islanders',
-      'New York Rangers',
-      'Ottawa Senators',
-      'Philadelphia Flyers',
-      'Pittsburgh Penguins',
-      'San Jose Sharks',
-      'Seattle Kraken',
-      'St. Louis Blues',
-      'Tampa Bay Lightning',
-      'Tornto Maple Leafs',
-      'Vancouver Canucks',
-      'Vegas Golden Knights',
-      'Washington Capitals',
-      'Winnipeg Jets',
-   ];
-   const positions = [
-      'Skaters',
-      'Goalie',
-      'Forwards',
-      'Center',
-      'Left Wing',
-      'Right Wing',
-      'Defenseman',
-   ];
 
    const seasons = ['Season', '2021-2022', '2022-2023'];
 

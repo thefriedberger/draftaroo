@@ -31,10 +31,11 @@ export interface DraftOrderProps {
    league?: League | any;
    players: Player[];
    teamID: string;
+   updateFeaturedPlayer: (player: Player | any, playerID?: number) => void;
 }
 
 export interface WatchlistProps {
-   updateFeaturedPlayer: (player: Player | any) => void;
+   updateFeaturedPlayer: (player: Player | any, playerID?: number) => void;
    draftedIDs: number[];
    leagueID: string;
 }
@@ -48,7 +49,7 @@ export interface FeaturedPlayerProps {
 }
 
 export interface PlayerListProps {
-   updateFeaturedPlayer: (player: Player | any) => void;
+   updateFeaturedPlayer: (player: Player | any, playerId?: number) => void;
    leagueID: string;
    draftedIDs: number[];
    players: Player[];
@@ -59,6 +60,7 @@ export interface DraftTileProps {
    currentPick: number;
    playerSelected: any;
    isYourTurn: boolean;
+   updateFeaturedPlayer: (player: Player | any, playerID?: number) => void;
 }
 
 export interface ChatProps {
@@ -141,7 +143,7 @@ export interface TeamViewProps {
    players: Player[];
    doReset?: boolean;
    setDoReset?: (reset: boolean) => void;
-   updateFeaturedPlayer: (player: Player | any) => void;
+   updateFeaturedPlayer: (player: Player | any, playerID?: number) => void;
 }
 
 export interface MyTeamProps extends TeamViewProps {
