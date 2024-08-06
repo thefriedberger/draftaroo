@@ -1,5 +1,5 @@
-import { PageContextProvider } from '@/components/context/page-context';
-import Nav from '@/components/nav';
+import { PageContextProvider } from '@/components/ui/context/page-context';
+import Nav from '@/components/ui/nav';
 import { Analytics } from '@vercel/analytics/react';
 import ContextWrapper from './context-wrapper';
 import './globals.css';

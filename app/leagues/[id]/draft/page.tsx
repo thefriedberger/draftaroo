@@ -1,6 +1,6 @@
 'use client';
 
-import Board from '@/components/board';
+import Board from '@/components/ui/board';
 import { BoardProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';

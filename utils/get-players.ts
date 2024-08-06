@@ -7,9 +7,13 @@ import { cookies } from 'next/headers';
 const getPlayers = async (leagueID: string) => {
    const playersArray: Player[] = [];
    const supabase = createServerComponentClient<Database>({ cookies });
+   // const data = await fetch(
+   //    'https://mfiegmjwkqpipahwvcbz.supabase.co/storage/v1/object/sign/players/players_updated.json?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJwbGF5ZXJzL3BsYXllcnNfdXBkYXRlZC5qc29uIiwiaWF0IjoxNzIyODc2NjczLCJleHAiOjE3NTQ0MTI2NzN9.Kd2ePms6fptXkFpL8vGqds_NsAEql0HSElcAxnW1hBw&t=2024-08-05T16%3A51%3A12.434Z',
+   //    { cache: 'force-cache' }
+   // );
+   // const players = await data.json();
    const data = await fetch(
-      'https://mfiegmjwkqpipahwvcbz.supabase.co/storage/v1/object/sign/players/players_updated.json?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJwbGF5ZXJzL3BsYXllcnNfdXBkYXRlZC5qc29uIiwiaWF0IjoxNjk2MDg4NDQ5LCJleHAiOjE3Mjc2MjQ0NDl9.ZI6_6E93UPNhwv67XfFyj8SOaqirm8FwOD-rFnun6jI&t=2023-09-30T15%3A40%3A49.042Z',
-      { cache: 'force-cache' }
+      'https://mfiegmjwkqpipahwvcbz.supabase.co/storage/v1/object/sign/players/players-updated-2.json?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJwbGF5ZXJzL3BsYXllcnMtdXBkYXRlZC0yLmpzb24iLCJpYXQiOjE3MjI4ODM0MjUsImV4cCI6MTc1NDQxOTQyNX0.K2Xt9D5JB2buQGheR-DY4FdbHottVR9kcyvIDQQ_Nbg&t=2024-08-05T18%3A43%3A44.538Z'
    );
    const players = await data.json();
    const league = await supabase

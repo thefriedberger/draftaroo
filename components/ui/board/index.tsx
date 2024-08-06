@@ -28,8 +28,7 @@ import PlayerList, { sortPlayers } from '../player-list';
 import Tabs from '../tabs';
 import TabsNavigation from '../tabs-navigation';
 import TeamsList from '../teams-list';
-import Timer from '../timer';
-import Watchlist from '../watchlist';
+import { default as Timer, default as Watchlist } from '../watchlist';
 
 const Board = (props: BoardProps) => {
    const supabase = createClientComponentClient<Database>();

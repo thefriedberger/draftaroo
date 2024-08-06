@@ -1,4 +1,4 @@
-import Tabs from '@/components/tabs';
+import Tabs from '@/components/ui/tabs';
 import { Tab, TabProps } from '@/lib/types';
 import DraftPicksTab from '../tabs/draft-picks';
 import KeepersTab from '../tabs/keepers';

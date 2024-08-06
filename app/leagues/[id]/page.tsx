@@ -1,8 +1,14 @@
 'use client';
-import { PageContext } from '@/components/context/page-context';
-import AuthModal from '@/components/modals/auth';
-import Tabs from '@/components/tabs';
-import { LeagueTeamViewProps, Tab, TabProps } from '@/lib/types';
+import { PageContext } from '@/components/ui/context/page-context';
+import { Pick } from '@/components/ui/draft-order';
+import AuthModal from '@/components/ui/modals/auth';
+import Tabs from '@/components/ui/tabs';
+import {
+   KeeperViewProps,
+   LeagueTeamViewProps,
+   Tab,
+   TabProps,
+} from '@/lib/types';
 import addTeam from '@/utils/add-team';
 import {
    User,
@@ -10,6 +16,7 @@ import {
 } from '@supabase/auth-helpers-nextjs';
 import Link from 'next/link';
 import { useContext, useEffect, useState } from 'react';
+import KeepersTab from '../tabs/keepers';
 import OwnerView from './owner-view';
 import TeamView from './team-view';
 
@@ -20,6 +27,7 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
    const [owner, setOwner] = useState<User>();
    const [hasTeam, setHasTeam] = useState<Boolean>(false);
    const [teamViewTeam, setTeamViewTeam] = useState<Team>();
+   const [draft, setDraft] = useState<Pick[]>([]);
 
    const { session, user, userTeams, teams, leagues, fetchTeams } =
       useContext(PageContext);
@@ -67,10 +75,17 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
       leagueID: id,
    };
 
+   const keepersProps: KeeperViewProps = {
+      league: league,
+   };
    const tabs: Tab[] = [
       {
          tabButton: 'Your Team',
          tabPane: <TeamView {...leagueTeamViewProps} />,
+      },
+      {
+         tabButton: 'Keepers',
+         tabPane: <KeepersTab {...keepersProps} />,
       },
       {
          tabButton: 'League Management',
@@ -86,6 +101,28 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
    useEffect(() => {
       if (userTeams === undefined) fetchTeams?.();
    }, [session, user, userTeams]);
+
+   const getDraft = async (setDraftPicks?: boolean) => {
+      const { data } = await supabase
+         .from('draft')
+         .select('*')
+         .match({ leauge_id: league?.league_rules });
+
+      if (setDraftPicks) {
+         getDraftSelections();
+      }
+   };
+   const getDraftSelections = async () => {
+      const { data } = await supabase
+         .from('draft_selections')
+         .select('*')
+         .match({ draft_id: league?.league_rules });
+   };
+   useEffect(() => {
+      if (league) {
+         getDraft(true);
+      }
+   });
 
    useEffect(() => {
       setTeamViewTeam(

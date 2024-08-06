@@ -56,7 +56,7 @@ const Team = ({
          players.forEach((player: Player) => {
             if (!playersArray.includes(player)) {
                const { primary_position } = player;
-               if (primary_position === 'Center' && tempCenters.length < 3) {
+               if (primary_position === 'C' && tempCenters.length < 3) {
                   if (!centers.includes(player)) {
                      tempCenters.push(player);
                      setCenters((prev) => {
@@ -64,7 +64,7 @@ const Team = ({
                      });
                   }
                } else if (
-                  primary_position === 'Left Wing' &&
+                  primary_position === 'L' &&
                   tempLeftWings.length < 3
                ) {
                   if (!leftWings.includes(player)) {
@@ -74,7 +74,7 @@ const Team = ({
                      });
                   }
                } else if (
-                  primary_position === 'Right Wing' &&
+                  primary_position === 'R' &&
                   tempRightWings.length < 3
                ) {
                   if (!rightWings.includes(player)) {
@@ -84,7 +84,7 @@ const Team = ({
                      });
                   }
                } else if (
-                  primary_position === 'Defenseman' &&
+                  primary_position === 'D' &&
                   tempDefenseman.length < 5
                ) {
                   if (!defenseman.includes(player)) {
@@ -93,10 +93,7 @@ const Team = ({
                         return [...prev, player];
                      });
                   }
-               } else if (
-                  primary_position === 'Goalie' &&
-                  tempGoalies.length < 2
-               ) {
+               } else if (primary_position === 'G' && tempGoalies.length < 2) {
                   if (!goalies.includes(player)) {
                      tempGoalies.push(player);
                      setGoalies((prev) => {
@@ -104,7 +101,7 @@ const Team = ({
                      });
                   }
                } else {
-                  if (primary_position === 'Goalie') {
+                  if (primary_position === 'G') {
                      !goaliesBench.includes(player) &&
                         setGoaliesBench((prev) => {
                            return [...prev, player];

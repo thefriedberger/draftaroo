@@ -62,15 +62,16 @@ export const teams = [
    'Washington Capitals',
    'Winnipeg Jets',
 ];
-export const positions = [
-   'Skaters',
-   'Goalie',
-   'Forwards',
-   'Center',
-   'Left Wing',
-   'Right Wing',
-   'Defenseman',
-];
+export const positions = ['Skaters', 'G', 'Forwards', 'C', 'L', 'R', 'D'];
+export const positionMap = {
+   Skaters: 'Skaters',
+   G: 'Goalies',
+   Forwards: 'Forwards',
+   C: 'Center',
+   L: 'Left Wing',
+   R: 'Right Wing',
+   D: 'Defender',
+};
 export const getStatFromLastSeason = (
    player_stats: any,
    stat: string,
@@ -128,7 +129,7 @@ const PlayerList = ({
 
    const { leagues } = useContext(PageContext);
 
-   const seasons = ['Season', '2021-2022', '2022-2023'];
+   const seasons = ['Season', '2022-2023', '2023-2024'];
 
    useEffect(() => {
       if (leagues)
@@ -142,13 +143,11 @@ const PlayerList = ({
    const filterPlayers = () => {
       const playersByPostion = players.filter((player: Player) => {
          if (positionFilter === 'Skaters')
-            return player.primary_position !== 'Goalie';
+            return player.primary_position !== 'G';
          if (positionFilter === 'Forwards')
             if (player.primary_position)
-               return ['Center', 'Left Wing', 'Right Wing'].includes(
-                  player.primary_position
-               );
-         if (positionFilter != '') {
+               return ['C', 'L', 'R'].includes(player.primary_position);
+         if (positionFilter !== '') {
             return player.primary_position === positionFilter;
          } else {
             return true;
@@ -156,7 +155,7 @@ const PlayerList = ({
       });
 
       const playersByTeam = playersByPostion.filter((player: Player) => {
-         if (teamFilter != 'Team') {
+         if (teamFilter !== 'Team') {
             return player.current_team === teamFilter;
          } else {
             return true;
@@ -185,7 +184,11 @@ const PlayerList = ({
             <div className="flex flex-col items-center h-full max-h-full w-full text-black dark:text-white">
                <div className="flex flex-col sticky top-0 z-10 bg-gray-primary lg:z-0 lg:bg-transparent lg:static lg:flex-row w-full lg:w-auto justify-start self-start items-stretch lg:items-end">
                   <div className="grid grid-cols-3">
-                     <Filter values={positions} filterFun={setPositionFilter} />
+                     <Filter
+                        values={positions}
+                        labels={positionMap}
+                        filterFun={setPositionFilter}
+                     />
                      <Filter values={teams} filterFun={setTeamFilter} />
                      <div className="flex flex-col">
                         <select
@@ -196,8 +199,8 @@ const PlayerList = ({
                               setSeason(Number(target?.value));
                            }}
                         >
-                           <option value="0">2021-2022</option>
-                           <option value="1">2022-2023</option>
+                           <option value="0">2022-2023</option>
+                           <option value="1">2023-2024</option>
                         </select>
                      </div>
                   </div>
@@ -238,7 +241,7 @@ const PlayerList = ({
                            >
                               GP
                            </th>
-                           {positionFilter !== 'Goalie' ? (
+                           {positionFilter !== 'G' ? (
                               <>
                                  <th
                                     className="my-2 cursor-pointer"
@@ -381,7 +384,7 @@ const PlayerList = ({
    );
 };
 
-const Filter = ({ values, filterFun }: any) => {
+const Filter = ({ values, labels, filterFun }: any) => {
    return (
       <select
          onChange={(e) => filterFun(e.target.value)}
@@ -390,7 +393,7 @@ const Filter = ({ values, filterFun }: any) => {
          {values.map((x: any) => {
             return (
                <option key={x} value={x}>
-                  {x}
+                  {labels?.[x] ?? x}
                </option>
             );
          })}

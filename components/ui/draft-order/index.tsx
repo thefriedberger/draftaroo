@@ -80,9 +80,9 @@ const DraftOrder = ({
          picks.forEach((pick: Pick) => {
             if (pick.draftPosition === draftedPlayer.pick) {
                pick.playerID = draftedPlayer.player_id;
-               pick.playerName = `${foundPlayer?.first_name.charAt(0)}. ${
-                  foundPlayer?.last_name
-               }`;
+               pick.playerName = `${
+                  foundPlayer ? foundPlayer?.first_name.charAt(0) : 'No'
+               }. ${foundPlayer ? foundPlayer?.last_name : 'Player'}`;
                pick.isKeeper = draftedPlayer.is_keeper;
             }
          });

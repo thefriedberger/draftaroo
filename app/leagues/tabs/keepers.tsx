@@ -139,7 +139,7 @@ const KeeperSelector = ({
    handleSetKeeper: (playerID: number, teamID: string, pick: number) => void;
 }) => {
    const [keeper, setKeeper] = useState<number>(0);
-   const [pickUsed, setPickUsed] = useState<number>(picks[0]);
+   const [pickUsed, setPickUsed] = useState<number>(picks && picks[0]);
    const { id } = team;
    return (
       <>
@@ -173,7 +173,7 @@ const KeeperSelector = ({
                         setPickUsed(e.target.value);
                      }}
                   >
-                     {picks.map((pick: number) => {
+                     {picks?.map((pick: number) => {
                         return (
                            <option key={pick} value={pick}>
                               {pick}

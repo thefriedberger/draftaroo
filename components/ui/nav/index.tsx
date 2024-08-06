@@ -1,6 +1,6 @@
 'use client';
 
-import LogoutButton from '@/components/logout-button';
+import LogoutButton from '@/components/ui/logout-button';
 import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
 import { useContext } from 'react';

@@ -122,7 +122,7 @@ const PlayerComponent = ({
                      {playerStats?.[season]?.stats?.games || 0}
                   </span>
                </td>
-               {player.primary_position !== 'Goalie' ? (
+               {player.primary_position !== 'G' ? (
                   <>
                      <td className="py-2 px-1">
                         <span className="cursor-pointer">

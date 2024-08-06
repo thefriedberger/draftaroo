@@ -1,5 +1,5 @@
-import { Pick } from '@/components/draft-order';
-import { formStatus, formType } from '@/components/modals/auth';
+import { Pick } from '@/components/ui/draft-order';
+import { formStatus, formType } from '@/components/ui/modals/auth';
 import { User } from '@supabase/supabase-js';
 import { AnchorHTMLAttributes, ReactNode } from 'react';
 
@@ -138,6 +138,10 @@ export interface BoardProps {
 export interface LeagueTeamViewProps {
    team: Team | undefined;
    leagueID: string;
+}
+
+export interface KeeperViewProps {
+   league: League | any;
 }
 export interface TeamViewProps {
    players: Player[];
