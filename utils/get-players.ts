@@ -7,15 +7,7 @@ import { cookies } from 'next/headers';
 const getPlayers = async (leagueID: string) => {
    const playersArray: Player[] = [];
    const supabase = createServerComponentClient<Database>({ cookies });
-   // const data = await fetch(
-   //    'https://mfiegmjwkqpipahwvcbz.supabase.co/storage/v1/object/sign/players/players_updated.json?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJwbGF5ZXJzL3BsYXllcnNfdXBkYXRlZC5qc29uIiwiaWF0IjoxNzIyODc2NjczLCJleHAiOjE3NTQ0MTI2NzN9.Kd2ePms6fptXkFpL8vGqds_NsAEql0HSElcAxnW1hBw&t=2024-08-05T16%3A51%3A12.434Z',
-   //    { cache: 'force-cache' }
-   // );
-   // const players = await data.json();
-   const data = await fetch(
-      'https://mfiegmjwkqpipahwvcbz.supabase.co/storage/v1/object/sign/players/players-updated-2.json?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJwbGF5ZXJzL3BsYXllcnMtdXBkYXRlZC0yLmpzb24iLCJpYXQiOjE3MjI4ODM0MjUsImV4cCI6MTc1NDQxOTQyNX0.K2Xt9D5JB2buQGheR-DY4FdbHottVR9kcyvIDQQ_Nbg&t=2024-08-05T18%3A43%3A44.538Z'
-   );
-   const players = await data.json();
+   let { data: players, error } = await supabase.from('players').select('*');
    const league = await supabase
       .from('leagues')
       .select('*')
@@ -25,7 +17,7 @@ const getPlayers = async (leagueID: string) => {
       .select('*')
       .eq('id', String(league?.data?.[0]?.league_scoring) || '');
    const leagueScoring = league_scoring?.data?.[0] as LeagueScoring | any;
-   if (players.length > 0 && leagueScoring !== undefined) {
+   if (players && players.length > 0 && leagueScoring !== undefined) {
       players.forEach((player: Player) => {
          const playerStats = player?.stats as PlayerStats[];
          for (const season in playerStats) {

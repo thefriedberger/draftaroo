@@ -1,70 +1,223 @@
-const fs = require('fs');
-
-const fetchPlayers = async () => {
-   const teamsReq = await fetch('https://statsapi.web.nhl.com/api/v1/teams');
-   const teamsData = await teamsReq.json();
-   const teamIds = [];
-   for (const teamData of teamsData.teams) {
-      teamIds.push(teamData.id);
-   }
-   const playerIDs = [];
-   for (const teamId of teamIds) {
-      let response = await fetch(
-         `https://statsapi.web.nhl.com/api/v1/teams/${teamId}?expand=team.roster`
-      );
-      const team = await response.json();
-
-      const roster = team.teams[0]?.roster?.roster;
-
-      if (roster)
-         roster.forEach((player) => {
-            playerIDs.push(player.person.id);
-         });
-   }
-
-   const players = [];
-   for (const playerID of playerIDs) {
-      const player = await fetch(
-         `https://statsapi.web.nhl.com/api/v1/people/${playerID}`
-      );
-      const season1 = await fetch(
-         `https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=statsSingleSeason&season=20222023`
-      );
-      const season2 = await fetch(
-         `https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=statsSingleSeason&season=20212022`
-      );
-      const season1Stats = await season1.json();
-      const season2Stats = await season2.json();
-      const seasonYear1 = season1Stats?.stats?.[0]?.splits?.[0]?.season;
-      const seasonYear2 = season2Stats?.stats?.[0]?.splits?.[0]?.season;
-      const stats1 = season1Stats?.stats?.[0]?.splits?.[0]?.stat;
-      const stats2 = season2Stats?.stats?.[0]?.splits?.[0]?.stat;
-
-      const playerInfo = await player.json();
-
-      const { id, firstName, lastName, currentTeam } = playerInfo.people[0];
-
-      const { name } = playerInfo.people[0].primaryPosition;
-
-      players.push({
-         id: id,
-         firstName: firstName,
-         lastName: lastName,
-         currentTeam: currentTeam.name,
-         primaryPosition: name,
-         stats: [
-            {
-               season: seasonYear2,
-               stats: stats2,
-            },
-            {
-               season: seasonYear1,
-               stats: stats1,
-            },
-         ],
-      });
-   }
-   fs.writeFileSync('players.json', JSON.stringify(players));
+const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config();
+const supabaseUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}`;
+const supabaseKey = `${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`;
+const supabase = createClient(supabaseUrl, supabaseKey);
+const teamTriCodes = [
+   'ANA',
+   'CBJ',
+   'SEA',
+   'UTA',
+   'DET',
+   'WPG',
+   'NJD',
+   'NYI',
+   'NYR',
+   'SJS',
+   'BOS',
+   'FLA',
+   'TBL',
+   'CHI',
+   'PIT',
+   'PHI',
+   'CAR',
+   'DAL',
+   'LAK',
+   'VAN',
+   'TOR',
+   'OTT',
+   'BUF',
+   'STL',
+   'MIN',
+   'EDM',
+   'VGK',
+   'NSH',
+   'MTL',
+   'COL',
+   'WSH',
+   'CGY',
+];
+const teamMap = {
+   ANA: 'Anaheim Ducks',
+   UTA: 'Utah Hockey Club',
+   BUF: 'Buffalo Sabres',
+   BOS: 'Boston Bruins',
+   CGY: 'Calgary Flames',
+   CAR: 'Carolina Hurricanes',
+   CHI: 'Chicago Blackhawks',
+   CBJ: 'Columbus Blue Jackets',
+   COL: 'Colorado Avalanche',
+   DAL: 'Dallas Stars',
+   DET: 'Detroit Red Wings',
+   EDM: 'Edmonton Oilers',
+   FLA: 'Florida Panthers',
+   LAK: 'Los Angeles Kings',
+   MIN: 'Minnesota Wild',
+   MTL: 'Montréal Canadiens',
+   NJD: 'New Jersey Devils',
+   NSH: 'Nashville Predators',
+   NYI: 'New York Islanders',
+   NYR: 'New York Rangers',
+   OTT: 'Ottawa Senators',
+   PHI: 'Philadelphia Flyers',
+   PIT: 'Pittsburgh Penguins',
+   SEA: 'Seattle Kraken',
+   SJS: 'San Jose Sharks',
+   STL: 'St. Louis Blues',
+   TBL: 'Tampa Bay Lightning',
+   TOR: 'Toronto Maple Leafs',
+   VAN: 'Vancouver Canucks',
+   VGK: 'Vegas Golden Knights',
+   WPG: 'Winnipeg Jets',
+   WSH: 'Washington Capitals',
 };
 
-fetchPlayers();
+const getPlayers = async () => {
+   const headers = {
+      mode: 'no-cors',
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json',
+   };
+
+   const players = [];
+
+   const populatePlayer = (player) => {
+      return {
+         id: player.id,
+         headshot: player.headshot,
+         first_name: player.firstName.default,
+         last_name: player.lastName.default,
+         sweater_number: player.sweaterNumber,
+         primary_position: player.positionCode,
+         current_team: player.currentTeam,
+         stats: [],
+      };
+   };
+
+   const extractPlayers = (roster, team) => {
+      const positions = ['forwards', 'defensemen', 'goalies'];
+      for (const position of positions) {
+         roster[position].forEach((player) => {
+            player.currentTeam = teamMap?.[team] ?? 'FA';
+            players.length
+               ? players.filter(
+                    (existingPlayer) => existingPlayer.id === player.id
+                 ).length < 1 && players.push(populatePlayer(player))
+               : players.push(populatePlayer(player));
+         });
+      }
+      players.forEach((player) => (player.stats = []));
+   };
+
+   const seasonCodes = ['20222023', '20232024'];
+   for (const team of teamTriCodes) {
+      const rosterResponse = await fetch(
+         `https://api-web.nhle.com/v1/roster/${team}/20242025`
+      );
+      const roster = await rosterResponse.json();
+      extractPlayers(roster, team);
+
+      const prospectsResponse = await fetch(
+         `https://api-web.nhle.com/v1/prospects/${team}`
+      );
+      const prospects = await prospectsResponse.json();
+      extractPlayers(prospects, team);
+   }
+   const extractStats = async (realtimePlayers, summaryPlayers, season) => {
+      realtimePlayers.forEach((realtimeStat) => {
+         let tempPlayer = {};
+         summaryPlayers.forEach((summaryStat) => {
+            if (realtimeStat.playerId === summaryStat.playerId) {
+               tempPlayer = {
+                  id: realtimeStat.playerId,
+                  stats: {
+                     season,
+                     stats: {
+                        hits: realtimeStat.hits,
+                        blocked: realtimeStat.blockedShots,
+                        timeOnIcePerGame: realtimeStat.timeOnIcePerGame,
+                        assists: summaryStat.assists,
+                        goals: summaryStat.goals,
+                        pim: summaryStat.penaltyMinutes,
+                        powerPlayGoals: summaryStat.ppGoals,
+                        powerPlayPoints: summaryStat.ppPoints,
+                        shortHandedGoals: summaryStat.shGoals,
+                        shortHandedPoints: summaryStat.shPoints,
+                        shots: summaryStat.shots,
+                        games: summaryStat.gamesPlayed,
+                        plusMinus: summaryStat.plusMinus,
+                     },
+                  },
+               };
+            }
+         });
+         players.forEach((player) => {
+            if (player.id === tempPlayer.id) {
+               player.stats.push(tempPlayer.stats);
+            }
+         });
+      });
+   };
+   const extractGoalieStats = (allGoalies, season) => {
+      allGoalies.forEach((goalie) => {
+         players.forEach((player) => {
+            if (goalie.playerId === player.id) {
+               player.stats.push({
+                  season,
+                  stats: {
+                     timeOnIce: goalie.timeOnIce,
+                     ot: goalie.otLosses,
+                     shutouts: goalie.shutouts,
+                     wins: goalie.wins,
+                     losses: goalie.losses,
+                     saves: goalie.saves,
+                     savePercentage: goalie.savePct,
+                     goalAgainstAverage: goalie.goalsAgainstAverage,
+                     games: goalie.gamesPlayed,
+                     gamesStarted: goalie.gamesStarted,
+                     shotsAgainst: goalie.shotsAgainst,
+                     goalsAgainst: goalie.goalsAgainst,
+                  },
+               });
+            }
+         });
+      });
+   };
+
+   for (const season of seasonCodes) {
+      const skatersRealtimeResponse = await fetch(
+         `https://api.nhle.com/stats/rest/en/skater/realtime?limit=-1&cayenneExp=seasonId=${season}%20and%20gameTypeId=2`,
+         { method: 'GET', headers: headers }
+      );
+      const realtimePlayers = await skatersRealtimeResponse.json();
+
+      const skatersSummaryResponse = await fetch(
+         `https://api.nhle.com/stats/rest/en/skater/summary?limit=-1&cayenneExp=seasonId=${season}%20and%20gameTypeId=2`,
+         { method: 'GET', headers: headers }
+      );
+      const summaryPlayers = await skatersSummaryResponse.json();
+      extractStats(realtimePlayers.data, summaryPlayers.data, season);
+
+      const goaliesResponse = await fetch(
+         `https://api.nhle.com/stats/rest/en/goalie/summary?limit=-1&cayenneExp=seasonId=${season}%20and%20gameTypeId=2`,
+         { method: 'GET', headers: headers }
+      );
+
+      const goalies = await goaliesResponse.json();
+      extractGoalieStats(goalies.data, season);
+   }
+   const deleteAllRows = async () => {
+      const { error } = await supabase.from('players').delete().neq('id', 0); // deletes all rows
+   };
+   const insertPlayerRows = async () => {
+      const { data, error } = await supabase
+         .from('players')
+         .insert(players)
+         .select();
+   };
+
+   deleteAllRows();
+   insertPlayerRows();
+};
+
+getPlayers();
