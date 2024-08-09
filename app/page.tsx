@@ -5,7 +5,8 @@ import { PageContext } from '@/components/ui/context/page-context';
 import { useContext } from 'react';
 
 export default function Home() {
-   const { user, userTeams, leagues } = useContext(PageContext);
+   // const supabase = createServerComponentClient<Database>({cookies});
+   const { user, userTeams, leagues, drafts } = useContext(PageContext);
    return (
       <div className="pt-5 dark:text-white text-center">
          <h1 className="text-3xl">Welcome to Draftaroo!</h1>
@@ -37,32 +38,41 @@ export default function Home() {
             {userTeams &&
                leagues &&
                userTeams?.map((team: Team, index: number) => {
-                  leagues?.filter((league: League) => {
-                     {
-                        if (league.league_id)
-                           return league.league_id === team.league_id;
-                     }
+                  leagues?.filter(
+                     (league: League) =>
+                        league.league_id && league.league_id === team.league_id
+                  );
+                  const league: League = leagues.filter(
+                     (league: League) => league.league_id === team.league_id
+                  )[0];
+                  const leagueDrafts = drafts.filter(
+                     (draft: Draft) => draft.league_id === team.league_id
+                  );
+                  const draftLinks = leagueDrafts.map((draft: Draft) => {
+                     const draftLink = draft.is_completed
+                        ? {
+                             href: `/leagues/${team.league_id}/draft-results/${draft.id}`,
+                             text: 'View draft results',
+                          }
+                        : {
+                             href: `/leagues/${team.league_id}/draft/${draft.id}`,
+                             text: 'View draft',
+                          };
+                     return draftLink;
                   });
-
-                  const league: League = leagues.filter((league: League) => {
-                     return league.league_id === team.league_id;
-                  })[0];
-
+                  const leagueLinks = [
+                     {
+                        href: `/leagues/${team.league_id}`,
+                        text: 'View league',
+                     },
+                     ...draftLinks,
+                  ];
                   return (
                      <Callout
                         key={index}
                         {...{
                            calloutText: `${team.team_name} - ${league?.league_name}`,
-                           links: [
-                              {
-                                 href: `/leagues/${team.league_id}`,
-                                 text: 'View league',
-                              },
-                              {
-                                 href: `/leagues/${team.league_id}/draft`,
-                                 text: 'View draft',
-                              },
-                           ],
+                           links: leagueLinks,
                         }}
                      />
                   );

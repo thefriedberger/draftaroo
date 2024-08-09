@@ -84,7 +84,7 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
          tabPane: <TeamView {...leagueTeamViewProps} />,
       },
       {
-         tabButton: 'Keepers',
+         tabButton: 'Set Keepers',
          tabPane: <KeepersTab {...keepersProps} />,
       },
       {
@@ -106,7 +106,7 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
       const { data } = await supabase
          .from('draft')
          .select('*')
-         .match({ leauge_id: league?.league_rules });
+         .match({ league_id: league?.league_rules });
 
       if (setDraftPicks) {
          getDraftSelections();

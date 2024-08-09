@@ -4,7 +4,7 @@ import { FeaturedPlayerProps } from '@/lib/types';
 import classNames from 'classnames';
 import { Fragment, useContext, useState } from 'react';
 import { PageContext } from '../context/page-context';
-import { teamAbreviations } from '../player';
+import { teamAbbreviations } from '../player';
 import WatchlistStar, { WatchlistStarProps } from '../watchlist/watchlist-star';
 
 const FeaturedPlayer = ({
@@ -120,7 +120,7 @@ const FeaturedPlayer = ({
                      {featuredPlayer.first_name} {featuredPlayer.last_name}
                      &nbsp;&nbsp;&nbsp;
                      <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap">
-                        {teamAbreviations?.[featuredPlayer.current_team] ||
+                        {teamAbbreviations?.[featuredPlayer.current_team] ||
                            'FA'}{' '}
                         -{' '}
                         {featuredPlayer.primary_position &&
@@ -183,7 +183,7 @@ const FeaturedPlayer = ({
                      {featuredPlayer.first_name} {featuredPlayer.last_name}
                      &nbsp;&nbsp;&nbsp;
                      <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap">
-                        {teamAbreviations?.[featuredPlayer.current_team] ||
+                        {teamAbbreviations?.[featuredPlayer.current_team] ||
                            'FA'}{' '}
                         -{' '}
                         {featuredPlayer.primary_position &&

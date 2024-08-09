@@ -69,8 +69,8 @@ const WatchlistStar = (props: WatchlistStarProps) => {
                )}
             </button>
          ) : (
-            <div
-               className="w-[30px]"
+            <button
+               className="flex align-center justify-center w-[24px] appearance-none border-0 outline-none"
                onClick={() => handleUpdateWatchlist(player)}
             >
                {isWatched ? (
@@ -104,7 +104,7 @@ const WatchlistStar = (props: WatchlistStarProps) => {
                      />
                   </svg>
                )}
-            </div>
+            </button>
          )}
       </>
    );

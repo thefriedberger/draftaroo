@@ -17,6 +17,8 @@ export type PageContextType = {
    players?: Player[];
    updatePlayers?: (newPlayers: Player[]) => void;
    leagues?: League | any;
+   drafts?: Draft | any;
+   updateDrafts?: (newDrafts: Draft | any) => void;
    updateLeagues?: (newLeagues: League | any) => void;
    profile?: Profile | any;
    udpateProfile?: (newProfile: Profile | any) => void;
@@ -48,6 +50,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
    const [teams, setTeams] = React.useState<Team | any>();
    const [players, setPlayers] = React.useState<Player[]>([]);
    const [leagues, setLeagues] = React.useState<League | any>();
+   const [drafts, setDrafts] = React.useState<Draft | any>();
    const [profile, setProfile] = React.useState<Profile | any>();
    const [watchlist, setWatchlist] = React.useState<number[]>([]);
    const [shouldUpdateWatchlist, setShouldUpdateWatchlist] =
@@ -78,6 +81,9 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
    };
    const updateLeagues = (newLeagues: League) => {
       setLeagues(newLeagues);
+   };
+   const updateDrafts = (newDrafts: Draft) => {
+      setDrafts(newDrafts);
    };
    const udpateProfile = (newProfile: Profile) => {
       setProfile(newProfile);
@@ -180,6 +186,12 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
       }
    };
 
+   const fetchDrafts = async () => {
+      const supabase = createClientComponentClient<Database>();
+      const { data: draft, error } = await supabase.from('draft').select('*');
+      if (draft) setDrafts(draft);
+   };
+
    const userSignout = () => {
       setSession(null);
       setUser(null);
@@ -190,6 +202,9 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
       setWatchlist([]);
       router.refresh();
    };
+   useEffect(() => {
+      fetchDrafts();
+   }, []);
    useEffect(() => {
       if (user?.id && user !== undefined && shouldFetchTeams) fetchTeams();
       if (user?.id && user !== undefined && shouldFetchProfile) fetchProfile();
@@ -247,6 +262,8 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
             updatePlayers,
             leagues,
             updateLeagues,
+            drafts,
+            updateDrafts,
             profile,
             udpateProfile,
             userSignout,

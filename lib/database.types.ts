@@ -16,6 +16,7 @@ export interface Database {
                id: string;
                is_active: boolean;
                league_id: string;
+               is_completed: boolean;
             };
             Insert: {
                created_at?: string | null;
@@ -23,6 +24,7 @@ export interface Database {
                id?: string;
                is_active?: boolean;
                league_id: string;
+               is_completed?: boolean;
             };
             Update: {
                created_at?: string | null;
@@ -30,6 +32,7 @@ export interface Database {
                id?: string;
                is_active?: boolean;
                league_id?: string;
+               is_completed?: boolean;
             };
             Relationships: [
                {

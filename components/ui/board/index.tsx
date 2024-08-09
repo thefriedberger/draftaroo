@@ -28,7 +28,8 @@ import PlayerList, { sortPlayers } from '../player-list';
 import Tabs from '../tabs';
 import TabsNavigation from '../tabs-navigation';
 import TeamsList from '../teams-list';
-import { default as Timer, default as Watchlist } from '../watchlist';
+import Timer from '../timer';
+import Watchlist from '../watchlist';
 
 const Board = (props: BoardProps) => {
    const supabase = createClientComponentClient<Database>();
@@ -51,6 +52,7 @@ const Board = (props: BoardProps) => {
    const [shouldFetchDraftedPlayers, setShouldFetchDraftedPlayers] =
       useState<boolean>(true);
    const [isActive, setIsActive] = useState<boolean>(draft?.is_active);
+   const [isCompleted, setIsCompleted] = useState<boolean>(draft?.is_completed);
    const [draftedIDs, setDraftedIDs] = useState<number[]>([]);
    const [players, setPlayers] = useState<Player[]>([]);
    const [shouldFilterPlayers, setShouldFilterPlayers] =
@@ -76,7 +78,7 @@ const Board = (props: BoardProps) => {
       await supabase
          .from('draft')
          .update({ is_active: true })
-         .match({ league_id: leagueID });
+         .match({ league_id: leagueID, id: draft.id });
    };
 
    const handlePick = async () => {
@@ -86,7 +88,7 @@ const Board = (props: BoardProps) => {
       await supabase
          .from('draft')
          .update({ current_pick: currentPick + 1 })
-         .match({ league_id: leagueID });
+         .match({ league_id: leagueID, id: draft.id });
 
       setDoReset(true);
    };
@@ -221,7 +223,7 @@ const Board = (props: BoardProps) => {
          const { data } = await supabase
             .from('draft')
             .select('current_pick')
-            .match({ league_id: leagueID });
+            .match({ league_id: leagueID, id: draft.id });
          data && setCurrentPick(data?.[0].current_pick);
       };
       getCurrentPick();
@@ -271,7 +273,7 @@ const Board = (props: BoardProps) => {
                event: 'UPDATE',
                schema: 'public',
                table: 'draft',
-               filter: `league_id=eq.${leagueID}`,
+               filter: `league_id=eq.${leagueID}&draft_id=eq.${draft.id}`,
             },
             (payload) => {
                setCurrentPick(payload.new.current_pick);
@@ -400,6 +402,7 @@ const Board = (props: BoardProps) => {
       yourTurn: isYourTurn,
       turnOrder: turnOrder,
       userTeam: team,
+      isCompleted: isCompleted,
    };
 
    const draftOrderProps: DraftOrderProps = {

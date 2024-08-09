@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from 'react';
 import { PageContext } from '../context/page-context';
 import WatchlistStar from '../watchlist/watchlist-star';
 
-export const teamAbreviations: string | any = {
+export const teamAbbreviations: string | any = {
    'Anaheim Ducks': 'ANA',
    'Arizona Coyotes': 'ARI',
    'Buffalo Sabres': 'BUF',
@@ -99,7 +99,7 @@ const PlayerComponent = ({
                      {player.first_name} {player.last_name}
                      &nbsp;&nbsp;&nbsp;
                      <span className="dark:text-gray-300 text-[11px] leading-3 whitespace-nowrap">
-                        {teamAbreviations?.[player.current_team] || 'FA'} -{' '}
+                        {teamAbbreviations?.[player.current_team] || 'FA'} -{' '}
                         {player.primary_position &&
                            player.primary_position
                               .split(' ')

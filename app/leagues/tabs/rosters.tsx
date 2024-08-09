@@ -7,7 +7,7 @@ const RostersTab = ({ league }: { league: League }) => {
    const [draftPicks, setDraftPicks] = useState<any[] | any>({});
    const [draft, setDraft] = useState<Draft | any>(null);
    const [players, setPlayers] = useState<Player[]>([]);
-   const [draftedIDs, setDraftedIDs] = useState<number[]>([]);
+   const [rosteredPlayers, setRosteredPlayers] = useState<number[]>([]);
    const [draftablePlayers, setDraftablePlayers] = useState<Player[]>([]);
    const [numberOfTeams, setNumberOfTeams] = useState<number>(0);
    const [shouldFilterPlayers, setShouldFilterPlayers] =
@@ -43,7 +43,10 @@ const RostersTab = ({ league }: { league: League }) => {
          const { data } = await supabase
             .from('draft')
             .select('*')
-            .match({ league_id: league.league_id });
+            .match({
+               league_id: league.league_id,
+               draft_year: new Date().getFullYear() - 1,
+            });
          if (data?.[0]) setDraft(data?.[0]);
       }
    };
@@ -51,34 +54,40 @@ const RostersTab = ({ league }: { league: League }) => {
    const filterDraftedPlayers = () => {
       setPlayers(
          players.filter((player: Player) => {
-            return !draftedIDs.includes(player.id);
+            return !rosteredPlayers.includes(player.id);
          })
       );
       setShouldFilterPlayers(false);
    };
 
-   const handleSetKeeper = async (
+   const handleSetRoster = async (
       playerID: number,
       teamID: string,
-      pick: number
+      timesKept: number
    ) => {
-      if (draft && teamID !== '') {
-         const round = Math.ceil(pick / numberOfTeams);
-         const { data, error } = await supabase
-            .from('draft_selections')
-            .insert({
-               player_id: playerID,
-               team_id: teamID,
-               draft_id: draft.id,
-               round: round,
-               pick: pick,
-               is_keeper: true,
-            });
+      const { data: draft_selections } = await supabase
+         .from('draft_selections')
+         .select('*')
+         .match({
+            player_id: playerID,
+            team_id: teamID,
+            draft_id: draft.id,
+         });
+      const round = draft_selections?.[0]?.round ?? null;
+      console.log('round: ', round);
+      if (teamID !== '') {
+         const { data, error } = await supabase.from('team_history').insert({
+            player_id: playerID,
+            team_id: teamID,
+            draft_position: round ?? null,
+            is_keeper: false,
+            times_kept: timesKept,
+         });
          if (error) {
             console.log(error);
             return;
          } else {
-            setDraftedIDs((prev) => [...prev, playerID]);
+            setRosteredPlayers((prev) => [...prev, playerID]);
          }
       }
    };
@@ -103,11 +112,11 @@ const RostersTab = ({ league }: { league: League }) => {
       if (players.length > 0) {
          setDraftablePlayers(
             players.filter((player: Player) => {
-               return !draftedIDs.includes(player.id);
+               return !rosteredPlayers.includes(player.id);
             })
          );
       }
-   }, [draftedIDs, players]);
+   }, [rosteredPlayers, players]);
 
    return (
       <>
@@ -117,7 +126,7 @@ const RostersTab = ({ league }: { league: League }) => {
                picks: picks,
                team: team,
                players: draftablePlayers,
-               handleSetKeeper: handleSetKeeper,
+               handleSetRoster: handleSetRoster,
             };
             return <KeeperSelector key={index} {...props} />;
          })}
@@ -131,32 +140,37 @@ const KeeperSelector = ({
    picks,
    team,
    players,
-   handleSetKeeper,
+   handleSetRoster,
 }: {
    picks: number[];
    team: Team;
    players: Player[];
-   handleSetKeeper: (playerID: number, teamID: string, pick: number) => void;
+   handleSetRoster: (
+      playerID: number,
+      teamID: string,
+      timesKept: number
+   ) => void;
 }) => {
-   const [keeper, setKeeper] = useState<number>(0);
+   const [roster, setRoster] = useState<number>(0);
    const [pickUsed, setPickUsed] = useState<number>(picks && picks[0]);
+   const [timesKept, setTimesKept] = useState<number>(0);
    const { id } = team;
    return (
       <>
-         {id !== undefined && (
+         {id && (
             <div className="flex mb-2">
                <h3>{team.team_name}</h3>
                <div className="flex flex-row">
                   <input
                      required
                      type="text"
-                     list="keepers"
-                     id="keeper-input"
+                     list="roster"
+                     id="roster-input"
                      onChange={(e: any) => {
-                        setKeeper(e.target.value);
+                        setRoster(e.target.value);
                      }}
                   />
-                  <datalist id="keepers">
+                  <datalist id="roster">
                      {players.map((player: Player) => {
                         return (
                            <option
@@ -166,24 +180,19 @@ const KeeperSelector = ({
                         );
                      })}
                   </datalist>
-                  <select
-                     required
-                     className="dark:bg-gray-primary"
-                     onChange={(e: any) => {
-                        setPickUsed(e.target.value);
-                     }}
-                  >
-                     {picks?.map((pick: number) => {
-                        return (
-                           <option key={pick} value={pick}>
-                              {pick}
-                           </option>
-                        );
-                     })}
-                  </select>
+                  <div className="flex flex-col">
+                     <label htmlFor="time-kept">Times kept:</label>
+                     <input
+                        type="number"
+                        id="times-kept"
+                        min="0"
+                        defaultValue={0}
+                        onChange={(e: any) => setTimesKept(e.target.value)}
+                     />
+                  </div>
                   <button
                      type="submit"
-                     onClick={() => handleSetKeeper(keeper, id || '', pickUsed)}
+                     onClick={() => handleSetRoster(roster, id, timesKept)}
                   >
                      Submit
                   </button>

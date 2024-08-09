@@ -119,6 +119,7 @@ export interface AuthFormProps {
 
 export interface TimerProps {
    owner?: string | any;
+   endTime?: string;
    currentPick: number | string;
    currentRound: number | string;
    doStart?: boolean;
@@ -129,6 +130,7 @@ export interface TimerProps {
    yourTurn: boolean;
    turnOrder: any;
    userTeam: Team;
+   isCompleted: boolean;
 }
 
 export interface BoardProps {
