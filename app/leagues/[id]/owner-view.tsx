@@ -1,12 +1,33 @@
+'use server';
+
+import getPlayers from '@/app/utils/get-players';
+import { fetchTeams } from '@/app/utils/helpers';
 import Tabs from '@/components/ui/tabs';
 import { Tab, TabProps } from '@/lib/types';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import DraftPicksTab from '../tabs/draft-picks';
-import RostersTab from '../tabs/rosters';
+import RostersTab, { RosterProps } from '../tabs/rosters';
 import RulesTab from '../tabs/rules';
 import ScoringTab from '../tabs/scoring';
 import TeamsTab from '../tabs/teams';
 
-const OwnerView = (league: League | any) => {
+export interface OwnerViewProps {
+   league: League | null | undefined;
+   draft: Draft | null | undefined;
+}
+const OwnerView = async ({ league, draft }: OwnerViewProps) => {
+   const supabase = createServerComponentClient<Database>({ cookies });
+   const players: any =
+      league?.league_id && (await getPlayers(league.league_id));
+   const teams: any =
+      league?.league_id && (await fetchTeams(supabase, league.league_id));
+   const rosterProps: RosterProps = {
+      league: league,
+      players: players,
+      teams: teams,
+      draft: draft,
+   };
    const tabs: Tab[] = [
       {
          tabButton: 'Manage Rules',
@@ -22,7 +43,7 @@ const OwnerView = (league: League | any) => {
       },
       {
          tabButton: 'Manage Rosters',
-         tabPane: <RostersTab {...league} />,
+         tabPane: <RostersTab {...rosterProps} />,
       },
       {
          tabButton: 'Manage Draft Pick',

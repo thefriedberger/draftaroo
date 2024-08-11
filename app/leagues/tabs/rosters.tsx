@@ -1,12 +1,17 @@
-import getPlayers from '@/utils/get-players';
+'use client';
+
+import getPlayers from '@/app/utils/get-players';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
 
-const RostersTab = ({ league }: { league: League }) => {
-   const [teams, setTeams] = useState<Team[]>([]);
+export interface RosterProps {
+   league: League | undefined | null;
+   teams: Team[] | undefined | null;
+   players: Player[] | undefined | null;
+   draft: Draft | undefined | null;
+}
+const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
    const [draftPicks, setDraftPicks] = useState<any[] | any>({});
-   const [draft, setDraft] = useState<Draft | any>(null);
-   const [players, setPlayers] = useState<Player[]>([]);
    const [rosteredPlayers, setRosteredPlayers] = useState<number[]>([]);
    const [draftablePlayers, setDraftablePlayers] = useState<Player[]>([]);
    const [numberOfTeams, setNumberOfTeams] = useState<number>(0);
@@ -14,14 +19,6 @@ const RostersTab = ({ league }: { league: League }) => {
       useState<boolean>(false);
 
    const supabase = createClientComponentClient<Database>();
-
-   const fetchLeagueTeams = async () => {
-      const { data } = await supabase
-         .from('teams')
-         .select('*')
-         .match({ league_id: league?.league_id });
-      data && setTeams(data);
-   };
 
    const fetchLeagueDraftRules = async () => {
       if (league) {
@@ -38,28 +35,6 @@ const RostersTab = ({ league }: { league: League }) => {
       }
    };
 
-   const getDraft = async () => {
-      if (league) {
-         const { data } = await supabase
-            .from('draft')
-            .select('*')
-            .match({
-               league_id: league.league_id,
-               draft_year: new Date().getFullYear() - 1,
-            });
-         if (data?.[0]) setDraft(data?.[0]);
-      }
-   };
-
-   const filterDraftedPlayers = () => {
-      setPlayers(
-         players.filter((player: Player) => {
-            return !rosteredPlayers.includes(player.id);
-         })
-      );
-      setShouldFilterPlayers(false);
-   };
-
    const handleSetRoster = async (
       playerID: number,
       teamID: string,
@@ -71,7 +46,7 @@ const RostersTab = ({ league }: { league: League }) => {
          .match({
             player_id: playerID,
             team_id: teamID,
-            draft_id: draft.id,
+            draft_id: draft?.id,
          });
       const round = draft_selections?.[0]?.round ?? null;
       console.log('round: ', round);
@@ -95,21 +70,19 @@ const RostersTab = ({ league }: { league: League }) => {
    useEffect(() => {
       const fetchPlayers = async () => {
          if (league !== undefined) {
-            const data = await getPlayers(String(league.league_id));
-            setPlayers(data as Player[]);
+            const data = await getPlayers(String(league?.league_id));
+            // setPlayers(data as Player[]);
          }
       };
       fetchPlayers();
    }, [league]);
 
    useEffect(() => {
-      fetchLeagueTeams();
-      getDraft();
       fetchLeagueDraftRules();
    }, [league]);
 
    useEffect(() => {
-      if (players.length > 0) {
+      if (players && players?.length > 0) {
          setDraftablePlayers(
             players.filter((player: Player) => {
                return !rosteredPlayers.includes(player.id);
@@ -120,7 +93,7 @@ const RostersTab = ({ league }: { league: League }) => {
 
    return (
       <>
-         {teams.map((team: Team, index: number) => {
+         {teams?.map((team: Team, index: number) => {
             const picks = draftPicks?.[String(team.id)];
             const props = {
                picks: picks,

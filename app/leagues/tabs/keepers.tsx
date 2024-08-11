@@ -1,4 +1,5 @@
-import getPlayers from '@/utils/get-players';
+'use client';
+import getPlayers from '@/app/utils/get-players';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
 

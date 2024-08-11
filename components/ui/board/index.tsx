@@ -1,5 +1,6 @@
 'use client';
 
+import getPlayers from '@/app/utils/get-players';
 import {
    BoardProps,
    ChatProps,
@@ -13,7 +14,6 @@ import {
    TimerProps,
    WatchlistProps,
 } from '@/lib/types';
-import getPlayers from '@/utils/get-players';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
 import { useContext, useEffect, useState } from 'react';
@@ -33,7 +33,7 @@ import Watchlist from '../watchlist';
 
 const Board = (props: BoardProps) => {
    const supabase = createClientComponentClient<Database>();
-   const { leagueID, draft } = props;
+   const { leagueID, draft, watchlist } = props;
 
    const [featuredPlayer, setFeaturedPlayer] = useState<Player | null>();
    const [isYourTurn, setIsYourTurn] = useState<boolean>(false);
@@ -255,7 +255,7 @@ const Board = (props: BoardProps) => {
             const { data } = await supabase
                .from('draft_selections')
                .select('*')
-               .match({ draft_id: draft.id });
+               .match({ draft_id: draft?.id });
             if (data) {
                data.forEach((draftPick) => {
                   setDraftedPlayers((prev) => [...prev, draftPick]);
@@ -264,7 +264,9 @@ const Board = (props: BoardProps) => {
             setShouldFetchDraftedPlayers(false);
          }
       };
-      if (shouldFetchDraftedPlayers) fetchDraftedPlayers();
+      if (shouldFetchDraftedPlayers) {
+         fetchDraftedPlayers();
+      }
       const pickChanel = supabase
          .channel('pick-channel')
          .on(
@@ -273,7 +275,7 @@ const Board = (props: BoardProps) => {
                event: 'UPDATE',
                schema: 'public',
                table: 'draft',
-               filter: `league_id=eq.${leagueID}&draft_id=eq.${draft.id}`,
+               filter: `league_id=eq.${leagueID}&id=eq.${draft.id}`,
             },
             (payload) => {
                setCurrentPick(payload.new.current_pick);
@@ -421,6 +423,7 @@ const Board = (props: BoardProps) => {
       updateFeaturedPlayer: updateFeaturedPlayer,
       draftedIDs: draftedIDs,
       leagueID: leagueID,
+      watchlist: watchlist,
    };
 
    const featuredPlayerProps: FeaturedPlayerProps = {

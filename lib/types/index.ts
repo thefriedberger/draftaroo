@@ -38,6 +38,7 @@ export interface WatchlistProps {
    updateFeaturedPlayer: (player: Player | any, playerID?: number) => void;
    draftedIDs: number[];
    leagueID: string;
+   watchlist: watchlist;
 }
 
 export interface FeaturedPlayerProps {
@@ -136,9 +137,10 @@ export interface TimerProps {
 export interface BoardProps {
    leagueID: string | any;
    draft: Draft | any;
+   watchlist: watchlist;
 }
 export interface LeagueTeamViewProps {
-   team: Team | undefined;
+   team: Team | undefined | null;
    leagueID: string;
 }
 
@@ -219,3 +221,5 @@ export interface PlayerStats {
    stats?: stats;
    season?: string | number;
 }
+
+export type watchlist = Watchlist | null | undefined;

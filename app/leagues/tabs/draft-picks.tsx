@@ -3,7 +3,7 @@
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 
-const DraftPicksTab = ({ league }: { league: League }) => {
+const DraftPicksTab = ({ league }: { league: League | any }) => {
    const [teams, setTeams] = useState<Team[]>();
    const [draftPicks, setDraftPicks] = useState<any[] | any>({});
    const [numberOfRounds, setNumberOfRounds] = useState<number>();

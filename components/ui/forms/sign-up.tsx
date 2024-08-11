@@ -1,7 +1,7 @@
 'use client';
 
+import addUser from '@/app/utils/add-user';
 import { AuthFormProps, UserProps } from '@/lib/types';
-import addUser from '@/utils/add-user';
 import { ChangeEvent, useState } from 'react';
 
 const SignUpForm = (props: AuthFormProps) => {
