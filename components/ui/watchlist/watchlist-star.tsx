@@ -1,5 +1,6 @@
 'use client';
 
+import { watchlist } from '@/lib/types';
 import classNames from 'classnames';
 import { useContext, useEffect, useState } from 'react';
 import { PageContext, WatchlistAction } from '../context/page-context';
@@ -7,9 +8,9 @@ export interface WatchlistStarProps {
    player: Player;
    isButton?: boolean;
    className?: string;
+   watchlist?: watchlist;
 }
-const WatchlistStar = (props: WatchlistStarProps) => {
-   const { player, isButton, className } = props;
+const WatchlistStar = ({ player, isButton, className }: WatchlistStarProps) => {
    const [isWatched, setIsWatched] = useState<boolean>(false);
    const { watchlist, updateWatchlist } = useContext(PageContext);
    const handleUpdateWatchlist = (player: Player) => {

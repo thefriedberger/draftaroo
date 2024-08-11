@@ -39,7 +39,7 @@ const OwnerView = async ({ league, draft }: OwnerViewProps) => {
       },
       {
          tabButton: 'Manage Teams',
-         tabPane: <TeamsTab {...league} />,
+         tabPane: <TeamsTab league={league} />,
       },
       {
          tabButton: 'Manage Rosters',
@@ -47,7 +47,7 @@ const OwnerView = async ({ league, draft }: OwnerViewProps) => {
       },
       {
          tabButton: 'Manage Draft Pick',
-         tabPane: <DraftPicksTab {...league} />,
+         tabPane: <DraftPicksTab league={league} />,
       },
    ];
    const tabProps: TabProps = {
