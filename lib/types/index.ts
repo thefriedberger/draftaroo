@@ -1,3 +1,4 @@
+import { WatchlistAction } from '@/components/context/page-context';
 import { Pick } from '@/components/ui/draft-order';
 import { formStatus, formType } from '@/components/ui/modals/auth';
 import { User } from '@supabase/supabase-js';
@@ -38,12 +39,15 @@ export interface WatchlistProps {
    updateFeaturedPlayer: (player: Player | any, playerID?: number) => void;
    draftedIDs: number[];
    leagueID: string;
-   watchlist: watchlist;
+   watchlist: number[];
+   updateWatchlist: (player: Player, action: WatchlistAction) => void;
 }
 
 export interface FeaturedPlayerProps {
    featuredPlayer: Player | null;
    yourTurn: boolean;
+   watchlist: number[];
+   updateWatchlist: (player: Player, action: WatchlistAction) => void;
    handleDraftSelection: (player: Player) => void;
    updateFeaturedPlayer: (player: Player | null) => void;
    draftedIDs: number[];
@@ -54,6 +58,8 @@ export interface PlayerListProps {
    leagueID: string;
    draftedIDs: number[];
    players: Player[];
+   watchlist: number[];
+   updateWatchlist: (player: Player, action: WatchlistAction) => void;
 }
 
 export interface DraftTileProps {

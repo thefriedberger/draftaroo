@@ -1,8 +1,8 @@
 'use client';
 
+import { WatchlistAction } from '@/components/context/page-context';
 import { PlayerStats } from '@/lib/types';
-import { useContext, useEffect, useState } from 'react';
-import { PageContext } from '../context/page-context';
+import { useEffect, useState } from 'react';
 import WatchlistStar from '../watchlist/watchlist-star';
 
 export const teamAbbreviations: string | any = {
@@ -46,14 +46,17 @@ const PlayerComponent = ({
    leagueScoring,
    season,
    updateFeaturedPlayer,
+   updateWatchlist,
+   watchlist,
 }: {
    player: Player;
    leagueScoring: LeagueScoring | any;
    season: number;
    updateFeaturedPlayer: (player: Player | any) => void;
+   updateWatchlist: (player: Player, action: WatchlistAction) => void;
+   watchlist: number[];
 }) => {
    const [playerStats, setPlayerStats] = useState<PlayerStats[]>();
-   const { watchlist, updateWatchlist } = useContext(PageContext);
 
    const getStatFromLastSeason = (player_stats: any, stat: string) => {
       if (!player_stats) {
@@ -92,7 +95,11 @@ const PlayerComponent = ({
                }}
             >
                <td className="mr-2 cursor-pointer table-cell align-middle w-[30px] fill-emerald-500">
-                  <WatchlistStar player={player} />
+                  <WatchlistStar
+                     player={player}
+                     updateWatchlist={updateWatchlist}
+                     watchlist={watchlist}
+                  />
                </td>
                <td className="py-2 px-1">
                   <span className="cursor-pointer whitespace-nowrap">

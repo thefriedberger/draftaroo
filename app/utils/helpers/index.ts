@@ -131,22 +131,24 @@ export const fetchDraft = cache(
    }
 );
 
-export const updateWatchlist = async (
+export const updateSupabaseWatchlist = async (
    supabase: SupabaseClient<Database>,
-   watchlist: Watchlist
+   watchlist: number[],
+   userId: string,
+   draftId: string
 ) => {
    let playerIDs: number[] = [];
    if (!watchlist) return;
 
-   if (watchlist && watchlist?.players?.length) {
-      for (const playerID of watchlist.players) {
+   if (watchlist && watchlist?.length) {
+      for (const playerID of watchlist) {
          playerIDs.push(playerID);
       }
 
       const { data, error } = await supabase
          .from('watchlist')
          .update({ players: playerIDs })
-         .match({ id: watchlist.id })
+         .match({ owner: userId, draft_id: draftId })
          .select('*');
       if (data) {
          if (data?.[0]?.players) {

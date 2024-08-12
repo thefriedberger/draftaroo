@@ -117,6 +117,8 @@ const PlayerList = ({
    updateFeaturedPlayer,
    leagueID,
    players,
+   updateWatchlist,
+   watchlist,
 }: PlayerListProps) => {
    const [leagueScoring, setLeagueScoring] = useState<LeagueScoring | any>();
    const [league, setLeague] = useState<League | any>();
@@ -371,6 +373,8 @@ const PlayerList = ({
                                     player={player}
                                     leagueScoring={leagueScoring}
                                     season={season}
+                                    updateWatchlist={updateWatchlist}
+                                    watchlist={watchlist}
                                     updateFeaturedPlayer={updateFeaturedPlayer}
                                  />
                               );

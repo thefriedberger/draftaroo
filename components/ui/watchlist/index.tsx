@@ -1,7 +1,6 @@
 'use client';
 
 import getPlayers from '@/app/utils/get-players';
-import { updateWatchlist } from '@/app/utils/helpers';
 import { WatchlistProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
@@ -12,6 +11,7 @@ const Watchlist = ({
    draftedIDs,
    leagueID,
    watchlist,
+   updateWatchlist,
 }: WatchlistProps) => {
    const supabase = createClientComponentClient<Database>();
    const [players, setPlayers] = useState<Player[]>([]);
@@ -25,16 +25,14 @@ const Watchlist = ({
       fetchPlayers();
    }, [leagueID]);
 
-   useEffect(() => {
-      watchlist && updateWatchlist(supabase, watchlist);
-   }, [watchlist, watchlistPlayers, supabase]);
+   // useEffect(() => {
+   //    watchlist && updateWatchlist(watchlist);
+   // }, [watchlist, watchlistPlayers, supabase]);
 
    useEffect(() => {
-      if (players && watchlist && watchlist?.players?.length) {
+      if (players && watchlist && watchlist?.length) {
          setWatchlistPlayers(
-            players.filter((player: Player) =>
-               (watchlist?.players ?? []).includes(player.id)
-            )
+            players.filter((player: Player) => watchlist.includes(player.id))
          );
       }
    }, [watchlist, players]);
@@ -58,7 +56,11 @@ const Watchlist = ({
                         onClick={(e) => handleUpdateFeaturedPlayer(player, e)}
                      >
                         <div className="fill-emerald-500 w-[30px] flex items-center">
-                           <WatchlistStar player={player} />
+                           <WatchlistStar
+                              watchlist={watchlist}
+                              player={player}
+                              updateWatchlist={updateWatchlist}
+                           />
                         </div>
                         <p className="ml-2 pt-1">
                            {player.first_name} {player.last_name}

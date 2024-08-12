@@ -1,6 +1,8 @@
 'use client';
 
 import getPlayers from '@/app/utils/get-players';
+import { updateSupabaseWatchlist } from '@/app/utils/helpers';
+import { WatchlistAction } from '@/components/context/page-context';
 import {
    BoardProps,
    ChatProps,
@@ -33,7 +35,11 @@ import Watchlist from '../watchlist';
 
 const Board = (props: BoardProps) => {
    const supabase = createClientComponentClient<Database>();
-   const { leagueID, draft, watchlist } = props;
+   const { leagueID, draft } = props;
+
+   const [watchlist, setWatchlist] = useState<number[]>(
+      props?.watchlist?.players ?? []
+   );
 
    const [featuredPlayer, setFeaturedPlayer] = useState<Player | null>();
    const [isYourTurn, setIsYourTurn] = useState<boolean>(false);
@@ -126,6 +132,19 @@ const Board = (props: BoardProps) => {
          return player.team_id === teamID;
       });
       return teamPlayers;
+   };
+
+   const updateWatchlist = async (player: Player, action: WatchlistAction) => {
+      if (watchlist) {
+         if (action === WatchlistAction.DELETE) {
+            setWatchlist(watchlist?.filter((el) => el !== player.id));
+         }
+         if (action === WatchlistAction.ADD) {
+            setWatchlist((prev) => [...prev, player.id]);
+         }
+         user &&
+            updateSupabaseWatchlist(supabase, watchlist, user?.id, draft.id);
+      }
    };
 
    useEffect(() => {
@@ -424,12 +443,15 @@ const Board = (props: BoardProps) => {
       draftedIDs: draftedIDs,
       leagueID: leagueID,
       watchlist: watchlist,
+      updateWatchlist: updateWatchlist,
    };
 
    const featuredPlayerProps: FeaturedPlayerProps = {
       draftedIDs: draftedIDs,
       featuredPlayer: featuredPlayer || null,
       yourTurn: isYourTurn,
+      watchlist: watchlist,
+      updateWatchlist: updateWatchlist,
       updateFeaturedPlayer: updateFeaturedPlayer,
       handleDraftSelection: handleDraftSelection,
    };
@@ -437,6 +459,8 @@ const Board = (props: BoardProps) => {
    const playerListProps: PlayerListProps = {
       leagueID: leagueID,
       draftedIDs: draftedIDs,
+      watchlist: watchlist,
+      updateWatchlist: updateWatchlist,
       updateFeaturedPlayer: updateFeaturedPlayer,
       players: players,
    };

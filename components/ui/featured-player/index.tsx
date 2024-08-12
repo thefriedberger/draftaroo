@@ -2,8 +2,7 @@
 
 import { FeaturedPlayerProps } from '@/lib/types';
 import classNames from 'classnames';
-import { Fragment, useContext, useState } from 'react';
-import { PageContext } from '../context/page-context';
+import { Fragment, useState } from 'react';
 import { teamAbbreviations } from '../player';
 import WatchlistStar, { WatchlistStarProps } from '../watchlist/watchlist-star';
 
@@ -13,11 +12,14 @@ const FeaturedPlayer = ({
    handleDraftSelection,
    updateFeaturedPlayer,
    draftedIDs,
+   updateWatchlist,
+   watchlist,
 }: FeaturedPlayerProps) => {
-   const { watchlist } = useContext(PageContext);
    const watchlistStarProps: WatchlistStarProps = {
       player: featuredPlayer as Player,
+      updateWatchlist: updateWatchlist,
       isButton: true,
+      watchlist: watchlist,
       className:
          'flex flex-row bg-paper-dark dark:bg-gray-primary text-white fill-emerald-700 p-2 rounded-md whitespace-nowrap',
    };
