@@ -146,7 +146,7 @@ export interface BoardProps {
    watchlist: watchlist;
 }
 export interface LeagueTeamViewProps {
-   team: Team | undefined | null;
+   team: Team;
    leagueID: string;
 }
 
@@ -228,4 +228,4 @@ export interface PlayerStats {
    season?: string | number;
 }
 
-export type watchlist = Watchlist | null | undefined;
+export type watchlist = Watchlist;

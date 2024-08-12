@@ -54,6 +54,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
       React.useState<boolean>(true);
    const [shouldFetchProfile, setShouldFetchProfile] =
       React.useState<boolean>(true);
+   const [draft, setDraft] = React.useState<Draft>();
 
    const router = useRouter();
 
@@ -253,7 +254,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
             fetchLeagues,
             watchlist,
             fetchWatchlist,
-            updateWatchlist,
+            // updateWatchlist,
          }}
       >
          {children}

@@ -2,7 +2,10 @@
 
 import getPlayers from '@/app/utils/get-players';
 import { updateSupabaseWatchlist } from '@/app/utils/helpers';
-import { WatchlistAction } from '@/components/context/page-context';
+import {
+   PageContext,
+   WatchlistAction,
+} from '@/components/context/page-context';
 import {
    BoardProps,
    ChatProps,
@@ -21,7 +24,6 @@ import classNames from 'classnames';
 import { useContext, useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Chat from '../chat';
-import { PageContext } from '../context/page-context';
 import DraftOrder from '../draft-order';
 import FeaturedPlayer from '../featured-player';
 import AuthModal from '../modals/auth';

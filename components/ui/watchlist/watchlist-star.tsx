@@ -1,8 +1,8 @@
 'use client';
 
+import { WatchlistAction } from '@/components/context/page-context';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
-import { WatchlistAction } from '../context/page-context';
 export interface WatchlistStarProps {
    player: Player;
    isButton?: boolean;
@@ -19,7 +19,6 @@ const WatchlistStar = ({
 }: WatchlistStarProps) => {
    const [isWatched, setIsWatched] = useState<boolean>(false);
    const handleUpdateWatchlist = (player: Player) => {
-      console.log(isWatched);
       if (isWatched) {
          updateWatchlist(player, WatchlistAction.DELETE);
       } else {

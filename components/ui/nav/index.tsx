@@ -1,10 +1,10 @@
 'use client';
 
+import { PageContext } from '@/components/context/page-context';
 import LogoutButton from '@/components/ui/logout-button';
 import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
 import { useContext } from 'react';
-import { PageContext } from '../context/page-context';
 import AuthModal from '../modals/auth';
 
 export interface NavProps {

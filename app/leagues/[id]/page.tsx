@@ -10,6 +10,7 @@ import {
    TabProps,
 } from '@/lib/types';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { UserResponse } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import KeepersTab from '../tabs/keepers';
@@ -20,13 +21,20 @@ const League = async ({ params: { id } }: { params: { id: string } }) => {
    const supabase = createServerComponentClient<Database>({ cookies });
 
    const currentYear = new Date().getFullYear();
-   const { data: user } = await supabase.auth.getUser();
-   const league = await fetchLeague(supabase, id);
-   const owner: boolean = league?.owner === user?.user?.id;
-   const draft = await fetchDraft(supabase, id, currentYear);
-   const team = user?.user && (await fetchTeam(supabase, user?.user?.id, id));
-
+   const { data: user }: Awaited<UserResponse> = await supabase.auth.getUser();
    const { data: session } = await supabase.auth.getSession();
+   if (!user?.user || !session) {
+      return (
+         <>
+            <h1>You must log in to see this</h1>
+            <AuthModal buttonClass="py-2 px-4 rounded-md no-underline" />
+         </>
+      );
+   }
+   const league: Awaited<League> = await fetchLeague(supabase, id);
+   const owner: boolean = league?.owner === user?.user?.id;
+   const draft: Awaited<Draft> = await fetchDraft(supabase, id, currentYear);
+   const team: Awaited<Team> = await fetchTeam(supabase, user.user.id, id);
 
    const leagueTeamViewProps: LeagueTeamViewProps = {
       team: team,
@@ -63,12 +71,7 @@ const League = async ({ params: { id } }: { params: { id: string } }) => {
 
    return (
       <>
-         {!session || !user ? (
-            <>
-               <h1>You must log in to see this</h1>
-               <AuthModal buttonClass="py-2 px-4 rounded-md no-underline" />
-            </>
-         ) : (
+         {
             <>
                {owner && <>{team && id && <Tabs {...tabProps} />}</>}
                {!team ? (
@@ -99,7 +102,7 @@ const League = async ({ params: { id } }: { params: { id: string } }) => {
                   )
                )}
             </>
-         )}
+         }
       </>
    );
 };

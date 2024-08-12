@@ -1,9 +1,9 @@
 'use client';
 
+import { PageContext } from '@/components/context/page-context';
 import { AuthFormProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useContext, useState } from 'react';
-import { PageContext } from '../context/page-context';
 
 const SignInForm = (props: AuthFormProps) => {
    const [email, setEmail] = useState('');

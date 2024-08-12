@@ -1,12 +1,12 @@
 'use client';
 import inviteUser from '@/app/utils/invite-user';
-import { PageContext } from '@/components/ui/context/page-context';
+import { PageContext } from '@/components/context/page-context';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, useContext, useEffect, useState } from 'react';
 
-const TeamsTab = ({ league }: { league: League | any }) => {
+const TeamsTab = ({ league }: { league: League }) => {
    const [shouldFetchTeams, setShouldFetchTeams] = useState<boolean>(false);
 
    const { leagues, teams, user, session, fetchTeams } =

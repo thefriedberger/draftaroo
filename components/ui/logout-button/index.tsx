@@ -1,9 +1,9 @@
 'use client';
 
+import { PageContext } from '@/components/context/page-context';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
 import { useContext } from 'react';
-import { PageContext } from '../context/page-context';
 
 export default function LogoutButton() {
    const router = useRouter();

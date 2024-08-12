@@ -1,6 +1,6 @@
 'use client';
 
-import { PageContext } from '@/components/ui/context/page-context';
+import { PageContext } from '@/components/context/page-context';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useContext, useEffect } from 'react';
 

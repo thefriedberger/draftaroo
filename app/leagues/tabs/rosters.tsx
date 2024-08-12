@@ -5,10 +5,10 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
 
 export interface RosterProps {
-   league: League | undefined | null;
-   teams: Team[] | undefined | null;
-   players: Player[] | undefined | null;
-   draft: Draft | undefined | null;
+   league: League;
+   teams: Team[];
+   players: Player[];
+   draft: Draft;
 }
 const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
    const [draftPicks, setDraftPicks] = useState<any[] | any>({});

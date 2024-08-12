@@ -1,7 +1,7 @@
 'use client';
 
+import { PageContext } from '@/components/context/page-context';
 import Callout from '@/components/ui/callout';
-import { PageContext } from '@/components/ui/context/page-context';
 import { useContext } from 'react';
 
 export default function Home() {

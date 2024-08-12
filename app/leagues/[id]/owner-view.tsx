@@ -13,8 +13,8 @@ import ScoringTab from '../tabs/scoring';
 import TeamsTab from '../tabs/teams';
 
 export interface OwnerViewProps {
-   league: League | null | undefined;
-   draft: Draft | null | undefined;
+   league: League;
+   draft: Draft;
 }
 const OwnerView = async ({ league, draft }: OwnerViewProps) => {
    const supabase = createServerComponentClient<Database>({ cookies });

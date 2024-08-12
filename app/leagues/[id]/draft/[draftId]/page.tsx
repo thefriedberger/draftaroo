@@ -1,13 +1,11 @@
 'use server';
 
 import { createDraft } from '@/app/utils/create-draft';
-import { getUser } from '@/app/utils/get-user';
+import { fetchWatchlist } from '@/app/utils/helpers';
 import Board from '@/components/ui/board';
-import { BoardProps, watchlist } from '@/lib/types';
-import {
-   User,
-   createServerComponentClient,
-} from '@supabase/auth-helpers-nextjs';
+import { BoardProps } from '@/lib/types';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { UserResponse } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { draftRedirect } from '../actions';
 
@@ -32,25 +30,29 @@ const Draft = async ({
       }
       return null;
    };
-   const getWatchlist = async () => {
-      const { data: watchlist } = await supabase
-         .from('watchlist')
-         .select('*')
-         .match({ owner: user?.id, draft_id: params.draftId });
-      // if (!watchlist?.length) {
-      //    await supabase
-      //       .from('watchlist')
-      //       .insert({ owner: user?.id, players: [] })
-      //       .match({})
-      //       .select('*');
-      // }
-      if (watchlist) {
-         return watchlist?.[0];
-      }
-   };
+   // const getWatchlist = async () => {
+   //    const { data: watchlist } = await supabase
+   //       .from('watchlist')
+   //       .select('*')
+   //       .match({ owner: user.id, draft_id: params.draftId });
+   //    // if (!watchlist?.length) {
+   //    //    await supabase
+   //    //       .from('watchlist')
+   //    //       .insert({ owner: user?.id, players: [] })
+   //    //       .match({})
+   //    //       .select('*');
+   //    // }
+   //    if (watchlist) {
+   //       return watchlist?.[0];
+   //    }
+   // };
    const draft = await getDraft();
-   const user: User | null = await getUser();
-   const watchlist: watchlist = user && (await getWatchlist());
+   const { data: user }: Awaited<UserResponse> = await supabase.auth.getUser();
+   if (!user?.user) return <></>;
+   const watchlist: Awaited<Watchlist> = await fetchWatchlist(
+      supabase,
+      user.user
+   );
 
    const boardProps: BoardProps = {
       leagueID: params.id,
