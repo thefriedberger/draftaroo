@@ -1,5 +1,6 @@
 'use client';
 
+import { updateSupabaseWatchlist } from '@/app/utils/helpers';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Session, User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
@@ -76,16 +77,21 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
    const udpateProfile = (newProfile: Profile) => {
       setProfile(newProfile);
    };
-   const updateWatchlist = async (player: Player, action: WatchlistAction) => {
+   const updateWatchlist = async (
+      player: Player,
+      action: WatchlistAction,
+      draft: Draft
+   ) => {
+      const supabase = createClientComponentClient<Database>();
       if (watchlist) {
          if (action === WatchlistAction.DELETE) {
             setWatchlist(watchlist?.filter((el) => el !== player.id));
-            setShouldUpdateWatchlist(true);
          }
          if (action === WatchlistAction.ADD) {
             setWatchlist((prev) => [...prev, player.id]);
-            setShouldUpdateWatchlist(true);
          }
+         user &&
+            updateSupabaseWatchlist(supabase, watchlist, user?.id, draft.id);
       }
    };
 

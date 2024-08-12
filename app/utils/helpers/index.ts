@@ -9,17 +9,20 @@ export const fetchTeam = cache(
       supabase: SupabaseClient<Database>,
       userId: string,
       leaguId: string
-   ) => {
+   ): Promise<Team> => {
       const { data, error } = await supabase
          .from('teams')
          .select('*')
          .match({ owner: userId, league_id: leaguId });
-      if (data) return data?.[0] as Team;
+      return data?.[0] as Team;
    }
 );
 
 export const fetchTeams = cache(
-   async (supabase: SupabaseClient<Database>, leagueId: string) => {
+   async (
+      supabase: SupabaseClient<Database>,
+      leagueId: string
+   ): Promise<Array<Team>> => {
       const { data: teams, error } = await supabase
          .from('teams')
          .select('*')
@@ -38,20 +41,19 @@ export const fetchDraftSelections = cache(
 );
 
 export const fetchProfile = cache(
-   async (supabase: SupabaseClient<Database>, user: User) => {
+   async (supabase: SupabaseClient<Database>, user: User): Promise<Profile> => {
       const { data, error } = await supabase
          .from('profiles')
          .select('*')
          .match({ id: user?.id });
-      if (data) return data;
-      if (error) return false;
+      return data?.[0] as Profile;
    }
 );
 
 export const fetchLeagues = cache(
-   async (supabase: SupabaseClient<Database>) => {
+   async (supabase: SupabaseClient<Database>): Promise<Array<League>> => {
       const { data, error } = await supabase.from('leagues').select('*');
-      return data;
+      return data as League[];
       // if (data) {
       //    if (teams.length === 0 && data?.[0].owner === user.id) {
       //       setLeagues(data as League);
@@ -66,53 +68,48 @@ export const fetchLeagues = cache(
 );
 
 export const fetchLeague = cache(
-   async (supabase: SupabaseClient<Database>, leagueId: string) => {
+   async (
+      supabase: SupabaseClient<Database>,
+      leagueId: string
+   ): Promise<League> => {
       const { data: league, error } = await supabase
          .from('leagues')
          .select('*')
          .match({ league_id: leagueId });
 
-      return league?.[0];
+      return league?.[0] as League;
    }
 );
 
 export const fetchWatchlist = async (
    supabase: SupabaseClient<Database>,
    user: User
-) => {
-   const { data } = await supabase
+): Promise<Array<number>> => {
+   const { data: watchlist } = await supabase
       .from('watchlist')
       .select('*')
       .match({ owner: user?.id });
-   if (!data?.length) {
+   if (!watchlist?.length) {
       const { data } = await supabase
          .from('watchlist')
          .insert({ owner: user?.id, players: [] })
          .match({})
          .select('*');
-      if (data?.[0]?.players) {
-         // setShouldUpdateWatchlist(false);
-         // setWatchlist(data?.[0]?.players);
-      }
+      return data?.[0]?.players as number[];
    }
-   if (data) {
-      if (data?.[0]?.players) {
-         // setShouldUpdateWatchlist(false);
-         // setWatchlist(data?.[0]?.players);
-      }
-   }
+   return watchlist?.[0]?.players as number[];
 };
 
 export const fetchDrafts = async (
    supabase: SupabaseClient<Database>,
    leagueId: string
-) => {
+): Promise<Array<Draft>> => {
    const { data: drafts, error } = await supabase
       .from('draft')
       .select('*')
       .match({ league_id: leagueId });
 
-   return drafts?.[0];
+   return drafts as Draft[];
 };
 
 export const fetchDraft = cache(
@@ -120,7 +117,7 @@ export const fetchDraft = cache(
       supabase: SupabaseClient<Database>,
       leagueId: string,
       draftYear: number
-   ) => {
+   ): Promise<Draft> => {
       const { data: draft, error } = await supabase
          .from('draft')
          .select('*')
@@ -136,24 +133,18 @@ export const updateSupabaseWatchlist = async (
    watchlist: number[],
    userId: string,
    draftId: string
-) => {
+): Promise<Array<number>> => {
    let playerIDs: number[] = [];
-   if (!watchlist) return;
+   if (!watchlist.length) return watchlist;
 
-   if (watchlist && watchlist?.length) {
-      for (const playerID of watchlist) {
-         playerIDs.push(playerID);
-      }
-
-      const { data, error } = await supabase
-         .from('watchlist')
-         .update({ players: playerIDs })
-         .match({ owner: userId, draft_id: draftId })
-         .select('*');
-      if (data) {
-         if (data?.[0]?.players) {
-            return data?.[0]?.players;
-         }
-      }
+   for (const playerID of watchlist) {
+      playerIDs.push(playerID);
    }
+
+   const { data, error } = await supabase
+      .from('watchlist')
+      .update({ players: playerIDs })
+      .match({ owner: userId, draft_id: draftId })
+      .select('*');
+   return data?.[0]?.players as number[];
 };
