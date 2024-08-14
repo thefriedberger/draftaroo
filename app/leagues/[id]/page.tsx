@@ -43,6 +43,8 @@ const League = async ({ params: { id } }: { params: { id: string } }) => {
 
    const keepersProps: KeeperViewProps = {
       league: league,
+      team: team,
+      draft: draft,
    };
 
    const ownerProps: OwnerViewProps = {
@@ -58,11 +60,13 @@ const League = async ({ params: { id } }: { params: { id: string } }) => {
          tabButton: 'Set Keepers',
          tabPane: <KeepersTab {...keepersProps} />,
       },
-      {
+   ];
+   if (owner) {
+      tabs.push({
          tabButton: 'League Management',
          tabPane: <OwnerView {...ownerProps} />,
-      },
-   ];
+      });
+   }
    const tabProps: TabProps = {
       tabs,
       className:
@@ -73,7 +77,7 @@ const League = async ({ params: { id } }: { params: { id: string } }) => {
       <>
          {
             <>
-               {owner && <>{team && id && <Tabs {...tabProps} />}</>}
+               <>{team && id && <Tabs {...tabProps} />}</>
                {!team ? (
                   <div className="">
                      <h1>Looks like you need to create a team</h1>

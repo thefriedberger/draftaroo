@@ -1,8 +1,8 @@
 'use client';
 
+import { PageContext } from '@/components/context/page-context';
 import { PlayerListProps } from '@/lib/types';
 import { ChangeEvent, useContext, useEffect, useState } from 'react';
-import { PageContext } from '../context/page-context';
 import PlayerComponent from '../player';
 
 export type SortValue =

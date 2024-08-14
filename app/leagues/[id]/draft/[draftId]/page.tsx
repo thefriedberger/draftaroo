@@ -1,8 +1,9 @@
 'use server';
 
 import { createDraft } from '@/app/utils/create-draft';
-import { fetchWatchlist } from '@/app/utils/helpers';
+import { fetchDraft, fetchWatchlist } from '@/app/utils/helpers';
 import Board from '@/components/ui/board';
+import AuthModal from '@/components/ui/modals/auth';
 import { BoardProps } from '@/lib/types';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { UserResponse } from '@supabase/supabase-js';
@@ -46,9 +47,15 @@ const Draft = async ({
    //       return watchlist?.[0];
    //    }
    // };
-   const draft = await getDraft();
+   const draft: Awaited<Draft> = await fetchDraft(supabase, params.draftId);
    const { data: user }: Awaited<UserResponse> = await supabase.auth.getUser();
-   if (!user?.user) return <></>;
+   if (!user?.user)
+      return (
+         <>
+            <h1>You must log in to see this</h1>
+            <AuthModal buttonClass="py-2 px-4 rounded-md no-underline" />
+         </>
+      );
    const watchlist: Awaited<Watchlist> = await fetchWatchlist(
       supabase,
       user.user
@@ -58,6 +65,7 @@ const Draft = async ({
       leagueID: params.id,
       draft: draft,
       watchlist: watchlist,
+      user: user.user,
    };
 
    return (

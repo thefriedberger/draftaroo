@@ -141,9 +141,10 @@ export interface TimerProps {
 }
 
 export interface BoardProps {
-   leagueID: string | any;
-   draft: Draft | any;
+   leagueID: string;
+   draft: Draft;
    watchlist: watchlist;
+   user: User;
 }
 export interface LeagueTeamViewProps {
    team: Team;
@@ -151,7 +152,9 @@ export interface LeagueTeamViewProps {
 }
 
 export interface KeeperViewProps {
-   league: League | any;
+   league: League;
+   team: Team;
+   draft: Draft;
 }
 export interface TeamViewProps {
    players: Player[];

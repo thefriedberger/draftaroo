@@ -31,6 +31,21 @@ export const fetchTeams = cache(
       return teams as Team[];
    }
 );
+
+export const fetchAllUserTeams = cache(
+   async (
+      supabase: SupabaseClient<Database>,
+      userId: string
+   ): Promise<Array<Team>> => {
+      const { data: teams, error } = await supabase
+         .from('teams')
+         .select('*')
+         .match({ owner: userId });
+
+      return teams as Team[];
+   }
+);
+
 export const fetchDraftSelections = cache(
    async (supabase: SupabaseClient<Database>, draftId: string) => {
       const { data: draftSelections, error } = await supabase
@@ -54,16 +69,6 @@ export const fetchLeagues = cache(
    async (supabase: SupabaseClient<Database>): Promise<Array<League>> => {
       const { data, error } = await supabase.from('leagues').select('*');
       return data as League[];
-      // if (data) {
-      //    if (teams.length === 0 && data?.[0].owner === user.id) {
-      //       setLeagues(data as League);
-      //    }
-      //    teams?.forEach((team: Team) => {
-      //       if (team.league_id === data?.[0].league_id) {
-      //          setLeagues(data as League);
-      //       }
-      //    });
-      // }
    }
 );
 
@@ -112,20 +117,49 @@ export const fetchDrafts = async (
    return drafts as Draft[];
 };
 
+export type DraftFetchType = {
+   leagueId: string;
+   draftYear: number;
+   draftId: string;
+};
 export const fetchDraft = cache(
    async (
       supabase: SupabaseClient<Database>,
-      leagueId: string,
-      draftYear: number
+      leagueId?: string,
+      draftYear?: number,
+      draftId?: string
    ): Promise<Draft> => {
+      const matchObj: any = {
+         id: leagueId ?? null,
+         league_id: draftId ?? null,
+         draft_year: draftYear ?? null,
+      };
+
+      Object.keys(matchObj).forEach((key: any) => {
+         if (matchObj[key] === null) {
+            delete matchObj[key];
+         }
+      });
       const { data: draft, error } = await supabase
          .from('draft')
          .select('*')
-         .match({ league_id: leagueId, draft_year: draftYear });
+         .match(matchObj);
 
       return draft?.[0] as Draft;
    }
 );
+
+export const fetchLeagueRules = async (
+   supabase: SupabaseClient,
+   league: League
+): Promise<LeagueRules> => {
+   const { data } = await supabase
+      .from('league_rules')
+      .select('*')
+      .match({ id: league?.league_rules });
+
+   return data?.[0] as LeagueRules;
+};
 
 export const updateSupabaseWatchlist = async (
    supabase: SupabaseClient<Database>,
@@ -146,4 +180,25 @@ export const updateSupabaseWatchlist = async (
       .match({ owner: userId, draft_id: draftId })
       .select('*');
    return data?.[0]?.players as number[];
+};
+
+export const fetchPlayers = cache(
+   async (supabase: SupabaseClient): Promise<Player[]> => {
+      const { data: players, error } = await supabase
+         .from('players')
+         .select('*');
+
+      return players as Player[];
+   }
+);
+
+export const fetchRosters = async (
+   supabase: SupabaseClient,
+   teamId: string
+): Promise<TeamHistory[]> => {
+   const { data, error } = await supabase
+      .from('team_history')
+      .select('*')
+      .match({ team_id: teamId });
+   return data as TeamHistory[];
 };

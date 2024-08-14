@@ -1,19 +1,38 @@
-'use client';
+'use server';
 
-import { PageContext } from '@/components/context/page-context';
 import Callout from '@/components/ui/callout';
-import { useContext } from 'react';
+import AuthModal from '@/components/ui/modals/auth';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { UserResponse } from '@supabase/supabase-js';
+import { cookies } from 'next/headers';
+import { fetchAllUserTeams, fetchDrafts, fetchLeagues } from './utils/helpers';
 
-export default function Home() {
-   // const supabase = createServerComponentClient<Database>({cookies});
-   const { user, userTeams, leagues, drafts } = useContext(PageContext);
+export default async function Home() {
+   const supabase = createServerComponentClient<Database>({ cookies });
+   const { data: user }: Awaited<UserResponse> = await supabase.auth.getUser();
+   if (!user?.user) {
+      return (
+         <>
+            <h1>You must log in to see this</h1>
+            <AuthModal buttonClass="py-2 px-4 rounded-md no-underline" />
+         </>
+      );
+   }
+   const leagues: Awaited<League[]> = await fetchLeagues(supabase);
+   if (!leagues) {
+      return <></>;
+   }
+   const userTeams: Awaited<Team[]> = await fetchAllUserTeams(
+      supabase,
+      user.user.id
+   );
    return (
       <div className="pt-5 dark:text-white text-center">
          <h1 className="text-3xl">Welcome to Draftaroo!</h1>
          <div className="flex flex-col items-stretch">
-            {user &&
-               leagues
-                  ?.filter((league: League) => {
+            <>
+               {leagues
+                  .filter((league: League) => {
                      userTeams.filter((team: Team) => {
                         return (
                            team.league_id === league.league_id &&
@@ -35,9 +54,10 @@ export default function Home() {
                         }}
                      />;
                   })}
+            </>
             {userTeams &&
                leagues &&
-               userTeams?.map((team: Team, index: number) => {
+               userTeams?.map(async (team: Team, index: number) => {
                   leagues?.filter(
                      (league: League) =>
                         league.league_id && league.league_id === team.league_id
@@ -45,6 +65,14 @@ export default function Home() {
                   const league: League = leagues.filter(
                      (league: League) => league.league_id === team.league_id
                   )[0];
+
+                  if (!league?.league_id) {
+                     return <></>;
+                  }
+                  const drafts: Awaited<Draft[]> = await fetchDrafts(
+                     supabase,
+                     league.league_id
+                  );
                   const leagueDrafts = drafts.filter(
                      (draft: Draft) => draft.league_id === team.league_id
                   );
