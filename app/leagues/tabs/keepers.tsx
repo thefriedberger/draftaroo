@@ -46,13 +46,13 @@ const KeepersTab = async ({ league, team, draft }: KeeperViewProps) => {
          if (player.times_kept > 0) {
             switch (player.times_kept) {
                case 1: {
-                  return [1].concat(picks.slice(picks.length, 7));
+                  return [1].concat(picks.slice(picks.length - 7));
                }
                case 2: {
-                  return [1].concat(picks.slice(picks.length, 7));
+                  return [1].concat(picks.slice(picks.length - 14));
                }
                default: {
-                  return [1].concat(picks.slice(picks.length, picks.length));
+                  return picks;
                }
             }
          }

@@ -27,7 +27,6 @@ const KeeperForm = ({
    const [picksUsed, setPicksUsed] = useState<number[]>([]);
    const [rosterPlayers, setRosterPlayers] = useState<RosterPlayer[]>(roster);
 
-   // update this to handle picks that aren't the one listed for player
    useEffect(() => {
       picks &&
          setAvailablePicks(
@@ -45,19 +44,16 @@ const KeeperForm = ({
       player: RosterPlayer
    ) => {
       const isChecked = change.target.checked;
-
       const pickUsed = pickToUse(player);
-
       player.picks_needed.map((pick) =>
          setPicksUsed(
             !isChecked
-               ? picksUsed.filter(
-                    (pick: number) =>
-                       player?.picks_used?.every(
-                          (neededPick: number) => neededPick !== pick
-                       ) ?? []
+               ? picksUsed.filter((pick: number) =>
+                    player.picks_used.every(
+                       (neededPick: number) => neededPick !== pick
+                    )
                  )
-               : [...picksUsed, pickToUse(player)[0]] // update to handle multiple picks for first rounders
+               : [...picksUsed, ...pickUsed]
          )
       );
 
@@ -67,8 +63,8 @@ const KeeperForm = ({
                ? {
                     ...rosterPlayer,
                     is_keeper: !rosterPlayer.is_keeper,
-                    picks_used: pickUsed,
-                 } // add picks_used for player kept
+                    picks_used: isChecked ? pickUsed : [],
+                 }
                : rosterPlayer
          )
       );
@@ -91,68 +87,35 @@ const KeeperForm = ({
    const pickToUse = (rosterPlayer: RosterPlayer) => {
       let pickToUse: number[] = [];
       if (rosterPlayer.picks_needed.length > 1) {
-      } else {
-         for (let i = availablePicks.length - 1; i >= 0; i--) {
-            if (!availablePicks[i].available) {
-               continue;
-            } else {
-               if (rosterPlayer.picks_needed.length === 1) {
-                  if (availablePicks[i].pick <= rosterPlayer.picks_needed[0]) {
-                     pickToUse.push(availablePicks[i].pick);
-                     break;
+         for (let i = rosterPlayer.picks_needed.length - 1; i >= 0; i--) {
+            for (let j = availablePicks.length - 1; j >= 0; j--) {
+               if (
+                  !availablePicks[j].available ||
+                  pickToUse.includes(rosterPlayer.picks_needed[i])
+               ) {
+                  break;
+               } else {
+                  if (availablePicks[j].pick <= rosterPlayer.picks_needed[i]) {
+                     pickToUse.push(availablePicks[j].pick);
                   }
                }
             }
          }
+         return pickToUse;
       }
-      return pickToUse;
-   };
-   const picksAvailable = (rosterPlayer: RosterPlayer) => {
-      let availablePickFound = false;
       for (let i = availablePicks.length - 1; i >= 0; i--) {
          if (!availablePicks[i].available) {
             continue;
          } else {
             if (rosterPlayer.picks_needed.length === 1) {
                if (availablePicks[i].pick <= rosterPlayer.picks_needed[0]) {
-                  availablePickFound = true;
+                  pickToUse.push(availablePicks[i].pick);
                   break;
                }
             }
          }
       }
-      return !availablePickFound;
-      // const picksNeeded = player?.picks_needed;
-      // if (!picksUsed.length) return false;
-      // if (!picksNeeded) return false;
-      // if (player?.is_keeper) return false;
-      // if (picksNeeded.length > 1) {
-      //    return;
-      // }
-      // for (let i = availablePicks.length - 1; i >= 0; i--) {
-      //    console.log(picksNeeded[0], availablePicks[i]);
-      //    if (
-      //       picksNeeded[0] < availablePicks[i].pick &&
-      //       availablePicks[i].available
-      //    ) {
-      //       continue;
-      //    }
-      //    return false;
-      // }
-      // return true;
-      // return availablePicks.every(
-      //    (pick: { pick: number; available: boolean }) =>
-      //       picksNeeded[0] < pick.pick && pick.available
-      // );
-      //   return picksUsed.map((usedPick: number) =>
-      //      player?.picks_needed?.every((pick: number) => usedPick > pick)
-      //   );
-
-      //   player?.picks_needed?.every((pick: number) => {
-      //      return picksUsed.every((usedPick: number) => {
-      //         usedPick <= pick;
-      //      });
-      //   });
+      return pickToUse;
    };
 
    useEffect(() => {
@@ -160,8 +123,55 @@ const KeeperForm = ({
    }, [availablePicks]);
 
    useEffect(() => {
-      console.log(rosterPlayers);
-   }, [rosterPlayers]);
+      console.log(picksUsed);
+   }, [picksUsed]);
+
+   const picksAvailable = (rosterPlayer: RosterPlayer) => {
+      let availablePickFound = false;
+
+      if (rosterPlayer.picks_needed.length > 1) {
+         for (let i = rosterPlayer.picks_needed.length - 1; i >= 0; i--) {
+            for (let j = availablePicks.length - 1; j >= 0; j--) {
+               if (!availablePicks[j].available) {
+                  continue;
+               } else {
+                  if (availablePicks[j].pick <= rosterPlayer.picks_needed[i]) {
+                     availablePickFound = true;
+                     break;
+                  }
+               }
+            }
+         }
+         return !availablePickFound;
+      }
+      for (let i = availablePicks.length - 1; i >= 0; i--) {
+         if (
+            !availablePicks[i].available ||
+            picksUsed.includes(rosterPlayer.picks_needed[i])
+         ) {
+            break;
+         } else {
+            if (availablePicks[i].pick <= rosterPlayer.picks_needed[0]) {
+               availablePickFound = true;
+               continue;
+            }
+         }
+      }
+      for (let i = rosterPlayer.picks_needed.length - 1; i >= 0; i--) {
+         for (let j = availablePicks.length - 1; j >= 0; j--) {
+            if (!availablePicks[j].available) {
+               continue;
+            } else {
+               if (availablePicks[j].pick <= rosterPlayer.picks_needed[i]) {
+                  availablePickFound = true;
+                  break;
+               }
+            }
+         }
+      }
+      return !availablePickFound;
+   };
+
    return (
       <form className={'flex flex-col mt-2'}>
          <table>
@@ -241,119 +251,6 @@ const KeeperForm = ({
                      );
                   }
                )}
-               {/* {rosterPlayers
-                  //   .sort((playerA: any, playerB: any) => {
-                  //      if (playerA?.draft_position && playerB?.draft_position) {
-                  //         return playerA.draft_position > playerB.draft_position;
-                  //      }
-                  //      return playerA;
-                  //   })
-                  ?.map((rosterPlayer, index) => {
-                     const playerData: Player | any = players.filter(
-                        (playerToMatch) =>
-                           playerToMatch.id === rosterPlayer.player_id
-                     );
-                     // const picksNeeded = rosterPlayer?.picks_needed;
-                     // let tempPicks = availablePicks.map((pick) => {
-                     //    if (picksUsed.includes(pick.pick)) {
-                     //       return { pick: pick.pick, available: false };
-                     //    }
-                     //    return { pick: pick.pick, available: true };
-                     // });
-                     // picksNeeded?.map((pickNeeded: number) => {
-                     //    for (let i = availablePicks.length; i > 0; i--) {
-                     //       if (
-                     //          tempPicks[i].pick === pickNeeded &&
-                     //          tempPicks[i].available
-                     //       ) {
-                     //          tempPicks[i].available = false;
-                     //          setAvailablePicks([
-                     //             ...availablePicks,
-                     //             tempPicks[i],
-                     //          ]);
-                     //          return;
-                     //       }
-                     //    }
-                     // });
-                     const disablePick = picksAvailable(rosterPlayer);
-                     return (
-                        <tr
-                           key={rosterPlayer.player_id}
-                           className={classNames(
-                              index % 2 === 0 && 'bg-gray-dark'
-                           )}
-                        >
-                           <td>
-                              <input
-                                 className={'w-[40px]'}
-                                 type="checkbox"
-                                 defaultChecked={
-                                    rosterPlayer.is_keeper ?? false
-                                 }
-                                 disabled={rosterPlayer.canKeep ?? false}
-                                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                    handleSetKeeper(e, rosterPlayer)
-                                 }
-                              />
-                           </td>
-                           <td className={'w-[40px]'}>
-                              {playerData[0].primary_position}
-                           </td>
-                           <td>
-                              {playerData[0].first_name}{' '}
-                              {playerData[0].last_name}
-                           </td>
-                           <td>{rosterPlayer.draft_position ?? 'FA'}</td>
-                           <td>
-                              <select
-                                 className={'text-black'}
-                                 defaultValue={
-                                    !rosterPlayer.draft_position
-                                       ? picks.length - 1
-                                       : rosterPlayer.draft_position === 1
-                                       ? rosterPlayer.draft_position
-                                       : rosterPlayer.draft_position + 1
-                                 }
-                              >
-                                 {availablePicks
-                                    .filter((pick) => {
-                                       if (!rosterPlayer.draft_position)
-                                          return pick.pick;
-                                       return rosterPlayer.draft_position === 1
-                                          ? rosterPlayer.draft_position ===
-                                               pick.pick
-                                          : rosterPlayer.draft_position >=
-                                               pick.pick;
-                                    })
-                                    .map((pick) => {
-                                       let shouldDisable = false;
-                                       if (picksUsed.includes(pick.pick)) {
-                                          shouldDisable = true;
-                                       }
-                                       return (
-                                          <option
-                                             key={`${rosterPlayer.player_id}${pick.pick}`}
-                                             disabled={shouldDisable}
-                                             selected={
-                                                rosterPlayer.draft_position
-                                                   ? rosterPlayer.draft_position +
-                                                        1 ===
-                                                     pick.pick
-                                                   : false
-                                             }
-                                             value={
-                                                !shouldDisable ? pick.pick : 0
-                                             }
-                                          >
-                                             {pick.pick}
-                                          </option>
-                                       );
-                                    })}
-                              </select>
-                           </td>
-                        </tr>
-                     );
-                  })} */}
             </tbody>
          </table>
          <button
