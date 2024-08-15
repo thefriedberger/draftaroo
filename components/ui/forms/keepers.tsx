@@ -9,7 +9,7 @@ export interface KeeperFormProps {
    picks: number[];
    roster: RosterPlayer[];
    players: Player[];
-   numberOfTeams: number;
+   numberOfRounds: number;
    draft: Draft;
 }
 const KeeperForm = ({
@@ -17,7 +17,7 @@ const KeeperForm = ({
    picks,
    roster,
    players,
-   numberOfTeams,
+   numberOfRounds,
    draft,
 }: KeeperFormProps) => {
    const supabase = createClientComponentClient<Database>();
@@ -102,64 +102,73 @@ const KeeperForm = ({
                </tr>
             </thead>
             <tbody>
-               {rosterState.map((player: RosterPlayer, index: number) => {
-                  const playerData: Player | any = players.filter(
-                     (playerToMatch) => playerToMatch.id === player.player_id
-                  );
-                  const closestPick = findClosestPick(player.picks_needed);
-                  return (
-                     <tr key={player.player_id}>
-                        <td>
-                           <input
-                              className={'w-[40px]'}
-                              type="checkbox"
-                              defaultChecked={player.is_keeper ?? false}
-                              disabled={
-                                 // add first check
-                                 (closestPick.length === 0 ||
-                                    closestPick[closestPick.length - 1] ===
-                                       0) &&
-                                 !player.is_keeper
-                              }
-                              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                 handleSetKeeper(e, player)
-                              }
-                           />
-                        </td>
-                        <td className={'w-[40px]'}>
-                           {playerData[0].primary_position}
-                        </td>
-                        <td>
-                           {playerData[0].first_name} {playerData[0].last_name}
-                        </td>
-                        <td>{player.draft_position ?? 'FA'}</td>
-                        <td>
-                           <select
-                              className="text-black"
-                              value={player.picks_used?.[0] ?? closestPick[0]}
-                              disabled={true}
-                           >
-                              {picks
-                                 .filter((pick) => {
-                                    if (!player.draft_position) return pick;
-                                    return player.draft_position === 1
-                                       ? player.draft_position === pick
-                                       : player.draft_position - 1 >= pick;
-                                 })
-                                 .map((pick) => {
-                                    return (
-                                       <option
-                                          key={`${player.player_id}${pick}`}
-                                       >
-                                          {pick}
-                                       </option>
-                                    );
-                                 })}
-                           </select>
-                        </td>
-                     </tr>
-                  );
-               })}
+               {rosterState
+                  .sort(
+                     (a, b) =>
+                        (a?.draft_position ?? numberOfRounds + 1) -
+                        (b?.draft_position ?? numberOfRounds + 1)
+                  )
+                  .map((player: RosterPlayer, index: number) => {
+                     const playerData: Player | any = players.filter(
+                        (playerToMatch) => playerToMatch.id === player.player_id
+                     );
+                     const closestPick = findClosestPick(player.picks_needed);
+                     return (
+                        <tr key={player.player_id}>
+                           <td>
+                              <input
+                                 className={'w-[40px]'}
+                                 type="checkbox"
+                                 defaultChecked={player.is_keeper ?? false}
+                                 disabled={
+                                    // add first check
+                                    (closestPick.length === 0 ||
+                                       closestPick[closestPick.length - 1] ===
+                                          0) &&
+                                    !player.is_keeper
+                                 }
+                                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                    handleSetKeeper(e, player)
+                                 }
+                              />
+                           </td>
+                           <td className={'w-[40px]'}>
+                              {playerData[0].primary_position}
+                           </td>
+                           <td>
+                              {playerData[0].first_name}{' '}
+                              {playerData[0].last_name}
+                           </td>
+                           <td>{player.draft_position ?? 'FA'}</td>
+                           <td>
+                              <select
+                                 className="text-black"
+                                 value={
+                                    player.picks_used?.[0] ?? closestPick[0]
+                                 }
+                                 disabled={true}
+                              >
+                                 {picks
+                                    .filter((pick) => {
+                                       if (!player.draft_position) return pick;
+                                       return player.draft_position === 1
+                                          ? player.draft_position === pick
+                                          : player.draft_position - 1 >= pick;
+                                    })
+                                    .map((pick) => {
+                                       return (
+                                          <option
+                                             key={`${player.player_id}${pick}`}
+                                          >
+                                             {pick}
+                                          </option>
+                                       );
+                                    })}
+                              </select>
+                           </td>
+                        </tr>
+                     );
+                  })}
             </tbody>
          </table>
          <button

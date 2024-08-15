@@ -26,6 +26,7 @@ const KeepersTab = async ({ league, team, draft }: KeeperViewProps) => {
    const userPicks = leaguePicks[team.id];
    const players: Awaited<Player[]> = await fetchPlayers(supabase);
    const numberOfTeams = leagueRules.number_of_teams;
+   const numberOfRounds = leagueRules.number_of_rounds;
    const teamHistory: Awaited<TeamHistory[]> = await fetchRosters(
       supabase,
       team.id
@@ -80,7 +81,7 @@ const KeepersTab = async ({ league, team, draft }: KeeperViewProps) => {
       picks: picks,
       players: players,
       roster: teamHistory as RosterPlayer[],
-      numberOfTeams: numberOfTeams ?? 0,
+      numberOfRounds: numberOfRounds ?? 0,
       draft: draft,
    };
 
