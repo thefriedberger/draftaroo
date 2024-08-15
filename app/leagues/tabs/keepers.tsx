@@ -11,6 +11,7 @@ export interface RosterPlayer extends TeamHistory {
    picks_needed: number[];
    times_kept: number;
    picks_used: number[];
+   picks_available: boolean;
 }
 const KeepersTab = async ({ league, team, draft }: KeeperViewProps) => {
    const supabase = createClientComponentClient<Database>();
