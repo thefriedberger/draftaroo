@@ -33,7 +33,12 @@ const League = async ({ params: { id } }: { params: { id: string } }) => {
    }
    const league: Awaited<League> = await fetchLeague(supabase, id);
    const owner: boolean = league?.owner === user?.user?.id;
-   const draft: Awaited<Draft> = await fetchDraft(supabase, id, currentYear);
+   const draft: Awaited<Draft> = await fetchDraft(
+      supabase,
+      null,
+      id,
+      currentYear
+   );
    const team: Awaited<Team> = await fetchTeam(supabase, user.user.id, id);
 
    const leagueTeamViewProps: LeagueTeamViewProps = {

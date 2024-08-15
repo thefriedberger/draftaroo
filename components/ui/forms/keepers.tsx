@@ -93,12 +93,12 @@ const KeeperForm = ({
       <form className={'flex flex-col mt-2'}>
          <table>
             <thead className="bg-emerald-primary">
-               <tr>
-                  <th className={'w-[40px]'}>Keep Player</th>
-                  <th className={'w-[40px]'}>Position</th>
-                  <th>Player</th>
-                  <th>Round Drafted</th>
-                  <th>Pick(s) Used</th>
+               <tr className={'align-bottom '}>
+                  <th className={'w-[40px] p-2'}>Keep Player?</th>
+                  <th className={'w-[40px] p-2'}>Pos</th>
+                  <th className="p-2">Player</th>
+                  <th className="w-[20px] p-2">Round Drafted</th>
+                  <th className="p-2">Pick(s) Used</th>
                </tr>
             </thead>
             <tbody>
@@ -113,18 +113,24 @@ const KeeperForm = ({
                         (playerToMatch) => playerToMatch.id === player.player_id
                      );
                      const closestPick = findClosestPick(player.picks_needed);
+                     const canKeep =
+                        player.picks_needed.length > 1 &&
+                        player.picks_needed.some(
+                           (pick) => !picksAvailable.includes(pick)
+                        );
+
                      return (
                         <tr key={player.player_id}>
-                           <td>
+                           <td className="p-2">
                               <input
-                                 className={'w-[40px]'}
+                                 className={'w-[40px] h-[20px] align-middle'}
                                  type="checkbox"
                                  defaultChecked={player.is_keeper ?? false}
                                  disabled={
-                                    // add first check
                                     (closestPick.length === 0 ||
                                        closestPick[closestPick.length - 1] ===
-                                          0) &&
+                                          0 ||
+                                       canKeep) &&
                                     !player.is_keeper
                                  }
                                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -132,19 +138,23 @@ const KeeperForm = ({
                                  }
                               />
                            </td>
-                           <td className={'w-[40px]'}>
+                           <td className={'w-[40px] p-2'}>
                               {playerData[0].primary_position}
                            </td>
-                           <td>
+                           <td className="p-2">
                               {playerData[0].first_name}{' '}
                               {playerData[0].last_name}
                            </td>
-                           <td>{player.draft_position ?? 'FA'}</td>
-                           <td>
+                           <td className="p-2">
+                              {player.draft_position ?? 'FA'}
+                           </td>
+                           <td className="p-2">
                               <select
                                  className="text-black"
                                  value={
-                                    player.picks_used?.[0] ?? closestPick[0]
+                                    player.is_keeper && player.picks_used?.[0]
+                                       ? player.picks_used[0]
+                                       : closestPick[0]
                                  }
                                  disabled={true}
                               >
@@ -160,7 +170,39 @@ const KeeperForm = ({
                                           <option
                                              key={`${player.player_id}${pick}`}
                                           >
-                                             {pick}
+                                             {player?.picks_used?.length > 1
+                                                ? player.picks_used.map(
+                                                     (pickUsed, index) => {
+                                                        if (
+                                                           index ===
+                                                           player.picks_used
+                                                              .length -
+                                                              1
+                                                        ) {
+                                                           return pickUsed;
+                                                        } else if (
+                                                           player.picks_needed
+                                                              .length ===
+                                                              numberOfRounds &&
+                                                           index === 0
+                                                        ) {
+                                                           return `${pickUsed}-`;
+                                                        } else if (
+                                                           index === 0
+                                                        ) {
+                                                           return `${pickUsed}, `;
+                                                        } else if (
+                                                           index === 1 &&
+                                                           player.picks_needed
+                                                              .length !==
+                                                              numberOfRounds
+                                                        ) {
+                                                           return `${pickUsed}-`;
+                                                        }
+                                                        return;
+                                                     }
+                                                  )
+                                                : pick}
                                           </option>
                                        );
                                     })}

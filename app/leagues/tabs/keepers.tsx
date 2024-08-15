@@ -1,5 +1,6 @@
 'use server';
 import {
+   fetchDraftSelections,
    fetchLeagueRules,
    fetchPlayers,
    fetchRosters,
@@ -22,6 +23,8 @@ const KeepersTab = async ({ league, team, draft }: KeeperViewProps) => {
       supabase,
       league
    );
+   const draftSelections: Awaited<DraftSelection[]> =
+      await fetchDraftSelections(supabase, draft.id);
    const leaguePicks: any = leagueRules?.draft_picks;
    const userPicks = leaguePicks[team.id];
    const players: Awaited<Player[]> = await fetchPlayers(supabase);
@@ -38,10 +41,6 @@ const KeepersTab = async ({ league, team, draft }: KeeperViewProps) => {
          return Math.ceil(pick / numberOfTeams);
       });
 
-   const rounds = Array.from(
-      { length: leagueRules.number_of_rounds ?? 23 },
-      (v, x) => x + 1
-   );
    const populatePicksNeeded = (player: RosterPlayer) => {
       if (!player.draft_position) return [leagueRules.number_of_rounds];
       if (player.draft_position === 1) {
@@ -62,19 +61,22 @@ const KeepersTab = async ({ league, team, draft }: KeeperViewProps) => {
       }
       return [player.draft_position - 1];
    };
-   teamHistory.map(
-      (player: any) =>
-         (player.picks_needed = populatePicksNeeded(player as RosterPlayer))
-   );
-   // const picks: { [key: number]: any } = {};
-   // userPicks.map((pick: number) => {
-   //    if (numberOfTeams) {
-   //       const round = Math.ceil(pick / numberOfTeams);
-   //       picks[round] = false;
-   //    }
-   // });
 
-   const populateDropdown = (player: any, pick: number) => {};
+   const populatePicksUsed = (player: RosterPlayer) => {
+      if (!draftSelections.length) return;
+
+      const foundPlayer = draftSelections.filter(
+         (selection) => selection.player_id === player.player_id
+      );
+      return [foundPlayer?.[0]?.round] ?? null;
+   };
+
+   teamHistory.map(
+      (player: any) => (
+         (player.picks_needed = populatePicksNeeded(player as RosterPlayer)),
+         (player.picks_used = populatePicksUsed(player as RosterPlayer))
+      )
+   );
 
    const keeperFormProps: KeeperFormProps = {
       team: team,

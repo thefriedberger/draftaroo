@@ -47,11 +47,15 @@ export const fetchAllUserTeams = cache(
 );
 
 export const fetchDraftSelections = cache(
-   async (supabase: SupabaseClient<Database>, draftId: string) => {
+   async (
+      supabase: SupabaseClient<Database>,
+      draftId: string
+   ): Promise<DraftSelection[]> => {
       const { data: draftSelections, error } = await supabase
          .from('draft_selections')
          .select('*')
          .match({ draft_id: draftId });
+      return draftSelections as DraftSelection[];
    }
 );
 
@@ -125,9 +129,9 @@ export type DraftFetchType = {
 export const fetchDraft = cache(
    async (
       supabase: SupabaseClient<Database>,
-      leagueId?: string,
-      draftYear?: number,
-      draftId?: string
+      leagueId?: string | null,
+      draftId?: string | null,
+      draftYear?: number | null
    ): Promise<Draft> => {
       const matchObj: any = {
          id: leagueId ?? null,
