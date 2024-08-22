@@ -40,24 +40,35 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
       teamID: string,
       timesKept: number
    ) => {
+      const { data: drafts, error: draft_error } = await supabase
+         .from('draft')
+         .select('*')
+         .match({ league_id: league.league_id });
+      const draftToUse: Draft = drafts
+         ? drafts.filter(
+              (d) => Number(d.draft_year) === new Date().getFullYear() - 1
+           )[0]
+         : draft;
       const { data: draft_selections } = await supabase
          .from('draft_selections')
          .select('*')
          .match({
             player_id: playerID,
-            team_id: teamID,
-            draft_id: draft?.id,
+            draft_id: draftToUse.id,
          });
       const round = draft_selections?.[0]?.round ?? null;
       console.log('round: ', round);
       if (teamID !== '') {
-         const { data, error } = await supabase.from('team_history').insert({
-            player_id: playerID,
-            team_id: teamID,
-            draft_position: round ?? null,
-            is_keeper: false,
-            times_kept: timesKept,
-         });
+         const { data, error } = await supabase.from('team_history').upsert(
+            {
+               player_id: playerID,
+               team_id: teamID,
+               draft_position: round ?? null,
+               is_keeper: false,
+               times_kept: timesKept,
+            },
+            { onConflict: 'player_id,team_id' }
+         );
          if (error) {
             console.log(error);
             return;

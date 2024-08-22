@@ -42,7 +42,7 @@ const KeepersTab = async ({ league, team, draft }: KeeperViewProps) => {
    );
 
    const picks =
-      numberOfTeams && userPicks.picks
+      numberOfTeams && userPicks?.picks
          ? userPicks.picks.map((pick: number) => {
               return Math.ceil(pick / numberOfTeams);
            })
@@ -88,7 +88,7 @@ const KeepersTab = async ({ league, team, draft }: KeeperViewProps) => {
 
    const keeperFormProps: KeeperFormProps = {
       team: team,
-      userPicks: userPicks.picks,
+      userPicks: userPicks?.picks ?? [],
       players: players,
       roster: teamHistory as RosterPlayer[],
       numberOfRounds: numberOfRounds ?? 0,
