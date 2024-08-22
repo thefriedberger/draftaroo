@@ -3,9 +3,11 @@
 import { PlayerStats } from '@/lib/types';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { cache } from 'react';
 
-const getPlayers = async (leagueID: string) => {
+const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
    const playersArray: Player[] = [];
+   if (!leagueID) return playersArray;
    const supabase = createServerComponentClient<Database>({ cookies });
    let { data: players, error } = await supabase.from('players').select('*');
    const league = await supabase
@@ -77,9 +79,8 @@ const getPlayers = async (leagueID: string) => {
          }
          playersArray.push(player);
       });
-      return playersArray;
    }
-   return false;
-};
+   return playersArray as Player[];
+});
 
 export default getPlayers;

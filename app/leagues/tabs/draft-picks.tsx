@@ -1,52 +1,53 @@
 'use client';
 
+import { DraftPick } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { ChangeEvent, ReactElement, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
-const DraftPicksTab = ({ league }: { league: League }) => {
-   const [teams, setTeams] = useState<Team[]>();
-   const [draftPicks, setDraftPicks] = useState<any[] | any>({});
-   const [numberOfRounds, setNumberOfRounds] = useState<number>();
-   const [draftPositions, setDraftPositions] = useState<number[] | any[]>([]);
-   const [options, setOptions] = useState<ReactElement<HTMLOptionElement>[]>(
-      []
+export interface DraftPicksProps {
+   league: League;
+   teams: Team[];
+   draft: Draft;
+   numberOfRounds: number;
+}
+
+const DraftPicksTab = ({
+   league,
+   teams,
+   draft,
+   numberOfRounds,
+}: DraftPicksProps) => {
+   const [draftPicks, setDraftPicks] = useState<DraftPick[]>([]);
+   const [draftPositions, setDraftPositions] = useState<number[]>([]);
+   const [picks, setPicks] = useState<number[]>(
+      Array.from({ length: teams.length }, (p, index) => {
+         return index + 1;
+      })
    );
    const [shouldSetDraftPicks, setShouldSetDraftPicks] =
       useState<boolean>(false);
    const supabase = createClientComponentClient<Database>();
 
-   const fetchLeagueDraftRules = async () => {
-      if (league) {
-         const { data } = await supabase
-            .from('league_rules')
-            .select('draft_picks')
-            .match({ id: league?.league_rules });
+   // const fetchLeagueDraftRules = async () => {
+   //    if (league) {
+   //       const { data } = await supabase
+   //          .from('league_rules')
+   //          .select('draft_picks')
+   //          .match({ id: league?.league_rules });
 
-         data &&
-            (setDraftPicks(data?.[0]?.draft_picks),
-            setShouldSetDraftPicks(true));
-      }
-   };
-   const fetchNumberOfRounds = async () => {
-      if (league) {
-         const { data } = await supabase
-            .from('league_rules')
-            .select('number_of_rounds')
-            .match({ id: league?.league_rules });
-         data && setNumberOfRounds(Number(data[0].number_of_rounds));
-      }
-   };
-   const fetchLeagueTeams = async () => {
-      const { data } = await supabase
-         .from('teams')
-         .select('*')
-         .match({ league_id: league?.league_id });
-      data && setTeams(data);
-   };
+   //       data &&
+   //          (setDraftPicks(data?.[0]?.draft_picks),
+   //          setShouldSetDraftPicks(true));
+   //    }
+   // };
 
    const handleSetDraftPicks = (team: Team, pick: number) => {
-      setDraftPositions((prev) => [...prev, pick]);
-      if (numberOfRounds && teams) {
+      if (!draftPositions.includes(pick)) {
+         setDraftPositions((prev) => [...prev, pick]);
+      } else {
+         setDraftPositions(picks.filter((pickUsed) => pick !== pickUsed));
+      }
+      if (numberOfRounds > 0 && teams) {
          let tempPicks: number[] = [];
          const numberOfPicks = teams.length * numberOfRounds;
          for (let i = 1; i <= teams.length; i++) {
@@ -56,44 +57,42 @@ const DraftPicksTab = ({ league }: { league: League }) => {
                }
             }
          }
-         draftPicks[String(team.id)] = tempPicks;
+         const updatedDraftPicks: DraftPick[] = draftPicks.map((draftPick) => {
+            if (draftPick.team_id === team.id) {
+               return {
+                  ...draftPick,
+                  picks: tempPicks,
+               };
+            }
+
+            return draftPick;
+         });
+         setDraftPicks(updatedDraftPicks);
       }
    };
 
    const handleSubmit = async () => {
-      const { error } = await supabase
-         .from('league_rules')
-         .update({ draft_picks: draftPicks })
-         .match({ id: league?.league_rules });
+      const { data, error } = await supabase
+         .from('draft_picks')
+         .upsert(draftPicks, {
+            onConflict: 'team_id, draft_id',
+         })
+         .select();
+      console.log(error);
    };
 
-   const updateSelectedOptions = (optionValue: string | number) => {};
-
    useEffect(() => {
-      // fetchLeagueDraftRules();
-      fetchLeagueTeams();
-      fetchNumberOfRounds();
-   }, [league]);
-
-   useEffect(() => {
-      if (teams && options.length === 0) {
-         const defaultOption: ReactElement<HTMLOptionElement> = (
-            <option value={0} className="text-black" disabled>
-               Pick
-            </option>
-         );
-         setOptions((prev) => [...prev, defaultOption]);
-         for (let i = 1; i <= teams.length; i++) {
-            const newOption: ReactElement<HTMLOptionElement> = (
-               <option value={i} className="text-black">
-                  {i}
-               </option>
-            );
-            setOptions((prev) => [...prev, newOption]);
-         }
+      if (draftPicks.length === 0) {
+         const initialTeams = teams.map((team) => {
+            return {
+               team_id: team?.id ?? '',
+               draft_id: draft?.id ?? '',
+               picks: [],
+            };
+         });
+         setDraftPicks(initialTeams);
       }
    }, [teams]);
-
    useEffect(() => {
       // const draftPickStructure: any[] = [];
       // teams &&
@@ -122,8 +121,8 @@ const DraftPicksTab = ({ league }: { league: League }) => {
                   key={team.id}
                   team={team}
                   handleSetDraftPicks={handleSetDraftPicks}
-                  options={options}
-                  updateSelectedOptions={updateSelectedOptions}
+                  picks={picks}
+                  draftPositions={draftPositions}
                />
             );
          })}
@@ -139,29 +138,36 @@ export default DraftPicksTab;
 const TeamPicks = ({
    team,
    handleSetDraftPicks,
-   options,
-   updateSelectedOptions,
+   picks,
+   draftPositions,
 }: {
    team: Team;
    handleSetDraftPicks: (team: Team, pick: number) => void;
-   options: ReactElement<HTMLOptionElement>[];
-   updateSelectedOptions: (option: string | number) => void;
+   picks: number[];
+   draftPositions: number[];
 }) => {
-   const updateDraftPosition = (e: ChangeEvent) => {
-      const target = e.target as HTMLInputElement;
-      handleSetDraftPicks(team, Number(target.value));
-   };
    return (
       <div className="flex">
          <p className={'text-white'}>{team.team_name}</p>
          <select
-            onChange={updateDraftPosition}
+            onChange={({ target }: ChangeEvent<HTMLSelectElement>) => {
+               handleSetDraftPicks(team, Number(target.value));
+            }}
             required
             name="draft_position"
             className="text-black"
             defaultValue={0}
          >
-            {options}
+            <option value={0} className="text-black">
+               Pick
+            </option>
+            {picks.map((p) => {
+               return (
+                  <option key={p} value={p}>
+                     {p}
+                  </option>
+               );
+            })}
          </select>
       </div>
    );

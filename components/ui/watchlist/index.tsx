@@ -1,17 +1,19 @@
 'use client';
 
+import getPlayers from '@/app/utils/get-players';
 import { WatchlistProps } from '@/lib/types';
-import getPlayers from '@/utils/get-players';
-import { useContext, useEffect, useState } from 'react';
-import { PageContext } from '../context/page-context';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useEffect, useState } from 'react';
 import WatchlistStar from './watchlist-star';
 
 const Watchlist = ({
    updateFeaturedPlayer,
    draftedIDs,
    leagueID,
+   watchlist,
+   updateWatchlist,
 }: WatchlistProps) => {
-   const { watchlist } = useContext(PageContext);
+   const supabase = createClientComponentClient<Database>();
    const [players, setPlayers] = useState<Player[]>([]);
    const [watchlistPlayers, setWatchlistPlayers] = useState<Player[]>([]);
 
@@ -23,8 +25,12 @@ const Watchlist = ({
       fetchPlayers();
    }, [leagueID]);
 
+   // useEffect(() => {
+   //    watchlist && updateWatchlist(watchlist);
+   // }, [watchlist, watchlistPlayers, supabase]);
+
    useEffect(() => {
-      if (players) {
+      if (players && watchlist && watchlist?.length) {
          setWatchlistPlayers(
             players.filter((player: Player) => watchlist.includes(player.id))
          );
@@ -46,11 +52,15 @@ const Watchlist = ({
                   return (
                      <div
                         key={player.id}
-                        className="flex flex-row items-center"
+                        className="flex flex-row items-center cursor-pointer"
                         onClick={(e) => handleUpdateFeaturedPlayer(player, e)}
                      >
                         <div className="fill-emerald-500 w-[30px] flex items-center">
-                           <WatchlistStar player={player} />
+                           <WatchlistStar
+                              watchlist={watchlist}
+                              player={player}
+                              updateWatchlist={updateWatchlist}
+                           />
                         </div>
                         <p className="ml-2 pt-1">
                            {player.first_name} {player.last_name}

@@ -1,8 +1,8 @@
 'use client';
 
+import { PageContext } from '@/components/context/page-context';
 import { PlayerListProps } from '@/lib/types';
 import { ChangeEvent, useContext, useEffect, useState } from 'react';
-import { PageContext } from '../context/page-context';
 import PlayerComponent from '../player';
 
 export type SortValue =
@@ -117,6 +117,8 @@ const PlayerList = ({
    updateFeaturedPlayer,
    leagueID,
    players,
+   updateWatchlist,
+   watchlist,
 }: PlayerListProps) => {
    const [leagueScoring, setLeagueScoring] = useState<LeagueScoring | any>();
    const [league, setLeague] = useState<League | any>();
@@ -371,6 +373,8 @@ const PlayerList = ({
                                     player={player}
                                     leagueScoring={leagueScoring}
                                     season={season}
+                                    updateWatchlist={updateWatchlist}
+                                    watchlist={watchlist}
                                     updateFeaturedPlayer={updateFeaturedPlayer}
                                  />
                               );

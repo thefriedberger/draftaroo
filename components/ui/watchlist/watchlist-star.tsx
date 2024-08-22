@@ -1,22 +1,28 @@
 'use client';
 
+import { WatchlistAction } from '@/components/context/page-context';
 import classNames from 'classnames';
-import { useContext, useEffect, useState } from 'react';
-import { PageContext, WatchlistAction } from '../context/page-context';
+import { useEffect, useState } from 'react';
 export interface WatchlistStarProps {
    player: Player;
    isButton?: boolean;
    className?: string;
+   watchlist: number[];
+   updateWatchlist: (player: Player, action: WatchlistAction) => void;
 }
-const WatchlistStar = (props: WatchlistStarProps) => {
-   const { player, isButton, className } = props;
+const WatchlistStar = ({
+   player,
+   isButton,
+   className,
+   watchlist,
+   updateWatchlist,
+}: WatchlistStarProps) => {
    const [isWatched, setIsWatched] = useState<boolean>(false);
-   const { watchlist, updateWatchlist } = useContext(PageContext);
    const handleUpdateWatchlist = (player: Player) => {
       if (isWatched) {
-         updateWatchlist?.(player, WatchlistAction.DELETE);
+         updateWatchlist(player, WatchlistAction.DELETE);
       } else {
-         updateWatchlist?.(player, WatchlistAction.ADD);
+         updateWatchlist(player, WatchlistAction.ADD);
       }
    };
    useEffect(() => {
@@ -69,8 +75,8 @@ const WatchlistStar = (props: WatchlistStarProps) => {
                )}
             </button>
          ) : (
-            <div
-               className="w-[30px]"
+            <button
+               className="flex align-center justify-center w-[24px] appearance-none border-0 outline-none"
                onClick={() => handleUpdateWatchlist(player)}
             >
                {isWatched ? (
@@ -104,7 +110,7 @@ const WatchlistStar = (props: WatchlistStarProps) => {
                      />
                   </svg>
                )}
-            </div>
+            </button>
          )}
       </>
    );

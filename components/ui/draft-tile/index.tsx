@@ -38,7 +38,7 @@ const DraftTile = ({
             pick.yourPick &&
                currentPick !== pick.draftPosition &&
                'bg-paper-light dark:bg-gray-light',
-            'flex flex-row border-b border-paper-dark dark:border-gray-300 p-1 text-black dark:text-white'
+            'flex flex-row border-b border-paper-dark dark:border-gray-300 p-1 cursor-pointer text-black dark:text-white'
          )}
          ref={draftTileRef}
          onClick={handleUpdateFeaturedPlayer}

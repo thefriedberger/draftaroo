@@ -1,9 +1,9 @@
 'use client';
 
-import { PageContext } from '@/components/ui/context/page-context';
+import createLeague from '@/app/utils/create-league';
+import { PageContext } from '@/components/context/page-context';
 import Tabs from '@/components/ui/tabs';
 import { Tab, TabProps } from '@/lib/types';
-import createLeague from '@/utils/create-league';
 import { useContext, useState } from 'react';
 import RulesTab from '../tabs/rules';
 import ScoringTab from '../tabs/scoring';

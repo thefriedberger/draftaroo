@@ -2,9 +2,8 @@
 
 import { FeaturedPlayerProps } from '@/lib/types';
 import classNames from 'classnames';
-import { Fragment, useContext, useState } from 'react';
-import { PageContext } from '../context/page-context';
-import { teamAbreviations } from '../player';
+import { Fragment, useState } from 'react';
+import { teamAbbreviations } from '../player';
 import WatchlistStar, { WatchlistStarProps } from '../watchlist/watchlist-star';
 
 const FeaturedPlayer = ({
@@ -13,11 +12,14 @@ const FeaturedPlayer = ({
    handleDraftSelection,
    updateFeaturedPlayer,
    draftedIDs,
+   updateWatchlist,
+   watchlist,
 }: FeaturedPlayerProps) => {
-   const { watchlist } = useContext(PageContext);
    const watchlistStarProps: WatchlistStarProps = {
       player: featuredPlayer as Player,
+      updateWatchlist: updateWatchlist,
       isButton: true,
+      watchlist: watchlist,
       className:
          'flex flex-row bg-paper-dark dark:bg-gray-primary text-white fill-emerald-700 p-2 rounded-md whitespace-nowrap',
    };
@@ -120,7 +122,7 @@ const FeaturedPlayer = ({
                      {featuredPlayer.first_name} {featuredPlayer.last_name}
                      &nbsp;&nbsp;&nbsp;
                      <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap">
-                        {teamAbreviations?.[featuredPlayer.current_team] ||
+                        {teamAbbreviations?.[featuredPlayer.current_team] ||
                            'FA'}{' '}
                         -{' '}
                         {featuredPlayer.primary_position &&
@@ -183,7 +185,7 @@ const FeaturedPlayer = ({
                      {featuredPlayer.first_name} {featuredPlayer.last_name}
                      &nbsp;&nbsp;&nbsp;
                      <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap">
-                        {teamAbreviations?.[featuredPlayer.current_team] ||
+                        {teamAbbreviations?.[featuredPlayer.current_team] ||
                            'FA'}{' '}
                         -{' '}
                         {featuredPlayer.primary_position &&

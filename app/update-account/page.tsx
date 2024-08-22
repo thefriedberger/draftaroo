@@ -1,6 +1,6 @@
 'use client';
 
-import { PageContext } from '@/components/ui/context/page-context';
+import { PageContext } from '@/components/context/page-context';
 import { createClient } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, useContext, useState } from 'react';

@@ -1,6 +1,6 @@
 'use client';
-import { PageContext } from '@/components/ui/context/page-context';
-import inviteUser from '@/utils/invite-user';
+import inviteUser from '@/app/utils/invite-user';
+import { PageContext } from '@/components/context/page-context';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
 import { useRouter } from 'next/navigation';

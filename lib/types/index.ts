@@ -1,3 +1,4 @@
+import { WatchlistAction } from '@/components/context/page-context';
 import { Pick } from '@/components/ui/draft-order';
 import { formStatus, formType } from '@/components/ui/modals/auth';
 import { User } from '@supabase/supabase-js';
@@ -26,7 +27,7 @@ export interface DraftOrderProps {
    draftedPlayers: DraftSelection[];
    currentPick: number;
    teams: Team[] | any;
-   turnOrder: any;
+   turnOrder: DraftPick[];
    isYourTurn: boolean;
    league?: League | any;
    players: Player[];
@@ -38,11 +39,15 @@ export interface WatchlistProps {
    updateFeaturedPlayer: (player: Player | any, playerID?: number) => void;
    draftedIDs: number[];
    leagueID: string;
+   watchlist: number[];
+   updateWatchlist: (player: Player, action: WatchlistAction) => void;
 }
 
 export interface FeaturedPlayerProps {
    featuredPlayer: Player | null;
    yourTurn: boolean;
+   watchlist: number[];
+   updateWatchlist: (player: Player, action: WatchlistAction) => void;
    handleDraftSelection: (player: Player) => void;
    updateFeaturedPlayer: (player: Player | null) => void;
    draftedIDs: number[];
@@ -53,6 +58,8 @@ export interface PlayerListProps {
    leagueID: string;
    draftedIDs: number[];
    players: Player[];
+   watchlist: number[];
+   updateWatchlist: (player: Player, action: WatchlistAction) => void;
 }
 
 export interface DraftTileProps {
@@ -67,6 +74,11 @@ export interface ChatProps {
    user: User | null;
 }
 
+export interface DraftPick {
+   team_id: string;
+   draft_id: string;
+   picks: number[];
+}
 export interface TeamProps {
    team_name: string;
    owner: string;
@@ -119,6 +131,7 @@ export interface AuthFormProps {
 
 export interface TimerProps {
    owner?: string | any;
+   endTime?: string;
    currentPick: number | string;
    currentRound: number | string;
    doStart?: boolean;
@@ -129,19 +142,26 @@ export interface TimerProps {
    yourTurn: boolean;
    turnOrder: any;
    userTeam: Team;
+   isCompleted: boolean;
 }
 
 export interface BoardProps {
-   leagueID: string | any;
-   draft: Draft | any;
+   leagueID: string;
+   players: Player[];
+   draft: Draft;
+   draftPicks: DraftPick[];
+   watchlist: watchlist;
+   user: User;
 }
 export interface LeagueTeamViewProps {
-   team: Team | undefined;
+   team: Team;
    leagueID: string;
 }
 
 export interface KeeperViewProps {
-   league: League | any;
+   league: League;
+   team: Team;
+   draft: Draft;
 }
 export interface TeamViewProps {
    players: Player[];
@@ -217,3 +237,5 @@ export interface PlayerStats {
    stats?: stats;
    season?: string | number;
 }
+
+export type watchlist = Watchlist;
