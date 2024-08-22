@@ -52,7 +52,7 @@ const Watchlist = ({
                   return (
                      <div
                         key={player.id}
-                        className="flex flex-row items-center"
+                        className="flex flex-row items-center cursor-pointer"
                         onClick={(e) => handleUpdateFeaturedPlayer(player, e)}
                      >
                         <div className="fill-emerald-500 w-[30px] flex items-center">

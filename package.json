@@ -47,6 +47,7 @@
       "husky": "^8.0.3",
       "postcss": "^8.4.21",
       "prettier": "^2.8.4",
-      "react-responsive": "^9.0.2"
+      "react-responsive": "^9.0.2",
+      "supabase": "^1.190.0"
    }
 }

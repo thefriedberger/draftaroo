@@ -52,12 +52,12 @@ const DraftOrder = ({
             yourPick: false,
             isKeeper: false,
          };
-         for (const turn in turnOrder) {
-            if (turnOrder[turn].includes(draftPosition)) {
+         for (const turn of turnOrder) {
+            if (turn.picks.includes(draftPosition)) {
                pick.username = teams.filter((team: Team) => {
-                  return team.id === turn;
+                  return team.id === turn.team_id;
                })?.[0]?.team_name;
-               if (turn === teamID) {
+               if (turn.team_id === teamID) {
                   pick.yourPick = true;
                }
             }
@@ -68,8 +68,7 @@ const DraftOrder = ({
    };
 
    useEffect(() => {
-      if (teams.length > 0 && (turnOrder !== undefined || turnOrder.length > 0))
-         populatePicks();
+      if (teams.length > 0 && turnOrder.length) populatePicks();
    }, [teams, numberOfRounds, turnOrder]);
 
    useEffect(() => {

@@ -1,3 +1,4 @@
+import { DraftPick } from '@/lib/types';
 import { SupabaseClient, User } from '@supabase/supabase-js';
 import { cache } from 'react';
 export const getUser = cache(async (supabase: SupabaseClient<Database>) => {
@@ -152,6 +153,18 @@ export const fetchDraft = cache(
       return draft?.[0] as Draft;
    }
 );
+
+export const fetchDraftPicks = async (
+   supabase: SupabaseClient,
+   draftId: string
+): Promise<DraftPick[]> => {
+   const { data: draftPicks, error } = await supabase
+      .from('draft_picks')
+      .select('*')
+      .match({ draft_id: draftId });
+
+   return draftPicks as DraftPick[];
+};
 
 export const fetchLeagueRules = async (
    supabase: SupabaseClient,

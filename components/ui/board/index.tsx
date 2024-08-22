@@ -1,6 +1,5 @@
 'use client';
 
-import getPlayers from '@/app/utils/get-players';
 import { updateSupabaseWatchlist } from '@/app/utils/helpers';
 import {
    PageContext,
@@ -10,6 +9,7 @@ import {
    BoardProps,
    ChatProps,
    DraftOrderProps,
+   DraftPick,
    FeaturedPlayerProps,
    MyTeamProps,
    PlayerListProps,
@@ -35,14 +35,19 @@ import TeamsList from '../teams-list';
 import Timer from '../timer';
 import Watchlist from '../watchlist';
 
-const Board = (props: BoardProps) => {
+const Board = ({
+   leagueID,
+   draft,
+   user,
+   watchlist,
+   draftPicks,
+   players,
+}: BoardProps) => {
    const supabase = createClientComponentClient<Database>();
-   const { leagueID, draft } = props;
 
-   const [watchlist, setWatchlist] = useState<number[]>(
-      props?.watchlist?.players ?? []
+   const [watchlistState, setWatchlistState] = useState<number[]>(
+      watchlist?.players ?? []
    );
-
    const [featuredPlayer, setFeaturedPlayer] = useState<Player | null>();
    const [isYourTurn, setIsYourTurn] = useState<boolean>(false);
    const [doStart, setDoStart] = useState<boolean>(false);
@@ -51,24 +56,25 @@ const Board = (props: BoardProps) => {
    const [currentRound, setCurrentRound] = useState<number>(1);
    const [owner, setOwner] = useState<boolean>(false);
    const [draftedPlayers, setDraftedPlayers] = useState<DraftSelection[]>([]);
-   const [originalPlayers, setOriginalPlayers] = useState<Player[]>([]);
+   const originalPlayers = players;
    const [league, setLeague] = useState<League | any>();
-   const [turnOrder, setTurnOrder] = useState<any>([]);
+   const [turnOrder, setTurnOrder] = useState<DraftPick[]>([]);
    const [team, setTeam] = useState<Team | any>(null);
    const [numberOfTeams, setNumberOfTeams] = useState<number>();
    const [teams, setTeams] = useState<Team[]>([]);
    const [shouldFetchDraftedPlayers, setShouldFetchDraftedPlayers] =
       useState<boolean>(true);
    const [isActive, setIsActive] = useState<boolean>(draft?.is_active);
-   const [isCompleted, setIsCompleted] = useState<boolean>(draft?.is_completed);
+   const [isCompleted, setIsCompleted] = useState<boolean>(
+      draft?.is_completed ?? false
+   );
    const [draftedIDs, setDraftedIDs] = useState<number[]>([]);
-   const [players, setPlayers] = useState<Player[]>([]);
    const [shouldFilterPlayers, setShouldFilterPlayers] =
       useState<boolean>(false);
    const [yourPlayers, setYourPlayers] = useState<number[]>([]);
    const [teamsViewPlayers, setTeamsViewPlayers] = useState<number[]>([]);
    const [teamViewToShow, setTeamViewToShow] = useState<string>('');
-   const { user, userTeams, leagues } = useContext(PageContext);
+   const { userTeams, leagues, updateUser } = useContext(PageContext);
 
    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
@@ -123,9 +129,10 @@ const Board = (props: BoardProps) => {
    const autoDraft = () => {
       const playerToDraft = sortPlayers(players, 'score', 1)[0] || null;
       if (playerToDraft)
-         for (const team in turnOrder) {
-            if (turnOrder[team].includes(currentPick))
-               playerToDraft && handleDraftSelection(playerToDraft, team);
+         for (const team of turnOrder) {
+            if (team.picks.includes(currentPick))
+               playerToDraft &&
+                  handleDraftSelection(playerToDraft, team.team_id);
          }
    };
 
@@ -137,15 +144,20 @@ const Board = (props: BoardProps) => {
    };
 
    const updateWatchlist = async (player: Player, action: WatchlistAction) => {
-      if (watchlist) {
+      if (watchlistState) {
          if (action === WatchlistAction.DELETE) {
-            setWatchlist(watchlist?.filter((el) => el !== player.id));
+            setWatchlistState(watchlistState?.filter((el) => el !== player.id));
          }
          if (action === WatchlistAction.ADD) {
-            setWatchlist((prev) => [...prev, player.id]);
+            setWatchlistState((prev) => [...prev, player.id]);
          }
          user &&
-            updateSupabaseWatchlist(supabase, watchlist, user?.id, draft.id);
+            updateSupabaseWatchlist(
+               supabase,
+               watchlistState,
+               user?.id,
+               draft.id
+            );
       }
    };
 
@@ -204,14 +216,21 @@ const Board = (props: BoardProps) => {
    // set if user can pick
    useEffect(() => {
       if (team && isActive) {
-         if (turnOrder[team.id] !== undefined) {
+         if (
+            !turnOrder.filter((turn) => turn.team_id === team.id)[0].picks
+               .length
+         ) {
             const draftedPlayer = draftedPlayers.filter(
                (player: DraftSelection) => {
                   return player.pick === currentPick;
                }
             );
             if (draftedPlayer.length === 0)
-               setIsYourTurn(turnOrder[team.id].includes(currentPick));
+               setIsYourTurn(
+                  turnOrder
+                     .filter((turn) => turn.team_id === team.id)[0]
+                     .picks.includes(currentPick)
+               );
          }
       }
    }, [turnOrder, team, currentPick, isActive, draftedPlayers]);
@@ -336,13 +355,11 @@ const Board = (props: BoardProps) => {
 
    useEffect(() => {
       const getTurnOrder = async () => {
-         if (league) {
-            const { data } = await supabase
-               .from('league_rules')
-               .select('draft_picks')
-               .match({ id: league.league_rules });
-            data && setTurnOrder(data?.[0]?.draft_picks);
-         }
+         const { data } = await supabase
+            .from('draft_picks')
+            .select('*')
+            .match({ draft_id: draft.id });
+         data && setTurnOrder(data);
       };
       const getNumberOfTeams = async () => {
          if (league) {
@@ -362,7 +379,7 @@ const Board = (props: BoardProps) => {
             data && setTeams(data);
          }
       };
-      turnOrder.length === 0 && getTurnOrder();
+      !turnOrder.length && getTurnOrder();
       numberOfTeams === undefined && getNumberOfTeams();
       teams.length === 0 && getTeams();
    }, [league]);
@@ -392,26 +409,18 @@ const Board = (props: BoardProps) => {
    }, [supabase, draft]);
 
    useEffect(() => {
-      const fetchPlayers = async () => {
-         const playersArray = await getPlayers(leagueID);
-         setPlayers(playersArray as Player[]);
-         setOriginalPlayers(playersArray as Player[]);
-         setShouldFilterPlayers(true);
-      };
-      players.length === 0 && fetchPlayers();
+      setShouldFilterPlayers(true);
    }, []);
 
+   const filterDraftedPlayers = () => {
+      players = players.filter((player: Player) => {
+         return !draftedIDs.includes(player.id);
+      });
+      setShouldFilterPlayers(false);
+   };
    useEffect(() => {
-      const filterDraftedPlayers = () => {
-         setPlayers(
-            players.filter((player: Player) => {
-               return !draftedIDs.includes(player.id);
-            })
-         );
-         setShouldFilterPlayers(false);
-      };
       shouldFilterPlayers && filterDraftedPlayers();
-   }, [shouldFilterPlayers, draftedIDs, players]);
+   }, [shouldFilterPlayers, draftedIDs]);
 
    const timerProps: TimerProps = {
       owner: owner,
@@ -444,7 +453,7 @@ const Board = (props: BoardProps) => {
       updateFeaturedPlayer: updateFeaturedPlayer,
       draftedIDs: draftedIDs,
       leagueID: leagueID,
-      watchlist: watchlist,
+      watchlist: watchlistState,
       updateWatchlist: updateWatchlist,
    };
 
@@ -452,7 +461,7 @@ const Board = (props: BoardProps) => {
       draftedIDs: draftedIDs,
       featuredPlayer: featuredPlayer || null,
       yourTurn: isYourTurn,
-      watchlist: watchlist,
+      watchlist: watchlistState,
       updateWatchlist: updateWatchlist,
       updateFeaturedPlayer: updateFeaturedPlayer,
       handleDraftSelection: handleDraftSelection,
@@ -461,7 +470,7 @@ const Board = (props: BoardProps) => {
    const playerListProps: PlayerListProps = {
       leagueID: leagueID,
       draftedIDs: draftedIDs,
-      watchlist: watchlist,
+      watchlist: watchlistState,
       updateWatchlist: updateWatchlist,
       updateFeaturedPlayer: updateFeaturedPlayer,
       players: players,

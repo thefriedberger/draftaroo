@@ -1,12 +1,13 @@
 'use server';
 import {
+   fetchDraftPicks,
    fetchDraftSelections,
    fetchLeagueRules,
    fetchPlayers,
    fetchRosters,
 } from '@/app/utils/helpers';
 import KeeperForm, { KeeperFormProps } from '@/components/ui/forms/keepers';
-import { KeeperViewProps } from '@/lib/types';
+import { DraftPick, KeeperViewProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 export interface RosterPlayer extends TeamHistory {
    picks_needed: number[];
@@ -23,10 +24,15 @@ const KeepersTab = async ({ league, team, draft }: KeeperViewProps) => {
       supabase,
       league
    );
+   const draftPicks: Awaited<DraftPick[]> = await fetchDraftPicks(
+      supabase,
+      draft.id
+   );
    const draftSelections: Awaited<DraftSelection[]> =
-      await fetchDraftSelections(supabase, draft.id);
-   const leaguePicks: any = leagueRules?.draft_picks;
-   const userPicks = leaguePicks[team.id];
+      await fetchDraftSelections(supabase, draft?.id);
+   const userPicks = draftPicks.filter(
+      (draftPick) => draftPick.team_id === team.id
+   )[0];
    const players: Awaited<Player[]> = await fetchPlayers(supabase);
    const numberOfTeams = leagueRules.number_of_teams;
    const numberOfRounds = leagueRules.number_of_rounds;
@@ -36,12 +42,14 @@ const KeepersTab = async ({ league, team, draft }: KeeperViewProps) => {
    );
 
    const picks =
-      numberOfTeams &&
-      userPicks.map((pick: number) => {
-         return Math.ceil(pick / numberOfTeams);
-      });
+      numberOfTeams && userPicks.picks
+         ? userPicks.picks.map((pick: number) => {
+              return Math.ceil(pick / numberOfTeams);
+           })
+         : [];
 
    const populatePicksNeeded = (player: RosterPlayer) => {
+      if (!picks) return;
       if (!player.draft_position) return [leagueRules.number_of_rounds];
       if (player.draft_position === 1) {
          if (player.times_kept > 0) {
@@ -80,10 +88,11 @@ const KeepersTab = async ({ league, team, draft }: KeeperViewProps) => {
 
    const keeperFormProps: KeeperFormProps = {
       team: team,
-      picks: picks,
+      userPicks: userPicks.picks,
       players: players,
       roster: teamHistory as RosterPlayer[],
       numberOfRounds: numberOfRounds ?? 0,
+      numberOfTeams: numberOfTeams ?? 0,
       draft: draft,
    };
 

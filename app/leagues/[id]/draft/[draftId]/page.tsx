@@ -1,10 +1,15 @@
 'use server';
 
 import { createDraft } from '@/app/utils/create-draft';
-import { fetchDraft, fetchWatchlist } from '@/app/utils/helpers';
+import getPlayers from '@/app/utils/get-players';
+import {
+   fetchDraft,
+   fetchDraftPicks,
+   fetchWatchlist,
+} from '@/app/utils/helpers';
 import Board from '@/components/ui/board';
 import AuthModal from '@/components/ui/modals/auth';
-import { BoardProps } from '@/lib/types';
+import { BoardProps, DraftPick } from '@/lib/types';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { UserResponse } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
@@ -31,6 +36,7 @@ const Draft = async ({
       }
       return null;
    };
+
    // const getWatchlist = async () => {
    //    const { data: watchlist } = await supabase
    //       .from('watchlist')
@@ -60,12 +66,19 @@ const Draft = async ({
       supabase,
       user.user
    );
+   const draftPicks: Awaited<DraftPick[]> = await fetchDraftPicks(
+      supabase,
+      draft.id
+   );
+   const players: Awaited<Player[]> = await getPlayers(params.id);
 
    const boardProps: BoardProps = {
       leagueID: params.id,
       draft: draft,
       watchlist: watchlist,
       user: user.user,
+      draftPicks: draftPicks,
+      players: players,
    };
 
    return (

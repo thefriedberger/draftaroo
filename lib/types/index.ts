@@ -27,7 +27,7 @@ export interface DraftOrderProps {
    draftedPlayers: DraftSelection[];
    currentPick: number;
    teams: Team[] | any;
-   turnOrder: any;
+   turnOrder: DraftPick[];
    isYourTurn: boolean;
    league?: League | any;
    players: Player[];
@@ -74,6 +74,11 @@ export interface ChatProps {
    user: User | null;
 }
 
+export interface DraftPick {
+   team_id: string;
+   draft_id: string;
+   picks: number[];
+}
 export interface TeamProps {
    team_name: string;
    owner: string;
@@ -142,7 +147,9 @@ export interface TimerProps {
 
 export interface BoardProps {
    leagueID: string;
+   players: Player[];
    draft: Draft;
+   draftPicks: DraftPick[];
    watchlist: watchlist;
    user: User;
 }

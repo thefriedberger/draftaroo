@@ -1,6 +1,6 @@
 'use client';
 
-import { TimerProps } from '@/lib/types';
+import { DraftPick, TimerProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { createRef, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
@@ -49,17 +49,18 @@ const Timer = ({
    };
 
    useEffect(() => {
-      if (turnOrder !== undefined && userTeam?.id !== undefined) {
-         if (turnOrder[userTeam.id] !== undefined) {
-            for (const turn of turnOrder[userTeam.id]) {
-               if (turn === currentPick) {
-                  setUserPick(0);
-                  break;
-               }
-               if (turn > currentPick) {
-                  setUserPick(Math.abs(Number(currentPick) - Number(turn)));
-                  break;
-               }
+      if (turnOrder.length && userTeam?.id) {
+         const picks = turnOrder.filter(
+            (turn: DraftPick) => turn.team_id === userTeam.id
+         )[0];
+         for (const pick in picks.picks) {
+            if (pick === currentPick) {
+               setUserPick(0);
+               break;
+            }
+            if (pick > currentPick) {
+               setUserPick(Math.abs(Number(currentPick) - Number(pick)));
+               break;
             }
          }
       }

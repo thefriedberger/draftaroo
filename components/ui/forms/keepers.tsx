@@ -2,25 +2,30 @@
 
 import { RosterPlayer } from '@/app/leagues/tabs/keepers';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
 export interface KeeperFormProps {
    team: Team;
-   picks: number[];
+   userPicks: number[];
    roster: RosterPlayer[];
    players: Player[];
    numberOfRounds: number;
+   numberOfTeams: number;
    draft: Draft;
 }
 const KeeperForm = ({
    team,
-   picks,
+   userPicks,
    roster,
    players,
    numberOfRounds,
+   numberOfTeams,
    draft,
 }: KeeperFormProps) => {
    const supabase = createClientComponentClient<Database>();
+   const picks = userPicks.map((pick: number) => {
+      return Math.ceil(pick / numberOfTeams);
+   });
    const [picksAvailable, setPicksAvailable] = useState<number[]>(picks);
    const [rosterState, setRosterState] = useState<RosterPlayer[]>(roster);
 
@@ -88,9 +93,65 @@ const KeeperForm = ({
          );
       }
    };
+   const submitKeepers = (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      rosterState.map(async (player) => {
+         if (player.player_id && player.is_keeper) {
+            await supabase
+               .from('draft_selections')
+               .upsert(
+                  {
+                     player_id: player.player_id,
+                     draft_id: draft.id,
+                     team_id: player.team_id,
+                     pick: userPicks[player.picks_used[0] - 1],
+                     round: player.picks_used[0],
+                     is_keeper: player.is_keeper,
+                  },
+                  {
+                     onConflict: 'player_id, draft_id',
+                  }
+               )
+               .select();
+            await supabase
+               .from('team_history')
+               .update({ is_keeper: true })
+               .match({
+                  player_id: player.player_id,
+                  team_id: team.id,
+               });
+         } else {
+            await supabase.from('draft_selections').delete().match({
+               player_id: player.player_id,
+               draft_id: draft.id,
+            });
+            await supabase
+               .from('team_history')
+               .update({ is_keeper: false })
+               .match({
+                  player_id: player.player_id,
+                  team_id: team.id,
+               });
+         }
+      });
+   };
 
+   useEffect(() => {
+      roster.forEach((player) => {
+         if (player.is_keeper) {
+            const { picks_needed, picks_used } = player;
+            const tempPicks: number[] = [];
+            const picks: number[] = findClosestPick(picks_needed).sort(
+               (a, b) => a - b
+            );
+            setPicksAvailable(
+               picksAvailable.filter((pick) => !picks.includes(pick))
+            );
+         }
+      });
+   }, []);
    return (
-      <form className={'flex flex-col mt-2'}>
+      <form className={'flex flex-col mt-2'} onSubmit={submitKeepers}>
          <table>
             <thead className="bg-emerald-primary">
                <tr className={'align-bottom '}>
