@@ -38,7 +38,12 @@ const KeeperForm = ({
                .filter((pick) => !tempPicks.includes(pick))
                .sort((a, b) => b - a)
                .reduce((prev, curr) => {
-                  return Math.abs(curr - pick) < Math.abs(prev - pick)
+                  if (pick === 1) {
+                     return Math.abs(curr - pick) < Math.abs(prev - pick)
+                        ? curr
+                        : prev;
+                  }
+                  return Math.abs(curr - pick) <= Math.abs(prev - pick)
                      ? curr
                      : prev;
                }, 0);
@@ -174,6 +179,7 @@ const KeeperForm = ({
                         (playerToMatch) => playerToMatch.id === player.player_id
                      );
                      const closestPick = findClosestPick(player.picks_needed);
+
                      const canKeep =
                         player.picks_needed.length > 1 &&
                         player.picks_needed.some(

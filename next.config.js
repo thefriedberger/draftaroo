@@ -4,6 +4,15 @@ const nextConfig = {
       serverActions: true,
       appDir: true,
    },
+   images: {
+      remotePatterns: [
+         {
+            protocol: 'https',
+            hostname: 'assets.nhle.com',
+            port: '',
+         },
+      ],
+   },
 };
 
 module.exports = nextConfig;

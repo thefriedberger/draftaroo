@@ -1,7 +1,9 @@
 'use client';
 
+import FallbackImage from '@/app/assets/images/default-skater.png';
 import { FeaturedPlayerProps } from '@/lib/types';
 import classNames from 'classnames';
+import Image from 'next/image';
 import { Fragment, useState } from 'react';
 import { teamAbbreviations } from '../player';
 import WatchlistStar, { WatchlistStarProps } from '../watchlist/watchlist-star';
@@ -104,7 +106,7 @@ const FeaturedPlayer = ({
    return (
       <div
          className={classNames(
-            'lg:h-[180px] lg:relative fixed bottom-[66px] lg:bottom-auto bg-paper-primary dark:bg-gray-dark w-full p-2',
+            'lg:h-[210px] lg:relative fixed bottom-[66px] lg:bottom-auto bg-paper-primary dark:bg-gray-dark w-full p-2',
             isExpanded &&
                (featuredPlayer && !draftedIDs.includes(featuredPlayer.id)
                   ? 'h-[232px]'
@@ -118,39 +120,53 @@ const FeaturedPlayer = ({
          {featuredPlayer &&
             (!draftedIDs.includes(featuredPlayer.id) ? (
                <>
-                  <div className="dark:text-white text-xl">
-                     {featuredPlayer.first_name} {featuredPlayer.last_name}
-                     &nbsp;&nbsp;&nbsp;
-                     <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap">
-                        {teamAbbreviations?.[featuredPlayer.current_team] ||
-                           'FA'}{' '}
-                        -{' '}
-                        {featuredPlayer.primary_position &&
-                           featuredPlayer.primary_position
-                              .split(' ')
-                              .map((char: string) => char[0])}
-                     </span>
-                  </div>
-                  <div className="flex flex-row h-10">
-                     <button
-                        className={classNames(
-                           'bg-fuscia p-2 rounded-md mr-2 disabled:cursor-not-allowed whitespace-nowrap',
-                           !yourTurn && 'saturate-[25%]'
-                        )}
-                        onClick={() => {
-                           handleDraftSelection(featuredPlayer);
-                        }}
-                        type="button"
-                        disabled={!yourTurn}
-                     >
-                        Draft{' '}
-                        {featuredPlayer.first_name
-                           .split(' ')
-                           .map((char: string) => char[0])}
-                        {'. '}
-                        {featuredPlayer.last_name}
-                     </button>
-                     <WatchlistStar {...watchlistStarProps} />
+                  <div className={'flex flex-row'}>
+                     <Image
+                        src={featuredPlayer.headshot ?? FallbackImage}
+                        objectFit="cover"
+                        width="100"
+                        height="100"
+                        className="md:mr-2"
+                        alt={`${featuredPlayer.first_name} ${featuredPlayer.last_name} headshot`}
+                     />
+                     <div className="flex flex-col">
+                        <div className="dark:text-white text-xl">
+                           {featuredPlayer.first_name}{' '}
+                           {featuredPlayer.last_name}
+                           &nbsp;&nbsp;&nbsp;
+                           <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap">
+                              {teamAbbreviations?.[
+                                 featuredPlayer.current_team
+                              ] || 'FA'}{' '}
+                              -{' '}
+                              {featuredPlayer.primary_position &&
+                                 featuredPlayer.primary_position
+                                    .split(' ')
+                                    .map((char: string) => char[0])}
+                           </span>
+                        </div>
+                        <div className="flex flex-row h-10">
+                           <button
+                              className={classNames(
+                                 'bg-fuscia p-2 rounded-md mr-2 disabled:cursor-not-allowed whitespace-nowrap',
+                                 !yourTurn && 'saturate-[25%]'
+                              )}
+                              onClick={() => {
+                                 handleDraftSelection(featuredPlayer);
+                              }}
+                              type="button"
+                              disabled={!yourTurn}
+                           >
+                              Draft{' '}
+                              {featuredPlayer.first_name
+                                 .split(' ')
+                                 .map((char: string) => char[0])}
+                              {'. '}
+                              {featuredPlayer.last_name}
+                           </button>
+                           <WatchlistStar {...watchlistStarProps} />
+                        </div>
+                     </div>
                   </div>
                   <div className="hidden lg:block">
                      {playerStats(featuredPlayer)}
@@ -181,18 +197,32 @@ const FeaturedPlayer = ({
                </>
             ) : (
                <>
-                  <div className="dark:text-white text-xl whitespace-nowrap">
-                     {featuredPlayer.first_name} {featuredPlayer.last_name}
-                     &nbsp;&nbsp;&nbsp;
-                     <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap">
-                        {teamAbbreviations?.[featuredPlayer.current_team] ||
-                           'FA'}{' '}
-                        -{' '}
-                        {featuredPlayer.primary_position &&
-                           featuredPlayer.primary_position
-                              .split(' ')
-                              .map((char: string) => char[0])}
-                     </span>
+                  <div className={'flex flex-row'}>
+                     <Image
+                        src={featuredPlayer.headshot ?? FallbackImage}
+                        objectFit="cover"
+                        width="100"
+                        height="100"
+                        className="md:mr-2"
+                        alt={`${featuredPlayer.first_name} ${featuredPlayer.last_name} headshot`}
+                     />
+                     <div className="flex flex-col">
+                        <div className="dark:text-white text-xl whitespace-nowrap">
+                           {featuredPlayer.first_name}{' '}
+                           {featuredPlayer.last_name}
+                           &nbsp;&nbsp;&nbsp;
+                           <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap">
+                              {teamAbbreviations?.[
+                                 featuredPlayer.current_team
+                              ] || 'FA'}{' '}
+                              -{' '}
+                              {featuredPlayer.primary_position &&
+                                 featuredPlayer.primary_position
+                                    .split(' ')
+                                    .map((char: string) => char[0])}
+                           </span>
+                        </div>
+                     </div>
                   </div>
                   <div className="hidden lg:block">
                      {playerStats(featuredPlayer)}

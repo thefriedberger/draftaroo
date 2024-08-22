@@ -62,7 +62,7 @@
 }
 .draft-tabs-container,
 .draft-order {
-   height: calc(100vh - 180px - 74px);
+   height: calc(100vh - 210px - 74px);
 }
 
 .draft-board {
