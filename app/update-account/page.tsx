@@ -24,14 +24,7 @@ const SetPassword = () => {
    const [verifyPassword, setVerifyPassword] = useState('');
    const [passwordsMatch, setPasswordsMatch] = useState(true);
    const router = useRouter();
-   const {
-      user,
-      updateUser,
-      updateSession,
-      fetchLeagues,
-      fetchTeam,
-      fetchTeams,
-   } = useContext(PageContext);
+   const { user } = useContext(PageContext);
 
    const checkPassword = (e: ChangeEvent<HTMLInputElement>) => {
       if (e?.target?.value === password) {

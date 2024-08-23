@@ -26,7 +26,7 @@ const League = async ({ params: { id } }: { params: { id: string } }) => {
    if (!user?.user || !session) {
       return (
          <>
-            <h1>You must log in to see this</h1>
+            <h1 className={'dark:text-white'}>You must log in to see this</h1>
             <AuthModal buttonClass="py-2 px-4 rounded-md no-underline" />
          </>
       );

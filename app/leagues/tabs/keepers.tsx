@@ -17,7 +17,7 @@ export interface RosterPlayer extends TeamHistory {
 }
 const KeepersTab = async ({ league, team, draft }: KeeperViewProps) => {
    const supabase = createClientComponentClient<Database>();
-   if (!team?.id) {
+   if (!team) {
       return <></>;
    }
    const leagueRules: Awaited<LeagueRules> = await fetchLeagueRules(

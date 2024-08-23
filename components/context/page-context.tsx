@@ -1,6 +1,5 @@
 'use client';
 
-import { updateSupabaseWatchlist } from '@/app/utils/helpers';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Session, User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
@@ -20,8 +19,6 @@ export type PageContextType = {
    profile?: Profile | any;
    udpateProfile?: (newProfile: Profile | any) => void;
    userSignout?: () => void;
-   fetchTeam?: () => void;
-   fetchTeams?: () => void;
    fetchLeagues?: () => void;
    watchlist?: Watchlist | any;
    fetchWatchlist?: () => void;
@@ -50,11 +47,8 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
    const [watchlist, setWatchlist] = React.useState<number[]>([]);
    const [shouldUpdateWatchlist, setShouldUpdateWatchlist] =
       React.useState<boolean>(false);
-   const [shouldFetchTeams, setShouldFetchTeams] =
-      React.useState<boolean>(true);
    const [shouldFetchProfile, setShouldFetchProfile] =
       React.useState<boolean>(true);
-   const [draft, setDraft] = React.useState<Draft>();
 
    const router = useRouter();
 
@@ -91,28 +85,7 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
          if (action === WatchlistAction.ADD) {
             setWatchlist((prev) => [...prev, player.id]);
          }
-         user &&
-            updateSupabaseWatchlist(supabase, watchlist, user?.id, draft.id);
       }
-   };
-
-   const fetchTeam = async () => {
-      const supabase = createClientComponentClient<Database>();
-      const { data, error } = await supabase
-         .from('teams')
-         .select('*')
-         .match({ owner: user?.id });
-      if (data) setUserTeams(data as Team);
-   };
-
-   const fetchTeams = async () => {
-      const supabase = createClientComponentClient<Database>();
-      const { data, error } = await supabase.from('teams').select('*');
-      if (data && data.length !== 0 && user) {
-         setTeams(data as Team);
-         setUserTeams(data.filter((team) => team.owner === user.id));
-      }
-      if (error) setShouldFetchTeams(false);
    };
 
    const fetchProfile = async () => {
@@ -152,29 +125,12 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
             .insert({ owner: user?.id, players: [] })
             .select('*');
          if (data?.[0]?.players) {
-            // let newWatchlist: Player[] = [];
-            // for (const player of data?.[0]?.players) {
-            //    const data = await getPlayers();
-            //    const players = await supabase
-            //       .from('players')
-            //       .select('*')
-            //       .match({ id: player });
-            //    newWatchlist.push(players?.data?.[0] as Player);
-            // }
             setShouldUpdateWatchlist(false);
             setWatchlist(data?.[0]?.players);
          }
       }
       if (data) {
          if (data?.[0]?.players) {
-            // let newWatchlist: Player[] = [];
-            // for (const player of data?.[0]?.players) {
-            //    const players = await supabase
-            //       .from('players')
-            //       .select('*')
-            //       .match({ id: player });
-            //    newWatchlist.push(players?.data?.[0] as Player);
-            // }
             setShouldUpdateWatchlist(false);
             setWatchlist(data?.[0]?.players);
          }
@@ -192,7 +148,6 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
       router.refresh();
    };
    useEffect(() => {
-      if (user?.id && user !== undefined && shouldFetchTeams) fetchTeams();
       if (user?.id && user !== undefined && shouldFetchProfile) fetchProfile();
    }, [user]);
 
@@ -216,15 +171,6 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
             .select('*');
          if (data) {
             if (data?.[0]?.players) {
-               // let newWatchlist: Player[] = [];
-               // for (const player of data?.[0]?.players) {
-               //    const players = await supabase
-               //       .from('players')
-               //       .select('*')
-               //       .match({ id: player });
-
-               //    newWatchlist.push(players?.data?.[0] as Player);
-               // }
                setShouldUpdateWatchlist(false);
                setWatchlist(data?.[0]?.players);
             }
@@ -249,8 +195,6 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
             profile,
             udpateProfile,
             userSignout,
-            fetchTeam,
-            fetchTeams,
             fetchLeagues,
             watchlist,
             fetchWatchlist,

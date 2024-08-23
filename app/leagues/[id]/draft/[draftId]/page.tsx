@@ -5,6 +5,8 @@ import getPlayers from '@/app/utils/get-players';
 import {
    fetchDraft,
    fetchDraftPicks,
+   fetchLeague,
+   fetchTeam,
    fetchWatchlist,
 } from '@/app/utils/helpers';
 import Board from '@/components/ui/board';
@@ -58,7 +60,7 @@ const Draft = async ({
    if (!user?.user)
       return (
          <>
-            <h1>You must log in to see this</h1>
+            <h1 className={'dark:text-white'}>You must log in to see this</h1>
             <AuthModal buttonClass="py-2 px-4 rounded-md no-underline" />
          </>
       );
@@ -70,15 +72,23 @@ const Draft = async ({
       supabase,
       draft.id
    );
+   const league: Awaited<League> = await fetchLeague(supabase, params.id);
    const players: Awaited<Player[]> = await getPlayers(params.id);
+   const team: Awaited<Team> = await fetchTeam(
+      supabase,
+      user.user.id,
+      params.id
+   );
 
    const boardProps: BoardProps = {
+      league: league,
       leagueID: params.id,
       draft: draft,
       watchlist: watchlist,
       user: user.user,
       draftPicks: draftPicks,
       players: players,
+      team: team,
    };
 
    return (

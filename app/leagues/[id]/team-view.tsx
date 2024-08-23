@@ -27,7 +27,7 @@ const TeamView = ({ team, leagueID }: LeagueTeamViewProps) => {
             <>
                <h2
                   className="font-bold text-xl text-black dark:text-white mb-2"
-                  key={team?.id}
+                  key={team.id}
                >
                   {teamName || team?.team_name}
                </h2>

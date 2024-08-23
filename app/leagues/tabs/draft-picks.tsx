@@ -85,7 +85,7 @@ const DraftPicksTab = ({
       if (draftPicks.length === 0) {
          const initialTeams = teams.map((team) => {
             return {
-               team_id: team?.id ?? '',
+               team_id: team.id,
                draft_id: draft?.id ?? '',
                picks: [],
             };

@@ -4,13 +4,14 @@ import { AuthFormProps, ModalProps } from '@/lib/types';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import Modal from 'react-modal';
+import ForgotPasswordForm from '../forms/forgot-password';
 import SignInForm from '../forms/sign-in';
 import SignUpForm from '../forms/sign-up';
 import styles from './modals.module.css';
 
 export type formStatus = 'VIEW_FORM' | 'CHECK_EMAIL';
 
-export type formType = 'SIGN_IN' | 'SIGN_UP';
+export type formType = 'SIGN_IN' | 'SIGN_UP' | 'FORGOT_PASSWORD';
 
 const AuthModal = (props: ModalProps) => {
    const [view, setView] = useState<formStatus>('VIEW_FORM');
@@ -68,10 +69,10 @@ const AuthModal = (props: ModalProps) => {
                Close
             </button>
             <>
-               {formType === 'SIGN_IN' ? (
-                  <SignInForm {...authFormProps} />
-               ) : (
-                  <SignUpForm {...authFormProps} />
+               {formType === 'SIGN_IN' && <SignInForm {...authFormProps} />}
+               {formType === 'SIGN_UP' && <SignUpForm {...authFormProps} />}
+               {formType === 'FORGOT_PASSWORD' && (
+                  <ForgotPasswordForm {...authFormProps} />
                )}
             </>
          </Modal>

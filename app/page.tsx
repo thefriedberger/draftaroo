@@ -13,7 +13,7 @@ export default async function Home() {
    if (!user?.user) {
       return (
          <>
-            <h1>You must log in to see this</h1>
+            <h1 className={'dark:text-white'}>You must log in to see this</h1>
             <AuthModal buttonClass="py-2 px-4 rounded-md no-underline" />
          </>
       );

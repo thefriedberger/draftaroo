@@ -1,21 +1,16 @@
-'use client';
-import inviteUser from '@/app/utils/invite-user';
-import { PageContext } from '@/components/context/page-context';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import classNames from 'classnames';
-import { useRouter } from 'next/navigation';
-import { ChangeEvent, useContext, useEffect, useState } from 'react';
+'use server';
+import { fetchTeams } from '@/app/utils/helpers';
+import TeamAdmin from '@/components/team-admin';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
-const TeamsTab = ({ league }: { league: League }) => {
-   const [shouldFetchTeams, setShouldFetchTeams] = useState<boolean>(false);
+const TeamsTab = async ({ league }: { league: League }) => {
+   if (!league?.league_id) return;
+   const supabase = createServerComponentClient<Database>({ cookies });
+   const user = supabase.auth.getUser();
 
-   const { leagues, teams, user, session, fetchTeams } =
-      useContext(PageContext);
+   const teams: Awaited<Team[]> = await fetchTeams(supabase, league.league_id);
 
-   useEffect(() => {
-      shouldFetchTeams && fetchTeams?.();
-      setShouldFetchTeams(false);
-   }, [shouldFetchTeams]);
    return (
       <>
          {user && user !== undefined && (
@@ -32,13 +27,7 @@ const TeamsTab = ({ league }: { league: League }) => {
                               return team.league_id === league.league_id;
                         })
                         .map((team: Team) => {
-                           return (
-                              <TeamAdmin
-                                 key={team.id}
-                                 team={team}
-                                 setShouldFetchTeams={setShouldFetchTeams}
-                              />
-                           );
+                           return <TeamAdmin key={team.id} team={team} />;
                         })}
                   </>
                )}
@@ -49,113 +38,3 @@ const TeamsTab = ({ league }: { league: League }) => {
 };
 
 export default TeamsTab;
-
-export type UserInvite = {
-   email: string;
-   callback: string;
-   teamId: string;
-   leagueID: string;
-};
-
-const TeamAdmin = ({
-   team,
-   setShouldFetchTeams,
-}: {
-   team: Team;
-   setShouldFetchTeams: (value: boolean) => void;
-}) => {
-   const supabase = createClientComponentClient<Database>();
-   const { team_name, id, league_id, owner } = team;
-   const [ownerEmail, setOwnerEmail] = useState<string>('');
-   const [newUserEmail, setNewUserEmail] = useState<string>('');
-   const [newTeamName, setNewTeamName] = useState<string>('');
-   const router = useRouter();
-
-   const updateEmail = (e: ChangeEvent<HTMLInputElement>) => {
-      setNewUserEmail(e.target.value);
-   };
-
-   useEffect(() => {
-      getUserByOwnerId();
-   }, [owner]);
-
-   const updateTeamName = (e: ChangeEvent<HTMLInputElement>) => {
-      setNewTeamName(e.target.value);
-   };
-
-   const getUserByOwnerId = async () => {
-      if (owner && owner !== undefined && owner.length > 0) {
-         const { data } = await supabase
-            .from('profiles')
-            .select('*')
-            .match({ id: owner });
-
-         data && data?.[0]?.email && setOwnerEmail(data[0].email);
-      }
-   };
-   const handleChangeName = async () => {
-      const { error } = await supabase
-         .from('teams')
-         .update({ team_name: newTeamName })
-         .match({ id: id });
-      if (!error) {
-         setShouldFetchTeams(true);
-         router.refresh();
-      }
-   };
-   const handleChangeOwner = async () => {
-      if (league_id && id) {
-         const formData: UserInvite = {
-            email: newUserEmail,
-            callback: String(
-               `${location.origin}/leagues/${league_id}/callback`
-            ),
-            teamId: id,
-            leagueID: league_id,
-         };
-         const response = await inviteUser(formData);
-         if (response) {
-            console.log(response);
-         } else {
-            setShouldFetchTeams(true);
-            router.refresh();
-         }
-      }
-   };
-   return (
-      <div className={classNames('flex my-2')}>
-         <p className="mr-3 min-w-[80px]">{team_name}</p>
-         {owner && <p>{ownerEmail}</p>}
-         <div className="flex flex-row items-stretch mr-2">
-            <input
-               className="p-2"
-               type="text"
-               name="team_name"
-               onChange={updateTeamName}
-            />
-            <button
-               className="p-2 ml-2 bg-white rounded-md text-black"
-               type="button"
-               onClick={handleChangeName}
-            >
-               Update name
-            </button>
-         </div>
-         <div className="flex flex-row items-stretch">
-            <input
-               className="p-2"
-               type="email"
-               name="user_email"
-               onChange={updateEmail}
-            />
-            <button
-               className="p-2 ml-2 bg-white rounded-md text-black"
-               type="button"
-               onClick={handleChangeOwner}
-            >
-               Add owner
-            </button>
-         </div>
-      </div>
-   );
-};

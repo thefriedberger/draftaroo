@@ -146,12 +146,14 @@ export interface TimerProps {
 }
 
 export interface BoardProps {
+   league: League;
    leagueID: string;
    players: Player[];
    draft: Draft;
    draftPicks: DraftPick[];
    watchlist: watchlist;
    user: User;
+   team: Team;
 }
 export interface LeagueTeamViewProps {
    team: Team;

@@ -1,41 +1,26 @@
 'use client';
 
-import { PageContext } from '@/components/context/page-context';
 import { AuthFormProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 
-const SignInForm = (props: AuthFormProps) => {
+const ForgotPasswordForm = (props: AuthFormProps) => {
    const [email, setEmail] = useState('');
-   const [password, setPassword] = useState('');
-   const [invalidCredentials, setInvalidCredentials] = useState(false);
-
-   const { updateUser, updateSession } = useContext(PageContext);
-
    const supabase = createClientComponentClient<Database>();
 
    const { setFormType, setView } = props;
 
-   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
+   const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      const { data, error } = await supabase.auth.signInWithPassword({
-         email,
-         password,
+      await supabase.auth.resetPasswordForEmail(email, {
+         redirectTo: `${origin}/account-recovery`,
       });
-
-      if (error) {
-         setInvalidCredentials(true);
-      } else {
-         setInvalidCredentials(false);
-         updateUser?.(data.user);
-         if (data.session) updateSession?.(data.session);
-      }
    };
    return (
       <>
          <form
             className="flex-1 flex flex-col w-full lg:w-96 justify-center gap-2 text-foreground"
-            onSubmit={handleSignIn}
+            onSubmit={handleResetPassword}
          >
             <label className="text-md" htmlFor="email">
                Email
@@ -49,31 +34,15 @@ const SignInForm = (props: AuthFormProps) => {
                value={email}
                placeholder="you@example.com"
             />
-            <label className="text-md" htmlFor="password">
-               Password
-            </label>
-            <input
-               className="rounded-md px-4 py-2 dark:text-white  bg-inherit border mb-3"
-               type="password"
-               name="password"
-               onChange={(e) => setPassword(e.target.value)}
-               value={password}
-               placeholder="••••••••"
-            />
-            {invalidCredentials && (
-               <p className="text-red-700 mb-3">
-                  Email or password is incorrect
-               </p>
-            )}
             <button className="bg-emerald-primary rounded px-4 py-2 text-white mb-3">
-               Sign In
+               Send recovery link
             </button>
             <div className="flex flex-row justify-around items-end">
                <button
                   className="underline"
-                  onClick={() => setFormType('FORGOT_PASSWORD')}
+                  onClick={() => setFormType('SIGN_IN')}
                >
-                  Forgot Password
+                  Sign In
                </button>
                <div className="flex flex-col text-left items-start">
                   <p className="text-sm text-center">
@@ -92,4 +61,4 @@ const SignInForm = (props: AuthFormProps) => {
    );
 };
 
-export default SignInForm;
+export default ForgotPasswordForm;

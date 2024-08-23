@@ -1,10 +1,7 @@
 'use client';
 
 import { updateSupabaseWatchlist } from '@/app/utils/helpers';
-import {
-   PageContext,
-   WatchlistAction,
-} from '@/components/context/page-context';
+import { WatchlistAction } from '@/components/context/page-context';
 import {
    BoardProps,
    ChatProps,
@@ -21,7 +18,7 @@ import {
 } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Chat from '../chat';
 import DraftOrder from '../draft-order';
@@ -36,12 +33,13 @@ import Timer from '../timer';
 import Watchlist from '../watchlist';
 
 const Board = ({
-   leagueID,
+   league,
    draft,
    user,
    watchlist,
    draftPicks,
    players,
+   team,
 }: BoardProps) => {
    const supabase = createClientComponentClient<Database>();
 
@@ -52,14 +50,12 @@ const Board = ({
    const [isYourTurn, setIsYourTurn] = useState<boolean>(false);
    const [doStart, setDoStart] = useState<boolean>(false);
    const [doReset, setDoReset] = useState<boolean>(false);
-   const [currentPick, setCurrentPick] = useState<number>(1);
+   const [currentPick, setCurrentPick] = useState<number>(draft.current_pick);
    const [currentRound, setCurrentRound] = useState<number>(1);
-   const [owner, setOwner] = useState<boolean>(false);
+   const [owner, setOwner] = useState<boolean>(league.owner === user.id);
    const [draftedPlayers, setDraftedPlayers] = useState<DraftSelection[]>([]);
    const originalPlayers = players;
-   const [league, setLeague] = useState<League | any>();
    const [turnOrder, setTurnOrder] = useState<DraftPick[]>([]);
-   const [team, setTeam] = useState<Team | any>(null);
    const [numberOfTeams, setNumberOfTeams] = useState<number>();
    const [teams, setTeams] = useState<Team[]>([]);
    const [shouldFetchDraftedPlayers, setShouldFetchDraftedPlayers] =
@@ -74,7 +70,6 @@ const Board = ({
    const [yourPlayers, setYourPlayers] = useState<number[]>([]);
    const [teamsViewPlayers, setTeamsViewPlayers] = useState<number[]>([]);
    const [teamViewToShow, setTeamViewToShow] = useState<string>('');
-   const { userTeams, leagues, updateUser } = useContext(PageContext);
 
    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
@@ -92,7 +87,7 @@ const Board = ({
       await supabase
          .from('draft')
          .update({ is_active: true })
-         .match({ league_id: leagueID, id: draft.id });
+         .match({ league_id: league.league_id, id: draft.id });
    };
 
    const handlePick = async () => {
@@ -102,7 +97,7 @@ const Board = ({
       await supabase
          .from('draft')
          .update({ current_pick: currentPick + 1 })
-         .match({ league_id: leagueID, id: draft.id });
+         .match({ league_id: league.league_id, id: draft.id });
 
       setDoReset(true);
    };
@@ -113,7 +108,7 @@ const Board = ({
             .from('draft_selections')
             .insert({
                player_id: player.id,
-               team_id: teamID || team.id,
+               team_id: team.id,
                draft_id: draft.id,
                round: currentRound,
                pick: currentPick,
@@ -235,17 +230,6 @@ const Board = ({
       }
    }, [turnOrder, team, currentPick, isActive, draftedPlayers]);
 
-   // sets your team for this league, probably not efficient
-   useEffect(() => {
-      userTeams &&
-         userTeams !== undefined &&
-         setTeam(
-            userTeams.filter((team: Team) => {
-               return team.league_id === leagueID;
-            })[0]
-         );
-   }, [userTeams]);
-
    // set round
    useEffect(() => {
       if (numberOfTeams) {
@@ -263,11 +247,11 @@ const Board = ({
          const { data } = await supabase
             .from('draft')
             .select('current_pick')
-            .match({ league_id: leagueID, id: draft.id });
+            .match({ league_id: league.league_id, id: draft.id });
          data && setCurrentPick(data?.[0].current_pick);
       };
       getCurrentPick();
-   }, [leagueID]);
+   }, [league.league_id]);
 
    // logic for updating after draft pick
    useEffect(() => {
@@ -315,14 +299,14 @@ const Board = ({
                event: 'UPDATE',
                schema: 'public',
                table: 'draft',
-               filter: `league_id=eq.${leagueID}&id=eq.${draft.id}`,
+               filter: `league_id=eq.${league.league_id}&id=eq.${draft.id}`,
             },
             (payload) => {
                setCurrentPick(payload.new.current_pick);
             }
          )
          .subscribe();
-   }, [supabase, draft, leagueID]);
+   }, [supabase, draft, league.league_id]);
 
    useEffect(() => {
       isActive === undefined && draft && setIsActive(draft.is_active);
@@ -335,23 +319,6 @@ const Board = ({
          setDoStart(false);
       }
    }, [isActive]);
-
-   useEffect(() => {
-      leagues?.forEach((league: League) => {
-         if (league.league_id === leagueID) {
-            if (league.owner === user?.id) {
-               setOwner(true);
-            } else {
-               setOwner(false);
-            }
-         }
-      });
-      setLeague(
-         leagues?.filter((league: League) => {
-            return league.league_id === leagueID;
-         })[0]
-      );
-   }, [leagues]);
 
    useEffect(() => {
       const getTurnOrder = async () => {
@@ -375,7 +342,7 @@ const Board = ({
             const { data } = await supabase
                .from('teams')
                .select('*')
-               .match({ league_id: leagueID });
+               .match({ league_id: league.league_id });
             data && setTeams(data);
          }
       };
@@ -445,14 +412,14 @@ const Board = ({
       turnOrder: turnOrder,
       league: league,
       players: originalPlayers,
-      teamID: team?.id || '',
+      teamID: team.id,
       updateFeaturedPlayer: updateFeaturedPlayer,
    };
 
    const watchlistProps: WatchlistProps = {
       updateFeaturedPlayer: updateFeaturedPlayer,
       draftedIDs: draftedIDs,
-      leagueID: leagueID,
+      leagueID: league?.league_id ?? '',
       watchlist: watchlistState,
       updateWatchlist: updateWatchlist,
    };
@@ -468,7 +435,7 @@ const Board = ({
    };
 
    const playerListProps: PlayerListProps = {
-      leagueID: leagueID,
+      leagueID: league.league_id ?? '',
       draftedIDs: draftedIDs,
       watchlist: watchlistState,
       updateWatchlist: updateWatchlist,
@@ -643,7 +610,7 @@ const Board = ({
    };
    return (
       <div className={classNames('w-full flex flex-col lg:flex-row')}>
-         {user && team?.league_id === leagueID ? (
+         {user && team?.league_id === league.league_id ? (
             <>
                {!isMobile ? (
                   <div className="draft-board w-full flex flex-col lg:flex-row">
