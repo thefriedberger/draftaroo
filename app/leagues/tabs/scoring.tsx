@@ -1,129 +1,184 @@
 'use client';
-const ScoringTab = (league?: League) => {
+
+import updateLeagueScoring from '@/app/utils/update-league-scoring';
+
+export interface ScoringTabProps {
+   league?: League;
+   leagueScoring?: { [key: string]: LeagueScoring } | any;
+}
+const ScoringTab = ({ league, leagueScoring }: ScoringTabProps) => {
+   const goalieStats = leagueScoring
+      ? Object.keys(leagueScoring).filter((key) =>
+           ['wins', 'goalsAgainst', 'shutouts', 'saves'].includes(key)
+        )
+      : ['wins', 'goalsAgainst', 'shutouts', 'saves'];
+   const skaterStats = leagueScoring
+      ? Object.keys(leagueScoring).filter(
+           (key) =>
+              !['id', 'wins', 'goalsAgainst', 'shutouts', 'saves'].includes(key)
+        )
+      : [
+           'goals',
+           'assists',
+           'plusMinus',
+           'powerPlayGoals',
+           'powerPlayAssists',
+           'powerPlayPoints',
+           'shortHandedGoals',
+           'shortHandedAssists',
+           'shortHandedPoints',
+           'hits',
+           'shots',
+           'blocked',
+           'pim',
+        ];
+
    return (
       <>
-         <div className="flex flex-col bg-gray-primary rounded-md p-4">
-            <h3 className="text-white mb-3">Skater scoring</h3>
+         {leagueScoring ? (
+            <form
+               action={(formData: FormData) =>
+                  updateLeagueScoring(formData, leagueScoring.id)
+               }
+            >
+               <div className="flex flex-col bg-gray-primary rounded-md rounded-t-none p-4">
+                  <h3 className="text-white mb-3 text-xl">Skater scoring</h3>
+                  {skaterStats.map((score: string) => {
+                     const spacedName = score
+                        ?.match(/[A-Z]?[^A-Z]*/g)
+                        ?.join(' ');
+                     const scoringInputProps: ScoringInputProps = {
+                        displayName: spacedName
+                           ? spacedName?.charAt(0).toLocaleUpperCase() +
+                             spacedName?.substring(1)
+                           : '',
+                        name: score,
+                        initialValue: Number(leagueScoring?.[score]),
+                     };
+                     return (
+                        <div
+                           className="flex flex-col lg:flex-row justify-between"
+                           key={score}
+                        >
+                           <ScoringInput {...scoringInputProps} />
+                        </div>
+                     );
+                  })}
+               </div>
 
-            <div className="flex flex-col lg:flex-row justify-between">
-               <label htmlFor="goals" className="text-white mr-2">
-                  Goals
-               </label>
-               <input name="goals" id="goals" className="mb-3 p-1 text-black" />
-            </div>
+               <div className="flex flex-col bg-gray-primary rounded-md p-4 mt-3">
+                  <h3 className="text-white mb-3 text-xl">
+                     Goaltender scoring
+                  </h3>
+                  {goalieStats.map((score: string) => {
+                     const spacedName = score
+                        ?.match(/[A-Z]?[^A-Z]*/g)
+                        ?.join(' ');
+                     const scoringInputProps: ScoringInputProps = {
+                        displayName: spacedName
+                           ? spacedName?.charAt(0).toLocaleUpperCase() +
+                             spacedName?.substring(1)
+                           : '',
+                        name: score,
+                        initialValue: Number(leagueScoring?.[score]),
+                     };
+                     return (
+                        <div
+                           className="flex flex-col lg:flex-row justify-between"
+                           key={score}
+                        >
+                           <ScoringInput {...scoringInputProps} />
+                        </div>
+                     );
+                  })}
+               </div>
+               <button
+                  className={
+                     'bg-emerald-primary rounded px-4 py-2 text-white mb-3 self-center mt-2'
+                  }
+                  type="submit"
+               >
+                  Submit
+               </button>
+            </form>
+         ) : (
+            <>
+               <div className="flex flex-col bg-gray-primary rounded-md rounded-t-none p-4">
+                  <h3 className="text-white mb-3 text-xl">Skater scoring</h3>
+                  {skaterStats.map((score: string) => {
+                     const spacedName = score
+                        ?.match(/[A-Z]?[^A-Z]*/g)
+                        ?.join(' ');
+                     const scoringInputProps: ScoringInputProps = {
+                        displayName: spacedName
+                           ? spacedName?.charAt(0).toLocaleUpperCase() +
+                             spacedName?.substring(1)
+                           : '',
+                        name: score,
+                     };
+                     return (
+                        <div
+                           className="flex flex-col lg:flex-row justify-between"
+                           key={score}
+                        >
+                           <ScoringInput {...scoringInputProps} />
+                        </div>
+                     );
+                  })}
+               </div>
 
-            <div className="flex flex-col lg:flex-row justify-between">
-               <label htmlFor="assists" className="text-white mr-2">
-                  Assists
-               </label>
-               <input
-                  name="assists"
-                  id="assists"
-                  className="mb-3 p-1 text-black"
-               />
-            </div>
-
-            <div className="flex flex-col lg:flex-row justify-between">
-               <label htmlFor="plus_minus" className="text-white mr-2">
-                  Plus/Minus (+/-)
-               </label>
-               <input
-                  name="plus_minus"
-                  id="plus_minus"
-                  className="mb-3 p-1 text-black"
-               />
-            </div>
-
-            <div className="flex flex-col lg:flex-row justify-between">
-               <label htmlFor="pim" className="text-white mr-2">
-                  Penalty Minutes (PIM)
-               </label>
-               <input name="pim" id="pim" className="mb-3 p-1 text-black" />
-            </div>
-
-            <div className="flex flex-col lg:flex-row justify-between">
-               <label htmlFor="ppg" className="text-white mr-2">
-                  Powerplay Goals (PPG)
-               </label>
-               <input name="ppg" id="ppg" className="mb-3 p-1 text-black" />
-            </div>
-
-            <div className="flex flex-col lg:flex-row justify-between">
-               <label htmlFor="ppa" className="text-white mr-2">
-                  Powerplay Assists (PPA)
-               </label>
-               <input name="ppa" id="ppa" className="mb-3 p-1 text-black" />
-            </div>
-
-            <div className="flex flex-col lg:flex-row justify-between">
-               <label htmlFor="shg" className="text-white mr-2">
-                  Shorthanded Goals (SHG)
-               </label>
-               <input name="shg" id="shg" className="mb-3 p-1 text-black" />
-            </div>
-
-            <div className="flex flex-col lg:flex-row justify-between">
-               <label htmlFor="sha" className="text-white mr-2">
-                  Shorthanded Assists (SHA)
-               </label>
-               <input name="sha" id="sha" className="mb-3 p-1 text-black" />
-            </div>
-
-            <div className="flex flex-col lg:flex-row justify-between">
-               <label htmlFor="shots" className="text-white mr-2">
-                  Shots
-               </label>
-               <input name="shots" id="shots" className="mb-3 p-1 text-black" />
-            </div>
-
-            <div className="flex flex-col lg:flex-row justify-between">
-               <label htmlFor="hits" className="text-white mr-2">
-                  Hits
-               </label>
-               <input name="hits" id="hits" className="mb-3 p-1 text-black" />
-            </div>
-
-            <div className="flex flex-col lg:flex-row justify-between">
-               <label htmlFor="blocks" className="text-white mr-2">
-                  Blocks
-               </label>
-               <input
-                  name="blocks"
-                  id="blocks"
-                  className="mb-3 p-1 text-black"
-               />
-            </div>
-         </div>
-
-         <div className="flex flex-col bg-gray-primary rounded-md p-4 mt-3">
-            <h3 className="text-white mb-3">Goaltender scoring</h3>
-            <label htmlFor="wins" className="text-white mr-2">
-               Wins
-            </label>
-            <input name="wins" id="wins" className="mb-3 p-1 text-black" />
-            <label htmlFor="goals_against" className="text-white mr-2">
-               Goals Against
-            </label>
-            <input
-               name="goals_against"
-               id="goals_against"
-               className="mb-3 p-1 text-black"
-            />
-            <label htmlFor="saves" className="text-white mr-2">
-               Saves
-            </label>
-            <input name="saves" id="saves" className="mb-3 p-1 text-black" />
-            <label htmlFor="shutouts" className="text-white mr-2">
-               Shutouts
-            </label>
-            <input
-               name="shutouts"
-               id="shutouts"
-               className="mb-3 p-1 text-black"
-            />
-         </div>
+               <div className="flex flex-col bg-gray-primary rounded-md p-4 mt-3">
+                  <h3 className="text-white mb-3 text-xl">
+                     Goaltender scoring
+                  </h3>
+                  {goalieStats.map((score: string) => {
+                     const spacedName = score
+                        ?.match(/[A-Z]?[^A-Z]*/g)
+                        ?.join(' ');
+                     const scoringInputProps: ScoringInputProps = {
+                        displayName: spacedName
+                           ? spacedName?.charAt(0).toLocaleUpperCase() +
+                             spacedName?.substring(1)
+                           : '',
+                        name: score,
+                     };
+                     return (
+                        <div
+                           className="flex flex-col lg:flex-row justify-between"
+                           key={score}
+                        >
+                           <ScoringInput {...scoringInputProps} />
+                        </div>
+                     );
+                  })}
+               </div>
+            </>
+         )}
       </>
    );
 };
-
 export default ScoringTab;
+export interface ScoringInputProps {
+   name: string;
+   initialValue?: number;
+   displayName: string;
+}
+const ScoringInput = ({
+   name,
+   initialValue,
+   displayName,
+}: ScoringInputProps) => {
+   return (
+      <>
+         <label htmlFor={name} className="text-white mr-2">
+            {displayName}
+         </label>
+         <input
+            name={name}
+            id={name}
+            defaultValue={initialValue ?? 0}
+            className="mb-3 p-1 text-black"
+         />
+      </>
+   );
+};

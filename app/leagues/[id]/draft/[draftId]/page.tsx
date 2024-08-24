@@ -5,8 +5,11 @@ import getPlayers from '@/app/utils/get-players';
 import {
    fetchDraft,
    fetchDraftPicks,
+   fetchDraftedPlayers,
    fetchLeague,
+   fetchLeagueRules,
    fetchTeam,
+   fetchTeams,
    fetchWatchlist,
 } from '@/app/utils/helpers';
 import Board from '@/components/ui/board';
@@ -15,7 +18,6 @@ import { BoardProps, DraftPick } from '@/lib/types';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { UserResponse } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
-import { draftRedirect } from '../actions';
 
 const Draft = async ({
    params,
@@ -24,37 +26,6 @@ const Draft = async ({
 }) => {
    const supabase = createServerComponentClient<Database>({ cookies });
 
-   const getDraft = async () => {
-      const { data } = await supabase
-         .from('draft')
-         .select('*')
-         .match({ league_id: params.id, id: params.draftId });
-      if (data?.[0] && data?.[0].is_completed === true) {
-         draftRedirect({ params });
-      }
-
-      if (data?.[0]) {
-         return data?.[0];
-      }
-      return null;
-   };
-
-   // const getWatchlist = async () => {
-   //    const { data: watchlist } = await supabase
-   //       .from('watchlist')
-   //       .select('*')
-   //       .match({ owner: user.id, draft_id: params.draftId });
-   //    // if (!watchlist?.length) {
-   //    //    await supabase
-   //    //       .from('watchlist')
-   //    //       .insert({ owner: user?.id, players: [] })
-   //    //       .match({})
-   //    //       .select('*');
-   //    // }
-   //    if (watchlist) {
-   //       return watchlist?.[0];
-   //    }
-   // };
    const draft: Awaited<Draft> = await fetchDraft(supabase, params.draftId);
    const { data: user }: Awaited<UserResponse> = await supabase.auth.getUser();
    if (!user?.user)
@@ -79,6 +50,17 @@ const Draft = async ({
       user.user.id,
       params.id
    );
+   const leagueRules: Awaited<LeagueRules> = await fetchLeagueRules(
+      supabase,
+      league
+   );
+
+   const teams: Awaited<Team[]> = await fetchTeams(supabase, league);
+
+   const draftedPlayers: Awaited<DraftSelection[]> = await fetchDraftedPlayers(
+      supabase,
+      draft
+   );
 
    const boardProps: BoardProps = {
       league: league,
@@ -89,6 +71,9 @@ const Draft = async ({
       draftPicks: draftPicks,
       players: players,
       team: team,
+      teams: teams,
+      leagueRules: leagueRules,
+      draftedPlayers: draftedPlayers,
    };
 
    return (

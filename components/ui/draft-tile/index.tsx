@@ -50,16 +50,16 @@ const DraftTile = ({
          >
             {pick.draftPosition}
          </span>
-         <div className="flex flex-col pl-2 self-center">
-            <p className="flex items-center">
-               {pick.username}
-               {pick.isKeeper && (
-                  <span className="border border-white bg-purple text-white font-bold ml-3 px-1 text-[10px] text-center">
-                     K
-                  </span>
-               )}
-            </p>
-            {pick.playerName && <p>{pick.playerName}</p>}
+         <div className="w-full grid grid-cols-4 pl-2 self-center">
+            <div className={`${pick.isKeeper ? 'col-span-3' : 'col-span-4'}`}>
+               <p className="grid items-center">{pick.username}</p>
+               {pick.playerName && <p>{pick.playerName}</p>}
+            </div>
+            {pick.isKeeper && (
+               <div className="w-[20px] h-[20px] border border-white bg-purple text-white font-bold text-[10px] text-center self-center ml-auto">
+                  K
+               </div>
+            )}
          </div>
       </div>
    );

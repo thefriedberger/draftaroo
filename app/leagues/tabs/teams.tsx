@@ -9,7 +9,7 @@ const TeamsTab = async ({ league }: { league: League }) => {
    const supabase = createServerComponentClient<Database>({ cookies });
    const user = supabase.auth.getUser();
 
-   const teams: Awaited<Team[]> = await fetchTeams(supabase, league.league_id);
+   const teams: Awaited<Team[]> = await fetchTeams(supabase, league);
 
    return (
       <>

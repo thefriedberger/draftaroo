@@ -6,7 +6,6 @@ import {
    BoardProps,
    ChatProps,
    DraftOrderProps,
-   DraftPick,
    FeaturedPlayerProps,
    MyTeamProps,
    PlayerListProps,
@@ -40,8 +39,15 @@ const Board = ({
    draftPicks,
    players,
    team,
+   teams,
+   leagueRules,
+   draftedPlayers,
 }: BoardProps) => {
    const supabase = createClientComponentClient<Database>();
+   const owner = league.owner === user.id;
+   const turnOrder = draftPicks;
+   const numberOfRounds = leagueRules.number_of_rounds;
+   const numberOfTeams = leagueRules.number_of_teams;
 
    const [watchlistState, setWatchlistState] = useState<number[]>(
       watchlist?.players ?? []
@@ -52,21 +58,13 @@ const Board = ({
    const [doReset, setDoReset] = useState<boolean>(false);
    const [currentPick, setCurrentPick] = useState<number>(draft.current_pick);
    const [currentRound, setCurrentRound] = useState<number>(1);
-   const [owner, setOwner] = useState<boolean>(league.owner === user.id);
-   const [draftedPlayers, setDraftedPlayers] = useState<DraftSelection[]>([]);
-   const originalPlayers = players;
-   const [turnOrder, setTurnOrder] = useState<DraftPick[]>([]);
-   const [numberOfTeams, setNumberOfTeams] = useState<number>();
-   const [teams, setTeams] = useState<Team[]>([]);
-   const [shouldFetchDraftedPlayers, setShouldFetchDraftedPlayers] =
-      useState<boolean>(true);
+   const [draftedPlayersState, setDraftedPlayersState] =
+      useState<DraftSelection[]>(draftedPlayers);
    const [isActive, setIsActive] = useState<boolean>(draft?.is_active);
    const [isCompleted, setIsCompleted] = useState<boolean>(
       draft?.is_completed ?? false
    );
    const [draftedIDs, setDraftedIDs] = useState<number[]>([]);
-   const [shouldFilterPlayers, setShouldFilterPlayers] =
-      useState<boolean>(false);
    const [yourPlayers, setYourPlayers] = useState<number[]>([]);
    const [teamsViewPlayers, setTeamsViewPlayers] = useState<number[]>([]);
    const [teamViewToShow, setTeamViewToShow] = useState<string>('');
@@ -75,7 +73,7 @@ const Board = ({
 
    const updateFeaturedPlayer = (player: Player | null, playerID?: number) => {
       if (playerID) {
-         player = originalPlayers.filter((toSearch) => {
+         player = players.filter((toSearch) => {
             return toSearch.id === playerID;
          })?.[0];
       }
@@ -92,7 +90,7 @@ const Board = ({
 
    const handlePick = async () => {
       setCurrentPick(currentPick + 1);
-      setShouldFilterPlayers(true);
+      // setShouldFilterPlayers(true);
 
       await supabase
          .from('draft')
@@ -102,13 +100,13 @@ const Board = ({
       setDoReset(true);
    };
 
-   const handleDraftSelection = async (player: Player, teamID?: string) => {
+   const handleDraftSelection = async (player: Player, teamId?: string) => {
       if (team && player && draft) {
          const { data, error } = await supabase
             .from('draft_selections')
             .insert({
                player_id: player.id,
-               team_id: team.id,
+               team_id: teamId ?? team.id,
                draft_id: draft.id,
                round: currentRound,
                pick: currentPick,
@@ -131,10 +129,12 @@ const Board = ({
          }
    };
 
-   const updateTeamsViewPlayers = (teamID: string) => {
-      const teamPlayers = draftedPlayers.filter((player: DraftSelection) => {
-         return player.team_id === teamID;
-      });
+   const updateTeamsViewPlayers = (teamId: string) => {
+      const teamPlayers = draftedPlayersState.filter(
+         (player: DraftSelection) => {
+            return player.team_id === teamId;
+         }
+      );
       return teamPlayers;
    };
 
@@ -157,23 +157,22 @@ const Board = ({
    };
 
    useEffect(() => {
-      if (draftedPlayers.length > 0) {
-         for (const player of draftedPlayers) {
+      if (draftedPlayersState.length > 0) {
+         for (const player of draftedPlayersState) {
             setDraftedIDs((prev) => [...prev, Number(player.player_id)]);
          }
-         setShouldFilterPlayers(true);
+         // setShouldFilterPlayers(true);
       }
-   }, [draftedPlayers]);
+   }, [draftedPlayersState]);
 
    // set my team and other teams players
    useEffect(() => {
-      team &&
-         updateTeamsViewPlayers(team.id).forEach(
-            (player: DraftSelection) =>
-               player.player_id &&
-               !yourPlayers.includes(player.player_id) &&
-               setYourPlayers((prev) => [...prev, player.player_id])
-         );
+      updateTeamsViewPlayers(team.id).forEach(
+         (player: DraftSelection) =>
+            player.player_id &&
+            !yourPlayers.includes(player.player_id) &&
+            setYourPlayers((prev) => [...prev, player.player_id])
+      );
       if (teamViewToShow !== '') {
          if (updateTeamsViewPlayers(teamViewToShow).length === 0) {
             setTeamsViewPlayers([]);
@@ -191,13 +190,13 @@ const Board = ({
             setTeamsViewPlayers(tempTeams);
          }
       }
-   }, [draftedPlayers, teamViewToShow]);
+   }, [draftedPlayersState, teamViewToShow]);
 
    // checking for keepers is handled here
    useEffect(() => {
       if (isActive && owner) {
-         if (draftedPlayers.length > 0) {
-            for (const player of draftedPlayers) {
+         if (draftedPlayersState.length > 0) {
+            for (const player of draftedPlayersState) {
                if (player.pick === currentPick && player.is_keeper) {
                   setTimeout(() => {
                      handlePick();
@@ -206,29 +205,27 @@ const Board = ({
             }
          }
       }
-   }, [isActive, draftedPlayers, currentPick]);
+   }, [isActive, draftedPlayersState, currentPick]);
 
    // set if user can pick
    useEffect(() => {
-      if (team && isActive) {
-         if (
-            !turnOrder.filter((turn) => turn.team_id === team.id)[0].picks
-               .length
-         ) {
-            const draftedPlayer = draftedPlayers.filter(
-               (player: DraftSelection) => {
-                  return player.pick === currentPick;
-               }
+      if (
+         isActive &&
+         !turnOrder.filter((turn) => turn.team_id === team.id)[0].picks.length
+      ) {
+         const draftedPlayer = draftedPlayersState.filter(
+            (player: DraftSelection) => {
+               return player.pick === currentPick;
+            }
+         );
+         if (draftedPlayer.length === 0)
+            setIsYourTurn(
+               turnOrder
+                  .filter((turn) => turn.team_id === team.id)[0]
+                  .picks.includes(currentPick)
             );
-            if (draftedPlayer.length === 0)
-               setIsYourTurn(
-                  turnOrder
-                     .filter((turn) => turn.team_id === team.id)[0]
-                     .picks.includes(currentPick)
-               );
-         }
       }
-   }, [turnOrder, team, currentPick, isActive, draftedPlayers]);
+   }, [turnOrder, team, currentPick, isActive, draftedPlayersState]);
 
    // set round
    useEffect(() => {
@@ -240,18 +237,6 @@ const Board = ({
          }
       }
    }, [currentPick, numberOfTeams]);
-
-   // gets current pick on page load, probably not necessary but if you join late it's nice
-   useEffect(() => {
-      const getCurrentPick = async () => {
-         const { data } = await supabase
-            .from('draft')
-            .select('current_pick')
-            .match({ league_id: league.league_id, id: draft.id });
-         data && setCurrentPick(data?.[0].current_pick);
-      };
-      getCurrentPick();
-   }, [league.league_id]);
 
    // logic for updating after draft pick
    useEffect(() => {
@@ -266,7 +251,7 @@ const Board = ({
                filter: `draft_id=eq.${draft?.id}`,
             },
             (payload) => {
-               setDraftedPlayers((prev) => [
+               setDraftedPlayersState((prev) => [
                   ...prev,
                   payload.new as DraftSelection,
                ]);
@@ -274,23 +259,6 @@ const Board = ({
          )
          .subscribe();
 
-      const fetchDraftedPlayers = async () => {
-         if (draft) {
-            const { data } = await supabase
-               .from('draft_selections')
-               .select('*')
-               .match({ draft_id: draft?.id });
-            if (data) {
-               data.forEach((draftPick) => {
-                  setDraftedPlayers((prev) => [...prev, draftPick]);
-               });
-            }
-            setShouldFetchDraftedPlayers(false);
-         }
-      };
-      if (shouldFetchDraftedPlayers) {
-         fetchDraftedPlayers();
-      }
       const pickChanel = supabase
          .channel('pick-channel')
          .on(
@@ -306,12 +274,14 @@ const Board = ({
             }
          )
          .subscribe();
-   }, [supabase, draft, league.league_id]);
+   }, [supabase, draft, league]);
 
+   // TODO: make draft start a time based feature
    useEffect(() => {
       isActive === undefined && draft && setIsActive(draft.is_active);
    }, [draft]);
 
+   // TODO: remove when updating timer
    useEffect(() => {
       if (isActive) {
          setDoStart(true);
@@ -319,37 +289,6 @@ const Board = ({
          setDoStart(false);
       }
    }, [isActive]);
-
-   useEffect(() => {
-      const getTurnOrder = async () => {
-         const { data } = await supabase
-            .from('draft_picks')
-            .select('*')
-            .match({ draft_id: draft.id });
-         data && setTurnOrder(data);
-      };
-      const getNumberOfTeams = async () => {
-         if (league) {
-            const { data } = await supabase
-               .from('league_rules')
-               .select('number_of_teams')
-               .match({ id: league.league_rules });
-            data && setNumberOfTeams(Number(data?.[0]?.number_of_teams));
-         }
-      };
-      const getTeams = async () => {
-         if (league) {
-            const { data } = await supabase
-               .from('teams')
-               .select('*')
-               .match({ league_id: league.league_id });
-            data && setTeams(data);
-         }
-      };
-      !turnOrder.length && getTurnOrder();
-      numberOfTeams === undefined && getNumberOfTeams();
-      teams.length === 0 && getTeams();
-   }, [league]);
 
    useEffect(() => {
       const draftStatusChannel = supabase
@@ -375,19 +314,15 @@ const Board = ({
       };
    }, [supabase, draft]);
 
-   useEffect(() => {
-      setShouldFilterPlayers(true);
-   }, []);
-
    const filterDraftedPlayers = () => {
       players = players.filter((player: Player) => {
          return !draftedIDs.includes(player.id);
       });
-      setShouldFilterPlayers(false);
+      // setShouldFilterPlayers(false);
    };
    useEffect(() => {
-      shouldFilterPlayers && filterDraftedPlayers();
-   }, [shouldFilterPlayers, draftedIDs]);
+      filterDraftedPlayers();
+   }, [draftedIDs]);
 
    const timerProps: TimerProps = {
       owner: owner,
@@ -405,14 +340,15 @@ const Board = ({
    };
 
    const draftOrderProps: DraftOrderProps = {
-      draftedPlayers: draftedPlayers,
+      draftedPlayers: draftedPlayersState,
       currentPick: currentPick,
       teams: teams,
       isYourTurn: isYourTurn,
       turnOrder: turnOrder,
       league: league,
-      players: originalPlayers,
+      players: players,
       teamID: team.id,
+      numberOfRounds: numberOfRounds ?? 23,
       updateFeaturedPlayer: updateFeaturedPlayer,
    };
 
@@ -435,7 +371,7 @@ const Board = ({
    };
 
    const playerListProps: PlayerListProps = {
-      leagueID: league.league_id ?? '',
+      league: league,
       draftedIDs: draftedIDs,
       watchlist: watchlistState,
       updateWatchlist: updateWatchlist,
@@ -445,7 +381,7 @@ const Board = ({
 
    const myTeamProps: MyTeamProps = {
       playerIDs: yourPlayers,
-      players: originalPlayers,
+      players: players,
       updateFeaturedPlayer: updateFeaturedPlayer,
    };
 
@@ -454,7 +390,7 @@ const Board = ({
       setTeamsViewPlayers: setTeamViewToShow,
       updateFeaturedPlayer: updateFeaturedPlayer,
       teams: teams,
-      players: originalPlayers,
+      players: players,
       user: user,
    };
    const tabs: Tab[] = [

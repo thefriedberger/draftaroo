@@ -36,7 +36,9 @@ const CreateLeague = () => {
                <h1 className="my-2 text-3xl text-white">
                   Welcome, {currentUser?.first_name && currentUser.first_name}
                </h1>
-               <p>Ready to create a league? Fill out the thing below</p>
+               <p className={'dark:text-white'}>
+                  Ready to create a league? Fill out the thing below
+               </p>
                <form
                   action={(formData: FormData) =>
                      createLeague(formData, draftPicks, user)

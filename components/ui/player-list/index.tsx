@@ -1,8 +1,7 @@
 'use client';
 
-import { PageContext } from '@/components/context/page-context';
 import { PlayerListProps } from '@/lib/types';
-import { ChangeEvent, useContext, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import PlayerComponent from '../player';
 
 export type SortValue =
@@ -115,13 +114,13 @@ export const sortPlayers = (
 };
 const PlayerList = ({
    updateFeaturedPlayer,
-   leagueID,
+   league,
    players,
    updateWatchlist,
    watchlist,
+   draftedIDs,
 }: PlayerListProps) => {
    const [leagueScoring, setLeagueScoring] = useState<LeagueScoring | any>();
-   const [league, setLeague] = useState<League | any>();
    const [sort, setSort] = useState<SortValue>('score');
    const [positionFilter, setPositionFilter] = useState<string>('Skaters');
    const [teamFilter, setTeamFilter] = useState<string>('Team');
@@ -129,32 +128,23 @@ const PlayerList = ({
    const [season, setSeason] = useState<number>(1);
    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
-   const { leagues } = useContext(PageContext);
-
    const seasons = ['Season', '2022-2023', '2023-2024'];
 
-   useEffect(() => {
-      if (leagues)
-         setLeague(
-            leagues?.filter((league: League) => {
-               return league.league_id === leagueID && league;
-            })
-         );
-   }, [leagues]);
-
    const filterPlayers = () => {
-      const playersByPostion = players.filter((player: Player) => {
-         if (positionFilter === 'Skaters')
-            return player.primary_position !== 'G';
-         if (positionFilter === 'Forwards')
-            if (player.primary_position)
-               return ['C', 'L', 'R'].includes(player.primary_position);
-         if (positionFilter !== '') {
-            return player.primary_position === positionFilter;
-         } else {
-            return true;
-         }
-      });
+      const playersByPostion = players
+         .filter((player: Player) => !draftedIDs.includes(player.id))
+         .filter((player: Player) => {
+            if (positionFilter === 'Skaters')
+               return player.primary_position !== 'G';
+            if (positionFilter === 'Forwards')
+               if (player.primary_position)
+                  return ['C', 'L', 'R'].includes(player.primary_position);
+            if (positionFilter !== '') {
+               return player.primary_position === positionFilter;
+            } else {
+               return true;
+            }
+         });
 
       const playersByTeam = playersByPostion.filter((player: Player) => {
          if (teamFilter !== 'Team') {

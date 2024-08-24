@@ -4,6 +4,10 @@ import { formStatus, formType } from '@/components/ui/modals/auth';
 import { User } from '@supabase/supabase-js';
 import { AnchorHTMLAttributes, ReactNode } from 'react';
 
+export interface DraftSelections extends DraftSelection {
+   first_name: string;
+   last_name: string;
+}
 export interface BaseProps {
    title?: string;
 }
@@ -32,6 +36,7 @@ export interface DraftOrderProps {
    league?: League | any;
    players: Player[];
    teamID: string;
+   numberOfRounds: number;
    updateFeaturedPlayer: (player: Player | any, playerID?: number) => void;
 }
 
@@ -55,7 +60,7 @@ export interface FeaturedPlayerProps {
 
 export interface PlayerListProps {
    updateFeaturedPlayer: (player: Player | any, playerId?: number) => void;
-   leagueID: string;
+   league: League;
    draftedIDs: number[];
    players: Player[];
    watchlist: number[];
@@ -154,6 +159,9 @@ export interface BoardProps {
    watchlist: watchlist;
    user: User;
    team: Team;
+   teams: Team[];
+   leagueRules: LeagueRules;
+   draftedPlayers: DraftSelection[];
 }
 export interface LeagueTeamViewProps {
    team: Team;

@@ -22,12 +22,12 @@ export const fetchTeam = cache(
 export const fetchTeams = cache(
    async (
       supabase: SupabaseClient<Database>,
-      leagueId: string
+      league: League
    ): Promise<Array<Team>> => {
       const { data: teams, error } = await supabase
          .from('teams')
          .select('*')
-         .match({ league_id: leagueId });
+         .match({ league_id: league.league_id });
 
       return teams as Team[];
    }
@@ -59,6 +59,17 @@ export const fetchDraftSelections = cache(
       return draftSelections as DraftSelection[];
    }
 );
+
+export const fetchDraftedPlayers = async (
+   supabase: SupabaseClient,
+   draft: Draft
+): Promise<DraftSelection[]> => {
+   const { data } = await supabase
+      .from('draft_selections')
+      .select('*')
+      .match({ draft_id: draft?.id });
+   return data as DraftSelection[];
+};
 
 export const fetchProfile = cache(
    async (supabase: SupabaseClient<Database>, user: User): Promise<Profile> => {
@@ -176,6 +187,18 @@ export const fetchLeagueRules = async (
       .match({ id: league?.league_rules });
 
    return data?.[0] as LeagueRules;
+};
+
+export const fetchLeagueScoring = async (
+   supabase: SupabaseClient,
+   league: League
+): Promise<LeagueScoring> => {
+   const { data } = await supabase
+      .from('league_scoring')
+      .select('*')
+      .match({ id: league?.league_scoring });
+
+   return data?.[0] as LeagueScoring;
 };
 
 export const updateSupabaseWatchlist = async (

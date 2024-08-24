@@ -123,7 +123,6 @@ const FeaturedPlayer = ({
                   <div className={'flex flex-row'}>
                      <Image
                         src={featuredPlayer.headshot ?? FallbackImage}
-                        objectFit="cover"
                         width="100"
                         height="100"
                         className="md:mr-2"
@@ -200,7 +199,6 @@ const FeaturedPlayer = ({
                   <div className={'flex flex-row'}>
                      <Image
                         src={featuredPlayer.headshot ?? FallbackImage}
-                        objectFit="cover"
                         width="100"
                         height="100"
                         className="md:mr-2"

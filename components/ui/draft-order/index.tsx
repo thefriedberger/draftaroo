@@ -20,29 +20,15 @@ const DraftOrder = ({
    league,
    players,
    teamID,
+   numberOfRounds,
    updateFeaturedPlayer,
 }: DraftOrderProps) => {
-   const [numberOfRounds, setNumberOfRounds] = useState<number>(0);
-   const [picks, setPicks] = useState<Pick[] | any[]>([]);
-   const [isLoading, setIsLoading] = useState<boolean>(true);
+   const [picks, setPicks] = useState<Pick[]>([]);
+   const numberOfPicks = teams.length * numberOfRounds;
 
    const supabase = createClientComponentClient<Database>();
 
-   useEffect(() => {
-      const getLeagueRules = async () => {
-         if (league) {
-            const { data } = await supabase
-               .from('league_rules')
-               .select('*')
-               .match({ id: league.league_rules });
-            data && setNumberOfRounds(Number(data[0].number_of_rounds));
-         }
-      };
-      numberOfRounds === 0 && getLeagueRules();
-   }, [league]);
-
    const populatePicks = () => {
-      const numberOfPicks = teams.length * numberOfRounds;
       const tempPicksArray = [];
       for (let j = 1; j <= numberOfPicks; j++) {
          const draftPosition = j;
@@ -52,6 +38,19 @@ const DraftOrder = ({
             yourPick: false,
             isKeeper: false,
          };
+         for (const draftedPlayer of draftedPlayers) {
+            if (pick.draftPosition === draftedPlayer.pick) {
+               const player = players.find(
+                  (p) => p.id === draftedPlayer.player_id
+               );
+               pick.playerID = draftedPlayer.player_id;
+               pick.isKeeper = draftedPlayer.is_keeper;
+               pick.playerName = `${player?.first_name.charAt(0)}. ${
+                  player?.last_name
+               }`;
+               break;
+            }
+         }
          for (const turn of turnOrder) {
             if (turn.picks.includes(draftPosition)) {
                pick.username = teams.filter((team: Team) => {
@@ -68,57 +67,72 @@ const DraftOrder = ({
    };
 
    useEffect(() => {
-      if (teams.length > 0 && turnOrder.length) populatePicks();
+      if (teams.length > 0 && turnOrder.length) {
+         populatePicks();
+      }
    }, [teams, numberOfRounds, turnOrder]);
 
-   useEffect(() => {
-      draftedPlayers.forEach((draftedPlayer) => {
-         const foundPlayer = players.filter((player) => {
-            return player.id === draftedPlayer.player_id;
-         })[0];
-         picks.forEach((pick: Pick) => {
+   const updateDraftedPlayers = () => {
+      const tempPicks: Pick[] = picks.map((pick) => {
+         let foundPlayer;
+         for (const draftedPlayer of draftedPlayers) {
             if (pick.draftPosition === draftedPlayer.pick) {
-               pick.playerID = draftedPlayer.player_id;
-               pick.playerName = `${
-                  foundPlayer ? foundPlayer?.first_name.charAt(0) : 'No'
-               }. ${foundPlayer ? foundPlayer?.last_name : 'Player'}`;
-               pick.isKeeper = draftedPlayer.is_keeper;
+               const player = players.find(
+                  (p) => p.id === draftedPlayer.player_id
+               );
+               foundPlayer = {
+                  draftPosition: draftedPlayer.pick,
+                  playerID: draftedPlayer.player_id,
+                  username: pick.username,
+                  yourPick: pick.yourPick,
+                  isKeeper: draftedPlayer.is_keeper,
+                  playerName: `${player?.first_name.charAt(0)}. ${
+                     player?.last_name
+                  }`,
+               };
+               break;
             }
-         });
+         }
+         if (foundPlayer?.playerID) {
+            return {
+               ...foundPlayer,
+            };
+         }
+         return pick;
       });
-      setIsLoading(false);
-   }, [draftedPlayers, players, picks]);
+      return tempPicks;
+   };
+   useEffect(() => {
+      picks.length > 0 && setPicks(updateDraftedPlayers());
+   }, [draftedPlayers]);
 
    return (
       <div className="draft-order overflow-y-scroll lg:h-full lg:border-r lg:border-paper-dark dark:lg:border-gray-300">
-         {!isLoading &&
-            picks?.map((pick: Pick, index: number) => {
-               return (
-                  <div key={index}>
-                     {pick.draftPosition % teams?.length === 1 && (
-                        <div
-                           className={
-                              'bg-emerald-primary text-white dark:text-black p-2'
-                           }
-                        >
-                           Round&nbsp;
-                           {pick.draftPosition === 1
-                              ? 1
-                              : Math.floor(
-                                   pick.draftPosition / teams.length + 1
-                                )}
-                        </div>
-                     )}
-                     <DraftTile
-                        pick={pick}
-                        currentPick={currentPick}
-                        playerSelected={draftedPlayers[pick.playerID || 0]}
-                        isYourTurn={isYourTurn}
-                        updateFeaturedPlayer={updateFeaturedPlayer}
-                     />
-                  </div>
-               );
-            })}
+         {picks?.map((pick: Pick, index: number) => {
+            return (
+               <div key={index}>
+                  {pick.draftPosition % teams?.length === 1 && (
+                     <div
+                        className={
+                           'bg-emerald-primary text-white dark:text-black p-2'
+                        }
+                     >
+                        Round&nbsp;
+                        {pick.draftPosition === 1
+                           ? 1
+                           : Math.floor(pick.draftPosition / teams.length + 1)}
+                     </div>
+                  )}
+                  <DraftTile
+                     pick={pick}
+                     currentPick={currentPick}
+                     playerSelected={draftedPlayers[pick.playerID || 0]}
+                     isYourTurn={isYourTurn}
+                     updateFeaturedPlayer={updateFeaturedPlayer}
+                  />
+               </div>
+            );
+         })}
       </div>
    );
 };
