@@ -7,9 +7,8 @@ const Team = ({
    setDoReset,
    updateFeaturedPlayer,
 }: TeamViewProps) => {
-   const [centers, setCenters] = useState<Player[]>([]);
-   const [leftWings, setLeftWings] = useState<Player[]>([]);
-   const [rightWings, setRightWings] = useState<Player[]>([]);
+   const forwardCodes = ['C', 'L', 'R'];
+   const [forwards, setForwards] = useState<Player[]>([]);
    const [defenseman, setDefenseman] = useState<Player[]>([]);
    const [goalies, setGoalies] = useState<Player[]>([]);
    const [goaliesBench, setGoaliesBench] = useState<Player[]>([]);
@@ -26,9 +25,7 @@ const Team = ({
    };
 
    const resetPlayers = () => {
-      setCenters([]);
-      setLeftWings([]);
-      setRightWings([]);
+      setForwards([]);
       setDefenseman([]);
       setGoalies([]);
       setGoaliesBench([]);
@@ -43,82 +40,54 @@ const Team = ({
          }, 250);
       }
    }, [doReset]);
+
    useEffect(() => {
       players.length === 0 && resetPlayers();
-      if (players.length > 0 && !doReset) {
-         const tempCenters: Player[] = [];
-         const tempLeftWings: Player[] = [];
-         const tempRightWings: Player[] = [];
-         const tempDefenseman: Player[] = [];
-         const tempBench: Player[] = [];
-         const tempGoalies: Player[] = [];
-         const tempGoaliesBench: Player[] = [];
-         players.forEach((player: Player) => {
-            if (!playersArray.includes(player)) {
-               const { primary_position } = player;
-               if (primary_position === 'C' && tempCenters.length < 3) {
-                  if (!centers.includes(player)) {
-                     tempCenters.push(player);
-                     setCenters((prev) => {
-                        return [...prev, player];
-                     });
-                  }
-               } else if (
-                  primary_position === 'L' &&
-                  tempLeftWings.length < 3
-               ) {
-                  if (!leftWings.includes(player)) {
-                     tempLeftWings.push(player);
-                     setLeftWings((prev) => {
-                        return [...prev, player];
-                     });
-                  }
-               } else if (
-                  primary_position === 'R' &&
-                  tempRightWings.length < 3
-               ) {
-                  if (!rightWings.includes(player)) {
-                     tempRightWings.push(player);
-                     setRightWings((prev) => {
-                        return [...prev, player];
-                     });
-                  }
-               } else if (
-                  primary_position === 'D' &&
-                  tempDefenseman.length < 5
-               ) {
-                  if (!defenseman.includes(player)) {
-                     tempDefenseman.push(player);
-                     setDefenseman((prev) => {
-                        return [...prev, player];
-                     });
-                  }
-               } else if (primary_position === 'G' && tempGoalies.length < 2) {
-                  if (!goalies.includes(player)) {
-                     tempGoalies.push(player);
-                     setGoalies((prev) => {
-                        return [...prev, player];
-                     });
-                  }
-               } else {
-                  if (primary_position === 'G') {
-                     !goaliesBench.includes(player) &&
-                        setGoaliesBench((prev) => {
-                           return [...prev, player];
-                        });
-                  } else {
-                     if (!bench.includes(player)) {
-                        setBench((prev) => {
-                           return [...prev, player];
-                        });
-                     }
-                  }
-               }
-               setPlayersArray((prev) => [...prev, player]);
-            }
-         });
+      if (players.length && !doReset) {
+         if (forwards.length < 9) {
+            setForwards(
+               players.filter(
+                  (player) =>
+                     player.primary_position &&
+                     forwardCodes.includes(player.primary_position)
+               )
+            );
+         }
+         if (defenseman.length < 5) {
+            setDefenseman(
+               players.filter(
+                  (player) =>
+                     player.primary_position && player.primary_position === 'D'
+               )
+            );
+         }
+         if (goalies.length < 2) {
+            setGoalies(
+               players.filter(
+                  (player) =>
+                     player.primary_position && player.primary_position === 'G'
+               )
+            );
+         }
       }
-   }, [players, doReset, playersArray]);
+   }, [players]);
+
+   useEffect(() => {
+      setBench(
+         players.filter(
+            (player) =>
+               player.primary_position !== 'G' &&
+               !forwards.concat(defenseman).includes(player)
+         )
+      );
+
+      setGoaliesBench(
+         players.filter(
+            (player) =>
+               player.primary_position === 'G' && !goalies.includes(player)
+         )
+      );
+   }, [forwards, defenseman, goalies]);
 
    const getPlayer = (position: string, index: number) => {
       const playerToDisplay: Player = players.filter((player: Player) => {
@@ -126,6 +95,7 @@ const Team = ({
       })[index];
       return setDisplayName(playerToDisplay);
    };
+
    return (
       <table className="w-full">
          <thead className="bg-gold text-left">
@@ -135,62 +105,39 @@ const Team = ({
             </tr>
          </thead>
          <tbody>
-            <tr onClick={() => updateFeaturedPlayer(centers[0])}>
-               <td>C</td>
-               <td>{setDisplayName(centers[0])}</td>
-            </tr>
-            <tr onClick={() => updateFeaturedPlayer(centers[1])}>
-               <td>C</td>
-               <td>{setDisplayName(centers[1])}</td>
-            </tr>
-            <tr onClick={() => updateFeaturedPlayer(centers[2])}>
-               <td>C</td>
-               <td>{setDisplayName(centers[2])}</td>
-            </tr>
-            <tr onClick={() => updateFeaturedPlayer(leftWings[0])}>
-               <td>LW</td>
-               <td>{setDisplayName(leftWings[0])}</td>
-            </tr>
-            <tr onClick={() => updateFeaturedPlayer(leftWings[1])}>
-               <td>LW</td>
-               <td>{setDisplayName(leftWings[1])}</td>
-            </tr>
-            <tr onClick={() => updateFeaturedPlayer(leftWings[2])}>
-               <td>LW</td>
-               <td>{setDisplayName(leftWings[2])}</td>
-            </tr>
-            <tr onClick={() => updateFeaturedPlayer(rightWings[0])}>
-               <td>RW</td>
-               <td>{setDisplayName(rightWings[0])}</td>
-            </tr>
-            <tr onClick={() => updateFeaturedPlayer(rightWings[1])}>
-               <td>RW</td>
-               <td>{setDisplayName(rightWings[1])}</td>
-            </tr>
-            <tr onClick={() => updateFeaturedPlayer(rightWings[2])}>
-               <td>RW</td>
-               <td>{setDisplayName(rightWings[2])}</td>
-            </tr>
-            <tr onClick={() => updateFeaturedPlayer(defenseman[0])}>
-               <td>D</td>
-               <td>{setDisplayName(defenseman[0])}</td>
-            </tr>
-            <tr onClick={() => updateFeaturedPlayer(defenseman[1])}>
-               <td>D</td>
-               <td>{setDisplayName(defenseman[1])}</td>
-            </tr>
-            <tr onClick={() => updateFeaturedPlayer(defenseman[2])}>
-               <td>D</td>
-               <td>{setDisplayName(defenseman[2])}</td>
-            </tr>
-            <tr onClick={() => updateFeaturedPlayer(defenseman[3])}>
-               <td>D</td>
-               <td>{setDisplayName(defenseman[3])}</td>
-            </tr>
-            <tr onClick={() => updateFeaturedPlayer(defenseman[4])}>
-               <td>D</td>
-               <td>{setDisplayName(defenseman[4])}</td>
-            </tr>
+            {Array.from({ length: 9 }).map((val, index: number) => {
+               return (
+                  <tr
+                     key={forwards?.[index]?.id ?? index}
+                     onClick={() => {
+                        forwards?.[index] &&
+                           updateFeaturedPlayer(forwards[index]);
+                     }}
+                  >
+                     <td>F</td>
+                     <td>
+                        {forwards?.[index] && setDisplayName(forwards[index])}
+                     </td>
+                  </tr>
+               );
+            })}
+            {Array.from({ length: 5 }).map((val, index: number) => {
+               return (
+                  <tr
+                     key={defenseman?.[index]?.id ?? index}
+                     onClick={() => {
+                        defenseman?.[index] &&
+                           updateFeaturedPlayer(defenseman[index]);
+                     }}
+                  >
+                     <td>D</td>
+                     <td>
+                        {defenseman?.[index] &&
+                           setDisplayName(defenseman[index])}
+                     </td>
+                  </tr>
+               );
+            })}
             {bench.map((player: Player) => {
                return (
                   <tr
@@ -202,14 +149,22 @@ const Team = ({
                   </tr>
                );
             })}
-            <tr onClick={() => updateFeaturedPlayer(goalies[0])}>
-               <td>G</td>
-               <td>{setDisplayName(goalies[0])}</td>
-            </tr>
-            <tr onClick={() => updateFeaturedPlayer(goalies[1])}>
-               <td>G</td>
-               <td>{setDisplayName(goalies[1])}</td>
-            </tr>
+            {Array.from({ length: 2 }).map((val, index: number) => {
+               return (
+                  <tr
+                     key={goalies?.[index]?.id ?? index}
+                     onClick={() => {
+                        goalies?.[index] &&
+                           updateFeaturedPlayer(goalies[index]);
+                     }}
+                  >
+                     <td>G</td>
+                     <td>
+                        {goalies?.[index] && setDisplayName(goalies[index])}
+                     </td>
+                  </tr>
+               );
+            })}
             {goaliesBench.map((player) => {
                return (
                   <tr

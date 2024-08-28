@@ -41,7 +41,7 @@ const Draft = async ({
    );
    const draftPicks: Awaited<DraftPick[]> = await fetchDraftPicks(
       supabase,
-      draft.id
+      params.draftId
    );
    const league: Awaited<League> = await fetchLeague(supabase, params.id);
    const players: Awaited<Player[]> = await getPlayers(params.id);

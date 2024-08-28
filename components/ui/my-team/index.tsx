@@ -6,10 +6,10 @@ const MyTeam = ({ playerIDs, players, updateFeaturedPlayer }: MyTeamProps) => {
    const [draftedPlayers, setDraftedPlayers] = useState<Player[]>([]);
 
    useEffect(() => {
-      players.forEach((player: Player) => {
-         playerIDs.includes(player.id) &&
-            setDraftedPlayers((prev: Player[]) => [...prev, player]);
-      });
+      const foundPlayers = players.filter((player) =>
+         playerIDs.includes(player.id)
+      );
+      setDraftedPlayers(foundPlayers);
    }, [playerIDs, players]);
 
    const teamProps: TeamViewProps = {

@@ -29,30 +29,29 @@ const KeeperForm = ({
    const [picksAvailable, setPicksAvailable] = useState<number[]>(picks);
    const [rosterState, setRosterState] = useState<RosterPlayer[]>(roster);
 
+   useEffect(() => {
+      roster.forEach((player) => {
+         if (player.is_keeper) {
+            const { picks_needed, picks_used } = player;
+            const tempPicks: number[] = [];
+            const picks: number[] = findClosestPick(picks_needed).sort(
+               (a, b) => a - b
+            );
+            setPicksAvailable(
+               picksAvailable.filter((pick) => !picks.includes(pick))
+            );
+         }
+      });
+   }, []);
+
    const findClosestPick = (picks: number[]) => {
-      const tempPicks: number[] = [];
       return picks
          .sort((a, b) => b - a)
          .map((pick) => {
-            let closestPick = picksAvailable
-               .filter((pick) => !tempPicks.includes(pick))
-               .sort((a, b) => b - a)
-               .reduce((prev, curr) => {
-                  if (pick === 1) {
-                     return Math.abs(curr - pick) < Math.abs(prev - pick)
-                        ? curr
-                        : prev;
-                  }
-                  return Math.abs(curr - pick) <= Math.abs(prev - pick)
-                     ? curr
-                     : prev;
-               }, 0);
-            if (tempPicks.includes(closestPick)) {
-               closestPick--;
-            }
+            let closestPick =
+               picksAvailable.sort((a, b) => b - a).find((x) => x <= pick) ?? 0;
             if (closestPick <= 0) return 0;
 
-            tempPicks.push(closestPick);
             return closestPick;
          });
    };
@@ -141,20 +140,6 @@ const KeeperForm = ({
       });
    };
 
-   useEffect(() => {
-      roster.forEach((player) => {
-         if (player.is_keeper) {
-            const { picks_needed, picks_used } = player;
-            const tempPicks: number[] = [];
-            const picks: number[] = findClosestPick(picks_needed).sort(
-               (a, b) => a - b
-            );
-            setPicksAvailable(
-               picksAvailable.filter((pick) => !picks.includes(pick))
-            );
-         }
-      });
-   }, []);
    return (
       <form className={'flex flex-col mt-2'} onSubmit={submitKeepers}>
          <table>

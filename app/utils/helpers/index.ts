@@ -1,3 +1,4 @@
+import { DraftTimerFields } from '@/components/ui/timer/new-timer';
 import { DraftPick } from '@/lib/types';
 import { SupabaseClient, User } from '@supabase/supabase-js';
 import { cache } from 'react';
@@ -241,4 +242,27 @@ export const fetchRosters = async (
       .select('*')
       .match({ team_id: teamId });
    return data as TeamHistory[];
+};
+
+export const setMainTimer = async (
+   supabase: SupabaseClient,
+   draftId: string,
+   timerValue: number
+) => {
+   const { data, error } = await supabase
+      .from('draft')
+      .update({ end_time: timerValue })
+      .match({ id: draftId });
+};
+
+export const getTimerData = async (
+   supabase: SupabaseClient,
+   draftId: string
+): Promise<DraftTimerFields> => {
+   const { data: draft, error } = await supabase
+      .from('draft')
+      .select('*')
+      .eq('id', draftId)
+      .single();
+   return draft as DraftTimerFields;
 };

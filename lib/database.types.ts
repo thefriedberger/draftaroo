@@ -19,7 +19,7 @@ export type Database = {
                is_active: boolean;
                is_completed: boolean | null;
                league_id: string;
-               timer_running: boolean;
+               start_time: string | null;
             };
             Insert: {
                created_at?: string | null;
@@ -30,7 +30,7 @@ export type Database = {
                is_active?: boolean;
                is_completed?: boolean | null;
                league_id: string;
-               timer_running?: boolean;
+               start_time?: string | null;
             };
             Update: {
                created_at?: string | null;
@@ -41,7 +41,7 @@ export type Database = {
                is_active?: boolean;
                is_completed?: boolean | null;
                league_id?: string;
-               timer_running?: boolean;
+               start_time?: string | null;
             };
             Relationships: [
                {
