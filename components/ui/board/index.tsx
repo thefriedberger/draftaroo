@@ -190,10 +190,12 @@ const Board = ({
                   if (
                      player.player_id &&
                      !teamsViewPlayers.includes(player.player_id)
-                  )
+                  ) {
                      tempTeams.push(player.player_id);
+                  }
                }
             );
+            console.log(tempTeams);
             setTeamsViewPlayers(tempTeams);
          }
       }

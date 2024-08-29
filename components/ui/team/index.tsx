@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 const Team = ({
    players,
-   doReset,
+   doReset = false,
    setDoReset,
    updateFeaturedPlayer,
 }: TeamViewProps) => {
@@ -42,52 +42,45 @@ const Team = ({
    }, [doReset]);
 
    useEffect(() => {
-      players.length === 0 && resetPlayers();
       if (players.length && !doReset) {
-         if (forwards.length < 9) {
-            setForwards(
-               players.filter(
-                  (player) =>
-                     player.primary_position &&
-                     forwardCodes.includes(player.primary_position)
-               )
-            );
+         const tempForwards: Player[] = [];
+         const tempDefensemen: Player[] = [];
+         const tempGoalies: Player[] = [];
+         const tempBench: Player[] = [];
+         const tempGoaliesBench: Player[] = [];
+         for (const player of players) {
+            const { primary_position } = player;
+            if (primary_position) {
+               if (forwardCodes.includes(primary_position)) {
+                  if (tempForwards.length < 9) {
+                     tempForwards.push(player);
+                  } else {
+                     tempBench.push(player);
+                  }
+               }
+               if (primary_position === 'D') {
+                  if (tempDefensemen.length < 5) {
+                     tempDefensemen.push(player);
+                  } else {
+                     tempBench.push(player);
+                  }
+               }
+               if (primary_position === 'G') {
+                  if (tempGoalies.length < 2) {
+                     tempGoalies.push(player);
+                  } else {
+                     tempGoaliesBench.push(player);
+                  }
+               }
+            }
          }
-         if (defenseman.length < 5) {
-            setDefenseman(
-               players.filter(
-                  (player) =>
-                     player.primary_position && player.primary_position === 'D'
-               )
-            );
-         }
-         if (goalies.length < 2) {
-            setGoalies(
-               players.filter(
-                  (player) =>
-                     player.primary_position && player.primary_position === 'G'
-               )
-            );
-         }
+         setForwards(tempForwards);
+         setDefenseman(tempDefensemen);
+         setGoalies(tempGoalies);
+         setBench(tempBench);
+         setGoaliesBench(tempGoaliesBench);
       }
    }, [players]);
-
-   useEffect(() => {
-      setBench(
-         players.filter(
-            (player) =>
-               player.primary_position !== 'G' &&
-               !forwards.concat(defenseman).includes(player)
-         )
-      );
-
-      setGoaliesBench(
-         players.filter(
-            (player) =>
-               player.primary_position === 'G' && !goalies.includes(player)
-         )
-      );
-   }, [forwards, defenseman, goalies]);
 
    const getPlayer = (position: string, index: number) => {
       const playerToDisplay: Player = players.filter((player: Player) => {

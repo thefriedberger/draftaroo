@@ -14,11 +14,10 @@ const TeamsList = ({
    const [doReset, setDoReset] = useState<boolean>(false);
 
    useEffect(() => {
-      const tempPlayers: Player[] = [];
-      players.forEach((player: Player) => {
-         playerIDs.includes(player.id) && tempPlayers.push(player);
-      });
-      setDraftedPlayers(tempPlayers);
+      const foundPlayers = players.filter((player) =>
+         playerIDs.includes(player.id)
+      );
+      setDraftedPlayers(foundPlayers);
    }, [playerIDs, players]);
 
    const teamProps: TeamViewProps = {
@@ -32,11 +31,12 @@ const TeamsList = ({
          {user && teams && (
             <>
                <select
-                  className="text-black p-1"
+                  className="text-black p-1 fixed h-[35px]"
                   onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                      setTeamsViewPlayers(e.target.value);
                      setDoReset(true);
                   }}
+                  title="Select team"
                   defaultValue={''}
                >
                   <option value="" disabled>
@@ -58,7 +58,9 @@ const TeamsList = ({
                         );
                      })}
                </select>
-               <Team {...teamProps} />
+               <div className={'pt-[35px]'}>
+                  <Team {...teamProps} />
+               </div>
             </>
          )}
       </div>
