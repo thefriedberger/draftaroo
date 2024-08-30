@@ -82,7 +82,7 @@ const League = async ({ params: { id } }: { params: { id: string } }) => {
       <>
          {
             <>
-               <>{team && id && <Tabs {...tabProps} />}</>
+               {team && id && <Tabs {...tabProps} />}
                {!team ? (
                   <div className="">
                      <h1>Looks like you need to create a team</h1>

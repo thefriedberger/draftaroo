@@ -3,6 +3,7 @@
 import { RosterPlayer } from '@/app/leagues/tabs/keepers';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import Confetti from 'react-confetti';
 
 export interface KeeperFormProps {
    team: Team;
@@ -28,21 +29,27 @@ const KeeperForm = ({
    });
    const [picksAvailable, setPicksAvailable] = useState<number[]>(picks);
    const [rosterState, setRosterState] = useState<RosterPlayer[]>(roster);
+   const [submitted, setSubmitted] = useState<boolean>(false);
 
    useEffect(() => {
-      roster.forEach((player) => {
-         if (player.is_keeper) {
-            const { picks_needed, picks_used } = player;
-            const tempPicks: number[] = [];
-            const picks: number[] = findClosestPick(picks_needed).sort(
-               (a, b) => a - b
-            );
-            setPicksAvailable(
-               picksAvailable.filter((pick) => !picks.includes(pick))
-            );
-         }
-      });
-   }, []);
+      const picksUsed: number[] = [];
+      for (const player of roster) {
+         const { picks_used } = player;
+         picksUsed.push(picks_used[0]);
+      }
+      setPicksAvailable(
+         picksAvailable.filter((pick) => !picksUsed.includes(pick))
+      );
+   }, [roster]);
+
+   useEffect(() => {
+      if (submitted) {
+         window.scrollTo({ top: 0, behavior: 'smooth' });
+         setTimeout(() => {
+            setSubmitted(false);
+         }, 5000);
+      }
+   }, [submitted]);
 
    const findClosestPick = (picks: number[]) => {
       return picks
@@ -101,7 +108,7 @@ const KeeperForm = ({
       event.preventDefault();
       rosterState.map(async (player) => {
          if (player.player_id && player.is_keeper) {
-            await supabase
+            const { error: draftSelectionsError } = await supabase
                .from('draft_selections')
                .upsert(
                   {
@@ -117,25 +124,39 @@ const KeeperForm = ({
                   }
                )
                .select();
-            await supabase
+
+            const { error: teamHistoryError } = await supabase
                .from('team_history')
                .update({ is_keeper: true })
                .match({
                   player_id: player.player_id,
                   team_id: team.id,
                });
+            if (!draftSelectionsError && !teamHistoryError) {
+               setSubmitted(true);
+            } else {
+               setSubmitted(false);
+            }
          } else {
-            await supabase.from('draft_selections').delete().match({
-               player_id: player.player_id,
-               draft_id: draft.id,
-            });
-            await supabase
+            const { error: draftSelectionsError } = await supabase
+               .from('draft_selections')
+               .delete()
+               .match({
+                  player_id: player.player_id,
+                  draft_id: draft.id,
+               });
+            const { error: teamHistoryError } = await supabase
                .from('team_history')
                .update({ is_keeper: false })
                .match({
                   player_id: player.player_id,
                   team_id: team.id,
                });
+            if (!draftSelectionsError && !teamHistoryError) {
+               setSubmitted(true);
+            } else {
+               setSubmitted(false);
+            }
          }
       });
    };
@@ -267,12 +288,13 @@ const KeeperForm = ({
          </table>
          <button
             className={
-               'appearance-none border-0 bg-emerald-primary picked-md w-fit mx-auto p-2 mt-2'
+               'appearance-none border-0 bg-emerald-primary picked-md w-fit mx-auto p-2 my-2'
             }
             type="submit"
          >
             Submit Keepers
          </button>
+         {submitted && <Confetti height={window.innerHeight} />}
       </form>
    );
 };

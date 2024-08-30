@@ -48,6 +48,11 @@ module.exports = {
             16: 'repeat(16, minmax(0, 1fr))',
          },
       },
+      animation: {
+         'bounce-1': '1s bounce 0s infinite',
+         'bounce-1.5': '1s bounce .25s infinite',
+         'bounce-2': '1s bounce .75s infinite',
+      },
    },
    plugins: [],
 };

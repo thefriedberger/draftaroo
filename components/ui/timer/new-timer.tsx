@@ -60,6 +60,9 @@ const NewTimer = ({
                timerValue.current = 0;
                const newTimerEnd = Date.now() + MAIN_TIMER_DURATION * 1000;
                setMainTimer(supabase, draftId, newTimerEnd);
+               if (owner) {
+                  autopick();
+               }
             } else {
                // can lose up to a second here depending on network latency, but the timer value needs to be less than then initial one so
                // that useEffect captures it
@@ -112,9 +115,6 @@ const NewTimer = ({
                   if (diff < 0) {
                      setTimer(0);
                      timerValue.current = 0;
-                     if (owner) {
-                        autopick();
-                     }
                   } else {
                      timeDown(timerValue.current);
                      lastTick.current = now;

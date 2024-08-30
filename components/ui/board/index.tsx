@@ -21,10 +21,11 @@ import {
 } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Chat from '../chat';
 import DraftOrder from '../draft-order';
+import DraftOrderLoading from '../draft-order/loading';
 import FeaturedPlayer from '../featured-player';
 import AuthModal from '../modals/auth';
 import MyTeam from '../my-team';
@@ -497,7 +498,9 @@ const Board = ({
                      )}
                      <div className="flex flex-col lg:max-w-[15vw] w-full">
                         <NewTimer {...timerProps} />
-                        <DraftOrder {...draftOrderProps} />
+                        <Suspense fallback={<DraftOrderLoading />}>
+                           <DraftOrder {...draftOrderProps} />
+                        </Suspense>
                      </div>
                      <div className="flex flex-col lg:max-w-[70vw] w-full">
                         <FeaturedPlayer {...featuredPlayerProps} />
