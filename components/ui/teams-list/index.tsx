@@ -31,7 +31,7 @@ const TeamsList = ({
          {user && teams && (
             <>
                <select
-                  className="text-black p-1 fixed h-[35px]"
+                  className="text-black p-1 md:fixed h-[35px]"
                   onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                      setTeamsViewPlayers(e.target.value);
                      setDoReset(true);

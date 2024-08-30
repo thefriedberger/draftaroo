@@ -64,6 +64,11 @@
 .draft-order {
    height: calc(100vh - 210px - 74px);
 }
+@screen sm {
+   .draft-order {
+      @apply h-full;
+   }
+}
 
 .draft-board {
    height: calc(100vh - 74px);

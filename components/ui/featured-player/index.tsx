@@ -103,6 +103,17 @@ const FeaturedPlayer = ({
       );
    };
 
+   const PlayerHeadshot = (featuredPlayer: Player) => {
+      return (
+         <Image
+            src={featuredPlayer.headshot ?? FallbackImage}
+            width="100"
+            height="100"
+            className="w-[60px] h-[60px] mt-auto md:h-[100px] md:w-[100px] mr-2"
+            alt={`${featuredPlayer.first_name} ${featuredPlayer.last_name} headshot`}
+         />
+      );
+   };
    return (
       <div
          className={classNames(
@@ -121,13 +132,7 @@ const FeaturedPlayer = ({
             (!draftedIDs.includes(featuredPlayer.id) ? (
                <>
                   <div className={'flex flex-row'}>
-                     <Image
-                        src={featuredPlayer.headshot ?? FallbackImage}
-                        width="100"
-                        height="100"
-                        className="md:mr-2"
-                        alt={`${featuredPlayer.first_name} ${featuredPlayer.last_name} headshot`}
-                     />
+                     <PlayerHeadshot {...featuredPlayer} />
                      <div className="flex flex-col">
                         <div className="dark:text-white text-xl">
                            {featuredPlayer.first_name}{' '}
@@ -178,8 +183,8 @@ const FeaturedPlayer = ({
                      onClick={() => updateFeaturedPlayer(null)}
                   >
                      <svg
-                        width="40px"
-                        height="40px"
+                        width="30px"
+                        height="30px"
                         viewBox="0 0 24 24"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -197,13 +202,7 @@ const FeaturedPlayer = ({
             ) : (
                <>
                   <div className={'flex flex-row'}>
-                     <Image
-                        src={featuredPlayer.headshot ?? FallbackImage}
-                        width="100"
-                        height="100"
-                        className="md:mr-2"
-                        alt={`${featuredPlayer.first_name} ${featuredPlayer.last_name} headshot`}
-                     />
+                     <PlayerHeadshot {...featuredPlayer} />
                      <div className="flex flex-col">
                         <div className="dark:text-white text-xl whitespace-nowrap">
                            {featuredPlayer.first_name}{' '}
