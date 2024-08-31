@@ -15,7 +15,7 @@ export default function Nav(props: NavProps) {
 
    return (
       <>
-         <nav className="h-[5vh] min-h-[74px]">
+         <nav className="h-[5dvh] min-h-[74px]">
             <div className="bg-emerald-600 w-full flex justify-center border-b border-b-foreground/10">
                <div className="w-full max-w-4xl flex justify-between items-center p-3 flex-row">
                   <Link

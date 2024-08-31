@@ -1,14 +1,15 @@
 import { PageContextProvider } from '@/components/context/page-context';
 import Nav from '@/components/ui/nav';
 import { Analytics } from '@vercel/analytics/react';
+import { Metadata } from 'next';
 import ContextWrapper from './context-wrapper';
 import './globals.css';
 
-export const metadata = {
+export const metadata: Metadata = {
    title: 'Draftaroo',
    description: 'A custom fantasy sports drafting app',
+   applicationName: 'Draftaroo',
 };
-
 export const dynamic = 'force-dynamic';
 
 export default function RootLayout({

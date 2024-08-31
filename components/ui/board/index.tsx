@@ -75,93 +75,6 @@ const Board = ({
 
    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
-   const updateFeaturedPlayer = (player: Player | null, playerID?: number) => {
-      if (playerID) {
-         player = players.filter((toSearch) => {
-            return toSearch.id === playerID;
-         })?.[0];
-      }
-      if (!player) setFeaturedPlayer(null);
-      setFeaturedPlayer(player);
-   };
-
-   const startDraft = async () => {
-      await supabase
-         .from('draft')
-         .update({ is_active: true })
-         .match({ id: draft.id });
-      setMainTimer(supabase, draft.id, Date.now() + 120 * 1000);
-   };
-
-   const handlePick = async () => {
-      setCurrentPick(currentPick + 1);
-      // setShouldFilterPlayers(true);
-
-      await supabase
-         .from('draft')
-         .update({ current_pick: currentPick + 1 })
-         .match({ id: draft.id });
-
-      setMainTimer(supabase, draft.id, Date.now() + 120 * 1000);
-      // setDoReset(true);
-   };
-
-   const handleDraftSelection = async (player: Player, teamId?: string) => {
-      if (team && player && draft) {
-         const { data, error } = await supabase
-            .from('draft_selections')
-            .insert({
-               player_id: player.id,
-               team_id: teamId ?? team.id,
-               draft_id: draft.id,
-               round: currentRound,
-               pick: currentPick,
-            });
-         if (error) {
-            console.log(error);
-            return;
-         }
-         handlePick();
-      }
-   };
-
-   const autoDraft = () => {
-      const playerToDraft = sortPlayers(players, 'score', 1)[0] || null;
-      if (playerToDraft)
-         for (const team of turnOrder) {
-            if (team.picks.includes(currentPick) && playerToDraft) {
-               handleDraftSelection(playerToDraft, team.team_id);
-            }
-         }
-   };
-
-   const updateTeamsViewPlayers = (teamId: string) => {
-      const teamPlayers = draftedPlayersState
-         .filter((player: DraftSelection) => {
-            return player.team_id === teamId;
-         })
-         .sort((a, b) => (a.pick < b.pick ? -1 : 1));
-      return teamPlayers;
-   };
-
-   const updateWatchlist = async (player: Player, action: WatchlistAction) => {
-      if (watchlistState) {
-         if (action === WatchlistAction.DELETE) {
-            setWatchlistState(watchlistState?.filter((el) => el !== player.id));
-         }
-         if (action === WatchlistAction.ADD) {
-            setWatchlistState((prev) => [...prev, player.id]);
-         }
-         user &&
-            updateSupabaseWatchlist(
-               supabase,
-               watchlistState,
-               user?.id,
-               draft.id
-            );
-      }
-   };
-
    useEffect(() => {
       if (draftedPlayersState.length > 0) {
          for (const player of draftedPlayersState) {
@@ -320,15 +233,103 @@ const Board = ({
       };
    }, [supabase, draft]);
 
+   useEffect(() => {
+      filterDraftedPlayers();
+   }, [draftedIDs]);
+
+   const updateFeaturedPlayer = (player: Player | null, playerID?: number) => {
+      if (playerID) {
+         player = players.filter((toSearch) => {
+            return toSearch.id === playerID;
+         })?.[0];
+      }
+      if (!player) setFeaturedPlayer(null);
+      setFeaturedPlayer(player);
+   };
+
+   const startDraft = async () => {
+      await supabase
+         .from('draft')
+         .update({ is_active: true })
+         .match({ id: draft.id });
+      setMainTimer(supabase, draft.id, Date.now() + 120 * 1000);
+   };
+
+   const handlePick = async () => {
+      setCurrentPick(currentPick + 1);
+      // setShouldFilterPlayers(true);
+
+      await supabase
+         .from('draft')
+         .update({ current_pick: currentPick + 1 })
+         .match({ id: draft.id });
+
+      setMainTimer(supabase, draft.id, Date.now() + 120 * 1000);
+      // setDoReset(true);
+   };
+
+   const handleDraftSelection = async (player: Player, teamId?: string) => {
+      if (team && player && draft) {
+         const { data, error } = await supabase
+            .from('draft_selections')
+            .insert({
+               player_id: player.id,
+               team_id: teamId ?? team.id,
+               draft_id: draft.id,
+               round: currentRound,
+               pick: currentPick,
+            });
+         if (error) {
+            console.log(error);
+            return;
+         }
+         handlePick();
+      }
+   };
+
+   const autoDraft = () => {
+      const playerToDraft = sortPlayers(players, 'score', 1)[0] || null;
+      if (playerToDraft)
+         for (const team of turnOrder) {
+            if (team.picks.includes(currentPick) && playerToDraft) {
+               handleDraftSelection(playerToDraft, team.team_id);
+            }
+         }
+   };
+
+   const updateTeamsViewPlayers = (teamId: string) => {
+      const teamPlayers = draftedPlayersState
+         .filter((player: DraftSelection) => {
+            return player.team_id === teamId;
+         })
+         .sort((a, b) => (a.pick < b.pick ? -1 : 1));
+      return teamPlayers;
+   };
+
+   const updateWatchlist = async (player: Player, action: WatchlistAction) => {
+      if (watchlistState) {
+         if (action === WatchlistAction.DELETE) {
+            setWatchlistState(watchlistState?.filter((el) => el !== player.id));
+         }
+         if (action === WatchlistAction.ADD) {
+            setWatchlistState((prev) => [...prev, player.id]);
+         }
+         user &&
+            updateSupabaseWatchlist(
+               supabase,
+               watchlistState,
+               user?.id,
+               draft.id
+            );
+      }
+   };
+
    const filterDraftedPlayers = () => {
       players = players.filter((player: Player) => {
          return !draftedIDs.includes(player.id);
       });
       // setShouldFilterPlayers(false);
    };
-   useEffect(() => {
-      filterDraftedPlayers();
-   }, [draftedIDs]);
 
    const timerProps: NewTimerProps = {
       owner: owner,
