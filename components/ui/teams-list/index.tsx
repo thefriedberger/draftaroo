@@ -58,7 +58,7 @@ const TeamsList = ({
                         );
                      })}
                </select>
-               <div className={'pt-[35px]'}>
+               <div className={'md:pt-[35px]'}>
                   <Team {...teamProps} />
                </div>
             </>

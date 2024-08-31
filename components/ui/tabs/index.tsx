@@ -90,7 +90,12 @@ const Tabs = ({
             >
                {navList()}
             </ul>
-            <div className={classNames(`${styles['tabpanes']}`, ' h-full')}>
+            <div
+               className={classNames(
+                  `${styles['tabpanes']}`,
+                  'mb-[66px] md:mb-0 h-full'
+               )}
+            >
                {panes()}
             </div>
          </div>
