@@ -85,7 +85,8 @@ const Tabs = ({
                   styles['tablist'],
                   centerTabs && 'mx-auto',
                   tabBgColor ? tabBgColor : 'w-[100vw] bg-emerald-primary',
-                  'grid grid-cols-5 fixed bottom-0 rounded-t-sm shadow-black shadow z-10 md:justify-between md:w-auto md:flex md:static md:shadow-none md:flex-row lg:max-w-fit lg:h-[50px]'
+                  `grid-cols-${tabs.length}`,
+                  'grid fixed bottom-0 rounded-t-sm shadow-black shadow z-10 md:justify-between md:w-auto md:flex md:static md:shadow-none md:flex-row lg:max-w-fit lg:h-[50px]'
                )}
             >
                {navList()}
