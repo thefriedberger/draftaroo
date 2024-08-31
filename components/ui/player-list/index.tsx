@@ -1,8 +1,9 @@
 'use client';
 
 import { PlayerListProps } from '@/lib/types';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import PlayerComponent from '../player';
+import PlayerObserver from './observer';
 
 export type SortValue =
    | 'score'
@@ -126,10 +127,21 @@ const PlayerList = ({
    const [teamFilter, setTeamFilter] = useState<string>('Team');
    const [playerSearch, setPlayerSearch] = useState<string>('');
    const [season, setSeason] = useState<number>(1);
+   const [records, setRecords] = useState<number>(150);
    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
+   const options: IntersectionObserverInit = {
+      root: null,
+      rootMargin: '50px',
+      threshold: 0.5,
+   };
+
+   const [playersRef, isVisible] = PlayerObserver(options);
    const seasons = ['Season', '2022-2023', '2023-2024'];
 
+   useEffect(() => {
+      if (isVisible) setRecords(records + 150);
+   }, [isVisible]);
    const filterPlayers = () => {
       const playersByPostion = players
          .filter((player: Player) => !draftedIDs.includes(player.id))
@@ -204,8 +216,14 @@ const PlayerList = ({
                      onChange={(e) => setPlayerSearch(e.target.value)}
                   />
                </div>
-               <div className=" w-full md:h-full overflow-y-scroll relative">
-                  <table className="w-full text-sm relative">
+               <div
+                  className=" w-full md:h-full overflow-y-scroll relative"
+                  id={'player-list-container'}
+               >
+                  <table
+                     className="w-full text-sm relative overflow-y-scroll"
+                     id={'player-list-table'}
+                  >
                      <thead className="w-full sticky top-0">
                         <tr className="bg-gray-700 text-white dark:bg-gold min-w-full text-left">
                            <th></th>
@@ -356,19 +374,26 @@ const PlayerList = ({
                      </thead>
                      <tbody>
                         {players?.length > 0 &&
-                           filterPlayers().map((player: Player) => {
-                              return (
-                                 <PlayerComponent
-                                    key={player.id}
-                                    player={player}
-                                    leagueScoring={leagueScoring}
-                                    season={season}
-                                    updateWatchlist={updateWatchlist}
-                                    watchlist={watchlist}
-                                    updateFeaturedPlayer={updateFeaturedPlayer}
-                                 />
-                              );
-                           })}
+                           filterPlayers()
+                              .slice(0, records as number)
+                              .map((player: Player) => {
+                                 return (
+                                    <PlayerComponent
+                                       key={player.id}
+                                       player={player}
+                                       leagueScoring={leagueScoring}
+                                       season={season}
+                                       updateWatchlist={updateWatchlist}
+                                       watchlist={watchlist}
+                                       updateFeaturedPlayer={
+                                          updateFeaturedPlayer
+                                       }
+                                    />
+                                 );
+                              })}
+                        {(records as number) < filterPlayers().length && (
+                           <tr ref={playersRef as any}>Loading...</tr>
+                        )}
                      </tbody>
                   </table>
                </div>

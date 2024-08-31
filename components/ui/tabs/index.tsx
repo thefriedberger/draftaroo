@@ -15,6 +15,7 @@ const Tabs = ({
    tabBgColor,
    text,
    useHash,
+   saveState = true,
 }: TabProps) => {
    const [activeTabIndex, setActiveTabIndex] = useState(0);
 
@@ -44,21 +45,35 @@ const Tabs = ({
       });
 
    const panes = () =>
-      tabs.map((tab, index) => (
-         <div
-            className={classNames(
-               {
-                  isActive: index === activeTabIndex,
-                  hidden: index !== activeTabIndex,
-               },
-               'h-full w-full'
-            )}
-            id={`tab-panel-${index}`}
-            key={index}
-         >
-            {tab.tabPane}
-         </div>
-      ));
+      tabs.map((tab, index) => {
+         if (saveState) {
+            return (
+               <div
+                  className={classNames(
+                     index === activeTabIndex ? 'block' : 'hidden',
+                     'h-full w-full'
+                  )}
+                  id={`tab-panel-${index}`}
+                  key={index}
+               >
+                  {tab.tabPane}
+               </div>
+            );
+         }
+         if (index === activeTabIndex) {
+            return (
+               <div
+                  className={classNames('block h-full w-full')}
+                  id={`tab-panel-${index}`}
+                  key={index}
+               >
+                  {tab.tabPane}
+               </div>
+            );
+         } else {
+            return <></>;
+         }
+      });
 
    return (
       <>

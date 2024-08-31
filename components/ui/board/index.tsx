@@ -465,6 +465,7 @@ const Board = ({
       centerTabs: false,
       className:
          'flex flex-col w-full lg:max-w-screen-xl draft-tabs-container text-white',
+      saveState: false,
    };
 
    const mobileTabProps: TabProps = {

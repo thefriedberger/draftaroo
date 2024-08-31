@@ -26,6 +26,7 @@ export interface TabProps {
    linkType?: string;
    link?: string;
    centerTabs?: boolean;
+   saveState?: boolean;
 }
 export interface DraftOrderProps {
    draftedPlayers: DraftSelection[];
