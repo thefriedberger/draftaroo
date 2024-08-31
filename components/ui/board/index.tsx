@@ -31,7 +31,6 @@ import AuthModal from '../modals/auth';
 import MyTeam from '../my-team';
 import PlayerList, { sortPlayers } from '../player-list';
 import Tabs from '../tabs';
-import TabsNavigation from '../tabs-navigation';
 import TeamsList from '../teams-list';
 import Timer from '../timer';
 import NewTimer, { NewTimerProps } from '../timer/new-timer';
@@ -471,7 +470,7 @@ const Board = ({
    const mobileTabProps: TabProps = {
       tabs: mobileTabs,
       centerTabs: false,
-      className: `mobile-tabs ${
+      className: `flex flex-col-reverse mobile-tabs ${
          featuredPlayer &&
          (!draftedIDs.includes(featuredPlayer?.id)
             ? 'featured-player-visible'
@@ -514,12 +513,12 @@ const Board = ({
                         <span className="hidden lg:block mt-auto h-[28%] self-start w-full">
                            <Chat {...chatProps} />
                         </span>
-                     </div>{' '}
+                     </div>
                   </div>
                ) : (
                   <>
                      <Timer {...timerProps} />
-                     <TabsNavigation {...mobileTabProps} />
+                     <Tabs {...mobileTabProps} />
                      {featuredPlayer && (
                         <FeaturedPlayer {...featuredPlayerProps} />
                      )}

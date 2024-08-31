@@ -21,13 +21,6 @@ export interface CalloutProps {
    links?: Link[];
 }
 
-export interface TabProps {
-   text?: string;
-   linkType?: string;
-   link?: string;
-   centerTabs?: boolean;
-   saveState?: boolean;
-}
 export interface DraftOrderProps {
    draftedPlayers: DraftSelection[];
    currentPick: number;
@@ -111,6 +104,11 @@ export interface TabProps {
    useHash?: boolean;
    activeTabName?: string;
    tabBgColor?: string;
+   text?: string;
+   linkType?: string;
+   link?: string;
+   centerTabs?: boolean;
+   saveState?: boolean;
 }
 export interface Profile {
    firstName: string;

@@ -1,17 +1,26 @@
 .nav-active {
    position: relative;
 }
-.nav-active::after {
-   content: '';
-   position: absolute;
-   width: 92%;
-   height: 4px;
-   left: 4%;
-   bottom: 3px;
-   background-color: white;
-   border-radius: 6px;
+.nav-inactive svg {
+   @apply !stroke-white;
 }
-.tabpanes {
-   @apply flex items-center text-left;
-   height: calc(100% - 50px);
+.nav-active svg {
+   @apply !fill-white !stroke-paper-primary;
+}
+
+@screen md {
+   .nav-active::after {
+      content: '';
+      position: absolute;
+      width: 92%;
+      height: 4px;
+      left: 4%;
+      bottom: 3px;
+      background-color: white;
+      border-radius: 6px;
+   }
+   .tabpanes {
+      @apply flex items-center text-left;
+      height: calc(100% - 50px);
+   }
 }
