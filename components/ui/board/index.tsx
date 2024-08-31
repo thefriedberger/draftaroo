@@ -477,6 +477,7 @@ const Board = ({
             ? 'featured-player-visible'
             : 'drafted-featured-player-visible')
       }`,
+      saveState: false,
    };
 
    const chatProps: ChatProps = {
