@@ -5,6 +5,7 @@ const PlayerObserver = (options: IntersectionObserverInit) => {
    const playersRef = useRef<HTMLTableRowElement | null>(null);
 
    useEffect(() => {
+      const observer = new IntersectionObserver(loadPlayers, options);
       if (playersRef.current) {
          observer.observe(playersRef.current);
       }
@@ -22,8 +23,6 @@ const PlayerObserver = (options: IntersectionObserverInit) => {
          setIsVisible(false);
       }
    };
-
-   const observer = new IntersectionObserver(loadPlayers, options);
 
    return [playersRef, isVisible];
 };

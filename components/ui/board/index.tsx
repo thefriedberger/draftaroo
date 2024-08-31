@@ -32,7 +32,6 @@ import MyTeam from '../my-team';
 import PlayerList, { sortPlayers } from '../player-list';
 import Tabs from '../tabs';
 import TeamsList from '../teams-list';
-import Timer from '../timer';
 import NewTimer, { NewTimerProps } from '../timer/new-timer';
 import Watchlist from '../watchlist';
 
@@ -195,7 +194,6 @@ const Board = ({
                   }
                }
             );
-            console.log(tempTeams);
             setTeamsViewPlayers(tempTeams);
          }
       }
@@ -220,8 +218,8 @@ const Board = ({
    useEffect(() => {
       setIsYourTurn(
          turnOrder
-            .filter((turn) => turn.team_id === team.id)[0]
-            .picks.includes(currentPick)
+            .filter((turn) => turn.team_id === team.id)?.[0]
+            ?.picks?.includes(currentPick)
       );
       if (
          isActive &&
@@ -517,7 +515,7 @@ const Board = ({
                   </div>
                ) : (
                   <>
-                     <Timer {...timerProps} />
+                     <NewTimer {...timerProps} />
                      <Tabs {...mobileTabProps} />
                      {featuredPlayer && (
                         <FeaturedPlayer {...featuredPlayerProps} />

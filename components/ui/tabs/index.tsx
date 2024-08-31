@@ -2,7 +2,7 @@
 
 import { TabProps } from '@/lib/types';
 import classNames from 'classnames';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import styles from './tabs.module.css';
 
 const Tabs = ({
@@ -73,7 +73,7 @@ const Tabs = ({
                </div>
             );
          } else {
-            return <></>;
+            return <Fragment key={index} />;
          }
       });
 

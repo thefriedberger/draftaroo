@@ -35,10 +35,10 @@ const Team = ({
       if (doReset) {
          resetPlayers();
          setPlayersArray([]);
-         setTimeout(() => {
-            setDoReset?.(false);
-         }, 250);
       }
+      return () => {
+         setDoReset?.(false);
+      };
    }, [doReset]);
 
    useEffect(() => {

@@ -89,25 +89,6 @@ export const sortPlayers = (
    players.sort((a: Player, b: Player) => {
       const statForA = getStatFromLastSeason(a.stats, sort, season);
       const statForB = getStatFromLastSeason(b.stats, sort, season);
-      if (sort === 'timeOnIcePerGame') {
-         const timeA = String(statForA);
-         const timeB = String(statForB);
-
-         if (timeA.split(':').length > 1) {
-            if (timeB.split(':').length > 1) {
-               return (
-                  Number(timeB.split(':')?.[0] + timeB.split(':')?.[1]) -
-                  Number(timeA.split(':')?.[0] + timeA.split(':')?.[1])
-               );
-            } else {
-               return (
-                  Number(timeB.split(':')[0]) -
-                  Number(timeA.split(':')[0] + timeA.split(':')[1])
-               );
-            }
-         }
-         return Number(timeB.split(':')[0]) - Number(timeA.split(':')[0]);
-      }
       return statForB - statForA;
    });
 
