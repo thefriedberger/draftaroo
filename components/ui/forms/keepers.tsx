@@ -35,7 +35,9 @@ const KeeperForm = ({
       const picksUsed: number[] = [];
       for (const player of roster) {
          const { picks_used } = player;
-         picksUsed.push(picks_used[0]);
+         if (picks_used) {
+            picks_used.length && picksUsed.push(picks_used[0]);
+         }
       }
       setPicksAvailable(
          picksAvailable.filter((pick) => !picksUsed.includes(pick))
