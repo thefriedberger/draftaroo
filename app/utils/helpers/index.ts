@@ -266,3 +266,9 @@ export const getTimerData = async (
       .single();
    return draft as DraftTimerFields;
 };
+
+export const convertTime = (time: number) => {
+   const hours = Math.floor(time * (1 / 60));
+   const minutes = Math.round(time - hours * 60);
+   return `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
+};

@@ -76,6 +76,18 @@ export default async function Home() {
                   const leagueDrafts = drafts.filter(
                      (draft: Draft) => draft.league_id === team.league_id
                   );
+                  const leagueManagementLink = leagues
+                     .filter(
+                        (league) =>
+                           league.owner === user.user.id &&
+                           league.league_id === team.league_id
+                     )
+                     .map((league) => {
+                        return {
+                           href: `/leagues/${league.league_id}/league-management`,
+                           text: 'Manage league',
+                        };
+                     });
                   const draftLinks = leagueDrafts.map((draft: Draft) => {
                      const draftLink = draft.is_completed
                         ? {
@@ -93,8 +105,13 @@ export default async function Home() {
                         href: `/leagues/${team.league_id}`,
                         text: 'View league',
                      },
-                     ...draftLinks,
                   ];
+                  if (leagueManagementLink) {
+                     leagueLinks.push(...leagueManagementLink);
+                  }
+                  if (draftLinks) {
+                     leagueLinks.push(...draftLinks);
+                  }
                   return (
                      <Callout
                         key={index}

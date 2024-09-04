@@ -142,45 +142,45 @@ const KeeperSelector = ({
    return (
       <>
          {id && (
-            <div className="flex mb-2">
-               <h3>{team.team_name}</h3>
-               <div className="flex flex-row">
+            <div className="grid grid-cols-5 w- my-5">
+               <h3 className="w-16">{team.team_name}</h3>
+               <input
+                  required
+                  type="text"
+                  list="roster"
+                  id="roster-input"
+                  onChange={(e: any) => {
+                     setRoster(e.target.value);
+                  }}
+                  className={'col-span-2 mr-2'}
+               />
+               <datalist id="roster">
+                  {players.map((player: Player) => {
+                     return (
+                        <option
+                           key={player.id}
+                           value={player.id}
+                        >{`${player.first_name} ${player.last_name}`}</option>
+                     );
+                  })}
+               </datalist>
+               <div className="flex flex-col w-[88px]">
+                  <label htmlFor="time-kept">Times kept:</label>
                   <input
-                     required
-                     type="text"
-                     list="roster"
-                     id="roster-input"
-                     onChange={(e: any) => {
-                        setRoster(e.target.value);
-                     }}
+                     type="number"
+                     id="times-kept"
+                     min="0"
+                     defaultValue={0}
+                     onChange={(e: any) => setTimesKept(e.target.value)}
                   />
-                  <datalist id="roster">
-                     {players.map((player: Player) => {
-                        return (
-                           <option
-                              key={player.id}
-                              value={player.id}
-                           >{`${player.first_name} ${player.last_name}`}</option>
-                        );
-                     })}
-                  </datalist>
-                  <div className="flex flex-col">
-                     <label htmlFor="time-kept">Times kept:</label>
-                     <input
-                        type="number"
-                        id="times-kept"
-                        min="0"
-                        defaultValue={0}
-                        onChange={(e: any) => setTimesKept(e.target.value)}
-                     />
-                  </div>
-                  <button
-                     type="submit"
-                     onClick={() => handleSetRoster(roster, id, timesKept)}
-                  >
-                     Submit
-                  </button>
                </div>
+               <button
+                  type="submit"
+                  className="w-16"
+                  onClick={() => handleSetRoster(roster, id, timesKept)}
+               >
+                  Submit
+               </button>
             </div>
          )}
       </>

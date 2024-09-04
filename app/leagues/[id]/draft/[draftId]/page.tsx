@@ -8,6 +8,7 @@ import {
    fetchDraftedPlayers,
    fetchLeague,
    fetchLeagueRules,
+   fetchLeagueScoring,
    fetchTeam,
    fetchTeams,
    fetchWatchlist,
@@ -55,6 +56,11 @@ const Draft = async ({
       league
    );
 
+   const leagueScoring: Awaited<LeagueScoring> = await fetchLeagueScoring(
+      supabase,
+      league
+   );
+
    const teams: Awaited<Team[]> = await fetchTeams(supabase, league);
 
    const draftedPlayers: Awaited<DraftSelection[]> = await fetchDraftedPlayers(
@@ -73,6 +79,7 @@ const Draft = async ({
       team: team,
       teams: teams,
       leagueRules: leagueRules,
+      leagueScoring: leagueScoring,
       draftedPlayers: draftedPlayers,
    };
 

@@ -2,6 +2,8 @@
 
 import getPlayers from '@/app/utils/get-players';
 import {
+   fetchDraft,
+   fetchLeague,
    fetchLeagueRules,
    fetchLeagueScoring,
    fetchTeams,
@@ -10,22 +12,22 @@ import Tabs from '@/components/ui/tabs';
 import { Tab, TabProps } from '@/lib/types';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import DraftPicksTab, { DraftPicksProps } from '../tabs/draft-picks';
-import RostersTab, { RosterProps } from '../tabs/rosters';
-import RulesTab from '../tabs/rules';
-import ScoringTab, { ScoringTabProps } from '../tabs/scoring';
-import TeamsTab from '../tabs/teams';
+import DraftPicksTab, { DraftPicksProps } from '../../tabs/draft-picks';
+import RostersTab, { RosterProps } from '../../tabs/rosters';
+import RulesTab from '../../tabs/rules';
+import ScoringTab, { ScoringTabProps } from '../../tabs/scoring';
+import TeamsTab from '../../tabs/teams';
 
-export interface OwnerViewProps {
-   league: League;
-   draft: Draft;
-}
-const OwnerView = async ({ league, draft }: OwnerViewProps) => {
-   if (!league?.league_id) return;
-
+const LeagueManagement = async ({
+   params: { id },
+}: {
+   params: { id: string };
+}) => {
    const supabase = createServerComponentClient<Database>({ cookies });
-   const players: Awaited<Player[]> = await getPlayers(league.league_id);
+   const players: Awaited<Player[]> = await getPlayers(id);
+   const league: Awaited<League> = await fetchLeague(supabase, id);
    const teams: Awaited<Team[]> = await fetchTeams(supabase, league);
+   const draft: Awaited<Draft> = await fetchDraft(supabase, id);
 
    const leagueRules: Awaited<LeagueRules> = await fetchLeagueRules(
       supabase,
@@ -56,29 +58,30 @@ const OwnerView = async ({ league, draft }: OwnerViewProps) => {
    };
    const tabs: Tab[] = [
       {
-         tabButton: 'Manage Rules',
+         tabButton: 'Rules',
          tabPane: <RulesTab {...league} />,
       },
       {
-         tabButton: 'Manage Scoring',
+         tabButton: 'Scoring',
          tabPane: <ScoringTab {...scoringTabProps} />,
       },
       {
-         tabButton: 'Manage Teams',
+         tabButton: 'Teams',
          tabPane: <TeamsTab league={league} />,
       },
       {
-         tabButton: 'Manage Rosters',
+         tabButton: 'Rosters',
          tabPane: <RostersTab {...rosterProps} />,
       },
       {
-         tabButton: 'Manage Draft Pick',
+         tabButton: 'Draft Picks',
          tabPane: <DraftPicksTab {...draftPicksProps} />,
       },
    ];
    const tabProps: TabProps = {
       tabs,
-      className: 'flex flex-col w-full lg:max-w-screen-xl text-white mt-5',
+      className:
+         'flex flex-col items-center w-full lg:max-w-screen-xl text-white mt-5',
    };
    return (
       <div className={'container'}>
@@ -87,4 +90,4 @@ const OwnerView = async ({ league, draft }: OwnerViewProps) => {
    );
 };
 
-export default OwnerView;
+export default LeagueManagement;

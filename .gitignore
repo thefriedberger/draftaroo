@@ -36,3 +36,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 yarn.lock
+.husky/commit-msg
+.husky/pre-commit
+.husky/pre-push

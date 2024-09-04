@@ -50,6 +50,8 @@ export interface FeaturedPlayerProps {
    handleDraftSelection: (player: Player) => void;
    updateFeaturedPlayer: (player: Player | null) => void;
    draftedIDs: number[];
+   isActive: boolean;
+   leagueScoring: LeagueScoring;
 }
 
 export interface PlayerListProps {
@@ -59,6 +61,7 @@ export interface PlayerListProps {
    players: Player[];
    watchlist: number[];
    updateWatchlist: (player: Player, action: WatchlistAction) => void;
+   leagueScoring: LeagueScoring;
 }
 
 export interface DraftTileProps {
@@ -160,6 +163,7 @@ export interface BoardProps {
    team: Team;
    teams: Team[];
    leagueRules: LeagueRules;
+   leagueScoring: LeagueScoring;
    draftedPlayers: DraftSelection[];
 }
 export interface LeagueTeamViewProps {
@@ -203,22 +207,22 @@ export type stats = {
    blocked?: number;
    shotPct?: number;
    plusMinus?: number;
-   timeOnIce?: string;
+   timeOnIce?: number;
    faceOffPct?: number;
-   evenTimeOnIce?: string;
+   evenTimeOnIce?: number;
    overTimeGoals?: number;
    penaltyMinutes?: number;
    powerPlayGoals?: number;
    powerPlayPoints?: number;
    gameWinningGoals?: number;
    shortHandedGoals?: number;
-   timeOnIcePerGame?: string;
+   timeOnIcePerGame?: number;
    shortHandedPoints?: number;
-   powerPlayTimeOnIce?: string;
-   evenTimeOnIcePerGame?: string;
-   shortHandedTimeOnIce?: string;
-   powerPlayTimeOnIcePerGame?: string;
-   shortHandedTimeOnIcePerGame?: string;
+   powerPlayTimeOnIce?: number;
+   evenTimeOnIcePerGame?: number;
+   shortHandedTimeOnIce?: number;
+   powerPlayTimeOnIcePerGame?: number;
+   shortHandedTimeOnIcePerGame?: number;
    ot?: number;
    ties?: number;
    wins?: number;

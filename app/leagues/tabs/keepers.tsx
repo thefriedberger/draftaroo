@@ -1,9 +1,9 @@
 'use server';
+import getPlayers from '@/app/utils/get-players';
 import {
    fetchDraftPicks,
    fetchDraftSelections,
    fetchLeagueRules,
-   fetchPlayers,
    fetchRosters,
 } from '@/app/utils/helpers';
 import KeeperForm, { KeeperFormProps } from '@/components/ui/forms/keepers';
@@ -20,6 +20,7 @@ const KeepersTab = async ({ league, team, draft }: KeeperViewProps) => {
    if (!team) {
       return <></>;
    }
+   if (!league.league_id) return <></>;
    const leagueRules: Awaited<LeagueRules> = await fetchLeagueRules(
       supabase,
       league
@@ -33,7 +34,7 @@ const KeepersTab = async ({ league, team, draft }: KeeperViewProps) => {
    const userPicks = draftPicks.filter(
       (draftPick) => draftPick.team_id === team.id
    )[0];
-   const players: Awaited<Player[]> = await fetchPlayers(supabase);
+   const players: Awaited<Player[]> = await getPlayers(league.league_id);
    const numberOfTeams = leagueRules.number_of_teams;
    const numberOfRounds = leagueRules.number_of_rounds;
    const teamHistory: Awaited<TeamHistory[]> = await fetchRosters(

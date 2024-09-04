@@ -4,7 +4,6 @@ import { getTimerData, setMainTimer } from '@/app/utils/helpers';
 import { useWorkerTimeout } from '@/components/worker/worker-timeout';
 import { DraftPick, TimerProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import _ from 'lodash';
 import { createRef, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 export interface NewTimerProps extends TimerProps {
@@ -13,6 +12,7 @@ export interface NewTimerProps extends TimerProps {
 
 export type DraftTimerFields = { is_active: boolean; end_time?: number };
 
+export const TIMER_DURATION = 120; // seconds
 const NewTimer = ({
    draftId,
    yourTurn,
@@ -23,21 +23,21 @@ const NewTimer = ({
    userTeam,
    autopick,
    owner,
+   isActive,
 }: NewTimerProps) => {
    const supabase = createClientComponentClient<Database>();
 
    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
-   const MAIN_TIMER_DURATION = 120; // seconds
    const { setRunning, tick } = useWorkerTimeout();
    const [time, setTime] = useState(0);
    const [isTimerRunning, setIsTimerRunning] = useState(false);
-   var lastTick = useRef(performance.now());
-   var lastSync = useRef(performance.now());
+   var lastTick = useRef(Date.now());
+   var lastSync = useRef(Date.now());
    const [roomData, setRoomData] = useState<DraftTimerFields>({
       is_active: false,
    });
    var timerValue = useRef(120);
-   const [timer, setTimer] = useState(120);
+   const [timer, setTimer] = useState(TIMER_DURATION);
    const [userPick, setUserPick] = useState<number>();
    const [doMute, setDoMute] = useState<boolean>(false);
    const chime = createRef<HTMLAudioElement>();
@@ -58,17 +58,12 @@ const NewTimer = ({
             if (diff < 0) {
                setTimer(0);
                timerValue.current = 0;
-               const newTimerEnd = Date.now() + MAIN_TIMER_DURATION * 1000;
-               setMainTimer(supabase, draftId, newTimerEnd);
-               if (owner) {
-                  autopick();
-               }
             } else {
                // can lose up to a second here depending on network latency, but the timer value needs to be less than then initial one so
                // that useEffect captures it
                const finalTimer = Math.ceil(diff / 1000);
 
-               lastTick.current = performance.now();
+               lastTick.current = Date.now();
 
                timerValue.current = finalTimer;
                setTimer(finalTimer);
@@ -102,19 +97,22 @@ const NewTimer = ({
 
    useEffect(() => {
       if (tick > 0) {
-         const now = performance.now();
+         const now = Date.now();
 
          // run only if timer is running
          if (isTimerRunning) {
             if (now - lastTick.current >= 950) {
                if (roomData.end_time) {
                   const end = roomData.end_time;
-
                   const diff = end - now;
-
                   if (diff < 0) {
                      setTimer(0);
                      timerValue.current = 0;
+                     const newTimerEnd = Date.now() + TIMER_DURATION * 1000;
+                     if (owner) {
+                        setMainTimer(supabase, draftId, newTimerEnd);
+                        autopick();
+                     }
                   } else {
                      timeDown(timerValue.current);
                      lastTick.current = now;
@@ -153,7 +151,7 @@ const NewTimer = ({
    };
 
    const onChange = (payload: DraftTimerFields) => {
-      console.log('Payload: ', payload);
+      // console.log('Payload: ', payload);
       if (payload?.end_time) {
          setRoomData({
             end_time: payload.end_time,
@@ -166,33 +164,6 @@ const NewTimer = ({
       const draft = await getTimerData(supabase, draftId);
       if (draft) {
          setRoomData(draft);
-      }
-   };
-   // calculate the remaining time based on what time is on the server, so we sync up
-   const calculateInitialTime = () => {
-      var now = performance.now();
-      // console.log('sync date: ', roomData);
-      if (_.isEmpty(roomData) === false) {
-         if (roomData.end_time) {
-            var end = roomData.end_time;
-
-            var diff = end - now;
-            if (diff < 0) {
-               setTimer(0);
-               timerValue.current = 0;
-            } else {
-               // can lose up to a second here depending on network latency, but the timer value needs to be less than then initial one so
-               // that useEffect captures it
-               var finalTimer = Math.ceil(diff / 1000);
-
-               setTimer(finalTimer);
-               timerValue.current = finalTimer;
-            }
-         } else {
-            setTimer(0);
-            timerValue.current = 0;
-            // console.log('timer end!');
-         }
       }
    };
 
@@ -226,10 +197,10 @@ const NewTimer = ({
    };
 
    return (
-      <div className="flex flex-col justify-between max-h-[10dvh] h-[10dvh] lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative">
+      <div className="flex flex-col justify-between max-h-[10vh] h-[10vh] lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative">
          {!isCompleted ? (
             <>
-               {yourTurn && (
+               {yourTurn && isActive && (
                   <audio ref={chime} controls={false} autoPlay={!doMute}>
                      <source
                         src={

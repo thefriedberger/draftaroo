@@ -171,6 +171,7 @@ const KeeperForm = ({
                   <th className={'w-[40px] p-2'}>Keep Player?</th>
                   <th className={'w-[40px] p-2'}>Pos</th>
                   <th className="p-2">Player</th>
+                  <th className="p-2">Avg. Points</th>
                   <th className="w-[20px] p-2">Round Drafted</th>
                   <th className="p-2">Pick(s) Used</th>
                </tr>
@@ -219,6 +220,9 @@ const KeeperForm = ({
                            <td className="p-2">
                               {playerData[0].first_name}{' '}
                               {playerData[0].last_name}
+                           </td>
+                           <td className="p-2">
+                              {playerData[0].stats[1].stats.averageScore}
                            </td>
                            <td className="p-2">
                               {player.draft_position ?? 'FA'}

@@ -66,3 +66,26 @@ export const teamMap = {
    WPG: 'Winnipeg Jets',
    WSH: 'Washington Capitals',
 };
+
+export const LeagueScoringMap: { [key: string]: string } = {
+   assists: 'A',
+   blocked: 'BLK',
+   goals: 'G',
+   hits: 'H',
+   pim: 'PIM',
+   plusMinus: '+/-',
+   powerPlayAssists: 'PPA',
+   powerPlayGoals: 'PPG',
+   powerPlayPoints: 'PPP',
+   shortHandedAssists: 'SHA',
+   shortHandedGoals: 'SHG',
+   shortHandedPoints: 'SHP',
+   shots: 'S',
+};
+
+export const GoalieStatsMap: { [key: string]: string } = {
+   wins: 'W',
+   saves: 'S',
+   goalsAgainst: 'GA',
+   shutouts: 'SO',
+};

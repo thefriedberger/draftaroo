@@ -12,9 +12,7 @@ import {
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { UserResponse } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
-import Link from 'next/link';
 import KeepersTab from '../tabs/keepers';
-import OwnerView, { OwnerViewProps } from './owner-view';
 import TeamView from './team-view';
 
 const League = async ({ params: { id } }: { params: { id: string } }) => {
@@ -52,10 +50,6 @@ const League = async ({ params: { id } }: { params: { id: string } }) => {
       draft: draft,
    };
 
-   const ownerProps: OwnerViewProps = {
-      league: league,
-      draft: draft,
-   };
    const tabs: Tab[] = [
       {
          tabButton: 'Your Team',
@@ -66,12 +60,7 @@ const League = async ({ params: { id } }: { params: { id: string } }) => {
          tabPane: <KeepersTab {...keepersProps} />,
       },
    ];
-   if (owner) {
-      tabs.push({
-         tabButton: 'League Management',
-         tabPane: <OwnerView {...ownerProps} />,
-      });
-   }
+
    const tabProps: TabProps = {
       tabs,
       className:
@@ -83,7 +72,7 @@ const League = async ({ params: { id } }: { params: { id: string } }) => {
          {
             <>
                {team && id && <Tabs {...tabProps} />}
-               {!team ? (
+               {!team && (
                   <div className="">
                      <h1>Looks like you need to create a team</h1>
                      <p>Let&apos;s get started!</p>
@@ -97,18 +86,6 @@ const League = async ({ params: { id } }: { params: { id: string } }) => {
                         <button type="submit">Submit</button>
                      </form>
                   </div>
-               ) : (
-                  !owner && (
-                     <>
-                        <TeamView {...leagueTeamViewProps} />
-                        <Link
-                           className={'bg-emerald-primary p-2 rounded-md mt-2'}
-                           href={`/leagues/${id}/draft`}
-                        >
-                           Join Draft
-                        </Link>
-                     </>
-                  )
                )}
             </>
          }

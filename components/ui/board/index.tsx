@@ -32,7 +32,7 @@ import MyTeam from '../my-team';
 import PlayerList, { sortPlayers } from '../player-list';
 import Tabs from '../tabs';
 import TeamsList from '../teams-list';
-import NewTimer, { NewTimerProps } from '../timer/new-timer';
+import NewTimer, { NewTimerProps, TIMER_DURATION } from '../timer/new-timer';
 import Watchlist from '../watchlist';
 
 const Board = ({
@@ -45,6 +45,7 @@ const Board = ({
    team,
    teams,
    leagueRules,
+   leagueScoring,
    draftedPlayers,
 }: BoardProps) => {
    const supabase = createClientComponentClient<Database>();
@@ -113,19 +114,19 @@ const Board = ({
    }, [draftedPlayersState, teamViewToShow]);
 
    // checking for keepers is handled here
-   useEffect(() => {
-      if (isActive && owner) {
-         if (draftedPlayersState.length > 0) {
-            for (const player of draftedPlayersState) {
-               if (player.pick === currentPick && player.is_keeper) {
-                  setTimeout(() => {
-                     handlePick();
-                  }, 1000);
-               }
-            }
-         }
-      }
-   }, [isActive, draftedPlayersState, currentPick]);
+   // useEffect(() => {
+   //    if (isActive && owner) {
+   //       if (draftedPlayersState.length > 0) {
+   //          for (const player of draftedPlayersState) {
+   //             if (player.pick === currentPick && player.is_keeper) {
+   //                setTimeout(() => {
+   //                   handlePick();
+   //                }, 1000);
+   //             }
+   //          }
+   //       }
+   //    }
+   // }, [isActive, owner, draftedPlayersState, currentPick]);
 
    // set if user can pick
    useEffect(() => {
@@ -197,7 +198,7 @@ const Board = ({
 
    // TODO: make draft start a time based feature
    useEffect(() => {
-      isActive === undefined && draft && setIsActive(draft.is_active);
+      draft && setIsActive(draft.is_active);
    }, [draft]);
 
    // TODO: remove when updating timer
@@ -252,7 +253,7 @@ const Board = ({
          .from('draft')
          .update({ is_active: true })
          .match({ id: draft.id });
-      setMainTimer(supabase, draft.id, Date.now() + 120 * 1000);
+      setMainTimer(supabase, draft.id, Date.now() + TIMER_DURATION * 1000);
    };
 
    const handlePick = async () => {
@@ -264,11 +265,15 @@ const Board = ({
          .update({ current_pick: currentPick + 1 })
          .match({ id: draft.id });
 
-      setMainTimer(supabase, draft.id, Date.now() + 120 * 1000);
+      setMainTimer(supabase, draft.id, Date.now() + TIMER_DURATION * 1000);
       // setDoReset(true);
    };
 
    const handleDraftSelection = async (player: Player, teamId?: string) => {
+      if (draftedPlayers.find((player) => player.pick === currentPick)) {
+         setMainTimer(supabase, draft.id, Date.now() + TIMER_DURATION * 1000);
+         return;
+      }
       if (team && player && draft) {
          const { data, error } = await supabase
             .from('draft_selections')
@@ -376,6 +381,8 @@ const Board = ({
       updateWatchlist: updateWatchlist,
       updateFeaturedPlayer: updateFeaturedPlayer,
       handleDraftSelection: handleDraftSelection,
+      isActive: isActive,
+      leagueScoring: leagueScoring,
    };
 
    const playerListProps: PlayerListProps = {
@@ -385,6 +392,7 @@ const Board = ({
       updateWatchlist: updateWatchlist,
       updateFeaturedPlayer: updateFeaturedPlayer,
       players: players,
+      leagueScoring: leagueScoring,
    };
 
    const myTeamProps: MyTeamProps = {

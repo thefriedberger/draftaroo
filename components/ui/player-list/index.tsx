@@ -254,12 +254,6 @@ const PlayerList = ({
                                  </th>
                                  <th
                                     className="my-2 cursor-pointer"
-                                    onClick={(e) => setSort('plusMinus')}
-                                 >
-                                    +/-
-                                 </th>
-                                 <th
-                                    className="my-2 cursor-pointer"
                                     onClick={(e) => setSort('pim')}
                                  >
                                     PIM
@@ -373,7 +367,9 @@ const PlayerList = ({
                                  );
                               })}
                         {(records as number) < filterPlayers().length && (
-                           <tr ref={playersRef as any}>Loading...</tr>
+                           <tr ref={playersRef as any}>
+                              <td>Loading...</td>
+                           </tr>
                         )}
                      </tbody>
                   </table>

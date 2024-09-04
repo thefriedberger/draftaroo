@@ -69,10 +69,9 @@ const TeamAdmin = ({ team }: { team: Team }) => {
       }
    };
    return (
-      <div className={classNames('flex my-2')}>
-         <p className="mr-3 min-w-[80px]">{team_name}</p>
-         {owner && <p>{ownerEmail}</p>}
-         <div className="flex flex-row items-stretch mr-2">
+      <div className={classNames('flex flex-col my-5')}>
+         <div className="grid grid-cols-3 my-2">
+            <p className="mr-3 min-w-[80px]">{team_name}</p>
             <input
                className="p-2"
                type="text"
@@ -87,7 +86,8 @@ const TeamAdmin = ({ team }: { team: Team }) => {
                Update name
             </button>
          </div>
-         <div className="flex flex-row items-stretch">
+         <div className="grid grid-cols-3">
+            {owner && <p>{ownerEmail}</p>}
             <input
                className="p-2"
                type="email"
@@ -99,7 +99,7 @@ const TeamAdmin = ({ team }: { team: Team }) => {
                type="button"
                onClick={handleChangeOwner}
             >
-               Add owner
+               Add/Change owner
             </button>
          </div>
       </div>

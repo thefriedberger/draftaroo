@@ -1,5 +1,6 @@
 'use client';
 
+import { convertTime } from '@/app/utils/helpers';
 import { WatchlistAction } from '@/components/context/page-context';
 import { PlayerStats } from '@/lib/types';
 import { useEffect, useState } from 'react';
@@ -133,7 +134,13 @@ const PlayerComponent = ({
                   <>
                      <td className="py-2 px-1">
                         <span className="cursor-pointer">
-                           {playerStats?.[season]?.stats?.timeOnIcePerGame || 0}
+                           {playerStats?.[season]?.stats?.timeOnIcePerGame !==
+                           undefined
+                              ? convertTime(
+                                   playerStats?.[season]?.stats
+                                      ?.timeOnIcePerGame ?? 0
+                                )
+                              : 0}
                         </span>
                      </td>
                      <td className="py-2 px-1">
@@ -144,11 +151,6 @@ const PlayerComponent = ({
                      <td className="py-2 px-1">
                         <span className="cursor-pointer">
                            {playerStats?.[season]?.stats?.assists || 0}
-                        </span>
-                     </td>
-                     <td className="py-2 px-1">
-                        <span className="cursor-pointer">
-                           {playerStats?.[season]?.stats?.plusMinus || 0}
                         </span>
                      </td>
                      <td className="py-2 px-1">

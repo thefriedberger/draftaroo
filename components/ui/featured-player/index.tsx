@@ -1,6 +1,7 @@
 'use client';
 
 import FallbackImage from '@/app/assets/images/default-skater.png';
+import { convertTime } from '@/app/utils/helpers';
 import { FeaturedPlayerProps } from '@/lib/types';
 import classNames from 'classnames';
 import Image from 'next/image';
@@ -16,6 +17,8 @@ const FeaturedPlayer = ({
    draftedIDs,
    updateWatchlist,
    watchlist,
+   leagueScoring,
+   isActive,
 }: FeaturedPlayerProps) => {
    const watchlistStarProps: WatchlistStarProps = {
       player: featuredPlayer as Player,
@@ -36,18 +39,30 @@ const FeaturedPlayer = ({
                   <th>Score</th>
                   <th>Avg Score</th>
                   <th>GP</th>
-                  <th>ATOI</th>
-                  <th>G</th>
-                  <th>A</th>
-                  <th>+/-</th>
-                  <th>PIM</th>
-                  <th>PPG</th>
-                  <th>PPA</th>
-                  <th>SHG</th>
-                  <th>SHA</th>
-                  <th>SOG</th>
-                  <th>HIT</th>
-                  <th>BLK</th>
+                  {featuredPlayer?.primary_position !== 'G' ? (
+                     <>
+                        <th>ATOI</th>
+                        <th>G</th>
+                        <th>A</th>
+                        <th>PIM</th>
+                        <th>PPG</th>
+                        <th>PPA</th>
+                        <th>SHG</th>
+                        <th>SHA</th>
+                        <th>SOG</th>
+                        <th>HIT</th>
+                        <th>BLK</th>
+                     </>
+                  ) : (
+                     <>
+                        <th>W</th>
+                        <th>L</th>
+                        <th>S</th>
+                        <th>GA</th>
+                        <th>GAA</th>
+                        <th>SO</th>
+                     </>
+                  )}
                </tr>
             </thead>
             <tbody>
@@ -65,18 +80,34 @@ const FeaturedPlayer = ({
                               <td>{stats.score}</td>
                               <td>{stats.averageScore}</td>
                               <td>{stats.games}</td>
-                              <td>{stats.timeOnIcePerGame}</td>
-                              <td>{stats.goals}</td>
-                              <td>{stats.assists}</td>
-                              <td>{stats.plusMinus}</td>
-                              <td>{stats.pim}</td>
-                              <td>{stats.powerPlayGoals}</td>
-                              <td>{stats.powerPlayAssists}</td>
-                              <td>{stats.shortHandedGoals}</td>
-                              <td>{stats.shortHandedAssists}</td>
-                              <td>{stats.shots}</td>
-                              <td>{stats.hits}</td>
-                              <td>{stats.blocked}</td>
+                              {player.primary_position !== 'G' ? (
+                                 <>
+                                    <td>
+                                       {convertTime(stats.timeOnIcePerGame)}
+                                    </td>
+                                    <td>{stats.goals}</td>
+                                    <td>{stats.assists}</td>
+                                    <td>{stats.pim}</td>
+                                    <td>{stats.powerPlayGoals}</td>
+                                    <td>{stats.powerPlayAssists}</td>
+                                    <td>{stats.shortHandedGoals}</td>
+                                    <td>{stats.shortHandedAssists}</td>
+                                    <td>{stats.shots}</td>
+                                    <td>{stats.hits}</td>
+                                    <td>{stats.blocked}</td>
+                                 </>
+                              ) : (
+                                 <>
+                                    <td>{stats.wins}</td>
+                                    <td>{stats.losses}</td>
+                                    <td>{stats.saves}</td>
+                                    <td>{stats.goalsAgainst}</td>
+                                    <td>
+                                       {stats.goalAgainstAverage.toFixed(2)}
+                                    </td>
+                                    <td>{stats.shutouts}</td>
+                                 </>
+                              )}
                            </tr>
                         )}
                      </Fragment>
@@ -118,14 +149,7 @@ const FeaturedPlayer = ({
       <div
          className={classNames(
             'lg:h-[210px] lg:relative fixed bottom-[66px] lg:bottom-auto bg-paper-primary dark:bg-gray-dark w-full p-2',
-            isExpanded &&
-               (featuredPlayer && !draftedIDs.includes(featuredPlayer.id)
-                  ? 'h-[232px]'
-                  : 'h-[200px]'),
-            !isExpanded &&
-               (featuredPlayer && !draftedIDs.includes(featuredPlayer.id)
-                  ? 'h-[130px]'
-                  : 'h-[90px]')
+            isExpanded ? 'h-[232px]' : 'h-[130px]'
          )}
       >
          {featuredPlayer &&
@@ -152,14 +176,15 @@ const FeaturedPlayer = ({
                         <div className="flex flex-row h-10">
                            <button
                               className={classNames(
-                                 'bg-fuscia p-2 rounded-md mr-2 disabled:cursor-not-allowed whitespace-nowrap',
-                                 !yourTurn && 'saturate-[25%]'
+                                 'bg-fuscia p-2 rounded-md mr-2 disabled:cursor-not-allowed disabled:saturate-[25%] whitespace-nowrap'
                               )}
                               onClick={() => {
-                                 handleDraftSelection(featuredPlayer);
+                                 isActive &&
+                                    yourTurn &&
+                                    handleDraftSelection(featuredPlayer);
                               }}
                               type="button"
-                              disabled={!yourTurn}
+                              disabled={!isActive || !yourTurn}
                            >
                               Draft{' '}
                               {featuredPlayer.first_name
