@@ -10,12 +10,12 @@ export const fetchTeam = cache(
    async (
       supabase: SupabaseClient<Database>,
       userId: string,
-      leaguId: string
+      leagueId: string
    ): Promise<Team> => {
       const { data: team, error } = await supabase
          .from('teams')
          .select('*')
-         .match({ owner: userId, league_id: leaguId });
+         .match({ owner: userId, league_id: leagueId });
       return team?.[0] as Team;
    }
 );
