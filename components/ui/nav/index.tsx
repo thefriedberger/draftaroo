@@ -1,5 +1,6 @@
 'use client';
 
+import { Roo } from '@/app/assets/images/icons/roo';
 import { PageContext } from '@/components/context/page-context';
 import LogoutButton from '@/components/ui/logout-button';
 import { User } from '@supabase/supabase-js';
@@ -16,14 +17,15 @@ export default function Nav(props: NavProps) {
 
    return (
       <>
-         <nav className="h-[5dvh] min-h-[74px]">
+         <nav className="h-fit max-h-[10dvh]">
             <div className="bg-emerald-600 w-full flex justify-center border-b border-b-foreground/10">
-               <div className="w-full max-w-4xl flex justify-between items-center p-3 flex-row">
+               <div className="w-full max-w-4xl flex justify-between items-center p-2 flex-row">
                   <Link
-                     className="text-2xl text-white dark:hover:text-gray-300"
+                     className="flex flex-row items-center text-2xl text-white hover:opacity-80 transition-all duration-75"
                      href="/"
                   >
-                     Draftaroo
+                     <Roo classes={''} fill="#fff" height="50px" width="50px" />
+                     <p className="ml-2">Draftaroo</p>
                   </Link>
                   {user?.id ? (
                      <div className="flex items-center gap-4">
@@ -37,7 +39,7 @@ export default function Nav(props: NavProps) {
                   )}
                </div>
             </div>
-            <div className="sub-nav bg-emerald-500 w-full flex justify-center border-b border-b-foreground/10 h-2"></div>
+            <div className="sub-nav bg-emerald-500 w-full flex justify-center border-b border-b-foreground/10 h-1"></div>
          </nav>
       </>
    );

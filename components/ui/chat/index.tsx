@@ -6,7 +6,8 @@ import {
    createClientComponentClient,
 } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import styles from './index.module.css';
 
 // export const UserStatus = ['sync', 'join', 'leave'] as const;
 // type UserStatus = (typeof UserStatus)[number];
@@ -17,9 +18,8 @@ type ChatType = {
 const Chat = ({ user }: ChatProps) => {
    const [message, setMessage] = useState<string>();
    const [chat, setChat] = useState<ChatType[]>([]);
-   const [sendMessage, setSendMessage] = useState<boolean>(false);
    const [isOpen, setIsOpen] = useState<boolean>(true);
-   const [unseenMessage, setUnseenMessage] = useState<boolean>(false);
+   const [unseenMessage, setUnseenMessage] = useState<boolean>(true);
    const supabase = createClientComponentClient<Database>();
 
    const chatChannel = supabase.channel('chat-channel', {
@@ -30,39 +30,46 @@ const Chat = ({ user }: ChatProps) => {
       },
    });
 
+   useEffect(() => {
+      chatChannel
+         .on('broadcast', { event: 'chat' }, (payload) => {
+            if (payload) {
+               const newChat: ChatType = {
+                  message: payload.payload.message,
+                  sender: payload.payload.sender,
+               };
+               if (!isOpen) {
+                  setUnseenMessage(true);
+               } else {
+                  setUnseenMessage(false);
+               }
+               setChat((prev: ChatType[]) => [...prev, newChat]);
+            }
+         })
+         .subscribe((status) => {
+            if (status === 'SUBSCRIBED' && message?.length && user) {
+               chatChannel.send({
+                  type: 'broadcast',
+                  event: 'chat',
+                  payload: { message: message, sender: user },
+               });
+               setTimeout(() => {
+                  setMessage('');
+               }, 100);
+            }
+         });
+   }, [chatChannel, message]);
+
+   useEffect(() => {
+      isOpen && setUnseenMessage(false);
+   }, [isOpen]);
+
    const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       const target: any = e.target;
+      setMessage(target[0].value);
       target[0].value = '';
-      setSendMessage(true);
    };
-
-   useEffect(() => {
-      if (user) {
-         chatChannel
-            .on('broadcast', { event: 'chat' }, (payload) => {
-               if (payload) {
-                  const newChat: ChatType = {
-                     message: payload.payload.message,
-                     sender: payload.payload.sender,
-                  };
-                  setChat((prev: ChatType[]) => [...prev, newChat]);
-               }
-            })
-            .subscribe((channelStatus) => {
-               if (channelStatus === 'SUBSCRIBED' && user && sendMessage) {
-                  chatChannel.send({
-                     type: 'broadcast',
-                     event: 'chat',
-                     payload: { message: message, sender: user },
-                  });
-                  setTimeout(() => {
-                     setSendMessage(false);
-                  }, 100);
-               }
-            });
-      }
-   }, [user, sendMessage]);
    return (
       <div className="flex flex-col h-full w-full chat-container justify-end">
          <div
@@ -76,7 +83,19 @@ const Chat = ({ user }: ChatProps) => {
                className={classNames(
                   'w-full flex items-center sticky top-0 min-h-6 px-2 justify-end h-6 bg-fuscia-primary hover:bg-fuscia-dark'
                )}
-            ></button>
+            >
+               {unseenMessage && (
+                  <span className="relative flex h-3 w-3 mr-auto">
+                     <span
+                        className={classNames(
+                           styles['message-notification'],
+                           'animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-primary opacity-75'
+                        )}
+                     ></span>
+                     <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-primary"></span>
+                  </span>
+               )}
+            </button>
             {chat.map((payload: ChatType, index: number) => {
                const { message, sender } = payload;
                return (
@@ -107,16 +126,13 @@ const Chat = ({ user }: ChatProps) => {
             })}
             <AlwaysScrollToBottom />
             <form
-               className={'flex flex-row mt-2 fixed bottom-0 w-full'}
+               className={'flex flex-row mt-2 fixed bottom-0 w-fit'}
                onSubmit={handleSendMessage}
             >
                <input
                   type="text"
                   placeholder="Enter message"
-                  className="w-full text-sm self-center p-1 min-h-[25px] pr-[30px] whitespace-nowrap"
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                     setMessage(e.target.value)
-                  }
+                  className="w-full text-sm self-center p-1 min-h-[25px pr-[30px] whitespace-nowrap"
                />
                <button
                   type="submit"
