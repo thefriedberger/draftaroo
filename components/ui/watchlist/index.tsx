@@ -43,7 +43,7 @@ const Watchlist = ({
          updateFeaturedPlayer(player);
    };
    return (
-      <div className=" lg:h-[30%] overflow-y-scroll px-1 text-black dark:text-white">
+      <div className=" lg:h-[32%] overflow-y-scroll px-1 text-black dark:text-white">
          <h3 className="hidden lg:block text-xl font-bold">Watchlist</h3>
          {watchlistPlayers.length > 0 &&
             watchlistPlayers

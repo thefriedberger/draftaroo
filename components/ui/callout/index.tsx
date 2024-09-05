@@ -5,13 +5,13 @@ const Callout = (props: CalloutProps) => {
    const { links } = props;
 
    return (
-      <div className="flex flex-col p-3 text-red bg-emerald-500 rounded-xl my-3">
+      <div className="flex flex-col p-3 text-red bg-paper-dark dark:bg-gray-light rounded-xl my-3">
          <p className="mb-2">{props.calloutText}</p>
          {links?.map((link, index) => {
             return (
                <Link
                   key={index}
-                  className="bg-gray-300 rounded-xl max-w-auto p-2 transition-all hover:bg-gray-400 text-black mt-2"
+                  className="bg-paper-button rounded-xl max-w-auto p-2 transition-all hover:bg-paper-light text-black mt-2"
                   href={link?.href ? link.href : '/'}
                >
                   {link.text}

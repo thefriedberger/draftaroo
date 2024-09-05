@@ -1,6 +1,11 @@
 'use server';
 import addTeam from '@/app/utils/add-team';
-import { fetchDraft, fetchLeague, fetchTeam } from '@/app/utils/helpers';
+import {
+   fetchDraftByLeague,
+   fetchLeague,
+   fetchTeam,
+} from '@/app/utils/helpers';
+import { buttonClasses } from '@/components/ui/helpers/buttons';
 import AuthModal from '@/components/ui/modals/auth';
 import Tabs from '@/components/ui/tabs';
 import {
@@ -25,15 +30,14 @@ const League = async ({ params: { id } }: { params: { id: string } }) => {
       return (
          <>
             <h1 className={'dark:text-white'}>You must log in to see this</h1>
-            <AuthModal buttonClass="py-2 px-4 rounded-md no-underline" />
+            <AuthModal buttonClass={buttonClasses} />
          </>
       );
    }
    const league: Awaited<League> = await fetchLeague(supabase, id);
    const owner: boolean = league?.owner === user?.user?.id;
-   const draft: Awaited<Draft> = await fetchDraft(
+   const draft: Awaited<Draft> = await fetchDraftByLeague(
       supabase,
-      null,
       id,
       currentYear
    );
@@ -71,7 +75,7 @@ const League = async ({ params: { id } }: { params: { id: string } }) => {
       <>
          {
             <>
-               {team && id && <Tabs {...tabProps} />}
+               {team && <Tabs {...tabProps} />}
                {!team && (
                   <div className="">
                      <h1>Looks like you need to create a team</h1>

@@ -17,8 +17,10 @@ const MyTeam = ({ playerIDs, players, updateFeaturedPlayer }: MyTeamProps) => {
       updateFeaturedPlayer: updateFeaturedPlayer,
    };
    return (
-      <div className="lg:h-[40%] overflow-y-scroll lg:border-l lg:border-gray-300">
-         <h2 className="hidden lg:block text-black bg-gray-300 p-2">My Team</h2>
+      <div className="lg:min-h-[40%] mb-2 overflow-y-scroll lg:border-l lg:border-paper-dark">
+         <h2 className="hidden lg:block text-black bg-paper-dark dark:bg-blue-muted p-2">
+            My Team
+         </h2>
          <Team {...teamProps} />
       </div>
    );

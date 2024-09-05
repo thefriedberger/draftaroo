@@ -517,7 +517,7 @@ const Board = ({
                      <div className="flex flex-col lg:max-w-[15vw] w-full">
                         <Watchlist {...watchlistProps} />
                         <MyTeam {...myTeamProps} />
-                        <span className="hidden lg:block mt-auto h-[28%] self-start w-full">
+                        <span className="hidden lg:block mt-auto max-h-[28%] self-start w-full">
                            <Chat {...chatProps} />
                         </span>
                      </div>

@@ -1,6 +1,6 @@
 'use server';
 import { fetchTeams } from '@/app/utils/helpers';
-import TeamAdmin from '@/components/team-admin';
+import TeamAdmin from '@/components/ui/team-admin';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { UserResponse } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';

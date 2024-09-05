@@ -99,7 +99,7 @@ table tr td {
    @apply text-black dark:text-white;
 }
 table tr:nth-of-type(even) {
-   @apply bg-gray-300 bg-paper-light dark:bg-gray-primary;
+   @apply bg-paper-primary dark:bg-gray-primary;
 }
 
 @media screen and (min-width: theme(screens.md)) {

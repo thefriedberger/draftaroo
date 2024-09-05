@@ -2,8 +2,10 @@
 
 import { RosterPlayer } from '@/app/leagues/tabs/keepers';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import classNames from 'classnames';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import Confetti from 'react-confetti';
+import { buttonClasses } from '../helpers/buttons';
 
 export interface KeeperFormProps {
    team: Team;
@@ -293,9 +295,7 @@ const KeeperForm = ({
             </tbody>
          </table>
          <button
-            className={
-               'appearance-none border-0 bg-emerald-primary picked-md w-fit mx-auto p-2 my-2'
-            }
+            className={classNames(buttonClasses, 'w-36 mx-auto my-5')}
             type="submit"
          >
             Submit Keepers

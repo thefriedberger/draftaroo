@@ -20,7 +20,6 @@
       border-radius: 6px;
    }
    .tabpanes {
-      @apply flex items-center text-left;
       height: calc(100% - 50px);
    }
 }

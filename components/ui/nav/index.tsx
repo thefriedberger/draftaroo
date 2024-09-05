@@ -5,6 +5,7 @@ import LogoutButton from '@/components/ui/logout-button';
 import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
 import { useContext } from 'react';
+import { buttonClasses } from '../helpers/buttons';
 import AuthModal from '../modals/auth';
 
 export interface NavProps {
@@ -32,7 +33,7 @@ export default function Nav(props: NavProps) {
                         <LogoutButton />
                      </div>
                   ) : (
-                     <AuthModal buttonClass="py-2 px-4 rounded-md no-underline bg-paper-dark hover:bg-paper-light  dark:bg-gray-dark dark:hover:bg-gray-primary text-sm" />
+                     <AuthModal buttonClass={buttonClasses} />
                   )}
                </div>
             </div>

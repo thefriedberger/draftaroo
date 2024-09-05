@@ -272,7 +272,7 @@ const NewTimer = ({
                         <p className="">{currentPick}&nbsp;Overall</p>
                      </div>
                      {yourTurn ? (
-                        <p className="bg-fuscia flex items-center h-full ml-auto align-middle p-2 text-xl font-bold">
+                        <p className="bg-fuscia-primary flex items-center h-full ml-auto align-middle p-2 text-xl font-bold">
                            Draft now!
                         </p>
                      ) : (

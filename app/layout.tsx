@@ -23,7 +23,7 @@ export default function RootLayout({
             <html lang="en">
                <body
                   id="DraftarooApp"
-                  className="min-h-screen bg-paper-primary dark:bg-gray-dark"
+                  className="min-h-screen bg-paper-light dark:bg-gray-dark"
                >
                   <header>
                      <Nav />

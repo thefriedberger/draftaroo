@@ -134,33 +134,29 @@ export const fetchDrafts = async (
    return drafts as Draft[];
 };
 
-export type DraftFetchType = {
-   leagueId: string;
-   draftYear: number;
-   draftId: string;
-};
-export const fetchDraft = cache(
+export const fetchDraftByLeague = cache(
    async (
       supabase: SupabaseClient<Database>,
-      leagueId?: string | null,
-      draftId?: string | null,
-      draftYear?: number | null
+      leagueId: string,
+      draftYear: number
    ): Promise<Draft> => {
-      const matchObj: any = {
-         id: leagueId ?? null,
-         league_id: draftId ?? null,
-         draft_year: draftYear ?? null,
-      };
-
-      Object.keys(matchObj).forEach((key: any) => {
-         if (matchObj[key] === null) {
-            delete matchObj[key];
-         }
-      });
       const { data: draft, error } = await supabase
          .from('draft')
          .select('*')
-         .match(matchObj);
+         .match({ draft_year: draftYear, league_id: leagueId });
+
+      return draft?.[0] as Draft;
+   }
+);
+export const fetchDraftById = cache(
+   async (
+      supabase: SupabaseClient<Database>,
+      draftId: string
+   ): Promise<Draft> => {
+      const { data: draft, error } = await supabase
+         .from('draft')
+         .select('*')
+         .match({ id: draftId });
 
       return draft?.[0] as Draft;
    }

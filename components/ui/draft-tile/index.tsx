@@ -34,11 +34,11 @@ const DraftTile = ({
    return (
       <div
          className={classNames(
-            currentPick === pick.draftPosition && 'bg-fuscia',
+            currentPick === pick.draftPosition && 'bg-fuscia-primary',
             pick.yourPick &&
                currentPick !== pick.draftPosition &&
-               'bg-paper-light dark:bg-gray-light',
-            'flex flex-row border-b border-paper-dark dark:border-gray-300 p-1 cursor-pointer text-black dark:text-white'
+               'bg-paper-primary dark:bg-gray-light',
+            'flex flex-row border-b dark:border-gray-300 p-1 cursor-pointer text-black dark:text-white'
          )}
          ref={draftTileRef}
          onClick={handleUpdateFeaturedPlayer}
@@ -56,7 +56,7 @@ const DraftTile = ({
                {pick.playerName && <p>{pick.playerName}</p>}
             </div>
             {pick.isKeeper && (
-               <div className="w-[20px] h-[20px] border border-white bg-purple text-white font-bold text-[10px] text-center self-center ml-auto">
+               <div className="flex items-center justify-center w-[20px] h-[20px] border border-white bg-blue-primary text-white font-bold text-[10px] text-center self-center ml-auto">
                   K
                </div>
             )}

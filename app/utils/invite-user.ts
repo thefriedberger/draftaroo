@@ -1,6 +1,6 @@
 'use server';
 
-import { UserInvite } from '@/components/team-admin';
+import { UserInvite } from '@/components/ui/team-admin';
 import { User, createClient } from '@supabase/supabase-js';
 
 const inviteUser = async (formData: UserInvite) => {

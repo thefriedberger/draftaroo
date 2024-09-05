@@ -26,7 +26,7 @@ const FeaturedPlayer = ({
       isButton: true,
       watchlist: watchlist,
       className:
-         'flex flex-row bg-paper-dark dark:bg-gray-primary text-white fill-emerald-700 p-2 rounded-md whitespace-nowrap',
+         'flex flex-row bg-paper-primary dark:bg-gray-primary text-black dark:text-white fill-emerald-700 p-2 rounded-md whitespace-nowrap',
    };
    const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
@@ -148,7 +148,7 @@ const FeaturedPlayer = ({
    return (
       <div
          className={classNames(
-            'lg:h-[210px] lg:relative fixed bottom-[66px] lg:bottom-auto bg-paper-primary dark:bg-gray-dark w-full p-2',
+            'lg:h-[210px] lg:relative fixed bottom-[66px] lg:bottom-auto w-full p-2',
             isExpanded ? 'h-[232px]' : 'h-[130px]'
          )}
       >
@@ -176,7 +176,7 @@ const FeaturedPlayer = ({
                         <div className="flex flex-row h-10">
                            <button
                               className={classNames(
-                                 'bg-fuscia p-2 rounded-md mr-2 disabled:cursor-not-allowed disabled:saturate-[25%] whitespace-nowrap'
+                                 'bg-fuscia-primary p-2 rounded-md mr-2 disabled:cursor-not-allowed disabled:saturate-[25%] whitespace-nowrap'
                               )}
                               onClick={() => {
                                  isActive &&

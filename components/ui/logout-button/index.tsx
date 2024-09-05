@@ -4,6 +4,7 @@ import { PageContext } from '@/components/context/page-context';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
 import { useContext } from 'react';
+import { buttonClasses } from '../helpers/buttons';
 
 export default function LogoutButton() {
    const router = useRouter();
@@ -17,10 +18,7 @@ export default function LogoutButton() {
    };
 
    return (
-      <button
-         className="py-2 px-4 rounded-md no-underline bg-white dark:text-white dark:bg-gray-dark dark:hover:bg-gray-primary"
-         onClick={signOut}
-      >
+      <button className={buttonClasses} onClick={signOut}>
          Logout
       </button>
    );

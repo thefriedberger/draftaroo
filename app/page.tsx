@@ -1,6 +1,7 @@
 'use server';
 
 import Callout from '@/components/ui/callout';
+import { buttonClasses } from '@/components/ui/helpers/buttons';
 import AuthModal from '@/components/ui/modals/auth';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { UserResponse } from '@supabase/supabase-js';
@@ -14,7 +15,7 @@ export default async function Home() {
       return (
          <>
             <h1 className={'dark:text-white'}>You must log in to see this</h1>
-            <AuthModal buttonClass="py-2 px-4 rounded-md no-underline" />
+            <AuthModal buttonClass={buttonClasses} />
          </>
       );
    }
@@ -47,8 +48,8 @@ export default async function Home() {
                            calloutText: `${league.league_name}`,
                            links: [
                               {
-                                 href: `/leagues/${league.league_id}`,
-                                 text: 'View league',
+                                 href: `/leagues/${league.league_id}/keepers`,
+                                 text: 'Set Keepers',
                               },
                            ],
                         }}
@@ -102,8 +103,8 @@ export default async function Home() {
                   });
                   const leagueLinks = [
                      {
-                        href: `/leagues/${team.league_id}`,
-                        text: 'View league',
+                        href: `/leagues/${league.league_id}/keepers`,
+                        text: 'Set Keepers',
                      },
                   ];
                   if (leagueManagementLink) {
