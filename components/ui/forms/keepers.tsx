@@ -169,7 +169,7 @@ const KeeperForm = ({
       <form className={'flex flex-col mt-2'} onSubmit={submitKeepers}>
          <table>
             <thead className="bg-emerald-primary">
-               <tr className={'align-bottom '}>
+               <tr className={'align-bottom text-left'}>
                   <th className={'w-[40px] p-2'}>Keep Player?</th>
                   <th className={'w-[40px] p-2'}>Pos</th>
                   <th className="p-2">Player</th>
