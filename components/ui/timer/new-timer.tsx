@@ -263,7 +263,7 @@ const NewTimer = ({
                      )}
                   </>
                ) : (
-                  <div className="flex flex-row items-center h-full">
+                  <div className="bg-paper-primary dark:bg-gray-primary flex flex-row items-center h-full">
                      <div className="flex items-center justify-center mr-2 text-xl w-[100px] bg-orange min-h-full">
                         <p className="p-2 text-2xl">{getTime()}</p>
                      </div>

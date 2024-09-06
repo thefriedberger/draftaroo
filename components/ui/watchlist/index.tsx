@@ -45,7 +45,7 @@ const Watchlist = ({
    return (
       <div className=" md:min-h-[35%] md:max-h-full overflow-y-scroll px-1 text-black dark:text-white">
          <h3 className="hidden lg:block text-xl font-bold">Watchlist</h3>
-         {watchlistPlayers.length > 0 &&
+         {watchlistPlayers.length > 0 ? (
             watchlistPlayers
                .filter((player: Player) => !draftedIDs.includes(player.id))
                .map((player: Player) => {
@@ -67,7 +67,12 @@ const Watchlist = ({
                         </p>
                      </div>
                   );
-               })}
+               })
+         ) : (
+            <h2 className="py-5 dark:text-white text-center text-xl">
+               Your watchlist is empty
+            </h2>
+         )}
       </div>
    );
 };

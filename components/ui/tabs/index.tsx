@@ -94,7 +94,7 @@ const Tabs = ({
             <div
                className={classNames(
                   `${styles['tabpanes']}`,
-                  'mb-[66px] md:mb-0 h-full'
+                  'pb-[66px] md:pb-0 h-full'
                )}
             >
                {panes()}

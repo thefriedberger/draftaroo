@@ -9,8 +9,7 @@ export default function ContextWrapper({
 }: {
    children: React.ReactNode;
 }) {
-   const { user, updateUser, session, updateSession, userTeams, updateTeam } =
-      useContext(PageContext);
+   const { user, updateUser, session, updateSession } = useContext(PageContext);
 
    const fetchUser = async () => {
       const supabase = createClientComponentClient<Database>();
