@@ -1,9 +1,8 @@
+import '@/app/globals.css';
 import { PageContextProvider } from '@/components/context/page-context';
 import Nav from '@/components/ui/nav';
-import { Analytics } from '@vercel/analytics/react';
 import { Metadata } from 'next';
 import ContextWrapper from './context-wrapper';
-import './globals.css';
 
 export const metadata: Metadata = {
    title: 'Draftaroo',
@@ -29,7 +28,6 @@ export default function RootLayout({
                      <Nav />
                   </header>
                   <main className="flex flex-col items-center">{children}</main>
-                  <Analytics />
                </body>
             </html>
          </ContextWrapper>

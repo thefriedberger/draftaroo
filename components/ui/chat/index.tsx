@@ -71,17 +71,23 @@ const Chat = ({ user }: ChatProps) => {
       target[0].value = '';
    };
    return (
-      <div className="flex flex-col h-full w-full chat-container justify-end">
+      <div
+         className={classNames(
+            isOpen && 'h-full max-h-[30%]',
+            'hidden mt-auto min-h-[60px] self-start md:flex flex-col transition-all w-full chat-container justify-end'
+         )}
+      >
          <div
             className={classNames(
-               isOpen && 'h-[249px] max-h-[249px] overflow-y-scroll',
-               'w-full flex flex-col rounded-t-md relative h-6 transition-all duration-150 bg-paper-primary overflow-hidden dark:bg-gray-primary mb-[35px]'
+               isOpen && 'h-full max-h-[250px] overflow-y-scroll',
+
+               'w-full flex flex-col rounded-t-md relative transition-all duration-150 bg-paper-primary overflow-hidden dark:bg-gray-primary pb-[35px]'
             )}
          >
             <button
                onClick={() => setIsOpen(!isOpen)}
                className={classNames(
-                  'w-full flex items-center sticky top-0 min-h-6 px-2 justify-end h-6 bg-fuscia-primary hover:bg-fuscia-dark'
+                  'w-full flex items-center sticky top-0 min-h-6 px-2 justify-end h-6 bg-fuscia-primary hover:bg-fuscia-dark outline-none'
                )}
             >
                {unseenMessage && (
@@ -89,9 +95,11 @@ const Chat = ({ user }: ChatProps) => {
                      <span
                         className={classNames(
                            styles['message-notification'],
-                           'animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-primary opacity-75'
+                           'animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-primary opacity-75 sr-only'
                         )}
-                     ></span>
+                     >
+                        Close chat
+                     </span>
                      <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-primary"></span>
                   </span>
                )}
@@ -126,13 +134,13 @@ const Chat = ({ user }: ChatProps) => {
             })}
             <AlwaysScrollToBottom />
             <form
-               className={'flex flex-row mt-2 fixed bottom-0 w-fit'}
+               className={'flex flex-row mt-2 fixed bottom-0 w-[15vw]'}
                onSubmit={handleSendMessage}
             >
                <input
                   type="text"
                   placeholder="Enter message"
-                  className="w-full text-sm self-center p-1 min-h-[25px pr-[30px] whitespace-nowrap"
+                  className="w-full text-sm self-center p-1 min-h-[25px] whitespace-nowrap"
                />
                <button
                   type="submit"

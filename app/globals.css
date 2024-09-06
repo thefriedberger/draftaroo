@@ -60,29 +60,10 @@
       transform: translateY(0);
    }
 }
-.draft-tabs-container {
-   height: calc(100dvh - 210px - 74px);
-}
-@screen sm {
-   .draft-order {
-      @apply h-full;
-   }
-}
-
 .draft-board {
-   height: calc(100dvh - 74px);
-   max-height: calc(100dvh - 74px);
-   overflow-y: hidden;
+   height: calc(100dvh - 57px);
+   max-height: calc(100dvh - 57px);
 }
-.mobile-tabs {
-   height: calc(100dvh - 74px - 84px);
-   max-height: calc(100dvh - 74px - 84px);
-   overflow-y: scroll;
-}
-/* .mobile-tabs > div {
-   height: calc(100% - -66px);
-   max-height: calc(100% - 66px);
-} */
 .mobile-tabs.featured-player-visible {
    height: calc(100dvh - 74px - 84px - 190px);
    max-height: calc(100dvh - 74px - 84px - 190px);

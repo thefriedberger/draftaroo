@@ -20,7 +20,6 @@ import {
    WatchlistProps,
 } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import classNames from 'classnames';
 import { Suspense, useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Chat from '../chat';
@@ -470,14 +469,14 @@ const Board = ({
       tabs,
       centerTabs: false,
       className:
-         'flex flex-col w-full lg:max-w-screen-xl draft-tabs-container text-white',
+         'flex flex-col w-full lg:max-w-screen-xl md:h-[65%] text-white',
       saveState: false,
    };
 
    const mobileTabProps: TabProps = {
       tabs: mobileTabs,
       centerTabs: false,
-      className: `flex flex-col-reverse mobile-tabs ${
+      className: `flex flex-col-reverse w-full h-[calc(100%-66px)] overflow-y-scroll mobile-tabs ${
          featuredPlayer &&
          (!draftedIDs.includes(featuredPlayer?.id)
             ? 'featured-player-visible'
@@ -487,14 +486,14 @@ const Board = ({
    };
 
    const chatProps: ChatProps = {
-      user: user || null,
+      user: user,
    };
    return (
-      <div className={classNames('w-full flex flex-col lg:flex-row')}>
+      <div className="flex flex-col md:flex-row items-center w-full overflow-y-scroll md:overflow-y-hidden draft-board">
          {user && team?.league_id === league.league_id ? (
             <>
                {!isMobile ? (
-                  <div className="draft-board w-full flex flex-col lg:flex-row">
+                  <>
                      {owner && !isActive && (
                         <button
                            className="bg-gray-primary p-1"
@@ -504,24 +503,22 @@ const Board = ({
                            Start Draft
                         </button>
                      )}
-                     <div className="flex flex-col lg:max-w-[15vw] w-full">
+                     <div className="flex flex-col lg:max-w-[15vw] h-full w-full overflow-y-hidden">
                         <NewTimer {...timerProps} />
                         <Suspense fallback={<DraftOrderLoading />}>
                            <DraftOrder {...draftOrderProps} />
                         </Suspense>
                      </div>
-                     <div className="flex flex-col lg:max-w-[70vw] w-full">
+                     <div className="flex flex-col lg:max-w-[70vw] h-full w-full">
                         <FeaturedPlayer {...featuredPlayerProps} />
                         <Tabs {...tabProps} />
                      </div>
-                     <div className="flex flex-col lg:max-w-[15vw] w-full">
+                     <div className="flex flex-col lg:max-w-[15vw] h-full w-full">
                         <Watchlist {...watchlistProps} />
                         <MyTeam {...myTeamProps} />
-                        <span className="hidden lg:block mt-auto max-h-[28%] self-start w-full">
-                           <Chat {...chatProps} />
-                        </span>
+                        <Chat {...chatProps} />
                      </div>
-                  </div>
+                  </>
                ) : (
                   <>
                      <NewTimer {...timerProps} />

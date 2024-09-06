@@ -91,10 +91,10 @@ const Team = ({
 
    return (
       <table className="w-full">
-         <thead className="bg-gold text-left">
+         <thead className="bg-gold text-left sticky top-0">
             <tr>
-               <th>Pos</th>
-               <th>Player</th>
+               <th colSpan={1}>Pos</th>
+               <th colSpan={2}>Player</th>
             </tr>
          </thead>
          <tbody>

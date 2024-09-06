@@ -197,7 +197,7 @@ const NewTimer = ({
    };
 
    return (
-      <div className="flex flex-col justify-between max-h-[10vh] h-[10vh] lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative">
+      <div className="flex flex-col justify-between w-full h-[10dvh] lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative">
          {!isCompleted ? (
             <>
                {yourTurn && isActive && (
@@ -217,6 +217,7 @@ const NewTimer = ({
                   }
                   onClick={() => setDoMute(!doMute)}
                >
+                  <span className="sr-only">Mute draft chime</span>
                   {doMute ? (
                      <svg
                         viewBox="0 0 24 24"

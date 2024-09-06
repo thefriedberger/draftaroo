@@ -1,6 +1,5 @@
 'use client';
 
-import { Roo } from '@/app/assets/images/icons/roo';
 import { PageContext } from '@/components/context/page-context';
 import LogoutButton from '@/components/ui/logout-button';
 import { User } from '@supabase/supabase-js';
@@ -17,14 +16,14 @@ export default function Nav(props: NavProps) {
 
    return (
       <>
-         <nav className="h-fit max-h-[10dvh]">
+         <nav className="h-[57px]">
             <div className="bg-emerald-600 w-full flex justify-center border-b border-b-foreground/10">
                <div className="w-full max-w-4xl flex justify-between items-center p-2 flex-row">
                   <Link
                      className="flex flex-row items-center text-2xl text-white hover:opacity-80 transition-all duration-75"
                      href="/"
                   >
-                     <Roo classes={''} fill="#fff" height="50px" width="50px" />
+                     {/* <Roo classes={''} fill="#fff" height="50px" width="50px" /> */}
                      <p className="ml-2">Draftaroo</p>
                   </Link>
                   {user?.id ? (
