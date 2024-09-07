@@ -1,13 +1,12 @@
 'use server';
 import { fetchTeams } from '@/app/utils/helpers';
+import { createClient } from '@/app/utils/supabase/server';
 import TeamAdmin from '@/components/ui/team-admin';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { UserResponse } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
 
 const TeamsTab = async ({ league }: { league: League }) => {
    if (!league?.league_id) return;
-   const supabase = createServerComponentClient<Database>({ cookies });
+   const supabase = createClient();
    const user: Awaited<UserResponse> = await supabase.auth.getUser();
 
    const teams: Awaited<Team[]> = await fetchTeams(supabase, league);

@@ -13,30 +13,22 @@ import {
    fetchTeams,
    fetchWatchlist,
 } from '@/app/utils/helpers';
+import { createClient } from '@/app/utils/supabase/server';
 import Board from '@/components/ui/board';
-import { buttonClasses } from '@/components/ui/helpers/buttons';
-import AuthModal from '@/components/ui/modals/auth';
 import { BoardProps, DraftPick } from '@/lib/types';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { UserResponse } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
 
 const Draft = async ({
    params,
 }: {
    params: { id: string; draftId: string };
 }) => {
-   const supabase = createServerComponentClient<Database>({ cookies });
+   const supabase = createClient();
 
    const draft: Awaited<Draft> = await fetchDraftById(supabase, params.draftId);
    const { data: user }: Awaited<UserResponse> = await supabase.auth.getUser();
-   if (!user?.user)
-      return (
-         <>
-            <h1 className={'dark:text-white'}>You must log in to see this</h1>
-            <AuthModal buttonClass={buttonClasses} />
-         </>
-      );
+   if (!user?.user) return;
+
    const watchlist: Awaited<Watchlist> = await fetchWatchlist(
       supabase,
       user.user

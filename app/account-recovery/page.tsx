@@ -2,6 +2,7 @@
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { ChangeEvent, useState } from 'react';
+import { resetPassword } from '../login/actions';
 
 const AccountRecovery = () => {
    const supabase = createClientComponentClient<Database>();
@@ -21,18 +22,9 @@ const AccountRecovery = () => {
          setPasswordsMatch(false);
       }
    };
-   const handleUpdatePassword = async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      const { data, error } = await supabase.auth.updateUser({
-         password: password,
-      });
-      if (error) {
-         console.log(error);
-      }
-   };
 
    return (
-      <form onSubmit={handleUpdatePassword}>
+      <form>
          <div className="flex flex-col max-w-44">
             <label htmlFor="newPassword" className={'dark:text-white'}>
                New Password:{' '}
@@ -78,6 +70,7 @@ const AccountRecovery = () => {
          <button
             className="bg-white dark:text-black rounded-md mx-auto max-w-min-content p-2 mt-2"
             type="submit"
+            formAction={resetPassword}
          >
             Update password
          </button>

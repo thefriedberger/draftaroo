@@ -1,42 +1,19 @@
 'use client';
 
-import { PageContext } from '@/components/context/page-context';
+import { login } from '@/app/login/actions';
 import { AuthFormProps } from '@/lib/types';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 
 const SignInForm = (props: AuthFormProps) => {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const [invalidCredentials, setInvalidCredentials] = useState(false);
 
-   const { updateUser, updateSession } = useContext(PageContext);
+   const { setFormType } = props;
 
-   const supabase = createClientComponentClient<Database>();
-
-   const { setFormType, setView } = props;
-
-   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      const { data, error } = await supabase.auth.signInWithPassword({
-         email,
-         password,
-      });
-
-      if (error) {
-         setInvalidCredentials(true);
-      } else {
-         setInvalidCredentials(false);
-         updateUser?.(data.user);
-         if (data.session) updateSession?.(data.session);
-      }
-   };
    return (
       <>
-         <form
-            className="flex-1 flex flex-col w-full lg:w-96 justify-center gap-2 text-foreground"
-            onSubmit={handleSignIn}
-         >
+         <form className="flex-1 flex flex-col w-full lg:w-96 justify-center gap-2 text-foreground">
             <label className="text-md" htmlFor="email">
                Email
             </label>
@@ -65,28 +42,34 @@ const SignInForm = (props: AuthFormProps) => {
                   Email or password is incorrect
                </p>
             )}
-            <button className="bg-emerald-primary rounded px-4 py-2 text-white mb-3">
+            <button
+               className="bg-emerald-primary rounded px-4 py-2 text-white mb-3"
+               formAction={login}
+            >
                Sign In
             </button>
-            <div className="flex flex-row justify-around items-end">
-               <button
-                  className="underline"
-                  onClick={() => setFormType('FORGOT_PASSWORD')}
-               >
-                  Forgot Password
-               </button>
-               <div className="flex flex-col text-left items-start">
-                  <p className="text-sm text-center">
-                     Don&rsquo;t have an account?
-                  </p>
+
+            {setFormType && (
+               <div className="flex flex-row justify-around items-end">
                   <button
                      className="underline"
-                     onClick={() => setFormType('SIGN_UP')}
+                     onClick={() => setFormType('FORGOT_PASSWORD')}
                   >
-                     Sign Up Now
+                     Forgot Password
                   </button>
+                  <div className="flex flex-col text-left items-start">
+                     <p className="text-sm text-center">
+                        Don&rsquo;t have an account?
+                     </p>
+                     <button
+                        className="underline"
+                        onClick={() => setFormType('SIGN_UP')}
+                     >
+                        Sign Up Now
+                     </button>
+                  </div>
                </div>
-            </div>
+            )}
          </form>
       </>
    );

@@ -8,7 +8,7 @@ const ForgotPasswordForm = (props: AuthFormProps) => {
    const [email, setEmail] = useState('');
    const supabase = createClientComponentClient<Database>();
 
-   const { setFormType, setView } = props;
+   const { setFormType } = props;
 
    const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();

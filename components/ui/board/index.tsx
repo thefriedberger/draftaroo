@@ -26,7 +26,6 @@ import Chat from '../chat';
 import DraftOrder from '../draft-order';
 import DraftOrderLoading from '../draft-order/loading';
 import FeaturedPlayer from '../featured-player';
-import AuthModal from '../modals/auth';
 import MyTeam from '../my-team';
 import PlayerList, { sortPlayers } from '../player-list';
 import Tabs from '../tabs';
@@ -80,7 +79,6 @@ const Board = ({
          for (const player of draftedPlayersState) {
             setDraftedIDs((prev) => [...prev, Number(player.player_id)]);
          }
-         // setShouldFilterPlayers(true);
       }
    }, [draftedPlayersState]);
 
@@ -113,19 +111,17 @@ const Board = ({
    }, [draftedPlayersState, teamViewToShow]);
 
    // checking for keepers is handled here
-   // useEffect(() => {
-   //    if (isActive && owner) {
-   //       if (draftedPlayersState.length > 0) {
-   //          for (const player of draftedPlayersState) {
-   //             if (player.pick === currentPick && player.is_keeper) {
-   //                setTimeout(() => {
-   //                   handlePick();
-   //                }, 1000);
-   //             }
-   //          }
-   //       }
-   //    }
-   // }, [isActive, owner, draftedPlayersState, currentPick]);
+   useEffect(() => {
+      if (isActive && owner) {
+         if (draftedPlayersState.length > 0) {
+            for (const player of draftedPlayersState) {
+               if (player.pick === currentPick && player.is_keeper) {
+                  handlePick();
+               }
+            }
+         }
+      }
+   }, [isActive, owner, draftedPlayersState, currentPick]);
 
    // set if user can pick
    useEffect(() => {
@@ -269,10 +265,6 @@ const Board = ({
    };
 
    const handleDraftSelection = async (player: Player, teamId?: string) => {
-      if (draftedPlayers.find((player) => player.pick === currentPick)) {
-         setMainTimer(supabase, draft.id, Date.now() + TIMER_DURATION * 1000);
-         return;
-      }
       if (team && player && draft) {
          const { data, error } = await supabase
             .from('draft_selections')
@@ -332,7 +324,6 @@ const Board = ({
       players = players.filter((player: Player) => {
          return !draftedIDs.includes(player.id);
       });
-      // setShouldFilterPlayers(false);
    };
 
    const timerProps: NewTimerProps = {
@@ -490,7 +481,7 @@ const Board = ({
    };
    return (
       <div className="flex flex-col md:flex-row items-center w-full overflow-y-scroll md:overflow-y-hidden draft-board">
-         {user && team?.league_id === league.league_id ? (
+         {user && team?.league_id === league.league_id && (
             <>
                {!isMobile ? (
                   <>
@@ -528,10 +519,6 @@ const Board = ({
                      )}
                   </>
                )}
-            </>
-         ) : (
-            <>
-               <AuthModal />
             </>
          )}
       </div>

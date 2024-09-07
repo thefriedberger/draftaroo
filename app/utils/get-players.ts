@@ -1,14 +1,13 @@
 'use server';
 
 import { PlayerStats } from '@/lib/types';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import { cache } from 'react';
+import { createClient } from './supabase/server';
 
 const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
    const playersArray: Player[] = [];
    if (!leagueID) return playersArray;
-   const supabase = createServerComponentClient<Database>({ cookies });
+   const supabase = createClient();
    let { data: players, error } = await supabase.from('players').select('*');
    const league = await supabase
       .from('leagues')

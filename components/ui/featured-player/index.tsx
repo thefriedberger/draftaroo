@@ -148,7 +148,7 @@ const FeaturedPlayer = ({
    return (
       <div
          className={classNames(
-            'md:min-h-[200px] md:h-[35%] md:relative fixed bottom-[66px] md:bottom-auto w-full p-2 md:py-0',
+            'md:min-h-[200px] md:h-[35%] md:relative fixed bottom-[66px] md:flex md:flex-col md:bottom-auto w-full p-2 md:py-0',
             isExpanded ? 'h-[232px]' : 'h-[130px]'
          )}
       >

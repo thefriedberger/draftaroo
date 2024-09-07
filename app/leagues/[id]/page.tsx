@@ -5,8 +5,7 @@ import {
    fetchLeague,
    fetchTeam,
 } from '@/app/utils/helpers';
-import { buttonClasses } from '@/components/ui/helpers/buttons';
-import AuthModal from '@/components/ui/modals/auth';
+import { createClient } from '@/app/utils/supabase/server';
 import Tabs from '@/components/ui/tabs';
 import {
    KeeperViewProps,
@@ -14,25 +13,18 @@ import {
    Tab,
    TabProps,
 } from '@/lib/types';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { UserResponse } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
 import KeepersTab from '../tabs/keepers';
 import TeamView from './team-view';
 
 const League = async ({ params: { id } }: { params: { id: string } }) => {
-   const supabase = createServerComponentClient<Database>({ cookies });
+   const supabase = createClient();
 
    const currentYear = new Date().getFullYear();
    const { data: user }: Awaited<UserResponse> = await supabase.auth.getUser();
    const { data: session } = await supabase.auth.getSession();
    if (!user?.user || !session) {
-      return (
-         <>
-            <h1 className={'dark:text-white'}>You must log in to see this</h1>
-            <AuthModal buttonClass={buttonClasses} />
-         </>
-      );
+      return;
    }
    const league: Awaited<League> = await fetchLeague(supabase, id);
    const owner: boolean = league?.owner === user?.user?.id;

@@ -1,6 +1,5 @@
 'use server';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from './supabase/server';
 
 const updateLeagueScoring = async (
    formData: FormData,
@@ -45,7 +44,7 @@ const updateLeagueScoring = async (
       shutouts,
    } = scoring;
 
-   const supabase = createServerComponentClient<Database>({ cookies });
+   const supabase = createClient();
 
    await supabase
       .from('league_scoring')

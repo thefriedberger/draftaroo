@@ -9,13 +9,10 @@ import {
    fetchRosters,
    fetchTeam,
 } from '@/app/utils/helpers';
+import { createClient } from '@/app/utils/supabase/server';
 import KeeperForm, { KeeperFormProps } from '@/components/ui/forms/keepers';
-import { buttonClasses } from '@/components/ui/helpers/buttons';
-import AuthModal from '@/components/ui/modals/auth';
 import { DraftPick } from '@/lib/types';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { UserResponse } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
 
 export interface RosterPlayer extends TeamHistory {
    picks_needed: number[];
@@ -24,17 +21,12 @@ export interface RosterPlayer extends TeamHistory {
    picks_available: boolean;
 }
 const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
-   const supabase = createServerComponentClient<Database>({ cookies });
+   const supabase = createClient();
    const { data: user }: Awaited<UserResponse> = await supabase.auth.getUser();
    const { data: session } = await supabase.auth.getSession();
 
    if (!user?.user || !session) {
-      return (
-         <>
-            <h1 className={'dark:text-white'}>You must log in to see this</h1>
-            <AuthModal buttonClass={buttonClasses} />
-         </>
-      );
+      return;
    }
    const team: Awaited<Team> = await fetchTeam(
       supabase,

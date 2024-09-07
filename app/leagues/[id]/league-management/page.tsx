@@ -8,10 +8,9 @@ import {
    fetchLeagueScoring,
    fetchTeams,
 } from '@/app/utils/helpers';
+import { createClient } from '@/app/utils/supabase/server';
 import Tabs from '@/components/ui/tabs';
 import { Tab, TabProps } from '@/lib/types';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import DraftPicksTab, { DraftPicksProps } from '../../tabs/draft-picks';
 import RostersTab, { RosterProps } from '../../tabs/rosters';
 import RulesTab from '../../tabs/rules';
@@ -23,7 +22,7 @@ const LeagueManagement = async ({
 }: {
    params: { id: string };
 }) => {
-   const supabase = createServerComponentClient<Database>({ cookies });
+   const supabase = createClient();
    const players: Awaited<Player[]> = await getPlayers(id);
    const league: Awaited<League> = await fetchLeague(supabase, id);
    const teams: Awaited<Team[]> = await fetchTeams(supabase, league);

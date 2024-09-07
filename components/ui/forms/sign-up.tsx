@@ -1,33 +1,22 @@
 'use client';
 
-import addUser from '@/app/utils/add-user';
-import { AuthFormProps, UserProps } from '@/lib/types';
+import { signup } from '@/app/login/actions';
+import { AuthFormProps } from '@/lib/types';
 import { ChangeEvent, useState } from 'react';
 
 const SignUpForm = (props: AuthFormProps) => {
-   const [email, setEmail] = useState('');
-   const [password, setPassword] = useState('');
-   const [firstName, setFirstName] = useState('');
-   const [lastName, setLastName] = useState('');
-   const [username, setUsername] = useState('');
-   const [verifyPassword, setVerifyPassword] = useState('');
-   const [passwordsMatch, setPasswordsMatch] = useState(true);
+   const [email, setEmail] = useState<string>('');
+   const [password, setPassword] = useState<string>('');
+   const [firstName, setFirstName] = useState<string>('');
+   const [lastName, setLastName] = useState<string>('');
+   const [username, setUsername] = useState<string>('');
+   const [verifyPassword, setVerifyPassword] = useState<string>('');
+   const [passwordsMatch, setPasswordsMatch] = useState<boolean>(true);
+   const [validPassword, setValidPassword] = useState<boolean>(true);
 
-   const { setView, setFormType } = props;
-
-   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      const userProps: UserProps = {
-         email: email,
-         password: password,
-         firstName: firstName,
-         lastName: lastName,
-         username: username,
-         origin: location.origin,
-      };
-      const didSubmit = await addUser(userProps);
-      setView(didSubmit);
-   };
+   const passwordPattern = new RegExp(
+      /(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*])(?!.*?(pass))(?!.*?(code))(?!.*?(secret)).*/gi
+   );
 
    const checkPassword = (e: ChangeEvent<HTMLInputElement>) => {
       setVerifyPassword(e.target.value);
@@ -37,17 +26,16 @@ const SignUpForm = (props: AuthFormProps) => {
          setPasswordsMatch(false);
       }
    };
+   const { setFormType } = props;
+
    return (
       <>
-         <form
-            className="flex-1 flex flex-col w-full lg:w-96 justify-center gap-2 text-foreground"
-            onSubmit={handleSignUp}
-         >
+         <form className="flex-1 flex flex-col w-full lg:w-96 justify-center gap-2 text-foreground dark:text-white">
             <label className="text-md" htmlFor="username">
                Username
             </label>
             <input
-               className="rounded-md px-4 py-2 bg-inherit border mb-3"
+               className="rounded-md px-4 py-2 bg-inherit border mb-3 dark:text-white"
                type="text"
                autoComplete="none"
                name="username"
@@ -59,7 +47,7 @@ const SignUpForm = (props: AuthFormProps) => {
                First Name
             </label>
             <input
-               className="rounded-md px-4 py-2 bg-inherit border mb-3"
+               className="rounded-md px-4 py-2 bg-inherit border mb-3 dark:text-white"
                type="text"
                name="first-name"
                autoComplete="given-name"
@@ -71,7 +59,7 @@ const SignUpForm = (props: AuthFormProps) => {
                Last Name
             </label>
             <input
-               className="rounded-md px-4 py-2 bg-inherit border mb-3"
+               className="rounded-md px-4 py-2 bg-inherit border mb-3 dark:text-white"
                type="text"
                name="last-name"
                autoComplete="family-name"
@@ -83,7 +71,7 @@ const SignUpForm = (props: AuthFormProps) => {
                Email
             </label>
             <input
-               className="rounded-md px-4 py-2 bg-inherit border mb-3"
+               className="rounded-md px-4 py-2 bg-inherit border mb-3 dark:text-white"
                type="email"
                name="email"
                autoComplete="email"
@@ -95,18 +83,30 @@ const SignUpForm = (props: AuthFormProps) => {
                Password
             </label>
             <input
-               className="rounded-md px-4 py-2 bg-inherit border mb-3"
+               className="rounded-md px-4 py-2 bg-inherit border mb-3 dark:text-white"
                type="password"
                name="password"
-               onChange={(e) => setPassword(e.target.value)}
+               onChange={(e) => {
+                  setPassword(e.target.value);
+                  setValidPassword(passwordPattern.test(e.target.value));
+               }}
                value={password}
                placeholder="••••••••"
+               required
+               minLength={10}
             />
+            {!validPassword && (
+               <p className="mb-2 text-red-600 text-sm">
+                  Password must include uppercase and lowercase, number, and
+                  special character. Can&apos;t include following words: pass,
+                  code, or secret
+               </p>
+            )}
             <label className="text-md" htmlFor="verify-password">
                Verify Password
             </label>
             <input
-               className={`rounded-md px-4 py-2 bg-inherit border ${
+               className={`rounded-md px-4 py-2 bg-inherit border dark:text-white ${
                   !passwordsMatch ? 'mb-0' : 'mb-3'
                }`}
                type="password"
@@ -114,16 +114,17 @@ const SignUpForm = (props: AuthFormProps) => {
                onChange={(e: ChangeEvent<HTMLInputElement>) => checkPassword(e)}
                value={verifyPassword}
                placeholder="••••••••"
+               required
+               minLength={10}
             />
 
             {!passwordsMatch && (
                <p className="text-red-700 mb-3">Passwords must match</p>
             )}
             <button
-               className={`${
-                  !passwordsMatch ? 'opacity-30' : ''
-               } bg-emerald-primary rounded px-4 py-2 text-white mb-3`}
-               disabled={!passwordsMatch}
+               className={`disabled:opacity-50 disabled:cursor-not-allowed bg-emerald-primary rounded px-4 py-2 text-white mb-3 `}
+               disabled={passwordsMatch && validPassword ? false : true}
+               formAction={signup}
             >
                Sign Up
             </button>

@@ -1,10 +1,7 @@
 'use server';
-import {
-   User,
-   createServerComponentClient,
-} from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { User } from '@supabase/auth-helpers-nextjs';
 import { redirect } from 'next/navigation';
+import { createClient } from './supabase/server';
 
 const createLeague = async (
    formData: FormData,
@@ -66,7 +63,7 @@ const createLeague = async (
    } = rules;
 
    const generateLeagueId = async () => {
-      const supabase = createServerComponentClient<Database>({ cookies });
+      const supabase = createClient();
       const { data } = await supabase.from('leagues').select('league_id');
       let leagueId;
       if (data?.length === 0) {
@@ -83,7 +80,7 @@ const createLeague = async (
 
    const leagueId = await generateLeagueId();
 
-   const supabase = createServerComponentClient<Database>({ cookies });
+   const supabase = createClient();
 
    const league_scoring = await supabase
       .from('league_scoring')

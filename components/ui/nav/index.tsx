@@ -6,7 +6,6 @@ import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
 import { useContext } from 'react';
 import { buttonClasses } from '../helpers/buttons';
-import AuthModal from '../modals/auth';
 
 export interface NavProps {
    user?: User;
@@ -34,7 +33,9 @@ export default function Nav(props: NavProps) {
                         <LogoutButton />
                      </div>
                   ) : (
-                     <AuthModal buttonClass={buttonClasses} />
+                     <Link className={buttonClasses} href="/login">
+                        Login
+                     </Link>
                   )}
                </div>
             </div>

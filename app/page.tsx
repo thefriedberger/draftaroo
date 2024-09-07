@@ -1,23 +1,15 @@
 'use server';
 
+import { createClient } from '@/app/utils/supabase/server';
 import Callout from '@/components/ui/callout';
-import { buttonClasses } from '@/components/ui/helpers/buttons';
-import AuthModal from '@/components/ui/modals/auth';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { UserResponse } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
 import { fetchAllUserTeams, fetchDrafts, fetchLeagues } from './utils/helpers';
 
 export default async function Home() {
-   const supabase = createServerComponentClient<Database>({ cookies });
+   const supabase = createClient();
    const { data: user }: Awaited<UserResponse> = await supabase.auth.getUser();
    if (!user?.user) {
-      return (
-         <>
-            <h1 className={'dark:text-white'}>You must log in to see this</h1>
-            <AuthModal buttonClass={buttonClasses} />
-         </>
-      );
+      return;
    }
    const leagues: Awaited<League[]> = await fetchLeagues(supabase);
    if (!leagues) {

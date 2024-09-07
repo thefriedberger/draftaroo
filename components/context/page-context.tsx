@@ -18,6 +18,7 @@ export type PageContextType = {
 const initialValues = {};
 
 interface Props {
+   user?: User;
    children: React.ReactNode;
 }
 export enum WatchlistAction {
@@ -27,19 +28,14 @@ export enum WatchlistAction {
 }
 export const PageContext = React.createContext<PageContextType>(initialValues);
 
-export const PageContextProvider: React.FC<Props> = ({ children }) => {
+export const PageContextProvider: React.FC<Props> = ({ user, children }) => {
    const [session, setSession] = React.useState<Session | any>();
-   const [user, setUser] = React.useState<User | any>();
    const [profile, setProfile] = React.useState<Profile | any>();
 
    const router = useRouter();
 
    const updateSession = (newSession: Session) => {
       setSession(newSession);
-      router.refresh();
-   };
-   const updateUser = (newUser: User) => {
-      setUser(newUser);
       router.refresh();
    };
    const udpateProfile = (newProfile: Profile) => {
@@ -57,7 +53,6 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
 
    const userSignout = () => {
       setSession(null);
-      setUser(null);
       setProfile(null);
       router.refresh();
    };
@@ -69,7 +64,6 @@ export const PageContextProvider: React.FC<Props> = ({ children }) => {
       <PageContext.Provider
          value={{
             user,
-            updateUser,
             session,
             updateSession,
             profile,

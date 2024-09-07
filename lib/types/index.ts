@@ -1,6 +1,6 @@
 import { WatchlistAction } from '@/components/context/page-context';
 import { Pick } from '@/components/ui/draft-order';
-import { formStatus, formType } from '@/components/ui/modals/auth';
+import { formStatus, formType } from '@/components/ui/form-wrappers/login';
 import { User } from '@supabase/supabase-js';
 import { AnchorHTMLAttributes, ReactNode } from 'react';
 

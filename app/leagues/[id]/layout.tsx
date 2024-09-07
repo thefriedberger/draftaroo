@@ -1,6 +1,5 @@
 'use server';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/app/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 
@@ -9,7 +8,7 @@ export default async function LeagueLayout({
 }: {
    children: ReactNode;
 }) {
-   const supabase = createServerComponentClient<Database>({ cookies });
+   const supabase = createClient();
 
    const { data, error } = await supabase.auth.getUser();
    if (error || !data?.user) {

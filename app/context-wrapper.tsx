@@ -11,16 +11,23 @@ export default function ContextWrapper({
 }) {
    const { user, updateUser, session, updateSession } = useContext(PageContext);
 
+   useEffect(() => {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      hashParams && getSession(hashParams);
+   }, []);
+
+   useEffect(() => {
+      if (!user) fetchUser();
+   }, [user]);
+
    const fetchUser = async () => {
       const supabase = createClientComponentClient<Database>();
-      const { data: user } = await supabase.auth.getUser();
-      if (user.user) updateUser?.(user.user);
-   };
-
-   const fetchSession = async () => {
-      const supabase = createClientComponentClient<Database>();
-      const { data: session } = await supabase.auth.getSession();
-      if (session.session) updateSession?.(session.session);
+      const { data: user, error } = await supabase.auth.getUser();
+      if (error) {
+         console.log(error);
+         return;
+      }
+      if (user?.user) updateUser?.(user.user);
    };
 
    const getSession = async (hashParams: URLSearchParams) => {
@@ -35,16 +42,6 @@ export default function ContextWrapper({
       user && updateUser?.(user);
       session && updateSession?.(session);
    };
-
-   useEffect(() => {
-      const hashParams = new URLSearchParams(window.location.hash.substring(1));
-      hashParams !== undefined && getSession(hashParams);
-   }, []);
-
-   useEffect(() => {
-      if (user === undefined) fetchUser();
-      if (session === undefined) fetchSession();
-   }, [user, session]);
 
    return <>{children}</>;
 }
