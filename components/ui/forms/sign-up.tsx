@@ -30,7 +30,7 @@ const SignUpForm = (props: AuthFormProps) => {
 
    return (
       <>
-         <form className="flex-1 flex flex-col w-full lg:w-96 justify-center gap-2 text-foreground dark:text-white">
+         <form className="flex-1 flex flex-col w-full lg:w-96 px-2 md-px-0 justify-center gap-2 text-foreground dark:text-white">
             <label className="text-md" htmlFor="username">
                Username
             </label>
@@ -79,44 +79,54 @@ const SignUpForm = (props: AuthFormProps) => {
                value={email}
                placeholder="you@example.com"
             />
-            <label className="text-md" htmlFor="password">
-               Password
-            </label>
-            <input
-               className="rounded-md px-4 py-2 bg-inherit border mb-3 dark:text-white"
-               type="password"
-               name="password"
-               onChange={(e) => {
-                  setPassword(e.target.value);
-                  setValidPassword(passwordPattern.test(e.target.value));
-               }}
-               value={password}
-               placeholder="••••••••"
-               required
-               minLength={10}
-            />
-            {!validPassword && (
-               <p className="mb-2 text-red-600 text-sm">
+            <div className="flex flex-col">
+               <label className="text-md mb-2" htmlFor="password">
+                  Password
+               </label>
+               <input
+                  className="rounded-md px-4 py-2 bg-inherit border mb-3 invalid:border invalid:border-red-600 invalid:focus:outline-offset-[0px] invalid:outline-[0.5px] invalid:focus:outline invalid:focus:outline-red-400 dark:text-white peer"
+                  type="password"
+                  name="password"
+                  onChange={(e) => {
+                     setPassword(e.target.value);
+                     setValidPassword(passwordPattern.test(e.target.value));
+                  }}
+                  value={password}
+                  placeholder="••••••••"
+                  required
+                  minLength={10}
+                  pattern={
+                     '(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*])(?!.*?(pass))(?!.*?(code))(?!.*?(secret)).*'
+                  }
+               />
+               <p className="hidden peer-invalid:block mb-2 text-red-600 text-sm">
                   Password must include uppercase and lowercase, number, and
                   special character. Can&apos;t include following words: pass,
                   code, or secret
                </p>
-            )}
-            <label className="text-md" htmlFor="verify-password">
-               Verify Password
-            </label>
-            <input
-               className={`rounded-md px-4 py-2 bg-inherit border dark:text-white ${
-                  !passwordsMatch ? 'mb-0' : 'mb-3'
-               }`}
-               type="password"
-               name="verify-password"
-               onChange={(e: ChangeEvent<HTMLInputElement>) => checkPassword(e)}
-               value={verifyPassword}
-               placeholder="••••••••"
-               required
-               minLength={10}
-            />
+            </div>
+            <div className="flex flex-col">
+               <label className="text-md mb-2" htmlFor="verify-password">
+                  Verify Password
+               </label>
+               <input
+                  className={`rounded-md px-4 py-2 bg-inherit border dark:text-white invalid:border invalid:border-red-600 invalid:focus:outline-offset-[0px] invalid:outline-[0.5px] invalid:focus:outline invalid:focus:outline-red-400 ${
+                     !passwordsMatch ? 'mb-0' : 'mb-3'
+                  }`}
+                  type="password"
+                  name="verify-password"
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                     checkPassword(e)
+                  }
+                  value={verifyPassword}
+                  placeholder="••••••••"
+                  required
+                  minLength={10}
+                  pattern={
+                     '(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*])(?!.*?(pass))(?!.*?(code))(?!.*?(secret)).*'
+                  }
+               />
+            </div>
 
             {!passwordsMatch && (
                <p className="text-red-700 mb-3">Passwords must match</p>

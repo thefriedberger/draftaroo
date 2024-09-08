@@ -1,28 +1,20 @@
-import { type EmailOtpType } from '@supabase/supabase-js';
-import { type NextRequest } from 'next/server';
-
+import { NextRequest, NextResponse } from 'next/server';
+// The client you created from the Server-Side Auth instructions
 import { createClient } from '@/app/utils/supabase/server';
-import { redirect } from 'next/navigation';
 
 export async function GET(request: NextRequest) {
-   const { searchParams } = new URL(request.url);
-   const token_hash = searchParams.get('token_hash');
-   const type = searchParams.get('type') as EmailOtpType | null;
-   const next = searchParams.get('next') ?? '/';
+   const requestUrl = new URL(request.url);
+   const code = requestUrl.searchParams.get('code');
 
-   if (token_hash && type) {
+   if (code) {
       const supabase = createClient();
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
 
-      const { error } = await supabase.auth.verifyOtp({
-         type,
-         token_hash,
-      });
       if (!error) {
-         // redirect user to specified redirect URL or root of app
-         redirect(next);
+         return NextResponse.redirect(
+            `${requestUrl.origin}/auth/reset-password`
+         );
       }
    }
-
-   // redirect the user to an error page with some instructions
-   redirect('/error');
+   return NextResponse.redirect(`${requestUrl.origin}/error`);
 }

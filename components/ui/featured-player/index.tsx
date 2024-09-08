@@ -26,7 +26,7 @@ const FeaturedPlayer = ({
       isButton: true,
       watchlist: watchlist,
       className:
-         'flex flex-row bg-paper-primary dark:bg-gray-primary text-black dark:text-white fill-emerald-700 p-2 rounded-md whitespace-nowrap',
+         'flex flex-row bg-paper-dark dark:bg-gray-primary text-black dark:text-white fill-emerald-700 p-2 rounded-md whitespace-nowrap',
    };
    const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
@@ -140,7 +140,7 @@ const FeaturedPlayer = ({
             src={featuredPlayer.headshot ?? FallbackImage}
             width="100"
             height="100"
-            className="w-[60px] h-[60px] mt-auto md:h-[100px] md:w-[100px] mr-2"
+            className="hidden mt-auto md:block md:h-[100px] md:w-[100px] mr-2"
             alt={`${featuredPlayer.first_name} ${featuredPlayer.last_name} headshot`}
          />
       );
@@ -148,7 +148,7 @@ const FeaturedPlayer = ({
    return (
       <div
          className={classNames(
-            'md:min-h-[200px] md:h-[35%] md:relative fixed bottom-[66px] md:flex md:flex-col md:bottom-auto w-full p-2 md:py-0',
+            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light md:border-none md:bg-transparent md:min-h-[200px] md:h-[35%] md:relative fixed bottom-[66px] md:flex md:flex-col md:bottom-auto w-full p-2 md:py-0',
             isExpanded ? 'h-[232px]' : 'h-[130px]'
          )}
       >

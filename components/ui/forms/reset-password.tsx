@@ -1,11 +1,9 @@
 'use client';
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { resetPassword } from '@/app/login/actions';
 import { ChangeEvent, useState } from 'react';
-import { resetPassword } from '../login/actions';
 
-const AccountRecovery = () => {
-   const supabase = createClientComponentClient<Database>();
+const ResetPasswordForm = () => {
    const [password, setPassword] = useState('');
    const [verifyPassword, setVerifyPassword] = useState('');
    const [passwordsMatch, setPasswordsMatch] = useState(true);
@@ -25,12 +23,13 @@ const AccountRecovery = () => {
 
    return (
       <form>
-         <div className="flex flex-col max-w-44">
-            <label htmlFor="newPassword" className={'dark:text-white'}>
+         <div className="flex flex-col max-w-96">
+            <label htmlFor="password" className={'dark:text-white'}>
                New Password:{' '}
             </label>
             <input
-               id="newPassword"
+               id="password"
+               name="password"
                type="password"
                onChange={(e) => {
                   setPassword(e.target.value);
@@ -40,15 +39,16 @@ const AccountRecovery = () => {
                placeholder="••••••••"
                required
                minLength={10}
-               className="invalid:border-red focus:invalid:border-red border-2"
+               pattern={
+                  '(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*])(?!.*?(pass))(?!.*?(code))(?!.*?(secret)).*'
+               }
+               className="peer invalid:border-red focus:invalid:border-red border-2"
             />
-            {!validPassword && (
-               <p className="mt-2 text-red-600 text-sm">
-                  Password must include uppercase and lowercase, number, and
-                  special character. Can&apos;t include following words: pass,
-                  code, or secret
-               </p>
-            )}
+            <p className="peer-invalid:block hidden mt-2 text-red-600 text-sm">
+               Password must include uppercase and lowercase, number, and
+               special character. Can&apos;t include following words: pass,
+               code, or secret
+            </p>
          </div>
          <div className="flex flex-col">
             <label htmlFor="confirmPassword" className={'dark:text-white'}>
@@ -61,6 +61,9 @@ const AccountRecovery = () => {
                value={verifyPassword}
                placeholder="••••••••"
                required={true}
+               pattern={
+                  '(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*])(?!.*?(pass))(?!.*?(code))(?!.*?(secret)).*'
+               }
                className="focus:outline-none focus:invalid:border-red invalid:border-red"
             />
          </div>
@@ -78,4 +81,4 @@ const AccountRecovery = () => {
    );
 };
 
-export default AccountRecovery;
+export default ResetPasswordForm;

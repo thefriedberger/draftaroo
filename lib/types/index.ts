@@ -39,6 +39,7 @@ export interface WatchlistProps {
    draftedIDs: number[];
    leagueID: string;
    watchlist: number[];
+   players: Player[];
    updateWatchlist: (player: Player, action: WatchlistAction) => void;
 }
 
@@ -133,7 +134,7 @@ export interface DropdownProps {
 
 export interface AuthFormProps {
    setFormType: (formType: formType) => void;
-   setView: (view: formStatus) => void;
+   setView?: (view: formStatus) => void;
 }
 
 export interface TimerProps {

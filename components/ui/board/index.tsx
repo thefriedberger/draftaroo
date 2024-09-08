@@ -360,6 +360,7 @@ const Board = ({
       draftedIDs: draftedIDs,
       leagueID: league?.league_id ?? '',
       watchlist: watchlistState,
+      players: players,
       updateWatchlist: updateWatchlist,
    };
 

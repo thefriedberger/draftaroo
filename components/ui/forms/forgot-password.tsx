@@ -1,5 +1,6 @@
 'use client';
 
+import { requestPasswordReset } from '@/app/login/actions';
 import { AuthFormProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useState } from 'react';
@@ -10,17 +11,16 @@ const ForgotPasswordForm = (props: AuthFormProps) => {
 
    const { setFormType } = props;
 
-   const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      await supabase.auth.resetPasswordForEmail(email, {
-         redirectTo: `${origin}/account-recovery`,
-      });
-   };
+   // const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
+   //    await supabase.auth.resetPasswordForEmail(email, {
+   //       redirectTo: `${origin}/account-recovery`,
+   //    });
+   // };
    return (
       <>
          <form
             className="flex-1 flex flex-col w-full lg:w-96 justify-center gap-2 text-foreground"
-            onSubmit={handleResetPassword}
+            // onSubmit={handleResetPassword}
          >
             <label className="text-md" htmlFor="email">
                Email
@@ -34,17 +34,27 @@ const ForgotPasswordForm = (props: AuthFormProps) => {
                value={email}
                placeholder="you@example.com"
             />
-            <button className="bg-emerald-primary rounded px-4 py-2 text-white mb-3">
+            <input
+               className="hidden"
+               id="origin"
+               name="origin"
+               value={origin}
+               onChange={() => {}}
+            />
+            <button
+               className="bg-emerald-primary rounded px-4 py-2 text-white mb-3"
+               formAction={requestPasswordReset}
+            >
                Send recovery link
             </button>
-            <div className="flex flex-row justify-around items-end">
+            <div className="flex flex-col md:flex-row md:justify-around items-center md:items-end">
                <button
                   className="underline"
                   onClick={() => setFormType('SIGN_IN')}
                >
                   Sign In
                </button>
-               <div className="flex flex-col text-left items-start">
+               <div className="flex flex-col mt-5 md:mt-0 text-center md:text-left items-center md:items-start">
                   <p className="text-sm text-center">
                      Don&rsquo;t have an account?
                   </p>

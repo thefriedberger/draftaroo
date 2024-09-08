@@ -9,18 +9,13 @@ export type formStatus = 'VIEW_FORM' | 'CHECK_EMAIL';
 export type formType = 'SIGN_IN' | 'SIGN_UP' | 'FORGOT_PASSWORD';
 
 const LoginFormWrapper = () => {
-   const [view, setView] = useState<formStatus>('VIEW_FORM');
    const [formType, setFormType] = useState<formType>('SIGN_IN');
 
-   const updateView = (view: formStatus) => {
-      setView(view);
-   };
    const updateFormType = (formType: formType) => {
       setFormType(formType);
    };
    const authFormProps: AuthFormProps = {
       setFormType: (formType: formType) => updateFormType(formType),
-      setView: (view: formStatus) => updateView(view),
    };
    return (
       <>

@@ -15,10 +15,15 @@ export async function login(formData: FormData) {
       password: formData.get('password') as string,
    };
 
-   const { error } = await supabase.auth.signInWithPassword(data);
+   const {
+      data: { user },
+      error,
+   } = await supabase.auth.signInWithPassword(data);
 
+   console.log(user);
    if (error) {
-      redirect('/error');
+      console.log(error);
+      //   redirect('/error');
    }
 
    revalidatePath('/');
@@ -45,17 +50,31 @@ export async function signup(formData: FormData) {
    redirect('/');
 }
 
-export async function resetPassword(formData: FormData) {
+export async function requestPasswordReset(formData: FormData) {
    const supabase = createClient();
 
+   const { data, error } = await supabase.auth.resetPasswordForEmail(
+      formData.get('email') as string,
+      {
+         redirectTo: `${formData.get('origin') as string}/auth/confirm`,
+      }
+   );
+   console.log(data, error);
+}
+export async function resetPassword(formData: FormData) {
+   const supabase = createClient();
    // type-casting here for convenience
    // in practice, you should validate your inputs
    const data = {
       password: formData.get('password') as string,
    };
 
-   const { error } = await supabase.auth.updateUser(data);
+   const {
+      data: { user },
+      error,
+   } = await supabase.auth.updateUser(data);
 
+   console.log(user, error);
    if (error) {
       redirect('/error');
    }

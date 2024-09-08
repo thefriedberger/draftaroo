@@ -1,33 +1,19 @@
 'use client';
 
-import getPlayers from '@/app/utils/get-players';
 import { WatchlistProps } from '@/lib/types';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
 import WatchlistStar from './watchlist-star';
 
 const Watchlist = ({
    updateFeaturedPlayer,
    draftedIDs,
-   leagueID,
    watchlist,
    updateWatchlist,
+   players,
 }: WatchlistProps) => {
-   const supabase = createClientComponentClient<Database>();
-   const [players, setPlayers] = useState<Player[]>([]);
-   const [watchlistPlayers, setWatchlistPlayers] = useState<Player[]>([]);
-
-   useEffect(() => {
-      const fetchPlayers = async () => {
-         const data = await getPlayers(leagueID);
-         data && setPlayers(data as Player[]);
-      };
-      fetchPlayers();
-   }, [leagueID]);
-
-   // useEffect(() => {
-   //    watchlist && updateWatchlist(watchlist);
-   // }, [watchlist, watchlistPlayers, supabase]);
+   const [watchlistPlayers, setWatchlistPlayers] = useState<Player[]>(
+      players?.filter((player: Player) => watchlist.includes(player.id)) ?? []
+   );
 
    useEffect(() => {
       if (players && watchlist && watchlist?.length) {
