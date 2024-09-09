@@ -74,6 +74,12 @@ const Board = ({
 
    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
+   const draftChannel = supabase.channel('draft-channel');
+
+   const pickChannel = supabase.channel('pick-channel');
+
+   const draftStatusChannel = supabase.channel('draft-is-active-channel');
+
    useEffect(() => {
       if (draftedPlayersState.length > 0) {
          for (const player of draftedPlayersState) {
@@ -116,12 +122,14 @@ const Board = ({
          if (draftedPlayersState.length > 0) {
             for (const player of draftedPlayersState) {
                if (player.pick === currentPick && player.is_keeper) {
-                  handlePick();
+                  setTimeout(() => {
+                     handlePick();
+                  }, 500);
                }
             }
          }
       }
-   }, [isActive, owner, draftedPlayersState, currentPick]);
+   }, [isActive, draftedPlayersState, currentPick]);
 
    // set if user can pick
    useEffect(() => {
@@ -155,8 +163,7 @@ const Board = ({
 
    // logic for updating after draft pick
    useEffect(() => {
-      const draftChannel = supabase
-         .channel('draft-channel')
+      draftChannel
          .on(
             'postgres_changes',
             {
@@ -174,8 +181,7 @@ const Board = ({
          )
          .subscribe();
 
-      const pickChanel = supabase
-         .channel('pick-channel')
+      pickChannel
          .on(
             'postgres_changes',
             {
@@ -189,25 +195,10 @@ const Board = ({
             }
          )
          .subscribe();
-   }, [supabase, draft, league]);
-
-   // TODO: make draft start a time based feature
-   useEffect(() => {
-      draft && setIsActive(draft.is_active);
-   }, [draft]);
-
-   // TODO: remove when updating timer
-   useEffect(() => {
-      if (isActive) {
-         setDoStart(true);
-      } else {
-         setDoStart(false);
-      }
-   }, [isActive]);
+   }, [supabase, draft]);
 
    useEffect(() => {
-      const draftStatusChannel = supabase
-         .channel('draft-is-active-channel')
+      draftStatusChannel
          .on(
             'postgres_changes',
             {
@@ -228,6 +219,20 @@ const Board = ({
          }
       };
    }, [supabase, draft]);
+
+   // TODO: make draft start a time based feature
+   useEffect(() => {
+      draft && setIsActive(draft.is_active);
+   }, [draft]);
+
+   // TODO: remove when updating timer
+   useEffect(() => {
+      if (isActive) {
+         setDoStart(true);
+      } else {
+         setDoStart(false);
+      }
+   }, [isActive]);
 
    useEffect(() => {
       filterDraftedPlayers();
@@ -253,15 +258,12 @@ const Board = ({
 
    const handlePick = async () => {
       setCurrentPick(currentPick + 1);
-      // setShouldFilterPlayers(true);
+      setMainTimer(supabase, draft.id, Date.now() + TIMER_DURATION * 1000);
 
       await supabase
          .from('draft')
          .update({ current_pick: currentPick + 1 })
          .match({ id: draft.id });
-
-      setMainTimer(supabase, draft.id, Date.now() + TIMER_DURATION * 1000);
-      // setDoReset(true);
    };
 
    const handleDraftSelection = async (player: Player, teamId?: string) => {
@@ -284,13 +286,21 @@ const Board = ({
    };
 
    const autoDraft = () => {
-      const playerToDraft = sortPlayers(players, 'score', 1)[0] || null;
-      if (playerToDraft)
+      const playerToDraft =
+         sortPlayers(
+            players.filter((player) => !draftedIDs.includes(player.id)),
+            'score',
+            1
+         )[0] || null;
+      if (playerToDraft) {
          for (const team of turnOrder) {
             if (team.picks.includes(currentPick) && playerToDraft) {
-               handleDraftSelection(playerToDraft, team.team_id);
+               setTimeout(() => {
+                  handleDraftSelection(playerToDraft, team.team_id);
+               }, 500);
             }
          }
+      }
    };
 
    const updateTeamsViewPlayers = (teamId: string) => {

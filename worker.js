@@ -7,5 +7,5 @@
 
    setInterval(function () {
       heartbeat();
-   }, 100);
+   }, 50);
 })();

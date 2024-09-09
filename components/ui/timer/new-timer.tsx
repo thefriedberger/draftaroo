@@ -12,7 +12,7 @@ export interface NewTimerProps extends TimerProps {
 
 export type DraftTimerFields = { is_active: boolean; end_time?: number };
 
-export const TIMER_DURATION = 120; // seconds
+export const TIMER_DURATION = 15; // seconds
 const NewTimer = ({
    draftId,
    yourTurn,
@@ -143,15 +143,12 @@ const NewTimer = ({
                changeCallback(payload.new);
             }
          )
-         .subscribe((status, e) => {
-            // console.log(status, e);
-         });
+         .subscribe();
 
       return timerTrack;
    };
 
    const onChange = (payload: DraftTimerFields) => {
-      // console.log('Payload: ', payload);
       if (payload?.end_time) {
          setRoomData({
             end_time: payload.end_time,
@@ -174,16 +171,12 @@ const NewTimer = ({
             t = 0;
          }
 
-         //console.log("timer ", t, timer);
          timerValue.current = t;
          setTime(t);
       }
    };
 
-   // presentation functions
-
    function formatTime(t: number) {
-      // for hours '0' + Math.floor(t / 3600) % 24).slice(-2) + ':' +
       var finalTime =
          ('0' + (Math.floor(t / 60) % 60)).slice(-2) +
          ':' +

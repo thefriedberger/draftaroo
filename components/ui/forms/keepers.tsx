@@ -297,6 +297,7 @@ const KeeperForm = ({
          <button
             className={classNames(buttonClasses, 'w-36 mx-auto my-5')}
             type="submit"
+            disabled={(draft?.is_active || draft?.is_completed) ?? false}
          >
             Submit Keepers
          </button>
