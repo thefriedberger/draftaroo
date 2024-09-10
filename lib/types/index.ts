@@ -143,8 +143,8 @@ export interface TimerProps {
    currentPick: number | string;
    currentRound: number | string;
    doStart?: boolean;
-   doReset: boolean;
-   setDoReset: (val: boolean) => void;
+   doReset?: boolean;
+   setDoReset?: (val: boolean) => void;
    isActive: boolean;
    autopick: () => void;
    yourTurn: boolean;

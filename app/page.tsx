@@ -7,54 +7,29 @@ import { fetchAllUserTeams, fetchDrafts, fetchLeagues } from './utils/helpers';
 
 export default async function Home() {
    const supabase = createClient();
-   const { data: user }: Awaited<UserResponse> = await supabase.auth.getUser();
-   if (!user?.user) {
+   const {
+      data: { user },
+   }: Awaited<UserResponse> = await supabase.auth.getUser();
+
+   if (!user) {
       return;
    }
-   const leagues: Awaited<League[]> = await fetchLeagues(supabase);
+   const leagues: Awaited<League[]> = await fetchLeagues(supabase, user);
    if (!leagues) {
       return <></>;
    }
    const userTeams: Awaited<Team[]> = await fetchAllUserTeams(
       supabase,
-      user.user.id
+      user.id
    );
+
    return (
       <div className="pt-5 dark:text-white text-center">
          <h1 className="text-3xl">Welcome to Draftaroo!</h1>
-         <div className="flex flex-col items-stretch">
-            <>
-               {leagues
-                  .filter((league: League) => {
-                     userTeams.filter((team: Team) => {
-                        return (
-                           team.league_id === league.league_id &&
-                           team.owner === null
-                        );
-                     });
-                  })
-                  .map((league: League, index: number) => {
-                     <Callout
-                        key={index}
-                        {...{
-                           calloutText: `${league.league_name}`,
-                           links: [
-                              {
-                                 href: `/leagues/${league.league_id}/keepers`,
-                                 text: 'Set Keepers',
-                              },
-                           ],
-                        }}
-                     />;
-                  })}
-            </>
+         <div className="flex flex-col lg:grid lg:grid-cols-3 gap-5 items-stretch md:items-start justify-between">
             {userTeams &&
                leagues &&
                userTeams?.map(async (team: Team, index: number) => {
-                  leagues?.filter(
-                     (league: League) =>
-                        league.league_id && league.league_id === team.league_id
-                  );
                   const league: League = leagues.filter(
                      (league: League) => league.league_id === team.league_id
                   )[0];
@@ -72,7 +47,7 @@ export default async function Home() {
                   const leagueManagementLink = leagues
                      .filter(
                         (league) =>
-                           league.owner === user.user.id &&
+                           league.owner === user.id &&
                            league.league_id === team.league_id
                      )
                      .map((league) => {

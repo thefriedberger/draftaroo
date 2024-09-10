@@ -1,6 +1,6 @@
 'use client';
 
-import { getTimerData, setMainTimer } from '@/app/utils/helpers';
+import { getTimerData } from '@/app/utils/helpers';
 import { useWorkerTimeout } from '@/components/worker/worker-timeout';
 import { DraftPick, TimerProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -36,7 +36,7 @@ const NewTimer = ({
    const [roomData, setRoomData] = useState<DraftTimerFields>({
       is_active: false,
    });
-   var timerValue = useRef(120);
+   var timerValue = useRef(TIMER_DURATION);
    const [timer, setTimer] = useState(TIMER_DURATION);
    const [userPick, setUserPick] = useState<number>();
    const [doMute, setDoMute] = useState<boolean>(false);
@@ -108,9 +108,8 @@ const NewTimer = ({
                   if (diff < 0) {
                      setTimer(0);
                      timerValue.current = 0;
-                     const newTimerEnd = Date.now() + TIMER_DURATION * 1000;
                      if (owner) {
-                        setMainTimer(supabase, draftId, newTimerEnd);
+                        console.log('were you problem?');
                         autopick();
                      }
                   } else {

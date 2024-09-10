@@ -23,9 +23,8 @@ export interface RosterPlayer extends TeamHistory {
 const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
    const supabase = createClient();
    const { data: user }: Awaited<UserResponse> = await supabase.auth.getUser();
-   const { data: session } = await supabase.auth.getSession();
 
-   if (!user?.user || !session) {
+   if (!user?.user) {
       return;
    }
    const team: Awaited<Team> = await fetchTeam(
@@ -39,6 +38,13 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
       id,
       new Date().getFullYear()
    );
+   console.log(team, league, id);
+
+   if (!draft) {
+      return (
+         <p className="dark:text-white">You need to create a draft silly</p>
+      );
+   }
 
    if (!team) {
       return <p>{'No team :('}</p>;
@@ -121,7 +127,7 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
    };
 
    return (
-      <div className="container">
+      <div className="lg:max-w-2xl w-full lg:px-5">
          <KeeperForm {...keeperFormProps} />
       </div>
    );

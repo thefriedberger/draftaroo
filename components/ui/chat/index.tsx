@@ -14,6 +14,7 @@ import styles from './index.module.css';
 type ChatType = {
    message: string;
    sender: User | null;
+   messageType: 'chat' | 'presence';
 };
 const Chat = ({ user }: ChatProps) => {
    const [message, setMessage] = useState<string>();
@@ -37,6 +38,7 @@ const Chat = ({ user }: ChatProps) => {
                const newChat: ChatType = {
                   message: payload.payload.message,
                   sender: payload.payload.sender,
+                  messageType: 'chat',
                };
                if (!isOpen) {
                   setUnseenMessage(true);
@@ -45,6 +47,9 @@ const Chat = ({ user }: ChatProps) => {
                }
                setChat((prev: ChatType[]) => [...prev, newChat]);
             }
+         })
+         .on('presence', { event: 'join' }, (payload) => {
+            console.log(payload);
          })
          .subscribe((status) => {
             if (status === 'SUBSCRIBED' && message?.length && user) {

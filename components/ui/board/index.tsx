@@ -20,7 +20,7 @@ import {
    WatchlistProps,
 } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Chat from '../chat';
 import DraftOrder from '../draft-order';
@@ -52,13 +52,16 @@ const Board = ({
    const numberOfRounds = leagueRules.number_of_rounds;
    const numberOfTeams = leagueRules.number_of_teams;
 
+   /*** Channels ***/
+   const isYourTurn = useRef<boolean>(false);
+
+   /*** Context ***/
    const [watchlistState, setWatchlistState] = useState<number[]>(
       watchlist?.players ?? []
-   );
+   ); // TODO: use context and reducer
+
+   /*** States ***/
    const [featuredPlayer, setFeaturedPlayer] = useState<Player | null>();
-   const [isYourTurn, setIsYourTurn] = useState<boolean>(false);
-   const [doStart, setDoStart] = useState<boolean>(false);
-   const [doReset, setDoReset] = useState<boolean>(false);
    const [currentPick, setCurrentPick] = useState<number>(draft.current_pick);
    const [currentRound, setCurrentRound] = useState<number>(1);
    const [draftedPlayersState, setDraftedPlayersState] =
@@ -74,10 +77,9 @@ const Board = ({
 
    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
+   /*** Channels ***/
    const draftChannel = supabase.channel('draft-channel');
-
    const pickChannel = supabase.channel('pick-channel');
-
    const draftStatusChannel = supabase.channel('draft-is-active-channel');
 
    useEffect(() => {
@@ -133,11 +135,10 @@ const Board = ({
 
    // set if user can pick
    useEffect(() => {
-      setIsYourTurn(
-         turnOrder
-            .filter((turn) => turn.team_id === team.id)?.[0]
-            ?.picks?.includes(currentPick)
-      );
+      isYourTurn.current = turnOrder
+         .filter((turn) => turn.team_id === team.id)?.[0]
+         ?.picks?.includes(currentPick);
+
       if (
          isActive &&
          !turnOrder.filter((turn) => turn.team_id === team.id)[0].picks.length
@@ -224,15 +225,6 @@ const Board = ({
    useEffect(() => {
       draft && setIsActive(draft.is_active);
    }, [draft]);
-
-   // TODO: remove when updating timer
-   useEffect(() => {
-      if (isActive) {
-         setDoStart(true);
-      } else {
-         setDoStart(false);
-      }
-   }, [isActive]);
 
    useEffect(() => {
       filterDraftedPlayers();
@@ -339,13 +331,10 @@ const Board = ({
    const timerProps: NewTimerProps = {
       owner: owner,
       currentPick: currentPick,
-      doStart: doStart,
-      doReset: doReset,
-      setDoReset: setDoReset,
       currentRound: currentRound,
       isActive: isActive,
       autopick: autoDraft,
-      yourTurn: isYourTurn,
+      yourTurn: isYourTurn.current,
       turnOrder: turnOrder,
       userTeam: team,
       isCompleted: isCompleted,
@@ -356,7 +345,7 @@ const Board = ({
       draftedPlayers: draftedPlayersState,
       currentPick: currentPick,
       teams: teams,
-      isYourTurn: isYourTurn,
+      isYourTurn: isYourTurn.current,
       turnOrder: turnOrder,
       league: league,
       players: players,
@@ -377,7 +366,7 @@ const Board = ({
    const featuredPlayerProps: FeaturedPlayerProps = {
       draftedIDs: draftedIDs,
       featuredPlayer: featuredPlayer || null,
-      yourTurn: isYourTurn,
+      yourTurn: isYourTurn.current,
       watchlist: watchlistState,
       updateWatchlist: updateWatchlist,
       updateFeaturedPlayer: updateFeaturedPlayer,

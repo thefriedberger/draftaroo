@@ -148,7 +148,7 @@ const FeaturedPlayer = ({
    return (
       <div
          className={classNames(
-            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light md:border-none md:bg-transparent md:min-h-[200px] md:h-[35%] md:relative fixed bottom-[66px] md:flex md:flex-col md:bottom-auto w-full p-2 md:py-0',
+            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light md:border-none md:bg-transparent md:min-h-[200px] md:h-[35%] md:relative z-10 fixed bottom-[66px] md:flex md:flex-col md:bottom-auto w-full p-2 md:py-0',
             isExpanded ? 'h-[232px]' : 'h-[130px]'
          )}
       >

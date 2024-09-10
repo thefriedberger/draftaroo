@@ -83,8 +83,14 @@ export const fetchProfile = cache(
 );
 
 export const fetchLeagues = cache(
-   async (supabase: SupabaseClient<Database>): Promise<Array<League>> => {
-      const { data, error } = await supabase.from('leagues').select('*');
+   async (
+      supabase: SupabaseClient<Database>,
+      user: User
+   ): Promise<Array<League>> => {
+      const { data, error } = await supabase
+         .from('leagues')
+         .select('*')
+         .match({ owner: user.id });
       return data as League[];
    }
 );

@@ -203,6 +203,7 @@ const KeeperForm = ({
                               <input
                                  className={'w-[40px] h-[20px] align-middle'}
                                  type="checkbox"
+                                 id={`keep-player-${player.player_id}-checkbox`}
                                  defaultChecked={player.is_keeper ?? false}
                                  disabled={
                                     (closestPick.length === 0 ||
@@ -217,11 +218,19 @@ const KeeperForm = ({
                               />
                            </td>
                            <td className={'w-[40px] p-2'}>
-                              {playerData[0].primary_position}
+                              <label
+                                 htmlFor={`keep-player-${player.player_id}-checkbox`}
+                              >
+                                 {playerData[0].primary_position}
+                              </label>
                            </td>
                            <td className="p-2">
-                              {playerData[0].first_name}{' '}
-                              {playerData[0].last_name}
+                              <label
+                                 htmlFor={`keep-player-${player.player_id}-checkbox`}
+                              >
+                                 {playerData[0].first_name}{' '}
+                                 {playerData[0].last_name}
+                              </label>
                            </td>
                            <td className="p-2">
                               {playerData[0].stats[1].stats.averageScore}
