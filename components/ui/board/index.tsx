@@ -47,18 +47,16 @@ const Board = ({
    draftedPlayers,
 }: BoardProps) => {
    const supabase = createClientComponentClient<Database>();
-   const owner = league.owner === user.id;
-   const turnOrder = draftPicks;
-   const numberOfRounds = leagueRules.number_of_rounds;
-   const numberOfTeams = leagueRules.number_of_teams;
-
-   /*** Channels ***/
+   const isOwner = useRef(league.owner === user.id);
+   const turnOrder = useRef(draftPicks);
+   const numberOfRounds = useRef(leagueRules.number_of_rounds);
+   const numberOfTeams = useRef(leagueRules.number_of_teams);
    const isYourTurn = useRef<boolean>(false);
 
-   /*** Context ***/
-   const [watchlistState, setWatchlistState] = useState<number[]>(
-      watchlist?.players ?? []
-   ); // TODO: use context and reducer
+   /*** Channels ***/
+   const draftChannel = supabase.channel('draft-channel');
+   const pickChannel = supabase.channel('pick-channel');
+   const draftStatusChannel = supabase.channel('draft-is-active-channel');
 
    /*** States ***/
    const [featuredPlayer, setFeaturedPlayer] = useState<Player | null>();
@@ -66,6 +64,9 @@ const Board = ({
    const [currentRound, setCurrentRound] = useState<number>(1);
    const [draftedPlayersState, setDraftedPlayersState] =
       useState<DraftSelection[]>(draftedPlayers);
+   const [watchlistState, setWatchlistState] = useState<number[]>(
+      watchlist?.players ?? []
+   );
    const [isActive, setIsActive] = useState<boolean>(draft?.is_active);
    const [isCompleted, setIsCompleted] = useState<boolean>(
       draft?.is_completed ?? false
@@ -76,11 +77,6 @@ const Board = ({
    const [teamViewToShow, setTeamViewToShow] = useState<string>('');
 
    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
-
-   /*** Channels ***/
-   const draftChannel = supabase.channel('draft-channel');
-   const pickChannel = supabase.channel('pick-channel');
-   const draftStatusChannel = supabase.channel('draft-is-active-channel');
 
    useEffect(() => {
       if (draftedPlayersState.length > 0) {
@@ -120,7 +116,7 @@ const Board = ({
 
    // checking for keepers is handled here
    useEffect(() => {
-      if (isActive && owner) {
+      if (isActive && isOwner.current) {
          if (draftedPlayersState.length > 0) {
             for (const player of draftedPlayersState) {
                if (player.pick === currentPick && player.is_keeper) {
@@ -135,13 +131,14 @@ const Board = ({
 
    // set if user can pick
    useEffect(() => {
-      isYourTurn.current = turnOrder
+      isYourTurn.current = turnOrder.current
          .filter((turn) => turn.team_id === team.id)?.[0]
          ?.picks?.includes(currentPick);
 
       if (
          isActive &&
-         !turnOrder.filter((turn) => turn.team_id === team.id)[0].picks.length
+         !turnOrder.current.filter((turn) => turn.team_id === team.id)[0].picks
+            .length
       ) {
          const draftedPlayer = draftedPlayersState.filter(
             (player: DraftSelection) => {
@@ -153,9 +150,9 @@ const Board = ({
 
    // set round
    useEffect(() => {
-      if (numberOfTeams) {
-         if (currentPick >= numberOfTeams) {
-            setCurrentRound(Math.ceil(currentPick / numberOfTeams));
+      if (numberOfTeams.current) {
+         if (currentPick >= numberOfTeams.current) {
+            setCurrentRound(Math.ceil(currentPick / numberOfTeams.current));
          } else {
             setCurrentRound(1);
          }
@@ -249,7 +246,6 @@ const Board = ({
    };
 
    const handlePick = async () => {
-      setCurrentPick(currentPick + 1);
       setMainTimer(supabase, draft.id, Date.now() + TIMER_DURATION * 1000);
 
       await supabase
@@ -270,7 +266,7 @@ const Board = ({
                pick: currentPick,
             });
          if (error) {
-            console.log(error);
+            console.log(data, error);
             return;
          }
          handlePick();
@@ -284,14 +280,16 @@ const Board = ({
             'score',
             1
          )[0] || null;
-      if (playerToDraft) {
-         for (const team of turnOrder) {
-            if (team.picks.includes(currentPick) && playerToDraft) {
-               setTimeout(() => {
-                  handleDraftSelection(playerToDraft, team.team_id);
-               }, 500);
-            }
+      if (!playerToDraft) return;
+      let autoDraftTeam;
+      for (const team of turnOrder.current) {
+         if (team.picks.includes(currentPick) && playerToDraft) {
+            autoDraftTeam = team;
+            break;
          }
+      }
+      if (autoDraftTeam) {
+         handleDraftSelection(playerToDraft, autoDraftTeam.team_id);
       }
    };
 
@@ -304,7 +302,7 @@ const Board = ({
       return teamPlayers;
    };
 
-   const updateWatchlist = async (player: Player, action: WatchlistAction) => {
+   const updateWatchlist = (player: Player, action: WatchlistAction) => {
       if (watchlistState) {
          if (action === WatchlistAction.DELETE) {
             setWatchlistState(watchlistState?.filter((el) => el !== player.id));
@@ -321,7 +319,6 @@ const Board = ({
             );
       }
    };
-
    const filterDraftedPlayers = () => {
       players = players.filter((player: Player) => {
          return !draftedIDs.includes(player.id);
@@ -329,13 +326,13 @@ const Board = ({
    };
 
    const timerProps: NewTimerProps = {
-      owner: owner,
+      owner: isOwner.current,
       currentPick: currentPick,
       currentRound: currentRound,
       isActive: isActive,
       autopick: autoDraft,
       yourTurn: isYourTurn.current,
-      turnOrder: turnOrder,
+      turnOrder: turnOrder.current,
       userTeam: team,
       isCompleted: isCompleted,
       draftId: draft.id,
@@ -346,11 +343,11 @@ const Board = ({
       currentPick: currentPick,
       teams: teams,
       isYourTurn: isYourTurn.current,
-      turnOrder: turnOrder,
+      turnOrder: turnOrder.current,
       league: league,
       players: players,
       teamID: team.id,
-      numberOfRounds: numberOfRounds ?? 23,
+      numberOfRounds: numberOfRounds.current ?? 23,
       updateFeaturedPlayer: updateFeaturedPlayer,
    };
 
@@ -485,7 +482,7 @@ const Board = ({
             <>
                {!isMobile ? (
                   <>
-                     {owner && !isActive && (
+                     {isOwner.current && !isActive && (
                         <button
                            className="bg-gray-primary p-1"
                            type="button"

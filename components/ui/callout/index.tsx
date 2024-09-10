@@ -1,11 +1,17 @@
 import { CalloutProps } from '@/lib/types';
+import classNames from 'classnames';
 import Link from 'next/link';
 
 const Callout = (props: CalloutProps) => {
    const { links } = props;
 
    return (
-      <div className="flex flex-col p-3 text-red bg-paper-dark dark:bg-gray-light max-w-lg rounded-xl my-3">
+      <div
+         className={classNames(
+            props?.classes,
+            'flex flex-col p-3 text-red bg-paper-dark dark:bg-gray-light max-w-lg rounded-xl my-3'
+         )}
+      >
          <p className="mb-2">{props.calloutText}</p>
          {links?.map((link, index) => {
             return (

@@ -93,25 +93,6 @@ const DraftPicksTab = ({
          setDraftPicks(initialTeams);
       }
    }, [teams]);
-   useEffect(() => {
-      // const draftPickStructure: any[] = [];
-      // teams &&
-      //    teams?.forEach((team: Team) => {
-      //       const teamPick = {
-      //          [String(team.id)]: [],
-      //       };
-      //       draftPickStructure.push(teamPick);
-      //    });
-      // console.log(draftPickStructure);
-      // if (
-      //    !draftPicks &&
-      //    shouldSetDraftPicks &&
-      //    draftPickStructure.length !== 0
-      // ) {
-      //    setDraftPicks([]);
-      //    setShouldSetDraftPicks(false);
-      // }
-   }, [teams, draftPicks, shouldSetDraftPicks]);
 
    return (
       <>

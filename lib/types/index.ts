@@ -19,6 +19,7 @@ export interface Link {
 export interface CalloutProps {
    calloutText?: string;
    links?: Link[];
+   classes?: string;
 }
 
 export interface DraftOrderProps {

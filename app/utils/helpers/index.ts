@@ -83,14 +83,8 @@ export const fetchProfile = cache(
 );
 
 export const fetchLeagues = cache(
-   async (
-      supabase: SupabaseClient<Database>,
-      user: User
-   ): Promise<Array<League>> => {
-      const { data, error } = await supabase
-         .from('leagues')
-         .select('*')
-         .match({ owner: user.id });
+   async (supabase: SupabaseClient<Database>): Promise<Array<League>> => {
+      const { data, error } = await supabase.from('leagues').select('*');
       return data as League[];
    }
 );
@@ -210,7 +204,7 @@ export const updateSupabaseWatchlist = async (
    userId: string,
    draftId: string
 ): Promise<Array<number>> => {
-   let playerIDs: number[] = [];
+   const playerIDs: number[] = [];
    if (!watchlist.length) return watchlist;
 
    for (const playerID of watchlist) {
@@ -222,6 +216,7 @@ export const updateSupabaseWatchlist = async (
       .update({ players: playerIDs })
       .match({ owner: userId, draft_id: draftId })
       .select('*');
+
    return data?.[0]?.players as number[];
 };
 

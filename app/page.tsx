@@ -14,7 +14,7 @@ export default async function Home() {
    if (!user) {
       return;
    }
-   const leagues: Awaited<League[]> = await fetchLeagues(supabase, user);
+   const leagues: Awaited<League[]> = await fetchLeagues(supabase);
    if (!leagues) {
       return <></>;
    }
@@ -24,9 +24,9 @@ export default async function Home() {
    );
 
    return (
-      <div className="pt-5 dark:text-white text-center">
+      <div className="pt-5 dark:text-white text-center w-full md:max-w-screen-lg">
          <h1 className="text-3xl">Welcome to Draftaroo!</h1>
-         <div className="flex flex-col lg:grid lg:grid-cols-3 gap-5 items-stretch md:items-start justify-between">
+         <div className="flex flex-col lg:flex-row flex-wrap w-full items-stretch md:items-start justify-between">
             {userTeams &&
                leagues &&
                userTeams?.map(async (team: Team, index: number) => {
@@ -81,13 +81,15 @@ export default async function Home() {
                      leagueLinks.push(...draftLinks);
                   }
                   return (
-                     <Callout
-                        key={index}
-                        {...{
-                           calloutText: `${team.team_name} - ${league?.league_name}`,
-                           links: leagueLinks,
-                        }}
-                     />
+                     <div key={index} className="flex-[25%] mx-5">
+                        <Callout
+                           {...{
+                              calloutText: `${team.team_name} - ${league?.league_name}`,
+                              links: leagueLinks,
+                              classes: 'mx-auto',
+                           }}
+                        />
+                     </div>
                   );
                })}
          </div>
