@@ -15,8 +15,6 @@ const Watchlist = ({
       players?.filter((player: Player) => watchlist.includes(player.id)) ?? []
    );
 
-   // test comment
-
    useEffect(() => {
       if (players && watchlist && watchlist?.length) {
          setWatchlistPlayers(
