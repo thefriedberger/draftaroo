@@ -473,7 +473,7 @@ const Board = ({
       <div className="flex flex-col lg:flex-row items-center w-full overflow-y-scroll lg:overflow-y-hidden draft-board">
          {user && team?.league_id === league.league_id && (
             <>
-               {isOwner.current && !isActive && (
+               {isOwner.current && !isActive ? (
                   <button
                      className={classNames(
                         buttonClasses,
@@ -483,6 +483,17 @@ const Board = ({
                      onClick={startDraft}
                   >
                      Start Draft
+                  </button>
+               ) : (
+                  <button
+                     className={classNames(
+                        buttonClasses,
+                        'w-full lg:w-auto lg:h-full'
+                     )}
+                     type="button"
+                     onClick={stopDraft}
+                  >
+                     Stop Draft
                   </button>
                )}
                {!isMobile ? (
