@@ -124,10 +124,12 @@ const KeeperForm = ({
                      is_keeper: player.is_keeper,
                   },
                   {
-                     onConflict: 'player_id, draft_id',
+                     onConflict: 'pick, draft_id',
                   }
                )
                .select();
+
+            console.log(draftSelectionsError);
 
             const { error: teamHistoryError } = await supabase
                .from('team_history')
