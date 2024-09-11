@@ -2,7 +2,7 @@ import {
    DraftTimerFields,
    TIMER_DURATION,
 } from '@/components/ui/timer/new-timer';
-import { DraftPick } from '@/lib/types';
+import { DraftPick, HandleDraftSelectionsProps } from '@/lib/types';
 import { SupabaseClient, User } from '@supabase/supabase-js';
 import { cache } from 'react';
 export const getUser = cache(async (supabase: SupabaseClient<Database>) => {
@@ -209,15 +209,11 @@ export const updateSupabaseWatchlist = async (
    userId: string,
    draftId: string
 ) => {
-   if (!watchlist.length) return watchlist;
-
    const { data, error } = await supabase
       .from('watchlist')
       .update({ players: watchlist })
       .match({ owner: userId, draft_id: draftId })
       .select('*');
-
-   console.log(data, error);
 };
 
 export const fetchPlayers = cache(
@@ -282,14 +278,6 @@ export const handlePick = async (
       .update({ current_pick: currentPick + 1 })
       .match({ id: draft.id });
 };
-export interface HandleDraftSelectionsProps {
-   supabase: SupabaseClient;
-   player: Player;
-   teamId: string;
-   draft: Draft;
-   currentRound: number;
-   currentPick: number;
-}
 export const handleDraftSelection = async ({
    supabase,
    player,

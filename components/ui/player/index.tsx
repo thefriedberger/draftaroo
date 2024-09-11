@@ -51,8 +51,7 @@ const PlayerComponent = ({
    leagueScoring: LeagueScoring | any;
    season: number;
 }) => {
-   const { updateFeaturedPlayer, updateWatchlist, watchlist } =
-      useContext(DraftContext);
+   const { updateFeaturedPlayer, watchlist } = useContext(DraftContext);
    const [playerStats, setPlayerStats] = useState<PlayerStats[]>();
 
    const getStatFromLastSeason = (player_stats: any, stat: string) => {

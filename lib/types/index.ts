@@ -167,6 +167,14 @@ export interface LeagueTeamViewProps {
    leagueID: string;
 }
 
+export interface HandleDraftSelectionsProps {
+   supabase: SupabaseClient;
+   player: Player;
+   teamId: string;
+   draft: Draft;
+   currentRound: number;
+   currentPick: number;
+}
 export interface KeeperViewProps {
    league: League;
    team: Team;

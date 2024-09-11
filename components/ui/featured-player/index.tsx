@@ -18,8 +18,7 @@ const FeaturedPlayer = ({
    leagueScoring,
    isActive,
 }: FeaturedPlayerProps) => {
-   const { updateFeaturedPlayer, updateWatchlist, watchlist } =
-      useContext(DraftContext);
+   const { updateFeaturedPlayer, watchlist } = useContext(DraftContext);
    const watchlistStarProps: WatchlistStarProps = {
       player: featuredPlayer as Player,
       isButton: true,
