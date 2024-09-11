@@ -11,7 +11,10 @@ import {
    setMainTimer,
    updateSupabaseWatchlist,
 } from '@/app/utils/helpers';
-import { WatchlistAction } from '@/components/context/page-context';
+import {
+   DraftContext,
+   WatchlistAction,
+} from '@/components/context/draft-context';
 import {
    BoardProps,
    ChatProps,
@@ -303,15 +306,11 @@ const Board = ({
          if (action === WatchlistAction.ADD) {
             setWatchlistState((prev) => [...prev, player.id]);
          }
-         user &&
-            updateSupabaseWatchlist(
-               supabase,
-               watchlistState,
-               user?.id,
-               draft.id
-            );
       }
    };
+   useEffect(() => {
+      updateSupabaseWatchlist(supabase, watchlistState, user.id, draft.id);
+   }, [watchlistState]);
    const filterDraftedPlayers = () => {
       players = players.filter((player: Player) => {
          return !draftedIDs.includes(player.id);
@@ -341,25 +340,18 @@ const Board = ({
       players: players,
       teamID: team.id,
       numberOfRounds: numberOfRounds.current ?? 23,
-      updateFeaturedPlayer: updateFeaturedPlayer,
    };
 
    const watchlistProps: WatchlistProps = {
-      updateFeaturedPlayer: updateFeaturedPlayer,
       draftedIDs: draftedIDs,
       leagueID: league?.league_id ?? '',
-      watchlist: watchlistState,
       players: players,
-      updateWatchlist: updateWatchlist,
    };
 
    const featuredPlayerProps: FeaturedPlayerProps = {
       draftedIDs: draftedIDs,
       featuredPlayer: featuredPlayer || null,
       yourTurn: isYourTurn.current,
-      watchlist: watchlistState,
-      updateWatchlist: updateWatchlist,
-      updateFeaturedPlayer: updateFeaturedPlayer,
       handleDraftSelectionProps: handleDraftSelectionProps,
       isActive: isActive,
       leagueScoring: leagueScoring,
@@ -368,9 +360,6 @@ const Board = ({
    const playerListProps: PlayerListProps = {
       league: league,
       draftedIDs: draftedIDs,
-      watchlist: watchlistState,
-      updateWatchlist: updateWatchlist,
-      updateFeaturedPlayer: updateFeaturedPlayer,
       players: players,
       leagueScoring: leagueScoring,
    };
@@ -378,13 +367,11 @@ const Board = ({
    const myTeamProps: MyTeamProps = {
       playerIDs: yourPlayers,
       players: players,
-      updateFeaturedPlayer: updateFeaturedPlayer,
    };
 
    const teamsViewProps: TeamsListProps = {
       playerIDs: teamsViewPlayers,
       setTeamsViewPlayers: setTeamViewToShow,
-      updateFeaturedPlayer: updateFeaturedPlayer,
       teams: teams,
       players: players,
       user: user,
@@ -471,60 +458,68 @@ const Board = ({
    };
    return (
       <div className="flex flex-col lg:flex-row items-center w-full overflow-y-scroll lg:overflow-y-hidden draft-board">
-         {user && team?.league_id === league.league_id && (
-            <>
-               {isOwner.current && !isActive ? (
-                  <button
-                     className={classNames(
-                        buttonClasses,
-                        'w-full lg:w-auto lg:h-full'
-                     )}
-                     type="button"
-                     onClick={startDraft}
-                  >
-                     Start Draft
-                  </button>
-               ) : (
-                  <button
-                     className={classNames(
-                        buttonClasses,
-                        'w-full lg:w-auto lg:h-full'
-                     )}
-                     type="button"
-                     onClick={stopDraft}
-                  >
-                     Stop Draft
-                  </button>
-               )}
-               {!isMobile ? (
-                  <>
-                     <div className="flex flex-col lg:max-w-[15vw] h-full w-full overflow-y-hidden">
+         <DraftContext.Provider
+            value={{
+               watchlist: watchlistState,
+               updateWatchlist,
+               updateFeaturedPlayer,
+            }}
+         >
+            {user && team?.league_id === league.league_id && (
+               <>
+                  {isOwner.current && !isActive ? (
+                     <button
+                        className={classNames(
+                           buttonClasses,
+                           'w-full lg:w-auto lg:h-full'
+                        )}
+                        type="button"
+                        onClick={startDraft}
+                     >
+                        Start Draft
+                     </button>
+                  ) : (
+                     <button
+                        className={classNames(
+                           buttonClasses,
+                           'w-full lg:w-auto lg:h-full'
+                        )}
+                        type="button"
+                        onClick={stopDraft}
+                     >
+                        Stop Draft
+                     </button>
+                  )}
+                  {!isMobile ? (
+                     <>
+                        <div className="flex flex-col lg:max-w-[15vw] h-full w-full overflow-y-hidden">
+                           <NewTimer {...timerProps} />
+                           <Suspense fallback={<DraftOrderLoading />}>
+                              <DraftOrder {...draftOrderProps} />
+                           </Suspense>
+                        </div>
+                        <div className="flex flex-col lg:max-w-[70vw] h-full w-full">
+                           <FeaturedPlayer {...featuredPlayerProps} />
+                           <Tabs {...tabProps} />
+                        </div>
+                        <div className="flex flex-col lg:max-w-[15vw] h-full w-full">
+                           <Watchlist {...watchlistProps} />
+                           <MyTeam {...myTeamProps} />
+                           <Chat {...chatProps} />
+                        </div>
+                     </>
+                  ) : (
+                     <>
                         <NewTimer {...timerProps} />
-                        <Suspense fallback={<DraftOrderLoading />}>
-                           <DraftOrder {...draftOrderProps} />
-                        </Suspense>
-                     </div>
-                     <div className="flex flex-col lg:max-w-[70vw] h-full w-full">
-                        <FeaturedPlayer {...featuredPlayerProps} />
-                        <Tabs {...tabProps} />
-                     </div>
-                     <div className="flex flex-col lg:max-w-[15vw] h-full w-full">
-                        <Watchlist {...watchlistProps} />
-                        <MyTeam {...myTeamProps} />
-                        <Chat {...chatProps} />
-                     </div>
-                  </>
-               ) : (
-                  <>
-                     <NewTimer {...timerProps} />
-                     <Tabs {...mobileTabProps} />
-                     {featuredPlayer && (
-                        <FeaturedPlayer {...featuredPlayerProps} />
-                     )}
-                  </>
-               )}
-            </>
-         )}
+                        <Tabs {...mobileTabProps} />
+                        {featuredPlayer && (
+                           <FeaturedPlayer {...featuredPlayerProps} />
+                        )}
+                     </>
+                  )}
+               </>
+            )}
+         </DraftContext.Provider>
       </div>
    );
 };

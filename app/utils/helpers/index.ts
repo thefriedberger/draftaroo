@@ -108,16 +108,18 @@ export const fetchLeague = cache(
 
 export const fetchWatchlist = async (
    supabase: SupabaseClient<Database>,
-   user: User
+   user: User,
+   draft: Draft
 ): Promise<Watchlist> => {
    const { data: watchlist } = await supabase
       .from('watchlist')
       .select('*')
-      .match({ owner: user?.id });
-   if (!watchlist?.length) {
-      const { data } = await supabase
+      .match({ owner: user?.id, draft_id: draft.id });
+
+   if (watchlist?.length === 0) {
+      const { data, error } = await supabase
          .from('watchlist')
-         .insert({ owner: user?.id, players: [] })
+         .insert({ owner: user?.id, players: [], draft_id: draft.id })
          .match({})
          .select('*');
       return data?.[0] as Watchlist;
@@ -206,21 +208,16 @@ export const updateSupabaseWatchlist = async (
    watchlist: number[],
    userId: string,
    draftId: string
-): Promise<Array<number>> => {
-   const playerIDs: number[] = [];
+) => {
    if (!watchlist.length) return watchlist;
-
-   for (const playerID of watchlist) {
-      playerIDs.push(playerID);
-   }
 
    const { data, error } = await supabase
       .from('watchlist')
-      .update({ players: playerIDs })
+      .update({ players: watchlist })
       .match({ owner: userId, draft_id: draftId })
       .select('*');
 
-   return data?.[0]?.players as number[];
+   console.log(data, error);
 };
 
 export const fetchPlayers = cache(

@@ -31,7 +31,8 @@ const Draft = async ({
 
    const watchlist: Awaited<Watchlist> = await fetchWatchlist(
       supabase,
-      user.user
+      user.user,
+      draft
    );
    const draftPicks: Awaited<DraftPick[]> = await fetchDraftPicks(
       supabase,
