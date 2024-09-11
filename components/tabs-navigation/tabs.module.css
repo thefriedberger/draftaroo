@@ -1,6 +1,0 @@
-.nav-active {
-   position: relative;
-}
-.nav-active svg {
-   @apply !fill-white;
-}

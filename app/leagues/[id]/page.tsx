@@ -1,70 +1,49 @@
-'use client';
-import { PageContext } from '@/components/context/page-context';
-import AuthModal from '@/components/modals/auth';
-import Tabs from '@/components/tabs';
-import { LeagueTeamViewProps, Tab, TabProps } from '@/lib/types';
-import addTeam from '@/utils/add-team';
+'use server';
+import addTeam from '@/app/utils/add-team';
 import {
-   User,
-   createClientComponentClient,
-} from '@supabase/auth-helpers-nextjs';
-import Link from 'next/link';
-import { useContext, useEffect, useState } from 'react';
-import OwnerView from './owner-view';
+   fetchDraftByLeague,
+   fetchLeague,
+   fetchTeam,
+} from '@/app/utils/helpers';
+import { createClient } from '@/app/utils/supabase/server';
+import Tabs from '@/components/ui/tabs';
+import {
+   KeeperViewProps,
+   LeagueTeamViewProps,
+   Tab,
+   TabProps,
+} from '@/lib/types';
+import { UserResponse } from '@supabase/supabase-js';
+import KeepersTab from '../tabs/keepers';
 import TeamView from './team-view';
 
-const League = ({ params: { id } }: { params: { id: string } }) => {
-   const supabase = createClientComponentClient<Database>();
-   const [isLoading, setIsLoading] = useState<Boolean>(true);
-   const [league, setLeague] = useState<League>();
-   const [owner, setOwner] = useState<User>();
-   const [hasTeam, setHasTeam] = useState<Boolean>(false);
-   const [teamViewTeam, setTeamViewTeam] = useState<Team>();
+const League = async ({ params: { id } }: { params: { id: string } }) => {
+   const supabase = createClient();
 
-   const { session, user, userTeams, teams, leagues, fetchTeams } =
-      useContext(PageContext);
-
-   useEffect(() => {
-      leagues?.forEach((league: League) => {
-         if (league.league_id === id) {
-            setLeague(league);
-            if (league.owner === user?.id) {
-               setOwner(user);
-            }
-         }
-      });
-   }, [leagues]);
-
-   useEffect(() => {
-      setHasTeam(userTeams ? true : false);
-      return () => {
-         setIsLoading(false);
-      };
-   }, [userTeams]);
-
-   useEffect(() => {
-      const channel = supabase
-         .channel('teams-channel')
-         .on(
-            'postgres_changes',
-            { event: '*', schema: 'public', table: 'teams' },
-            (payload) => {
-               if (
-                  payload.eventType === 'INSERT' &&
-                  payload.new.owner === user?.id
-               ) {
-                  fetchTeams?.();
-                  setHasTeam(true);
-               }
-            }
-         )
-         .subscribe();
-      if (hasTeam) supabase.removeChannel(channel);
-   }, [userTeams, user]);
+   const currentYear = new Date().getFullYear();
+   const { data: user }: Awaited<UserResponse> = await supabase.auth.getUser();
+   const { data: session } = await supabase.auth.getSession();
+   if (!user?.user || !session) {
+      return;
+   }
+   const league: Awaited<League> = await fetchLeague(supabase, id);
+   const owner: boolean = league?.owner === user?.user?.id;
+   const draft: Awaited<Draft> = await fetchDraftByLeague(
+      supabase,
+      id,
+      currentYear
+   );
+   const team: Awaited<Team> = await fetchTeam(supabase, user.user.id, id);
 
    const leagueTeamViewProps: LeagueTeamViewProps = {
-      team: teamViewTeam,
+      team: team,
       leagueID: id,
+   };
+
+   const keepersProps: KeeperViewProps = {
+      league: league,
+      team: team,
+      draft: draft,
    };
 
    const tabs: Tab[] = [
@@ -73,45 +52,23 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
          tabPane: <TeamView {...leagueTeamViewProps} />,
       },
       {
-         tabButton: 'League Management',
-         tabPane: <OwnerView league={league} />,
+         tabButton: 'Set Keepers',
+         tabPane: <KeepersTab {...keepersProps} />,
       },
    ];
+
    const tabProps: TabProps = {
       tabs,
       className:
          'flex flex-col w-full lg:max-w-screen-xl text-white mt-5 items-center',
    };
 
-   useEffect(() => {
-      if (userTeams === undefined) fetchTeams?.();
-   }, [session, user, userTeams]);
-
-   useEffect(() => {
-      setTeamViewTeam(
-         userTeams?.filter((team: Team) => {
-            return team.league_id === id;
-         })[0]
-      );
-   }, [userTeams]);
-
    return (
       <>
-         {!session || session === undefined || !user || user === undefined ? (
+         {
             <>
-               <h1>You must log in to see this</h1>
-               <AuthModal buttonClass="py-2 px-4 rounded-md no-underline" />
-            </>
-         ) : (
-            <>
-               {owner?.id === user?.id && (
-                  <>
-                     {userTeams !== undefined && id !== undefined && (
-                        <Tabs {...tabProps} />
-                     )}
-                  </>
-               )}
-               {!hasTeam ? (
+               {team && <Tabs {...tabProps} />}
+               {!team && (
                   <div className="">
                      <h1>Looks like you need to create a team</h1>
                      <p>Let&apos;s get started!</p>
@@ -125,21 +82,9 @@ const League = ({ params: { id } }: { params: { id: string } }) => {
                         <button type="submit">Submit</button>
                      </form>
                   </div>
-               ) : (
-                  !owner && (
-                     <>
-                        <TeamView {...leagueTeamViewProps} />
-                        <Link
-                           className={'bg-emerald-primary p-2 rounded-md mt-2'}
-                           href={`/leagues/${id}/draft`}
-                        >
-                           Join Draft
-                        </Link>
-                     </>
-                  )
                )}
             </>
-         )}
+         }
       </>
    );
 };

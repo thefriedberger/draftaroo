@@ -3,7 +3,7 @@ module.exports = {
    content: [
       './app/**/*.{js,ts,jsx,tsx}',
       './pages/**/*.{js,ts,jsx,tsx}',
-      './components/**/*.{js,ts,jsx,tsx}',
+      './components/ui/**/*.{js,ts,jsx,tsx}',
    ],
    theme: {
       extend: {
@@ -14,10 +14,10 @@ module.exports = {
                background: 'hsl(var(--btn-background))',
                'background-hover': 'hsl(var(--btn-background-hover))',
             },
-            emerald: { primary: '#059669' },
+            emerald: { primary: '#059669', dark: '#036345', light: '#06C689' },
             purple: '#570478',
             gold: '#785704',
-            fuscia: '#bb4467',
+            fuscia: { primary: '#bb4467', dark: '#963653' },
             gray: {
                primary: '#3e3e3e',
                light: '#6e6e6e',
@@ -25,13 +25,14 @@ module.exports = {
                scrollhover: '#5c5c5c',
             },
             blue: {
-               muted: '#6DDBFC',
-               primary: '#1AA1C9',
+               muted: '#7082D3',
+               primary: '#354BAC',
             },
             paper: {
-               primary: '#cecdc2',
+               primary: '#ADAD99',
                dark: '#91907e',
-               light: '#f4f3e1',
+               light: '#DBDBD2',
+               button: '#EDEDE8',
             },
             orange: '#DE8F52',
          },
@@ -47,6 +48,11 @@ module.exports = {
             15: 'repeat(15, minmax(0, 1fr))',
             16: 'repeat(16, minmax(0, 1fr))',
          },
+      },
+      animation: {
+         'bounce-1': '1s bounce 0s infinite',
+         'bounce-1.5': '1s bounce .25s infinite',
+         'bounce-2': '1s bounce .75s infinite',
       },
    },
    plugins: [],

@@ -1,8 +1,13 @@
-import { Pick } from '@/components/draft-order';
-import { formStatus, formType } from '@/components/modals/auth';
-import { User } from '@supabase/supabase-js';
+import { WatchlistAction } from '@/components/context/page-context';
+import { Pick } from '@/components/ui/draft-order';
+import { formStatus, formType } from '@/components/ui/form-wrappers/login';
+import { SupabaseClient, User } from '@supabase/supabase-js';
 import { AnchorHTMLAttributes, ReactNode } from 'react';
 
+export interface DraftSelections extends DraftSelection {
+   first_name: string;
+   last_name: string;
+}
 export interface BaseProps {
    title?: string;
 }
@@ -14,44 +19,57 @@ export interface Link {
 export interface CalloutProps {
    calloutText?: string;
    links?: Link[];
+   classes?: string;
 }
 
-export interface TabProps {
-   text?: string;
-   linkType?: string;
-   link?: string;
-   centerTabs?: boolean;
-}
 export interface DraftOrderProps {
    draftedPlayers: DraftSelection[];
    currentPick: number;
    teams: Team[] | any;
-   turnOrder: any;
+   turnOrder: DraftPick[];
    isYourTurn: boolean;
    league?: League | any;
    players: Player[];
    teamID: string;
+   numberOfRounds: number;
+   updateFeaturedPlayer: (player: Player | any, playerID?: number) => void;
 }
 
 export interface WatchlistProps {
-   updateFeaturedPlayer: (player: Player | any) => void;
+   updateFeaturedPlayer: (player: Player | any, playerID?: number) => void;
    draftedIDs: number[];
    leagueID: string;
+   watchlist: number[];
+   players: Player[];
+   updateWatchlist: (player: Player, action: WatchlistAction) => void;
 }
 
 export interface FeaturedPlayerProps {
    featuredPlayer: Player | null;
    yourTurn: boolean;
-   handleDraftSelection: (player: Player) => void;
+   watchlist: number[];
+   updateWatchlist: (player: Player, action: WatchlistAction) => void;
+   handleDraftSelectionProps: {
+      supabase: SupabaseClient;
+      currentPick: number;
+      currentRound: number;
+      draft: Draft;
+      teamId: string;
+   };
    updateFeaturedPlayer: (player: Player | null) => void;
    draftedIDs: number[];
+   isActive: boolean;
+   leagueScoring: LeagueScoring;
 }
 
 export interface PlayerListProps {
-   updateFeaturedPlayer: (player: Player | any) => void;
-   leagueID: string;
+   updateFeaturedPlayer: (player: Player | any, playerId?: number) => void;
+   league: League;
    draftedIDs: number[];
    players: Player[];
+   watchlist: number[];
+   updateWatchlist: (player: Player, action: WatchlistAction) => void;
+   leagueScoring: LeagueScoring;
 }
 
 export interface DraftTileProps {
@@ -59,12 +77,18 @@ export interface DraftTileProps {
    currentPick: number;
    playerSelected: any;
    isYourTurn: boolean;
+   updateFeaturedPlayer: (player: Player | any, playerID?: number) => void;
 }
 
 export interface ChatProps {
    user: User | null;
 }
 
+export interface DraftPick {
+   team_id: string;
+   draft_id: string;
+   picks: number[];
+}
 export interface TeamProps {
    team_name: string;
    owner: string;
@@ -91,6 +115,11 @@ export interface TabProps {
    useHash?: boolean;
    activeTabName?: string;
    tabBgColor?: string;
+   text?: string;
+   linkType?: string;
+   link?: string;
+   centerTabs?: boolean;
+   saveState?: boolean;
 }
 export interface Profile {
    firstName: string;
@@ -112,36 +141,54 @@ export interface DropdownProps {
 
 export interface AuthFormProps {
    setFormType: (formType: formType) => void;
-   setView: (view: formStatus) => void;
+   setView?: (view: formStatus) => void;
 }
 
 export interface TimerProps {
    owner?: string | any;
+   endTime?: string;
    currentPick: number | string;
    currentRound: number | string;
    doStart?: boolean;
-   doReset: boolean;
-   setDoReset: (val: boolean) => void;
+   doReset?: boolean;
+   setDoReset?: (val: boolean) => void;
    isActive: boolean;
    autopick: () => void;
    yourTurn: boolean;
    turnOrder: any;
    userTeam: Team;
+   isCompleted: boolean;
 }
 
 export interface BoardProps {
-   leagueID: string | any;
-   draft: Draft | any;
+   league: League;
+   leagueID: string;
+   players: Player[];
+   draft: Draft;
+   draftPicks: DraftPick[];
+   watchlist: watchlist;
+   user: User;
+   team: Team;
+   teams: Team[];
+   leagueRules: LeagueRules;
+   leagueScoring: LeagueScoring;
+   draftedPlayers: DraftSelection[];
 }
 export interface LeagueTeamViewProps {
-   team: Team | undefined;
+   team: Team;
    leagueID: string;
+}
+
+export interface KeeperViewProps {
+   league: League;
+   team: Team;
+   draft: Draft;
 }
 export interface TeamViewProps {
    players: Player[];
    doReset?: boolean;
    setDoReset?: (reset: boolean) => void;
-   updateFeaturedPlayer: (player: Player | any) => void;
+   updateFeaturedPlayer: (player: Player | any, playerID?: number) => void;
 }
 
 export interface MyTeamProps extends TeamViewProps {
@@ -168,22 +215,22 @@ export type stats = {
    blocked?: number;
    shotPct?: number;
    plusMinus?: number;
-   timeOnIce?: string;
+   timeOnIce?: number;
    faceOffPct?: number;
-   evenTimeOnIce?: string;
+   evenTimeOnIce?: number;
    overTimeGoals?: number;
    penaltyMinutes?: number;
    powerPlayGoals?: number;
    powerPlayPoints?: number;
    gameWinningGoals?: number;
    shortHandedGoals?: number;
-   timeOnIcePerGame?: string;
+   timeOnIcePerGame?: number;
    shortHandedPoints?: number;
-   powerPlayTimeOnIce?: string;
-   evenTimeOnIcePerGame?: string;
-   shortHandedTimeOnIce?: string;
-   powerPlayTimeOnIcePerGame?: string;
-   shortHandedTimeOnIcePerGame?: string;
+   powerPlayTimeOnIce?: number;
+   evenTimeOnIcePerGame?: number;
+   shortHandedTimeOnIce?: number;
+   powerPlayTimeOnIcePerGame?: number;
+   shortHandedTimeOnIcePerGame?: number;
    ot?: number;
    ties?: number;
    wins?: number;
@@ -211,3 +258,5 @@ export interface PlayerStats {
    stats?: stats;
    season?: string | number;
 }
+
+export type watchlist = Watchlist;

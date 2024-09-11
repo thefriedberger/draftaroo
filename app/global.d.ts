@@ -2,7 +2,7 @@ import type { Database as DB } from '@/lib/database.types';
 
 declare global {
    type Database = DB;
-   type Team = DB['public']['Tables']['teams']['Update'];
+   type Team = DB['public']['Tables']['teams']['Row'];
    type League = DB['public']['Tables']['leagues']['Update'];
    type Player = DB['public']['Tables']['players']['Row'];
    type Watchlist = DB['public']['Tables']['watchlist']['Row'];
