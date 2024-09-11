@@ -16,6 +16,8 @@ const Watchlist = ({
    );
 
    // comment to test
+
+   // second revert test
    useEffect(() => {
       if (players && watchlist && watchlist?.length) {
          setWatchlistPlayers(
