@@ -1,13 +1,12 @@
+import { DraftContext } from '@/components/context/draft-context';
 import { DraftTileProps } from '@/lib/types';
 import classNames from 'classnames';
-import { useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 
-const DraftTile = ({
-   pick,
-   currentPick,
-   updateFeaturedPlayer,
-}: DraftTileProps) => {
+const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
    const draftTileRef = useRef<HTMLDivElement | null>(null);
+
+   const { updateFeaturedPlayer } = useContext(DraftContext);
 
    const scrollCallback = () => {
       // lol wut is this? JS written in 2015?
@@ -29,7 +28,7 @@ const DraftTile = ({
    }, [pick, currentPick]);
 
    const handleUpdateFeaturedPlayer = () => {
-      updateFeaturedPlayer(null, pick.playerID);
+      updateFeaturedPlayer?.(null, pick.playerID);
    };
    return (
       <div
