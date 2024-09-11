@@ -86,8 +86,6 @@ const OldTimer = ({
       clearInterval(timerRef.current);
    };
 
-   // second test comment
-
    const handleReset = () => {
       clearInterval(timerRef.current);
       setTimer(TIMER_DURATION);

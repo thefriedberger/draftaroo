@@ -1,4 +1,7 @@
-import { DraftTimerFields } from '@/components/ui/timer/new-timer';
+import {
+   DraftTimerFields,
+   TIMER_DURATION,
+} from '@/components/ui/timer/new-timer';
 import { DraftPick } from '@/lib/types';
 import { SupabaseClient, User } from '@supabase/supabase-js';
 import { cache } from 'react';
@@ -268,4 +271,47 @@ export const convertTime = (time: number) => {
    const hours = Math.floor(time * (1 / 60));
    const minutes = Math.round(time - hours * 60);
    return `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
+};
+
+export const handlePick = async (
+   supabase: SupabaseClient,
+   draft: Draft,
+   currentPick: number
+) => {
+   setMainTimer(supabase, draft.id, Date.now() + TIMER_DURATION * 1000);
+
+   await supabase
+      .from('draft')
+      .update({ current_pick: currentPick + 1 })
+      .match({ id: draft.id });
+};
+export interface HandleDraftSelectionsProps {
+   supabase: SupabaseClient;
+   player: Player;
+   teamId: string;
+   draft: Draft;
+   currentRound: number;
+   currentPick: number;
+}
+export const handleDraftSelection = async ({
+   supabase,
+   player,
+   teamId,
+   draft,
+   currentRound,
+   currentPick,
+}: HandleDraftSelectionsProps) => {
+   console.log('drafting a player', player.id);
+   const { data, error } = await supabase.from('draft_selections').insert({
+      player_id: player.id,
+      team_id: teamId,
+      draft_id: draft.id,
+      round: currentRound,
+      pick: currentPick,
+   });
+   if (error) {
+      console.log(error);
+      return;
+   }
+   handlePick(supabase, draft, currentPick);
 };

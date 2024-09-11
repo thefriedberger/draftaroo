@@ -5,7 +5,12 @@ import { DraftOrderIcon } from '@/app/assets/images/icons/draft-order';
 import { MyTeamIcon } from '@/app/assets/images/icons/my-team';
 import { TeamsIcon } from '@/app/assets/images/icons/teams';
 import { WatchlistIcon } from '@/app/assets/images/icons/watchlist';
-import { setMainTimer, updateSupabaseWatchlist } from '@/app/utils/helpers';
+import {
+   handleDraftSelection,
+   handlePick,
+   setMainTimer,
+   updateSupabaseWatchlist,
+} from '@/app/utils/helpers';
 import { WatchlistAction } from '@/components/context/page-context';
 import {
    BoardProps,
@@ -80,6 +85,13 @@ const Board = ({
 
    const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
 
+   const handleDraftSelectionProps = {
+      supabase: supabase,
+      currentPick: currentPick,
+      currentRound: currentRound,
+      draft: draft,
+      teamId: team.id,
+   };
    useEffect(() => {
       if (draftedPlayersState.length > 0) {
          for (const player of draftedPlayersState) {
@@ -123,7 +135,7 @@ const Board = ({
             for (const player of draftedPlayersState) {
                if (player.pick === currentPick && player.is_keeper) {
                   setTimeout(() => {
-                     handlePick();
+                     handlePick(supabase, draft, currentPick);
                   }, 500);
                }
             }
@@ -247,35 +259,19 @@ const Board = ({
       setMainTimer(supabase, draft.id, Date.now() + TIMER_DURATION * 1000);
    };
 
-   const handlePick = async () => {
-      setMainTimer(supabase, draft.id, Date.now() + TIMER_DURATION * 1000);
-
+   const stopDraft = async () => {
       await supabase
          .from('draft')
-         .update({ current_pick: currentPick + 1 })
+         .update({ is_active: false })
          .match({ id: draft.id });
    };
-
-   const handleDraftSelection = async (player: Player, teamId?: string) => {
-      if (team && player && draft) {
-         const { data, error } = await supabase
-            .from('draft_selections')
-            .insert({
-               player_id: player.id,
-               team_id: teamId ?? team.id,
-               draft_id: draft.id,
-               round: currentRound,
-               pick: currentPick,
-            });
-         if (error) {
-            console.log(data, error);
-            return;
-         }
-         handlePick();
-      }
-   };
-
    const autoDraft = () => {
+      const autoDraftTeam = turnOrder.current.find((team) =>
+         team.picks.includes(currentPick)
+      );
+
+      if (!autoDraftTeam) return;
+
       const playerToDraft =
          sortPlayers(
             players.filter((player) => !draftedIDs.includes(player.id)),
@@ -283,16 +279,11 @@ const Board = ({
             1
          )[0] || null;
       if (!playerToDraft) return;
-      let autoDraftTeam;
-      for (const team of turnOrder.current) {
-         if (team.picks.includes(currentPick) && playerToDraft) {
-            autoDraftTeam = team;
-            break;
-         }
-      }
-      if (autoDraftTeam) {
-         handleDraftSelection(playerToDraft, autoDraftTeam.team_id);
-      }
+      handleDraftSelection({
+         ...handleDraftSelectionProps,
+         player: playerToDraft,
+         teamId: autoDraftTeam.team_id,
+      });
    };
 
    const updateTeamsViewPlayers = (teamId: string) => {
@@ -369,7 +360,7 @@ const Board = ({
       watchlist: watchlistState,
       updateWatchlist: updateWatchlist,
       updateFeaturedPlayer: updateFeaturedPlayer,
-      handleDraftSelection: handleDraftSelection,
+      handleDraftSelectionProps: handleDraftSelectionProps,
       isActive: isActive,
       leagueScoring: leagueScoring,
    };
@@ -482,7 +473,7 @@ const Board = ({
       <div className="flex flex-col lg:flex-row items-center w-full overflow-y-scroll lg:overflow-y-hidden draft-board">
          {user && team?.league_id === league.league_id && (
             <>
-               {isOwner.current && !isActive && (
+               {isOwner.current && !isActive ? (
                   <button
                      className={classNames(
                         buttonClasses,
@@ -492,6 +483,17 @@ const Board = ({
                      onClick={startDraft}
                   >
                      Start Draft
+                  </button>
+               ) : (
+                  <button
+                     className={classNames(
+                        buttonClasses,
+                        'w-full lg:w-auto lg:h-full'
+                     )}
+                     type="button"
+                     onClick={stopDraft}
+                  >
+                     Stop Draft
                   </button>
                )}
                {!isMobile ? (

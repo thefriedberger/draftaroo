@@ -1,7 +1,7 @@
 'use client';
 
 import FallbackImage from '@/app/assets/images/default-skater.png';
-import { convertTime } from '@/app/utils/helpers';
+import { convertTime, handleDraftSelection } from '@/app/utils/helpers';
 import { FeaturedPlayerProps } from '@/lib/types';
 import classNames from 'classnames';
 import Image from 'next/image';
@@ -12,7 +12,7 @@ import WatchlistStar, { WatchlistStarProps } from '../watchlist/watchlist-star';
 const FeaturedPlayer = ({
    featuredPlayer,
    yourTurn,
-   handleDraftSelection,
+   handleDraftSelectionProps,
    updateFeaturedPlayer,
    draftedIDs,
    updateWatchlist,
@@ -181,7 +181,10 @@ const FeaturedPlayer = ({
                               onClick={() => {
                                  isActive &&
                                     yourTurn &&
-                                    handleDraftSelection(featuredPlayer);
+                                    handleDraftSelection({
+                                       ...handleDraftSelectionProps,
+                                       player: featuredPlayer,
+                                    });
                               }}
                               type="button"
                               disabled={!isActive || !yourTurn}

@@ -9,11 +9,6 @@ const PlayerObserver = (options: IntersectionObserverInit) => {
       if (playersRef.current) {
          observer.observe(playersRef.current);
       }
-      //   return () => {
-      //      if (playersRef.current) {
-      //         observer.unobserve(playersRef.current);
-      //      }
-      //   };
    }, [playersRef]);
 
    const loadPlayers: IntersectionObserverCallback = (entries, observer) => {

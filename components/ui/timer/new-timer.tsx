@@ -14,7 +14,7 @@ export interface NewTimerProps extends TimerProps {
 
 export type DraftTimerFields = { is_active: boolean; end_time?: number };
 
-export const TIMER_DURATION = 60; // seconds
+export const TIMER_DURATION = 15; // seconds
 
 const NewTimer = ({
    draftId,
@@ -38,7 +38,8 @@ const NewTimer = ({
       is_active: false,
    });
    var timerValue = useRef(TIMER_DURATION);
-   const [timer, setTimer] = useState(TIMER_DURATION);
+   const shouldAutopick = useRef(false);
+   const [timer, setTimer] = useState<string>(formatTime(TIMER_DURATION));
    const [userPick, setUserPick] = useState<number>();
    const [doMute, setDoMute] = useState<boolean>(false);
    const chime = createRef<HTMLAudioElement>();
@@ -57,7 +58,7 @@ const NewTimer = ({
             const diff = end - now;
             setIsTimerRunning(true);
             if (diff < 0) {
-               setTimer(0);
+               setTimer(formatTime(0));
                timerValue.current = 0;
             } else {
                const finalTimer = Math.ceil(diff / 1000);
@@ -65,7 +66,7 @@ const NewTimer = ({
                lastTick.current = performance.now();
 
                timerValue.current = finalTimer;
-               setTimer(finalTimer);
+               setTimer(formatTime(finalTimer));
                setRunning(true);
             }
          }
@@ -101,11 +102,8 @@ const NewTimer = ({
                   const end = roomData.end_time;
                   const diff = end - Date.now();
                   if (diff < 0) {
-                     setTimer(0);
+                     setTimer(formatTime(0));
                      timerValue.current = 0;
-                     if (owner) {
-                        // autopick();
-                     }
                   } else {
                      timeDown(timerValue.current);
                      lastTick.current = now;
@@ -115,6 +113,12 @@ const NewTimer = ({
          }
       }
    }, [tick]);
+
+   useEffect(() => {
+      if (timer === '00:00' && owner) {
+         autopick();
+      }
+   }, [timer]);
 
    // end of use effects
 
@@ -163,8 +167,8 @@ const NewTimer = ({
          if (t < 0) {
             t = 0;
          }
-
          timerValue.current = t;
+         setTimer(formatTime(t));
       }
    };
 
@@ -175,12 +179,6 @@ const NewTimer = ({
          ('0' + (t % 60)).slice(-2);
       return finalTime;
    }
-
-   const getTime = () => {
-      var t = timer;
-      return formatTime(timerValue.current);
-   };
-
    return (
       <div className="flex flex-col justify-between w-full h-[10dvh] lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative">
          {!isCompleted ? (
@@ -208,7 +206,7 @@ const NewTimer = ({
                {!isMobile ? (
                   <>
                      <p className="bg-orange text-black text-4xl p-2 text-center font-bold">
-                        {getTime()}
+                        {timer}
                      </p>
                      <p className="">{currentRound}&nbsp;Round</p>
                      <p className="">{currentPick}&nbsp;Pick</p>
@@ -224,7 +222,7 @@ const NewTimer = ({
                ) : (
                   <div className="bg-paper-primary dark:bg-gray-primary flex flex-row items-center h-full">
                      <div className="flex items-center justify-center mr-2 text-xl w-[100px] bg-orange min-h-full">
-                        <p className="p-2 text-2xl">{getTime()}</p>
+                        <p className="p-2 text-2xl">{timer}</p>
                      </div>
                      <div className="flex flex-col py-2">
                         <p className="">{currentRound}&nbsp;Round</p>

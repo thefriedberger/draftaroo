@@ -1,7 +1,7 @@
 import { WatchlistAction } from '@/components/context/page-context';
 import { Pick } from '@/components/ui/draft-order';
 import { formStatus, formType } from '@/components/ui/form-wrappers/login';
-import { User } from '@supabase/supabase-js';
+import { SupabaseClient, User } from '@supabase/supabase-js';
 import { AnchorHTMLAttributes, ReactNode } from 'react';
 
 export interface DraftSelections extends DraftSelection {
@@ -49,7 +49,13 @@ export interface FeaturedPlayerProps {
    yourTurn: boolean;
    watchlist: number[];
    updateWatchlist: (player: Player, action: WatchlistAction) => void;
-   handleDraftSelection: (player: Player) => void;
+   handleDraftSelectionProps: {
+      supabase: SupabaseClient;
+      currentPick: number;
+      currentRound: number;
+      draft: Draft;
+      teamId: string;
+   };
    updateFeaturedPlayer: (player: Player | null) => void;
    draftedIDs: number[];
    isActive: boolean;
