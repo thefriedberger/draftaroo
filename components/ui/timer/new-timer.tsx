@@ -14,7 +14,7 @@ export interface NewTimerProps extends TimerProps {
 
 export type DraftTimerFields = { is_active: boolean; end_time?: number };
 
-export const TIMER_DURATION = 15; // seconds
+export const TIMER_DURATION = 120; // seconds
 
 const NewTimer = ({
    draftId,
