@@ -298,7 +298,6 @@ export const handleDraftSelection = async ({
    currentRound,
    currentPick,
 }: HandleDraftSelectionsProps) => {
-   console.log('drafting a player', player.id);
    const { data, error } = await supabase.from('draft_selections').insert({
       player_id: player.id,
       team_id: teamId,

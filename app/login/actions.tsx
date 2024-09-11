@@ -20,10 +20,8 @@ export async function login(formData: FormData) {
       error,
    } = await supabase.auth.signInWithPassword(data);
 
-   console.log(user);
    if (error) {
       console.log(error);
-      //   redirect('/error');
    }
 
    revalidatePath('/');
