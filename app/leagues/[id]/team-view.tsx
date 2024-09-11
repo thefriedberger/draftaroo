@@ -1,3 +1,4 @@
+'use client';
 import { LeagueTeamViewProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { ChangeEvent, useState } from 'react';
@@ -28,7 +29,7 @@ const TeamView = ({ team, leagueID }: LeagueTeamViewProps) => {
                   className="font-bold text-xl text-black dark:text-white mb-2"
                   key={team.id}
                >
-                  {teamName || team.team_name}
+                  {teamName || team?.team_name}
                </h2>
                <form className="flex flex-col items-start">
                   <label

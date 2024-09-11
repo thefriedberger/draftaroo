@@ -1,0 +1,16 @@
+.message-notification {
+   animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) 1s infinite;
+}
+
+@keyframes ping {
+   0%,
+   75% {
+      transform: scale(1);
+      opacity: 0.75;
+   }
+   75%,
+   100% {
+      transform: scale(2);
+      opacity: 0;
+   }
+}
