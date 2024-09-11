@@ -91,7 +91,6 @@ const OldTimer = ({
       setTimer(TIMER_DURATION);
       setTimeout(() => {
          setStatus(TIMER_STATUS.START);
-         setDoReset(false);
       }, 1000);
    };
    useEffect(() => {

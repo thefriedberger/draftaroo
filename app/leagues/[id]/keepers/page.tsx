@@ -38,7 +38,6 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
       id,
       new Date().getFullYear()
    );
-   console.log(team, league, id);
 
    if (!draft) {
       return (
