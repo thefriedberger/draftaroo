@@ -47,14 +47,14 @@ const ForgotPasswordForm = (props: AuthFormProps) => {
             >
                Send recovery link
             </button>
-            <div className="flex flex-col md:flex-row md:justify-around items-center md:items-end">
+            <div className="flex flex-col lg:flex-row lg:justify-around items-center lg:items-end">
                <button
                   className="underline"
                   onClick={() => setFormType('SIGN_IN')}
                >
                   Sign In
                </button>
-               <div className="flex flex-col mt-5 md:mt-0 text-center md:text-left items-center md:items-start">
+               <div className="flex flex-col mt-5 lg:mt-0 text-center lg:text-left items-center lg:items-start">
                   <p className="text-sm text-center">
                      Don&rsquo;t have an account?
                   </p>

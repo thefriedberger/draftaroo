@@ -2,23 +2,24 @@
 
 import { MicIcon } from '@/app/assets/images/icons/mic-icon';
 import { MutedIcon } from '@/app/assets/images/icons/muted-icon';
-import { DraftPick, TimerProps } from '@/lib/types';
+import { useWorkerTimeout } from '@/components/worker/worker-timeout';
+import { DraftPick } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { createRef, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
+import { NewTimerProps } from './new-timer';
 
 export enum TIMER_STATUS {
    START = 'start',
    STOP = 'stop',
    RESET = 'reset',
 }
-
+export const twoDigits = (num: number) =>
+   new Date(num * 1000).toISOString().substring(14, 19);
 const Timer = ({
+   draftId,
    owner,
    currentPick,
-   doStart,
-   doReset,
-   setDoReset,
    currentRound,
    isActive,
    autopick,
@@ -26,138 +27,100 @@ const Timer = ({
    turnOrder,
    userTeam,
    isCompleted,
-}: TimerProps) => {
+}: NewTimerProps) => {
    const TIMER_DURATION = 120;
-   const [status, setStatus] = useState<TIMER_STATUS>(TIMER_STATUS.STOP);
-   const [timer, setTimer] = useState<number>(TIMER_DURATION);
-   const timerRef = useRef<any>();
+   const { setRunning, tick } = useWorkerTimeout();
+
+   const timerValue = useRef<number>(TIMER_DURATION); // tracks current time
+   const resetTimer = useRef<boolean>(true); // tracks whether user should broadcast
+   const endTime = useRef<number>();
+   const [timer, setTimer] = useState<string>(twoDigits(timerValue.current)); // What displays
+   var lastTick = useRef(performance.now());
+
    const [userPick, setUserPick] = useState<number>();
+
    const chime = createRef<HTMLAudioElement>();
    const [doMute, setDoMute] = useState<boolean>(false);
+
    const supabase = createClientComponentClient<Database>();
 
-   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
+   const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
 
-   const timerChannelA = supabase.channel('timer-channel');
-   const timerChannelB = supabase.channel('timer-channel');
-   const timerChannelC = supabase.channel('timer-channel');
+   const timerChannel = supabase.channel(`public:draft:id=eq.${draftId}`);
 
-   const twoDigits = (num: number) =>
-      new Date(num * 1000).toISOString().substring(14, 19);
-   const handleStart = () => {
-      timerRef.current = setInterval(() => {
-         setTimer((timer) => timer - 1);
-      }, 1000);
+   const timeDown = (value: number) => {
+      if (isActive) {
+         var t = Number(String(value)) - 1;
+         if (t < 0) {
+            t = 0;
+         }
+
+         timerValue.current = t;
+      }
    };
 
    useEffect(() => {
+      //   resetTimer.current = isActive;
+   }, [isActive]);
+
+   useEffect(() => {
+      setTimer(twoDigits(timerValue.current));
+   }, [timerValue]);
+
+   useEffect(() => {
+      timerChannel
+         .on(
+            'postgres_changes',
+            {
+               event: '*',
+               schema: 'public',
+               table: 'draft',
+               filter: `id=eq.${draftId}`,
+            },
+            (payload) => {}
+         )
+         .subscribe();
+   }, [timerChannel, resetTimer]);
+
+   useEffect(() => {
       if (turnOrder.length && userTeam?.id) {
-         const picks = turnOrder.filter(
-            (turn: DraftPick) => turn.team_id === userTeam.id
-         )[0];
-         for (const pick in picks.picks) {
-            if (pick === currentPick) {
-               setUserPick(0);
-               break;
-            }
-            if (pick > currentPick) {
-               setUserPick(Math.abs(Number(currentPick) - Number(pick)));
-               break;
-            }
-         }
+         setUserPick(
+            Math.abs(
+               Number(currentPick) -
+                  turnOrder
+                     .filter(
+                        (turn: DraftPick) => turn.team_id === userTeam.id
+                     )[0]
+                     .picks.find((pick: number) => Number(currentPick) <= pick)
+            )
+         );
       }
    }, [turnOrder, userTeam, currentPick]);
 
    useEffect(() => {
-      if (status === TIMER_STATUS.START && owner) handleStart();
-      if (status === TIMER_STATUS.STOP) handleStop();
-      if (status === TIMER_STATUS.RESET) handleReset();
-      return () => {
-         clearInterval(timerRef.current);
-      };
-   }, [status, isActive, owner]);
+      if (tick > 0) {
+         const now = performance.now();
 
-   useEffect(() => {
-      if (owner && timer === 0) {
-         setStatus(TIMER_STATUS.STOP);
-         autopick();
-      }
-   }, [timer, owner]);
-
-   const handleStop = () => {
-      clearInterval(timerRef.current);
-   };
-
-   const handleReset = () => {
-      clearInterval(timerRef.current);
-      setTimer(TIMER_DURATION);
-      setTimeout(() => {
-         setStatus(TIMER_STATUS.START);
-         setDoReset(false);
-      }, 1000);
-   };
-   useEffect(() => {
-      doStart && setStatus(TIMER_STATUS.START);
-   }, [doStart]);
-
-   useEffect(() => {
-      doReset && setStatus(TIMER_STATUS.RESET);
-   }, [doReset]);
-
-   useEffect(() => {
-      timerChannelA
-         .on('broadcast', { event: 'timer' }, (payload) => {
-            if (payload && !owner) {
-               payload.payload.message && setTimer(payload.payload.message);
-            }
-         })
-         .on('broadcast', { event: 'status' }, (payload) => {
-            if (payload) {
-               payload.payload.status && setStatus(payload.payload.status);
-            }
-         });
-   }, [timerChannelA]);
-
-   useEffect(() => {
-      if (owner)
-         timerChannelB.subscribe((channelStatus) => {
-            if (channelStatus === 'SUBSCRIBED') {
-               timerChannelB.send({
-                  type: 'broadcast',
-                  event: 'timer',
-                  payload: { message: timer },
-               });
-            }
-         });
-   }, [timer, timerChannelB, owner]);
-
-   useEffect(() => {
-      timerChannelC.subscribe((channelStatus) => {
-         if (channelStatus === 'SUBSCRIBED') {
-            if (status === TIMER_STATUS.START) {
-               timerChannelC.send({
-                  type: 'broadcast',
-                  event: 'status',
-                  payload: { status: TIMER_STATUS.START },
-               });
-            }
-            if (status === TIMER_STATUS.STOP) {
-               timerChannelC.send({
-                  type: 'broadcast',
-                  event: 'status',
-                  payload: { status: TIMER_STATUS.STOP },
-               });
-            }
-            if (status === TIMER_STATUS.RESET) {
-               timerChannelC.send({
-                  type: 'broadcast',
-                  event: 'status',
-                  payload: { status: TIMER_STATUS.RESET },
-               });
+         // run only if timer is running
+         if (isActive) {
+            if (now - lastTick.current >= 950) {
+               if (endTime.current) {
+                  const diff = endTime.current - Date.now();
+                  if (diff < 0) {
+                     setTimer(twoDigits(0));
+                     timerValue.current = 0;
+                     if (owner) {
+                        // autopick();
+                     }
+                  } else {
+                     timeDown(timerValue.current);
+                     lastTick.current = now;
+                  }
+               }
             }
          }
-      });
-   }, [status]);
+      }
+   }, [tick]);
 
    return (
       <div className="flex flex-col justify-between max-h-[10dvh] h-[10dvh] lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative">
@@ -185,7 +148,7 @@ const Timer = ({
                {!isMobile ? (
                   <>
                      <p className="bg-orange text-black text-4xl p-2 text-center font-bold">
-                        {twoDigits(timer)}
+                        {timer}
                      </p>
                      <p className="">{currentRound}&nbsp;Round</p>
                      <p className="">{currentPick}&nbsp;Pick</p>
@@ -201,7 +164,7 @@ const Timer = ({
                ) : (
                   <div className="flex flex-row items-center h-full">
                      <div className="flex items-center justify-center mr-2 text-xl w-[100px] bg-orange min-h-full">
-                        <p className="p-2 text-2xl">{twoDigits(timer)}</p>
+                        <p className="p-2 text-2xl">{timer}</p>
                      </div>
                      <div className="flex flex-col py-2">
                         <p className="">{currentRound}&nbsp;Round</p>

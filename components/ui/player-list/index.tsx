@@ -198,7 +198,7 @@ const PlayerList = ({
                   />
                </div>
                <div
-                  className=" w-full md:h-full overflow-y-scroll relative"
+                  className=" w-full lg:h-full overflow-y-scroll relative"
                   id={'player-list-container'}
                >
                   <table

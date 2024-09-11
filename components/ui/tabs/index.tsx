@@ -28,7 +28,7 @@ const Tabs = ({
                key={key}
                className={classNames(
                   isActive ? styles['nav-active'] : styles['nav-inactive'],
-                  'h-[66px] inline-flex text-center p-2 items-end justify-center md:h-auto md:border-r-2 md:border-r-emerald-600 md:p-0 md:last-of-type:border-none lg:h-auto'
+                  'h-[66px] inline-flex text-center p-2 items-end justify-center lg:h-auto lg:border-r-2 lg:border-r-emerald-600 lg:p-0 lg:last-of-type:border-none lg:h-auto'
                )}
             >
                <button
@@ -37,7 +37,7 @@ const Tabs = ({
                      setActiveTabIndex(index);
                   }}
                   className={
-                     'flex flex-col items-center pb-1 text-white md:block text-center md:p-3'
+                     'flex flex-col items-center pb-1 text-white lg:block text-center lg:p-3'
                   }
                >
                   {tab.tabButton}
@@ -65,7 +65,7 @@ const Tabs = ({
          if (index === activeTabIndex) {
             return (
                <div
-                  className={classNames('md:block h-full w-full')}
+                  className={classNames('lg:block h-full w-full')}
                   id={`tab-panel-${index}`}
                   key={index}
                >
@@ -85,7 +85,7 @@ const Tabs = ({
                   styles['tablist'],
                   centerTabs && 'mx-auto',
                   tabBgColor ? tabBgColor : 'w-[100vw] bg-emerald-primary',
-                  'grid fixed bottom-0 rounded-t-sm shadow-black shadow z-10 md:justify-between md:w-auto md:flex md:static md:shadow-none md:flex-row md:text-left md-items-center lg:max-w-fit lg:h-[50px]',
+                  'grid fixed bottom-0 rounded-t-sm shadow-black shadow z-10 lg:justify-between lg:w-auto lg:flex lg:static lg:shadow-none lg:flex-row lg:text-left md-items-center lg:max-w-fit lg:h-[50px]',
                   `grid-cols-${tabs.length}`
                )}
             >
@@ -94,7 +94,7 @@ const Tabs = ({
             <div
                className={classNames(
                   `${styles['tabpanes']}`,
-                  'pb-[66px] md:pb-0 h-full'
+                  'pb-[66px] lg:pb-0 h-full'
                )}
             >
                {panes()}

@@ -17,6 +17,7 @@ type ChatType = {
    messageType: 'chat' | 'presence';
 };
 const Chat = ({ user }: ChatProps) => {
+   const sendMessage = useRef<boolean>(false);
    const [message, setMessage] = useState<string>();
    const [chat, setChat] = useState<ChatType[]>([]);
    const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -33,11 +34,11 @@ const Chat = ({ user }: ChatProps) => {
 
    useEffect(() => {
       chatChannel
-         .on('broadcast', { event: 'chat' }, (payload) => {
+         .on('broadcast', { event: 'chat' }, ({ payload }) => {
             if (payload) {
                const newChat: ChatType = {
-                  message: payload.payload.message,
-                  sender: payload.payload.sender,
+                  message: payload.message,
+                  sender: payload.sender,
                   messageType: 'chat',
                };
                if (!isOpen) {
@@ -48,22 +49,17 @@ const Chat = ({ user }: ChatProps) => {
                setChat((prev: ChatType[]) => [...prev, newChat]);
             }
          })
-         .on('presence', { event: 'join' }, (payload) => {
-            console.log(payload);
-         })
          .subscribe((status) => {
-            if (status === 'SUBSCRIBED' && message?.length && user) {
+            if (status === 'SUBSCRIBED' && sendMessage.current && user) {
                chatChannel.send({
                   type: 'broadcast',
                   event: 'chat',
                   payload: { message: message, sender: user },
                });
-               setTimeout(() => {
-                  setMessage('');
-               }, 100);
+               sendMessage.current = false;
             }
          });
-   }, [chatChannel, message]);
+   }, [chatChannel, sendMessage]);
 
    useEffect(() => {
       isOpen && setUnseenMessage(false);
@@ -73,13 +69,15 @@ const Chat = ({ user }: ChatProps) => {
       e.preventDefault();
       const target: any = e.target;
       setMessage(target[0].value);
+      sendMessage.current = true;
       target[0].value = '';
    };
    return (
       <div
          className={classNames(
+            !isOpen && 'h-0',
             isOpen && 'h-full max-h-[30%]',
-            'hidden mt-auto min-h-[60px] self-start md:flex flex-col transition-all w-full chat-container justify-end'
+            'hidden mt-auto min-h-[50px] self-start lg:flex flex-col transition-all w-full chat-container justify-end'
          )}
       >
          <div
@@ -145,7 +143,7 @@ const Chat = ({ user }: ChatProps) => {
                <input
                   type="text"
                   placeholder="Enter message"
-                  className="w-full text-sm self-center p-1 min-h-[25px] whitespace-nowrap"
+                  className="w-full text-sm self-center p-1 min-h-[25px] pr-[30px] whitespace-nowrap"
                />
                <button
                   type="submit"

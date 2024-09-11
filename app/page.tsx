@@ -24,9 +24,9 @@ export default async function Home() {
    );
 
    return (
-      <div className="pt-5 dark:text-white text-center w-full md:max-w-screen-lg">
+      <div className="pt-5 dark:text-white text-center w-full lg:max-w-screen-lg">
          <h1 className="text-3xl">Welcome to Draftaroo!</h1>
-         <div className="flex flex-col lg:flex-row flex-wrap w-full items-stretch md:items-start justify-between">
+         <div className="flex flex-col lg:flex-row flex-wrap w-full items-stretch lg:items-start justify-between">
             {userTeams &&
                leagues &&
                userTeams?.map(async (team: Team, index: number) => {

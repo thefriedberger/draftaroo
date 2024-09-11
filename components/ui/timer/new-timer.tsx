@@ -30,7 +30,7 @@ const NewTimer = ({
 }: NewTimerProps) => {
    const supabase = createClientComponentClient<Database>();
 
-   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
+   const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
    const { setRunning, tick } = useWorkerTimeout();
    const [isTimerRunning, setIsTimerRunning] = useState(false);
    var lastTick = useRef(performance.now());

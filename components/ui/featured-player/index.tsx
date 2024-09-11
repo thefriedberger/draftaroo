@@ -140,7 +140,7 @@ const FeaturedPlayer = ({
             src={featuredPlayer.headshot ?? FallbackImage}
             width="100"
             height="100"
-            className="hidden mt-auto md:block md:h-[100px] md:w-[100px] mr-2"
+            className="hidden mt-auto lg:block lg:h-[100px] lg:w-[100px] mr-2"
             alt={`${featuredPlayer.first_name} ${featuredPlayer.last_name} headshot`}
          />
       );
@@ -148,7 +148,7 @@ const FeaturedPlayer = ({
    return (
       <div
          className={classNames(
-            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light md:border-none md:bg-transparent md:min-h-[200px] md:h-[35%] md:relative z-10 fixed bottom-[66px] md:flex md:flex-col md:bottom-auto w-full p-2 md:py-0',
+            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:relative z-10 fixed bottom-[66px] lg:flex lg:flex-col lg:bottom-auto w-full p-2 lg:py-0',
             isExpanded ? 'h-[232px]' : 'h-[130px]'
          )}
       >

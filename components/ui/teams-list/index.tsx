@@ -31,7 +31,7 @@ const TeamsList = ({
          {user && teams && (
             <>
                <select
-                  className="text-black p-1 md:fixed h-[35px]"
+                  className="text-black p-1 lg:fixed h-[35px]"
                   onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                      setTeamsViewPlayers(e.target.value);
                      setDoReset(true);
@@ -58,7 +58,7 @@ const TeamsList = ({
                         );
                      })}
                </select>
-               <div className={'md:pt-[35px]'}>
+               <div className={'lg:pt-[35px]'}>
                   <Team {...teamProps} />
                </div>
             </>

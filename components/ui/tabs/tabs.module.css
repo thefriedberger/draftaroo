@@ -8,7 +8,7 @@
    @apply !fill-white !stroke-paper-primary;
 }
 
-@screen md {
+@screen lg {
    .nav-active::after {
       content: '';
       position: absolute;

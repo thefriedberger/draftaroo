@@ -34,7 +34,7 @@ const OldTimer = ({
    const [doMute, setDoMute] = useState<boolean>(false);
    const supabase = createClientComponentClient<Database>();
 
-   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
+   const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
 
    const timerChannelA = supabase.channel('timer-channel');
    const timerChannelB = supabase.channel('timer-channel');

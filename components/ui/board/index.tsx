@@ -20,12 +20,14 @@ import {
    WatchlistProps,
 } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import classNames from 'classnames';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Chat from '../chat';
 import DraftOrder from '../draft-order';
 import DraftOrderLoading from '../draft-order/loading';
 import FeaturedPlayer from '../featured-player';
+import { buttonClasses } from '../helpers/buttons';
 import MyTeam from '../my-team';
 import PlayerList, { sortPlayers } from '../player-list';
 import Tabs from '../tabs';
@@ -76,7 +78,7 @@ const Board = ({
    const [teamsViewPlayers, setTeamsViewPlayers] = useState<number[]>([]);
    const [teamViewToShow, setTeamViewToShow] = useState<string>('');
 
-   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
+   const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
 
    useEffect(() => {
       if (draftedPlayersState.length > 0) {
@@ -457,14 +459,14 @@ const Board = ({
       tabs,
       centerTabs: false,
       className:
-         'flex flex-col w-full lg:max-w-screen-xl md:h-[65%] text-white',
+         'flex flex-col w-full lg:max-w-screen-xl lg:h-[65%] text-white',
       saveState: false,
    };
 
    const mobileTabProps: TabProps = {
       tabs: mobileTabs,
       centerTabs: false,
-      className: `flex flex-col-reverse w-full h-[calc(100%-66px)] overflow-y-scroll mobile-tabs ${
+      className: `flex flex-col-reverse w-full h-[calc(100%-66px)] overflow-y-scroll ${
          featuredPlayer &&
          (!draftedIDs.includes(featuredPlayer?.id)
             ? 'featured-player-visible'
@@ -477,20 +479,23 @@ const Board = ({
       user: user,
    };
    return (
-      <div className="flex flex-col md:flex-row items-center w-full overflow-y-scroll md:overflow-y-hidden draft-board">
+      <div className="flex flex-col lg:flex-row items-center w-full overflow-y-scroll lg:overflow-y-hidden draft-board">
          {user && team?.league_id === league.league_id && (
             <>
+               {isOwner.current && !isActive && (
+                  <button
+                     className={classNames(
+                        buttonClasses,
+                        'w-full lg:w-auto lg:h-full'
+                     )}
+                     type="button"
+                     onClick={startDraft}
+                  >
+                     Start Draft
+                  </button>
+               )}
                {!isMobile ? (
                   <>
-                     {isOwner.current && !isActive && (
-                        <button
-                           className="bg-gray-primary p-1"
-                           type="button"
-                           onClick={startDraft}
-                        >
-                           Start Draft
-                        </button>
-                     )}
                      <div className="flex flex-col lg:max-w-[15vw] h-full w-full overflow-y-hidden">
                         <NewTimer {...timerProps} />
                         <Suspense fallback={<DraftOrderLoading />}>
