@@ -21,7 +21,6 @@ const DraftOrder = ({
    players,
    teamID,
    numberOfRounds,
-   updateFeaturedPlayer,
 }: DraftOrderProps) => {
    const [picks, setPicks] = useState<Pick[]>([]);
    const numberOfPicks = teams.length * numberOfRounds;
@@ -128,7 +127,6 @@ const DraftOrder = ({
                      currentPick={currentPick}
                      playerSelected={draftedPlayers[pick.playerID || 0]}
                      isYourTurn={isYourTurn}
-                     updateFeaturedPlayer={updateFeaturedPlayer}
                   />
                </div>
             );

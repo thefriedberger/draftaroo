@@ -1,4 +1,3 @@
-import { WatchlistAction } from '@/components/context/page-context';
 import { Pick } from '@/components/ui/draft-order';
 import { formStatus, formType } from '@/components/ui/form-wrappers/login';
 import { SupabaseClient, User } from '@supabase/supabase-js';
@@ -32,23 +31,17 @@ export interface DraftOrderProps {
    players: Player[];
    teamID: string;
    numberOfRounds: number;
-   updateFeaturedPlayer: (player: Player | any, playerID?: number) => void;
 }
 
 export interface WatchlistProps {
-   updateFeaturedPlayer: (player: Player | any, playerID?: number) => void;
    draftedIDs: number[];
    leagueID: string;
-   watchlist: number[];
    players: Player[];
-   updateWatchlist: (player: Player, action: WatchlistAction) => void;
 }
 
 export interface FeaturedPlayerProps {
    featuredPlayer: Player | null;
    yourTurn: boolean;
-   watchlist: number[];
-   updateWatchlist: (player: Player, action: WatchlistAction) => void;
    handleDraftSelectionProps: {
       supabase: SupabaseClient;
       currentPick: number;
@@ -56,19 +49,15 @@ export interface FeaturedPlayerProps {
       draft: Draft;
       teamId: string;
    };
-   updateFeaturedPlayer: (player: Player | null) => void;
    draftedIDs: number[];
    isActive: boolean;
    leagueScoring: LeagueScoring;
 }
 
 export interface PlayerListProps {
-   updateFeaturedPlayer: (player: Player | any, playerId?: number) => void;
    league: League;
    draftedIDs: number[];
    players: Player[];
-   watchlist: number[];
-   updateWatchlist: (player: Player, action: WatchlistAction) => void;
    leagueScoring: LeagueScoring;
 }
 
@@ -77,7 +66,6 @@ export interface DraftTileProps {
    currentPick: number;
    playerSelected: any;
    isYourTurn: boolean;
-   updateFeaturedPlayer: (player: Player | any, playerID?: number) => void;
 }
 
 export interface ChatProps {
@@ -188,7 +176,6 @@ export interface TeamViewProps {
    players: Player[];
    doReset?: boolean;
    setDoReset?: (reset: boolean) => void;
-   updateFeaturedPlayer: (player: Player | any, playerID?: number) => void;
 }
 
 export interface MyTeamProps extends TeamViewProps {
