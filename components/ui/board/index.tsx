@@ -446,9 +446,7 @@ const Board = ({
       centerTabs: false,
       className: `flex flex-col-reverse w-full h-[calc(100%-66px)] overflow-y-scroll ${
          featuredPlayer &&
-         (!draftedIDs.includes(featuredPlayer?.id)
-            ? 'featured-player-visible'
-            : 'drafted-featured-player-visible')
+         (!draftedIDs.includes(featuredPlayer?.id) ? 'pb-[130px]' : 'pb-[90px]')
       }`,
       saveState: false,
    };
