@@ -94,7 +94,14 @@ export const sortPlayers = (
 
    return players;
 };
-const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
+const PlayerList = ({
+   updateFeaturedPlayer,
+   league,
+   players,
+   updateWatchlist,
+   watchlist,
+   draftedIDs,
+}: PlayerListProps) => {
    const [leagueScoring, setLeagueScoring] = useState<LeagueScoring | any>();
    const [sort, setSort] = useState<SortValue>('score');
    const [positionFilter, setPositionFilter] = useState<string>('Skaters');
@@ -351,6 +358,11 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
                                        player={player}
                                        leagueScoring={leagueScoring}
                                        season={season}
+                                       updateWatchlist={updateWatchlist}
+                                       watchlist={watchlist}
+                                       updateFeaturedPlayer={
+                                          updateFeaturedPlayer
+                                       }
                                     />
                                  );
                               })}

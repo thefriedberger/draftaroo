@@ -1,9 +1,12 @@
-import { DraftContext } from '@/components/context/draft-context';
 import { TeamViewProps } from '@/lib/types';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
-   const { updateFeaturedPlayer } = useContext(DraftContext);
+const Team = ({
+   players,
+   doReset = false,
+   setDoReset,
+   updateFeaturedPlayer,
+}: TeamViewProps) => {
    const forwardCodes = ['C', 'L', 'R'];
    const [forwards, setForwards] = useState<Player[]>([]);
    const [defenseman, setDefenseman] = useState<Player[]>([]);
@@ -101,7 +104,7 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
                      key={forwards?.[index]?.id ?? index}
                      onClick={() => {
                         forwards?.[index] &&
-                           updateFeaturedPlayer?.(forwards[index]);
+                           updateFeaturedPlayer(forwards[index]);
                      }}
                   >
                      <td>F</td>
@@ -117,7 +120,7 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
                      key={defenseman?.[index]?.id ?? index}
                      onClick={() => {
                         defenseman?.[index] &&
-                           updateFeaturedPlayer?.(defenseman[index]);
+                           updateFeaturedPlayer(defenseman[index]);
                      }}
                   >
                      <td>D</td>
@@ -132,7 +135,7 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
                return (
                   <tr
                      key={player.id}
-                     onClick={() => updateFeaturedPlayer?.(player)}
+                     onClick={() => updateFeaturedPlayer(player)}
                   >
                      <td>Bench</td>
                      <td>{setDisplayName(player)}</td>
@@ -145,7 +148,7 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
                      key={goalies?.[index]?.id ?? index}
                      onClick={() => {
                         goalies?.[index] &&
-                           updateFeaturedPlayer?.(goalies[index]);
+                           updateFeaturedPlayer(goalies[index]);
                      }}
                   >
                      <td>G</td>
@@ -159,7 +162,7 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
                return (
                   <tr
                      key={player.id}
-                     onClick={() => updateFeaturedPlayer?.(player)}
+                     onClick={() => updateFeaturedPlayer(player)}
                   >
                      <td>Bench</td>
                      <td>{setDisplayName(player)}</td>

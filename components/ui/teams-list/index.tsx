@@ -8,6 +8,7 @@ const TeamsList = ({
    teams,
    players,
    user,
+   updateFeaturedPlayer,
 }: TeamsListProps) => {
    const [draftedPlayers, setDraftedPlayers] = useState<Player[]>([]);
    const [doReset, setDoReset] = useState<boolean>(false);
@@ -23,6 +24,7 @@ const TeamsList = ({
       players: draftedPlayers,
       doReset: doReset,
       setDoReset: setDoReset,
+      updateFeaturedPlayer: updateFeaturedPlayer,
    };
    return (
       <div className="w-full h-full overflow-y-scroll">

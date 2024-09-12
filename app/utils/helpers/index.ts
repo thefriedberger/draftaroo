@@ -2,7 +2,7 @@ import {
    DraftTimerFields,
    TIMER_DURATION,
 } from '@/components/ui/timer/new-timer';
-import { DraftPick, HandleDraftSelectionsProps } from '@/lib/types';
+import { DraftPick } from '@/lib/types';
 import { SupabaseClient, User } from '@supabase/supabase-js';
 import { cache } from 'react';
 export const getUser = cache(async (supabase: SupabaseClient<Database>) => {
@@ -115,11 +115,10 @@ export const fetchWatchlist = async (
       .from('watchlist')
       .select('*')
       .match({ owner: user?.id, draft_id: draft.id });
-
-   if (watchlist?.length === 0) {
-      const { data, error } = await supabase
+   if (!watchlist?.length) {
+      const { data } = await supabase
          .from('watchlist')
-         .insert({ owner: user?.id, players: [], draft_id: draft.id })
+         .insert({ owner: user?.id, players: [] })
          .match({})
          .select('*');
       return data?.[0] as Watchlist;
@@ -278,6 +277,14 @@ export const handlePick = async (
       .update({ current_pick: currentPick + 1 })
       .match({ id: draft.id });
 };
+export interface HandleDraftSelectionsProps {
+   supabase: SupabaseClient;
+   player: Player;
+   teamId: string;
+   draft: Draft;
+   currentRound: number;
+   currentPick: number;
+}
 export const handleDraftSelection = async ({
    supabase,
    player,
@@ -286,6 +293,7 @@ export const handleDraftSelection = async ({
    currentRound,
    currentPick,
 }: HandleDraftSelectionsProps) => {
+   console.log('drafting a player', player.id);
    const { data, error } = await supabase.from('draft_selections').insert({
       player_id: player.id,
       team_id: teamId,

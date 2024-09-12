@@ -129,11 +129,7 @@ const KeeperForm = ({
                )
                .select();
 
-            if (draftSelectionsError) {
-               console.log(draftSelectionsError);
-               setSubmitted(false);
-               return;
-            }
+            console.log(draftSelectionsError);
 
             const { error: teamHistoryError } = await supabase
                .from('team_history')
@@ -142,12 +138,11 @@ const KeeperForm = ({
                   player_id: player.player_id,
                   team_id: team.id,
                });
-            if (teamHistoryError) {
-               console.log(teamHistoryError);
+            if (!draftSelectionsError && !teamHistoryError) {
+               setSubmitted(true);
+            } else {
                setSubmitted(false);
-               return;
             }
-            setSubmitted(true);
          } else {
             const { error: draftSelectionsError } = await supabase
                .from('draft_selections')
