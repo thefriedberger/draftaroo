@@ -21,6 +21,11 @@ interface Props {
    user?: User;
    children: React.ReactNode;
 }
+export enum WatchlistAction {
+   ADD = 'add',
+   UPDATE = 'update',
+   DELETE = 'delete',
+}
 export const PageContext = React.createContext<PageContextType>(initialValues);
 
 export const PageContextProvider: React.FC<Props> = ({ user, children }) => {

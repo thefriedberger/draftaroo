@@ -1,18 +1,22 @@
 'use client';
 
-import { DraftContext } from '@/components/context/draft-context';
 import { WatchlistProps } from '@/lib/types';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import WatchlistStar from './watchlist-star';
 
-const Watchlist = ({ draftedIDs, players }: WatchlistProps) => {
-   const { updateFeaturedPlayer, watchlist } = useContext(DraftContext);
+const Watchlist = ({
+   updateFeaturedPlayer,
+   draftedIDs,
+   watchlist,
+   updateWatchlist,
+   players,
+}: WatchlistProps) => {
    const [watchlistPlayers, setWatchlistPlayers] = useState<Player[]>(
       players?.filter((player: Player) => watchlist.includes(player.id)) ?? []
    );
 
    useEffect(() => {
-      if (players && watchlist && watchlist?.length) {
+      if (players && watchlist) {
          setWatchlistPlayers(
             players.filter((player: Player) => watchlist.includes(player.id))
          );
@@ -22,7 +26,7 @@ const Watchlist = ({ draftedIDs, players }: WatchlistProps) => {
    const handleUpdateFeaturedPlayer = (player: Player, e: any) => {
       const target: HTMLElement = e.target;
       !['svg', 'path'].includes(target.localName) &&
-         updateFeaturedPlayer?.(player);
+         updateFeaturedPlayer(player);
    };
    return (
       <div className=" lg:min-h-[35%] lg:max-h-full overflow-y-scroll px-1 text-black dark:text-white">
@@ -41,6 +45,7 @@ const Watchlist = ({ draftedIDs, players }: WatchlistProps) => {
                            <WatchlistStar
                               watchlist={watchlist}
                               player={player}
+                              updateWatchlist={updateWatchlist}
                            />
                         </div>
                         <p className="ml-2 pt-1">
