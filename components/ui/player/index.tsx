@@ -1,9 +1,9 @@
 'use client';
 
 import { convertTime } from '@/app/utils/helpers';
-import { WatchlistAction } from '@/components/context/page-context';
+import { DraftContext } from '@/components/context/draft-context';
 import { PlayerStats } from '@/lib/types';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import WatchlistStar from '../watchlist/watchlist-star';
 
 export const teamAbbreviations: string | any = {
@@ -46,17 +46,12 @@ const PlayerComponent = ({
    player,
    leagueScoring,
    season,
-   updateFeaturedPlayer,
-   updateWatchlist,
-   watchlist,
 }: {
    player: Player;
    leagueScoring: LeagueScoring | any;
    season: number;
-   updateFeaturedPlayer: (player: Player | any) => void;
-   updateWatchlist: (player: Player, action: WatchlistAction) => void;
-   watchlist: number[];
 }) => {
+   const { updateFeaturedPlayer } = useContext(DraftContext);
    const [playerStats, setPlayerStats] = useState<PlayerStats[]>();
 
    const getStatFromLastSeason = (player_stats: any, stat: string) => {
@@ -82,7 +77,7 @@ const PlayerComponent = ({
    const handleUpdateFeaturedPlayer = (player: Player, e: any) => {
       const target: HTMLElement = e.target;
       !['svg', 'path'].includes(target.localName) &&
-         updateFeaturedPlayer(player);
+         updateFeaturedPlayer?.(player);
    };
 
    return (
@@ -96,11 +91,7 @@ const PlayerComponent = ({
                }}
             >
                <td className="mr-2 cursor-pointer table-cell align-middle w-[30px] fill-emerald-500">
-                  <WatchlistStar
-                     player={player}
-                     updateWatchlist={updateWatchlist}
-                     watchlist={watchlist}
-                  />
+                  <WatchlistStar player={player} />
                </td>
                <td className="py-2 px-1">
                   <span className="cursor-pointer whitespace-nowrap">

@@ -2,10 +2,11 @@
 
 import FallbackImage from '@/app/assets/images/default-skater.png';
 import { convertTime, handleDraftSelection } from '@/app/utils/helpers';
+import { DraftContext } from '@/components/context/draft-context';
 import { FeaturedPlayerProps } from '@/lib/types';
 import classNames from 'classnames';
 import Image from 'next/image';
-import { Fragment, useState } from 'react';
+import { Fragment, useContext, useState } from 'react';
 import { teamAbbreviations } from '../player';
 import WatchlistStar, { WatchlistStarProps } from '../watchlist/watchlist-star';
 
@@ -13,18 +14,14 @@ const FeaturedPlayer = ({
    featuredPlayer,
    yourTurn,
    handleDraftSelectionProps,
-   updateFeaturedPlayer,
    draftedIDs,
-   updateWatchlist,
-   watchlist,
    leagueScoring,
    isActive,
 }: FeaturedPlayerProps) => {
+   const { updateFeaturedPlayer } = useContext(DraftContext);
    const watchlistStarProps: WatchlistStarProps = {
       player: featuredPlayer as Player,
-      updateWatchlist: updateWatchlist,
       isButton: true,
-      watchlist: watchlist,
       className:
          'flex flex-row bg-paper-dark dark:bg-gray-primary text-black dark:text-white fill-emerald-700 p-2 rounded-md whitespace-nowrap',
    };
@@ -208,7 +205,7 @@ const FeaturedPlayer = ({
                   <button
                      className="block lg:hidden dark:bg-dark-primary rounded-md absolute top-1 right-1"
                      type="button"
-                     onClick={() => updateFeaturedPlayer(null)}
+                     onClick={() => updateFeaturedPlayer?.(null)}
                   >
                      <svg
                         width="30px"
@@ -256,7 +253,7 @@ const FeaturedPlayer = ({
                   <button
                      className="block lg:hidden absolute top-1 right-1"
                      type="button"
-                     onClick={() => updateFeaturedPlayer(null)}
+                     onClick={() => updateFeaturedPlayer?.(null)}
                   >
                      <svg
                         width="40px"
