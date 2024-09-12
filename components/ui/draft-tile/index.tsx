@@ -8,7 +8,6 @@ const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
    const draftTileRef = useRef<HTMLDivElement | null>(null);
 
    const scrollCallback = () => {
-      // lol wut is this? JS written in 2015?
       const draftOrderContainer: HTMLDivElement | null | undefined =
          draftTileRef.current?.offsetParent?.querySelector('.draft-order');
 
@@ -27,7 +26,7 @@ const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
    }, [pick, currentPick]);
 
    const handleUpdateFeaturedPlayer = () => {
-      updateFeaturedPlayer?.(null, pick.playerID);
+      pick.playerID && updateFeaturedPlayer?.(null, pick.playerID);
    };
    return (
       <div
@@ -36,7 +35,8 @@ const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
             pick.yourPick &&
                currentPick !== pick.draftPosition &&
                'bg-paper-primary dark:bg-gray-light',
-            'flex flex-row border-b dark:border-gray-300 p-1 cursor-pointer text-black dark:text-white'
+            pick.playerID && ' cursor-pointer',
+            'flex flex-row border-b dark:border-gray-300 p-1 text-black dark:text-white'
          )}
          ref={draftTileRef}
          onClick={handleUpdateFeaturedPlayer}
@@ -54,7 +54,7 @@ const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
                {pick.playerName && <p>{pick.playerName}</p>}
             </div>
             {pick.isKeeper && (
-               <div className="flex items-center justify-center w-[20px] h-[20px] border border-white bg-blue-primary text-white font-bold text-[10px] text-center self-center ml-auto">
+               <div className="flex items-center justify-center w-[20px] h-[20px] mr-2 border border-white bg-blue-primary text-white font-bold text-[10px] text-center self-center ml-auto">
                   K
                </div>
             )}

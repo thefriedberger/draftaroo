@@ -7,6 +7,7 @@ import { FeaturedPlayerProps } from '@/lib/types';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { Fragment, useContext, useState } from 'react';
+import { useMediaQuery } from 'react-responsive';
 import { teamAbbreviations } from '../player';
 import WatchlistStar, { WatchlistStarProps } from '../watchlist/watchlist-star';
 
@@ -26,6 +27,8 @@ const FeaturedPlayer = ({
          'flex flex-row bg-paper-dark dark:bg-gray-primary text-black dark:text-white fill-emerald-700 p-2 rounded-md whitespace-nowrap',
    };
    const [isExpanded, setIsExpanded] = useState<boolean>(false);
+
+   const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
 
    const playerStats = (player: Player) => {
       return (
@@ -145,7 +148,7 @@ const FeaturedPlayer = ({
    return (
       <div
          className={classNames(
-            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:relative z-10 fixed bottom-[66px] lg:flex lg:flex-col lg:bottom-auto w-full p-2 lg:py-0',
+            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:max-w-[600px] z-10 fixed lg:relative bottom-[66px] lg:w lg:flex lg:flex-col lg:bottom-auto w-full p-2 lg:py-0',
             isExpanded
                ? 'h-[232px]'
                : featuredPlayer && !draftedIDs.includes(featuredPlayer.id)
@@ -206,34 +209,14 @@ const FeaturedPlayer = ({
                   </div>
                   {statsToggle(featuredPlayer)}
                   <p>{yourTurn}</p>
-                  <button
-                     className="block lg:hidden dark:bg-dark-primary rounded-md absolute top-1 right-1"
-                     type="button"
-                     onClick={() => updateFeaturedPlayer?.(null)}
-                  >
-                     <svg
-                        width="30px"
-                        height="30px"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="stroke-white"
-                     >
-                        <path
-                           d="M9 9L15 15M15 9L9 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-                           strokeWidth="2"
-                           strokeLinecap="round"
-                           strokeLinejoin="round"
-                        />
-                     </svg>
-                  </button>
+                  <CloseFeaturedPlayer />
                </>
             ) : (
                <>
                   <div className={'flex flex-row'}>
                      <PlayerHeadshot {...featuredPlayer} />
                      <div className="flex flex-col">
-                        <div className="dark:text-white text-xl whitespace-nowrap">
+                        <div className="dark:text-white text-xl whitespace-nowrap mt-2">
                            {featuredPlayer.first_name}{' '}
                            {featuredPlayer.last_name}
                            &nbsp;&nbsp;&nbsp;
@@ -254,27 +237,7 @@ const FeaturedPlayer = ({
                      {playerStats(featuredPlayer)}
                   </div>
                   {statsToggle(featuredPlayer)}
-                  <button
-                     className="block lg:hidden absolute top-1 right-1"
-                     type="button"
-                     onClick={() => updateFeaturedPlayer?.(null)}
-                  >
-                     <svg
-                        width="40px"
-                        height="40px"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="stroke-white"
-                     >
-                        <path
-                           d="M9 9L15 15M15 9L9 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-                           strokeWidth="2"
-                           strokeLinecap="round"
-                           strokeLinejoin="round"
-                        />
-                     </svg>
-                  </button>
+                  <CloseFeaturedPlayer />
                </>
             ))}
       </div>
@@ -282,3 +245,31 @@ const FeaturedPlayer = ({
 };
 
 export default FeaturedPlayer;
+
+const CloseFeaturedPlayer = () => {
+   const { updateFeaturedPlayer } = useContext(DraftContext);
+
+   return (
+      <button
+         className="block absolute top-1 right-1"
+         type="button"
+         onClick={() => updateFeaturedPlayer?.(null)}
+      >
+         <svg
+            width="40px"
+            height="40px"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="stroke-white"
+         >
+            <path
+               d="M9 9L15 15M15 9L9 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+               strokeWidth="2"
+               strokeLinecap="round"
+               strokeLinejoin="round"
+            />
+         </svg>
+      </button>
+   );
+};
