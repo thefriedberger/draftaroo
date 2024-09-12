@@ -77,20 +77,20 @@ const Chat = ({ user }: ChatProps) => {
          className={classNames(
             !isOpen && 'h-0',
             isOpen && 'h-full max-h-[30%]',
-            'hidden mt-auto min-h-[50px] self-start lg:flex flex-col transition-all w-full chat-container justify-end'
+            'hidden mt-auto self-start min-h-[60px] lg:flex flex-col transition-all w-full chat-container justify-end'
          )}
       >
          <div
             className={classNames(
                isOpen && 'h-full max-h-[250px] overflow-y-scroll',
 
-               'w-full flex flex-col rounded-t-md relative transition-all duration-150 bg-paper-primary overflow-hidden dark:bg-gray-primary pb-[35px]'
+               'w-full flex min-h-[60px]  flex-col rounded-t-md relative transition-all duration-150 bg-paper-primary overflow-hidden dark:bg-gray-primary pb-[35px]'
             )}
          >
             <button
                onClick={() => setIsOpen(!isOpen)}
                className={classNames(
-                  'w-full flex items-center sticky top-0 min-h-6 px-2 justify-end h-6 bg-fuscia-primary hover:bg-fuscia-dark outline-none'
+                  'w-full flex items-center sticky top-0 min-h-7 px-2 justify-end h-7 bg-fuscia-primary hover:bg-fuscia-dark outline-none'
                )}
             >
                {unseenMessage && (
@@ -98,46 +98,47 @@ const Chat = ({ user }: ChatProps) => {
                      <span
                         className={classNames(
                            styles['message-notification'],
-                           'animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-primary opacity-75 sr-only'
+                           'animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-primary opacity-75'
                         )}
                      >
-                        Close chat
+                        <span className="sr-only">Close chat</span>
                      </span>
                      <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-primary"></span>
                   </span>
                )}
             </button>
-            {chat.map((payload: ChatType, index: number) => {
-               const { message, sender } = payload;
-               return (
-                  <div
-                     key={index}
-                     className={classNames(
-                        'flex flex-col p-1 w-[90%] rounded-xl m-1 ',
-                        sender?.id === user?.id
-                           ? 'self-end text-right pr-2 bg-emerald-primary rounded-br-none'
-                           : 'bg-gray-light rounded-bl-none pl-2'
-                     )}
-                  >
-                     <p className="text-[10px] text-black dark:text-white">
-                        {`${
-                           sender?.user_metadata?.first_name !== undefined &&
-                           sender?.user_metadata?.last_name !== undefined
-                              ? sender?.user_metadata?.first_name +
-                                ' ' +
-                                sender?.user_metadata?.last_name
-                              : sender?.email
-                        }`}
-                     </p>
-                     <p className="text-sm text-black dark:text-white break-words">
-                        {message}
-                     </p>
-                  </div>
-               );
-            })}
+            {isOpen &&
+               chat.map((payload: ChatType, index: number) => {
+                  const { message, sender } = payload;
+                  return (
+                     <div
+                        key={index}
+                        className={classNames(
+                           'flex flex-col p-1 w-[90%] rounded-xl m-1 ',
+                           sender?.id === user?.id
+                              ? 'self-end text-right pr-2 bg-emerald-primary rounded-br-none'
+                              : 'bg-gray-light rounded-bl-none pl-2'
+                        )}
+                     >
+                        <p className="text-[10px] text-black dark:text-white">
+                           {`${
+                              sender?.user_metadata?.first_name !== undefined &&
+                              sender?.user_metadata?.last_name !== undefined
+                                 ? sender?.user_metadata?.first_name +
+                                   ' ' +
+                                   sender?.user_metadata?.last_name
+                                 : sender?.email
+                           }`}
+                        </p>
+                        <p className="text-sm text-black dark:text-white break-words">
+                           {message}
+                        </p>
+                     </div>
+                  );
+               })}
             <AlwaysScrollToBottom />
             <form
-               className={'flex flex-row mt-2 fixed bottom-0 w-[15vw]'}
+               className={'flex flex-row fixed bottom-0 w-[15vw]'}
                onSubmit={handleSendMessage}
             >
                <input
