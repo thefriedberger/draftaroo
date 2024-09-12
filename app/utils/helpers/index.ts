@@ -118,7 +118,7 @@ export const fetchWatchlist = async (
    if (!watchlist?.length) {
       const { data } = await supabase
          .from('watchlist')
-         .insert({ owner: user?.id, players: [] })
+         .insert({ owner: user?.id, players: [], draft_id: draft.id })
          .match({})
          .select('*');
       return data?.[0] as Watchlist;
