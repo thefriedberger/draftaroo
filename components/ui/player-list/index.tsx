@@ -102,7 +102,6 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
    const [playerSearch, setPlayerSearch] = useState<string>('');
    const [season, setSeason] = useState<number>(1);
    const [records, setRecords] = useState<number>(150);
-   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
    const options: IntersectionObserverInit = {
       root: null,
@@ -116,6 +115,7 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
    useEffect(() => {
       if (isVisible) setRecords(records + 150);
    }, [isVisible]);
+
    const filterPlayers = () => {
       const playersByPostion = players
          .filter((player: Player) => !draftedIDs.includes(player.id))
