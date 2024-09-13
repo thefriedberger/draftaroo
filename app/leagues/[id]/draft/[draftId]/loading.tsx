@@ -1,5 +1,4 @@
 export default function Loading() {
-   // You can add any UI inside Loading, including a Skeleton.
    return (
       <div className="flex items-center dark:text-white ">
          <h1 className="my-5">Loading draft</h1>

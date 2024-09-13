@@ -38,7 +38,6 @@ const NewTimer = ({
       is_active: false,
    });
    var timerValue = useRef(TIMER_DURATION);
-   const shouldAutopick = useRef(false);
    const [timer, setTimer] = useState<string>(formatTime(TIMER_DURATION));
    const [userPick, setUserPick] = useState<number>();
    const [doMute, setDoMute] = useState<boolean>(false);
@@ -48,7 +47,7 @@ const NewTimer = ({
    useEffect(() => {
       subscribeToTimerRoom(draftId, onChange);
       getData();
-   }, []);
+   }, [draftId]);
 
    useEffect(() => {
       if (roomData.is_active) {

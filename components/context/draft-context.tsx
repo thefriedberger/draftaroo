@@ -1,11 +1,15 @@
 'use client';
 
+import { FeaturedPlayerType } from '@/lib/types';
 import React from 'react';
 
 export type DraftContextType = {
    watchlist: number[];
    updateWatchlist?: (player: Player, action: WatchlistAction) => void;
-   updateFeaturedPlayer?: (player: Player | null, playerID?: number) => void;
+   updateFeaturedPlayer?: (
+      player: FeaturedPlayerType,
+      playerID?: number
+   ) => void;
 };
 
 const initialValues: DraftContextType = {

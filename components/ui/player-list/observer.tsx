@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 const PlayerObserver = (options: IntersectionObserverInit) => {
    const [isVisible, setIsVisible] = useState<boolean>(false);
-   const playersRef = useRef<HTMLTableRowElement | null>(null);
+   const playersRef = useRef<HTMLTableRowElement>(null);
 
    useEffect(() => {
       const observer = new IntersectionObserver(loadPlayers, options);
@@ -12,6 +12,10 @@ const PlayerObserver = (options: IntersectionObserverInit) => {
    }, [playersRef]);
 
    const loadPlayers: IntersectionObserverCallback = (entries, observer) => {
+      if (entries[0].boundingClientRect.bottom < window.innerHeight) {
+         setIsVisible(false);
+         return;
+      }
       if (entries[0].isIntersecting) {
          setIsVisible(true);
       } else {
@@ -19,7 +23,7 @@ const PlayerObserver = (options: IntersectionObserverInit) => {
       }
    };
 
-   return [playersRef, isVisible];
+   return { playersRef, isVisible };
 };
 
 export default PlayerObserver;

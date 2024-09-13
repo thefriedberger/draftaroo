@@ -18,6 +18,7 @@ import {
    ChatProps,
    DraftOrderProps,
    FeaturedPlayerProps,
+   FeaturedPlayerType,
    MyTeamProps,
    PlayerListProps,
    Tab,
@@ -27,7 +28,7 @@ import {
 } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Chat from '../chat';
 import DraftOrder from '../draft-order';
@@ -67,7 +68,7 @@ const Board = ({
    const draftStatusChannel = supabase.channel('draft-is-active-channel');
 
    /*** States ***/
-   const [featuredPlayer, setFeaturedPlayer] = useState<Player | null>();
+   const [featuredPlayer, setFeaturedPlayer] = useState<FeaturedPlayerType>();
    const [currentPick, setCurrentPick] = useState<number>(draft.current_pick);
    const [currentRound, setCurrentRound] = useState<number>(1);
    const [draftedPlayersState, setDraftedPlayersState] =
@@ -242,15 +243,19 @@ const Board = ({
       filterDraftedPlayers();
    }, [draftedIDs]);
 
-   const updateFeaturedPlayer = (player: Player | null, playerID?: number) => {
-      if (playerID) {
-         player = players.filter((toSearch) => {
-            return toSearch.id === playerID;
-         })?.[0];
-      }
-      if (!player) setFeaturedPlayer(null);
-      setFeaturedPlayer(player);
-   };
+   const updateFeaturedPlayer = useCallback(
+      (player: FeaturedPlayerType, playerID?: number) => {
+         if (playerID && players) {
+            player =
+               players.find((toSearch) => {
+                  return toSearch.id === playerID;
+               }) ?? null;
+         }
+         if (!player) setFeaturedPlayer(null);
+         setFeaturedPlayer(player);
+      },
+      [players]
+   );
 
    const startDraft = async () => {
       await supabase
