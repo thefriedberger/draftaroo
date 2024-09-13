@@ -152,10 +152,13 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
       if (sort !== '') {
          return sortPlayers(playersSearched, sort, season);
       } else {
-         setRecords(150);
          return playersSearched;
       }
    };
+
+   useEffect(() => {
+      setRecords(150);
+   }, [sort]);
 
    return (
       <>
