@@ -56,18 +56,18 @@ const NewTimer = ({
             const now = Date.now();
             const diff = end - now;
             setIsTimerRunning(true);
-            if (diff < 0) {
-               setTimer(formatTime(0));
-               timerValue.current = 0;
-            } else {
-               const finalTimer = Math.ceil(diff / 1000);
+            // if (diff < 0) {
+            //    setTimer(formatTime(0));
+            //    timerValue.current = 0;
+            // } else {
+            const finalTimer = Math.ceil(diff / 1000);
 
-               lastTick.current = performance.now();
+            lastTick.current = performance.now();
 
-               timerValue.current = finalTimer;
-               setTimer(formatTime(finalTimer));
-               setRunning(true);
-            }
+            timerValue.current = finalTimer;
+            setTimer(formatTime(finalTimer));
+            setRunning(true);
+            // }
          }
       } else {
          setRunning(false);
@@ -94,7 +94,6 @@ const NewTimer = ({
       if (tick > 0) {
          const now = performance.now();
 
-         // run only if timer is running
          if (isTimerRunning) {
             if (now - lastTick.current >= 950) {
                if (roomData.end_time) {

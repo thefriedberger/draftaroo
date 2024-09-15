@@ -60,7 +60,7 @@ const Board = ({
    const turnOrder = useRef(draftPicks);
    const numberOfRounds = useRef(leagueRules.number_of_rounds);
    const numberOfTeams = useRef(leagueRules.number_of_teams);
-   const isYourTurn = useRef<boolean>(false);
+   const [isYourTurn, setIsYourTurn] = useState<boolean>(false);
 
    /*** Channels ***/
    const draftChannel = supabase.channel('draft-channel');
@@ -139,6 +139,7 @@ const Board = ({
                   setTimeout(() => {
                      handlePick(supabase, draft, currentPick);
                   }, 500);
+                  break;
                }
             }
          }
@@ -147,9 +148,11 @@ const Board = ({
 
    // set if user can pick
    useEffect(() => {
-      isYourTurn.current = turnOrder.current
-         .filter((turn) => turn.team_id === team.id)?.[0]
-         ?.picks?.includes(currentPick);
+      setIsYourTurn(
+         turnOrder.current
+            .filter((turn) => turn.team_id === team.id)?.[0]
+            ?.picks?.includes(currentPick)
+      );
 
       if (
          isActive &&
@@ -278,18 +281,96 @@ const Board = ({
 
       if (!autoDraftTeam) return;
 
-      const playerToDraft =
+      const playerIds: number[] = updateTeamsViewPlayers(
+         autoDraftTeam.team_id
+      ).map((player) => player.player_id);
+
+      const teamPlayers: Player[] = players.filter((player) =>
+         playerIds.includes(player.id)
+      );
+
+      const positionNeeded: string[] | null = findPositionsNeeded(teamPlayers);
+
+      const positionPlayer =
          sortPlayers(
-            players.filter((player) => !draftedIDs.includes(player.id)),
+            players.filter((player) => {
+               if (positionNeeded && player.primary_position) {
+                  return (
+                     positionNeeded.includes(player.primary_position) &&
+                     !draftedIDs.includes(player.id)
+                  );
+               }
+            }),
             'score',
             1
          )[0] || null;
+      const bpa =
+         sortPlayers(
+            players.filter((player) => {
+               return !draftedIDs.includes(player.id);
+            }),
+            'score',
+            1
+         )[0] || null;
+
+      const playerToDraft =
+         positionPlayer && positionPlayer.primary_position === 'G'
+            ? positionPlayer
+            : sortPlayers([bpa, positionPlayer], 'score', 1)[0] || null;
+
+      console.log(positionNeeded, playerToDraft);
       if (!playerToDraft) return;
       handleDraftSelection({
          ...handleDraftSelectionProps,
          player: playerToDraft,
          teamId: autoDraftTeam.team_id,
       });
+   };
+
+   const findPositionsNeeded = (teamRoster: Player[]) => {
+      const positionsMap = {
+         forwards: 9,
+         defensemen: 5,
+         goalies: 2,
+      }; // this should be updated along with all static position values
+      let numberOfForwards = 0;
+      let numberOfDefensemen = 0;
+      let numberOfGoalies = 0;
+      for (const player of teamRoster) {
+         if (!player.primary_position) {
+            continue;
+         }
+
+         if (['C', 'L', 'R'].includes(player.primary_position)) {
+            numberOfForwards++;
+            continue;
+         }
+         if (player.primary_position === 'D') {
+            numberOfDefensemen++;
+            continue;
+         }
+         if (player.primary_position === 'G') {
+            numberOfGoalies++;
+            continue;
+         }
+      }
+      if (
+         numberOfForwards >= Math.ceil(positionsMap.forwards / 2) &&
+         numberOfDefensemen >= Math.ceil(positionsMap.defensemen / 2) &&
+         numberOfGoalies === 0
+      ) {
+         return ['G'];
+      }
+      if (numberOfForwards <= positionsMap.forwards) {
+         return ['C', 'L', 'R'];
+      }
+      if (numberOfDefensemen <= positionsMap.defensemen) {
+         return ['D'];
+      }
+      if (numberOfGoalies <= positionsMap.goalies) {
+         return ['G'];
+      }
+      return null;
    };
 
    const updateTeamsViewPlayers = (teamId: string) => {
@@ -328,7 +409,7 @@ const Board = ({
       currentRound: currentRound,
       isActive: isActive,
       autopick: autoDraft,
-      yourTurn: isYourTurn.current,
+      yourTurn: isYourTurn,
       turnOrder: turnOrder.current,
       userTeam: team,
       isCompleted: isCompleted,
@@ -339,7 +420,7 @@ const Board = ({
       draftedPlayers: draftedPlayersState,
       currentPick: currentPick,
       teams: teams,
-      isYourTurn: isYourTurn.current,
+      isYourTurn: isYourTurn,
       turnOrder: turnOrder.current,
       league: league,
       players: players,
@@ -356,7 +437,7 @@ const Board = ({
    const featuredPlayerProps: FeaturedPlayerProps = {
       draftedIDs: draftedIDs,
       featuredPlayer: featuredPlayer || null,
-      yourTurn: isYourTurn.current,
+      yourTurn: isYourTurn,
       handleDraftSelectionProps: handleDraftSelectionProps,
       isActive: isActive,
       leagueScoring: leagueScoring,
