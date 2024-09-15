@@ -37,6 +37,18 @@ export const fetchTeams = cache(
    }
 );
 
+export const fetchTeamHistory = async (
+   supabase: SupabaseClient,
+   team: Team
+): Promise<Array<TeamHistory>> => {
+   const { data: team_history, error } = await supabase
+      .from('team_history')
+      .select('*')
+      .match({ team_id: team.id });
+
+   return team_history as TeamHistory[];
+};
+
 export const fetchAllUserTeams = cache(
    async (
       supabase: SupabaseClient<Database>,

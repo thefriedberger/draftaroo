@@ -19,7 +19,9 @@ const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
       .eq('id', String(league?.data?.[0]?.league_scoring) || '');
    const leagueScoring = league_scoring?.data?.[0] as LeagueScoring | any;
    if (players && players.length > 0 && leagueScoring !== undefined) {
-      players.forEach((player: Player) => {
+      for (const player of players) {
+         if (!player.is_active) continue;
+
          const playerStats = player?.stats as PlayerStats[];
          for (const season in playerStats) {
             if (playerStats?.[season] !== undefined) {
@@ -77,7 +79,7 @@ const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
             }
          }
          playersArray.push(player);
-      });
+      }
    }
    return playersArray as Player[];
 });
