@@ -109,6 +109,7 @@ export interface TabProps {
    link?: string;
    centerTabs?: boolean;
    saveState?: boolean;
+   gridColumns?: string;
 }
 export interface Profile {
    firstName: string;

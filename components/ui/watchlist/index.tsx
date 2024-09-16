@@ -105,7 +105,7 @@ const WatchlistPlayer = ({
             <input
                type="number"
                max={watchlistPlayers.length}
-               min={0}
+               min={1}
                ref={inputRef}
                className="w-full rounded-sm text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                onChange={(e) => {

@@ -6,6 +6,8 @@ import { MyTeamIcon } from '@/app/assets/images/icons/my-team';
 import { TeamsIcon } from '@/app/assets/images/icons/teams';
 import { WatchlistIcon } from '@/app/assets/images/icons/watchlist';
 import {
+   fetchOwnerByTeam,
+   fetchWatchlist,
    handleDraftSelection,
    handlePick,
    setMainTimer,
@@ -274,57 +276,79 @@ const Board = ({
          .update({ is_active: false })
          .match({ id: draft.id });
    };
-   const autoDraft = () => {
+   const autoDraft = async () => {
       const autoDraftTeam = turnOrder.current.find((team) =>
          team.picks.includes(currentPick)
       );
 
       if (!autoDraftTeam) return;
 
-      const playerIds: number[] = updateTeamsViewPlayers(
-         autoDraftTeam.team_id
-      ).map((player) => player.player_id);
-
-      const teamPlayers: Player[] = players.filter((player) =>
-         playerIds.includes(player.id)
+      const teamOwner = await fetchOwnerByTeam(supabase, autoDraftTeam.team_id);
+      const autoDraftWatchlist = await fetchWatchlist(
+         supabase,
+         teamOwner,
+         draft
       );
 
-      const positionNeeded: string[] | null = findPositionsNeeded(teamPlayers);
+      if (autoDraftWatchlist?.players?.length) {
+         const watchlistPlayerToDraft: Player | null =
+            players.find(
+               (player) => player.id === autoDraftWatchlist.players?.[0]
+            ) ?? null;
 
-      const positionPlayer =
-         sortPlayers(
-            players.filter((player) => {
-               if (positionNeeded && player.primary_position) {
-                  return (
-                     positionNeeded.includes(player.primary_position) &&
-                     !draftedIDs.includes(player.id)
-                  );
-               }
-            }),
-            'score',
-            1
-         )[0] || null;
-      const bpa =
-         sortPlayers(
-            players.filter((player) => {
-               return !draftedIDs.includes(player.id);
-            }),
-            'score',
-            1
-         )[0] || null;
+         if (watchlistPlayerToDraft) {
+            handleDraftSelection({
+               ...handleDraftSelectionProps,
+               player: watchlistPlayerToDraft,
+               teamId: autoDraftTeam.team_id,
+            });
+         }
+      } else {
+         const playerIds: number[] = updateTeamsViewPlayers(
+            autoDraftTeam.team_id
+         ).map((player) => player.player_id);
 
-      const playerToDraft =
-         positionPlayer && positionPlayer.primary_position === 'G'
-            ? positionPlayer
-            : sortPlayers([bpa, positionPlayer], 'score', 1)[0] || null;
+         const teamPlayers: Player[] = players.filter((player) =>
+            playerIds.includes(player.id)
+         );
 
-      console.log(positionNeeded, playerToDraft);
-      if (!playerToDraft) return;
-      handleDraftSelection({
-         ...handleDraftSelectionProps,
-         player: playerToDraft,
-         teamId: autoDraftTeam.team_id,
-      });
+         const positionNeeded: string[] | null =
+            findPositionsNeeded(teamPlayers);
+
+         const positionPlayer =
+            sortPlayers(
+               players.filter((player) => {
+                  if (positionNeeded && player.primary_position) {
+                     return (
+                        positionNeeded.includes(player.primary_position) &&
+                        !draftedIDs.includes(player.id)
+                     );
+                  }
+               }),
+               'score',
+               1
+            )[0] || null;
+         const bpa =
+            sortPlayers(
+               players.filter((player) => {
+                  return !draftedIDs.includes(player.id);
+               }),
+               'score',
+               1
+            )[0] || null;
+
+         const playerToDraft =
+            positionPlayer && positionPlayer.primary_position === 'G'
+               ? positionPlayer
+               : sortPlayers([bpa, positionPlayer], 'score', 1)[0] || null;
+
+         if (!playerToDraft) return;
+         handleDraftSelection({
+            ...handleDraftSelectionProps,
+            player: playerToDraft,
+            teamId: autoDraftTeam.team_id,
+         });
+      }
    };
 
    const findPositionsNeeded = (teamRoster: Player[]) => {
@@ -539,6 +563,7 @@ const Board = ({
          (!draftedIDs.includes(featuredPlayer?.id) ? 'pb-[130px]' : 'pb-[90px]')
       }`,
       saveState: false,
+      gridColumns: `grid-cols-5`,
    };
 
    const chatProps: ChatProps = {

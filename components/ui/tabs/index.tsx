@@ -16,6 +16,7 @@ const Tabs = ({
    text,
    useHash,
    saveState = true,
+   gridColumns,
 }: TabProps) => {
    const [activeTabIndex, setActiveTabIndex] = useState(0);
 
@@ -86,7 +87,7 @@ const Tabs = ({
                   centerTabs && 'mx-auto',
                   tabBgColor ? tabBgColor : 'w-[100vw] bg-emerald-primary',
                   'grid fixed bottom-0 rounded-t-sm shadow-black shadow z-10 lg:justify-between lg:w-auto lg:flex lg:static lg:shadow-none lg:flex-row lg:text-left md-items-center lg:max-w-fit lg:h-[50px]',
-                  `grid-cols-${tabs.length}`
+                  gridColumns
                )}
             >
                {navList()}
