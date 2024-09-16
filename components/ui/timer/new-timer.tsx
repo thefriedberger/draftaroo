@@ -175,6 +175,12 @@ const NewTimer = ({
          ('0' + (Math.floor(t / 60) % 60)).slice(-2) +
          ':' +
          ('0' + (t % 60)).slice(-2);
+      if (
+         new Date(TIMER_DURATION * 1000).toISOString().substring(14, 19) <
+         finalTime
+      ) {
+         return new Date(TIMER_DURATION * 1000).toISOString().substring(14, 19);
+      }
       return finalTime;
    }
    return (
