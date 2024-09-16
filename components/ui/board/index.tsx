@@ -6,6 +6,8 @@ import { MyTeamIcon } from '@/app/assets/images/icons/my-team';
 import { TeamsIcon } from '@/app/assets/images/icons/teams';
 import { WatchlistIcon } from '@/app/assets/images/icons/watchlist';
 import {
+   fetchOwnerByTeam,
+   fetchWatchlist,
    handleDraftSelection,
    handlePick,
    setMainTimer,
@@ -18,6 +20,7 @@ import {
    ChatProps,
    DraftOrderProps,
    FeaturedPlayerProps,
+   FeaturedPlayerType,
    MyTeamProps,
    PlayerListProps,
    Tab,
@@ -27,7 +30,7 @@ import {
 } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Chat from '../chat';
 import DraftOrder from '../draft-order';
@@ -59,7 +62,7 @@ const Board = ({
    const turnOrder = useRef(draftPicks);
    const numberOfRounds = useRef(leagueRules.number_of_rounds);
    const numberOfTeams = useRef(leagueRules.number_of_teams);
-   const isYourTurn = useRef<boolean>(false);
+   const [isYourTurn, setIsYourTurn] = useState<boolean>(false);
 
    /*** Channels ***/
    const draftChannel = supabase.channel('draft-channel');
@@ -67,7 +70,7 @@ const Board = ({
    const draftStatusChannel = supabase.channel('draft-is-active-channel');
 
    /*** States ***/
-   const [featuredPlayer, setFeaturedPlayer] = useState<Player | null>();
+   const [featuredPlayer, setFeaturedPlayer] = useState<FeaturedPlayerType>();
    const [currentPick, setCurrentPick] = useState<number>(draft.current_pick);
    const [currentRound, setCurrentRound] = useState<number>(1);
    const [draftedPlayersState, setDraftedPlayersState] =
@@ -138,6 +141,7 @@ const Board = ({
                   setTimeout(() => {
                      handlePick(supabase, draft, currentPick);
                   }, 500);
+                  break;
                }
             }
          }
@@ -146,9 +150,11 @@ const Board = ({
 
    // set if user can pick
    useEffect(() => {
-      isYourTurn.current = turnOrder.current
-         .filter((turn) => turn.team_id === team.id)?.[0]
-         ?.picks?.includes(currentPick);
+      setIsYourTurn(
+         turnOrder.current
+            .filter((turn) => turn.team_id === team.id)?.[0]
+            ?.picks?.includes(currentPick)
+      );
 
       if (
          isActive &&
@@ -242,15 +248,19 @@ const Board = ({
       filterDraftedPlayers();
    }, [draftedIDs]);
 
-   const updateFeaturedPlayer = (player: Player | null, playerID?: number) => {
-      if (playerID) {
-         player = players.filter((toSearch) => {
-            return toSearch.id === playerID;
-         })?.[0];
-      }
-      if (!player) setFeaturedPlayer(null);
-      setFeaturedPlayer(player);
-   };
+   const updateFeaturedPlayer = useCallback(
+      (player: FeaturedPlayerType, playerID?: number) => {
+         if (playerID && players) {
+            player =
+               players.find((toSearch) => {
+                  return toSearch.id === playerID;
+               }) ?? null;
+         }
+         if (!player) setFeaturedPlayer(null);
+         setFeaturedPlayer(player);
+      },
+      [players]
+   );
 
    const startDraft = async () => {
       await supabase
@@ -266,25 +276,124 @@ const Board = ({
          .update({ is_active: false })
          .match({ id: draft.id });
    };
-   const autoDraft = () => {
+   const autoDraft = async () => {
       const autoDraftTeam = turnOrder.current.find((team) =>
          team.picks.includes(currentPick)
       );
 
       if (!autoDraftTeam) return;
 
-      const playerToDraft =
+      const teamOwner = await fetchOwnerByTeam(supabase, autoDraftTeam.team_id);
+      const autoDraftWatchlist = await fetchWatchlist(
+         supabase,
+         teamOwner,
+         draft
+      );
+
+      if (autoDraftWatchlist?.players?.length) {
+         const watchlistPlayerToDraft: Player | null =
+            players.find(
+               (player) => player.id === autoDraftWatchlist.players?.[0]
+            ) ?? null;
+
+         if (watchlistPlayerToDraft) {
+            handleDraftSelection({
+               ...handleDraftSelectionProps,
+               player: watchlistPlayerToDraft,
+               teamId: autoDraftTeam.team_id,
+            });
+            return;
+         }
+      }
+      const playerIds: number[] = updateTeamsViewPlayers(
+         autoDraftTeam.team_id
+      ).map((player) => player.player_id);
+
+      const teamPlayers: Player[] = players.filter((player) =>
+         playerIds.includes(player.id)
+      );
+
+      const positionNeeded: string[] | null = findPositionsNeeded(teamPlayers);
+
+      const positionPlayer =
          sortPlayers(
-            players.filter((player) => !draftedIDs.includes(player.id)),
+            players.filter((player) => {
+               if (positionNeeded && player.primary_position) {
+                  return (
+                     positionNeeded.includes(player.primary_position) &&
+                     !draftedIDs.includes(player.id)
+                  );
+               }
+            }),
             'score',
             1
          )[0] || null;
+      const bpa =
+         sortPlayers(
+            players.filter((player) => {
+               return !draftedIDs.includes(player.id);
+            }),
+            'score',
+            1
+         )[0] || null;
+
+      const playerToDraft =
+         positionPlayer && positionPlayer.primary_position === 'G'
+            ? positionPlayer
+            : sortPlayers([bpa, positionPlayer], 'score', 1)[0] || null;
+
       if (!playerToDraft) return;
       handleDraftSelection({
          ...handleDraftSelectionProps,
          player: playerToDraft,
          teamId: autoDraftTeam.team_id,
       });
+   };
+
+   const findPositionsNeeded = (teamRoster: Player[]) => {
+      const positionsMap = {
+         forwards: 9,
+         defensemen: 5,
+         goalies: 2,
+      }; // this should be updated along with all static position values
+      let numberOfForwards = 0;
+      let numberOfDefensemen = 0;
+      let numberOfGoalies = 0;
+      for (const player of teamRoster) {
+         if (!player.primary_position) {
+            continue;
+         }
+
+         if (['C', 'L', 'R'].includes(player.primary_position)) {
+            numberOfForwards++;
+            continue;
+         }
+         if (player.primary_position === 'D') {
+            numberOfDefensemen++;
+            continue;
+         }
+         if (player.primary_position === 'G') {
+            numberOfGoalies++;
+            continue;
+         }
+      }
+      if (
+         numberOfForwards >= Math.ceil(positionsMap.forwards / 2) &&
+         numberOfDefensemen >= Math.ceil(positionsMap.defensemen / 2) &&
+         numberOfGoalies === 0
+      ) {
+         return ['G'];
+      }
+      if (numberOfForwards <= positionsMap.forwards) {
+         return ['C', 'L', 'R'];
+      }
+      if (numberOfDefensemen <= positionsMap.defensemen) {
+         return ['D'];
+      }
+      if (numberOfGoalies <= positionsMap.goalies) {
+         return ['G'];
+      }
+      return null;
    };
 
    const updateTeamsViewPlayers = (teamId: string) => {
@@ -307,6 +416,10 @@ const Board = ({
       }
    };
 
+   const reorderWatchlist = (newWatchlist: number[]) => {
+      setWatchlistState(newWatchlist);
+   };
+
    useEffect(() => {
       updateSupabaseWatchlist(supabase, watchlistState, user?.id, draft.id);
    }, [watchlistState]);
@@ -323,7 +436,7 @@ const Board = ({
       currentRound: currentRound,
       isActive: isActive,
       autopick: autoDraft,
-      yourTurn: isYourTurn.current,
+      yourTurn: isYourTurn,
       turnOrder: turnOrder.current,
       userTeam: team,
       isCompleted: isCompleted,
@@ -334,7 +447,7 @@ const Board = ({
       draftedPlayers: draftedPlayersState,
       currentPick: currentPick,
       teams: teams,
-      isYourTurn: isYourTurn.current,
+      isYourTurn: isYourTurn,
       turnOrder: turnOrder.current,
       league: league,
       players: players,
@@ -351,7 +464,7 @@ const Board = ({
    const featuredPlayerProps: FeaturedPlayerProps = {
       draftedIDs: draftedIDs,
       featuredPlayer: featuredPlayer || null,
-      yourTurn: isYourTurn.current,
+      yourTurn: isYourTurn,
       handleDraftSelectionProps: handleDraftSelectionProps,
       isActive: isActive,
       leagueScoring: leagueScoring,
@@ -449,6 +562,7 @@ const Board = ({
          (!draftedIDs.includes(featuredPlayer?.id) ? 'pb-[130px]' : 'pb-[90px]')
       }`,
       saveState: false,
+      gridColumns: `grid-cols-5`,
    };
 
    const chatProps: ChatProps = {
@@ -461,34 +575,36 @@ const Board = ({
             value={{
                watchlist: watchlistState,
                updateWatchlist,
+               reorderWatchlist,
                updateFeaturedPlayer,
             }}
          >
             {user && team?.league_id === league.league_id && (
                <>
-                  {isOwner.current && !isActive ? (
-                     <button
-                        className={classNames(
-                           buttonClasses,
-                           'w-full lg:w-auto lg:h-full'
-                        )}
-                        type="button"
-                        onClick={startDraft}
-                     >
-                        Start Draft
-                     </button>
-                  ) : (
-                     <button
-                        className={classNames(
-                           buttonClasses,
-                           'w-full lg:w-auto lg:h-full'
-                        )}
-                        type="button"
-                        onClick={stopDraft}
-                     >
-                        Stop Draft
-                     </button>
-                  )}
+                  {isOwner.current &&
+                     (!isActive ? (
+                        <button
+                           className={classNames(
+                              buttonClasses,
+                              'w-full lg:w-auto lg:h-full'
+                           )}
+                           type="button"
+                           onClick={startDraft}
+                        >
+                           Start Draft
+                        </button>
+                     ) : (
+                        <button
+                           className={classNames(
+                              buttonClasses,
+                              'w-full lg:w-auto lg:h-full'
+                           )}
+                           type="button"
+                           onClick={stopDraft}
+                        >
+                           Stop Draft
+                        </button>
+                     ))}
                   {!isMobile ? (
                      <>
                         <div className="flex flex-col lg:max-w-[15vw] h-full w-full overflow-y-hidden">

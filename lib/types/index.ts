@@ -3,6 +3,7 @@ import { formStatus, formType } from '@/components/ui/form-wrappers/login';
 import { SupabaseClient, User } from '@supabase/supabase-js';
 import { AnchorHTMLAttributes, ReactNode } from 'react';
 
+export type FeaturedPlayerType = Player | null;
 export interface DraftSelections extends DraftSelection {
    first_name: string;
    last_name: string;
@@ -40,7 +41,7 @@ export interface WatchlistProps {
 }
 
 export interface FeaturedPlayerProps {
-   featuredPlayer: Player | null;
+   featuredPlayer: FeaturedPlayerType;
    yourTurn: boolean;
    handleDraftSelectionProps: {
       supabase: SupabaseClient;
@@ -108,6 +109,7 @@ export interface TabProps {
    link?: string;
    centerTabs?: boolean;
    saveState?: boolean;
+   gridColumns?: string;
 }
 export interface Profile {
    firstName: string;

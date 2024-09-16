@@ -6,18 +6,28 @@ import { useContext, useEffect, useRef } from 'react';
 const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
    const { updateFeaturedPlayer } = useContext(DraftContext);
    const draftTileRef = useRef<HTMLDivElement | null>(null);
+   const shouldScroll = useRef<boolean>(true);
 
    const scrollCallback = () => {
-      const draftOrderContainer: HTMLDivElement | null | undefined =
-         draftTileRef.current?.offsetParent?.querySelector('.draft-order');
+      const draftOrderContainer: HTMLDivElement = draftTileRef.current
+         ?.parentElement?.parentElement as HTMLDivElement;
 
-      if (draftOrderContainer && draftTileRef.current?.offsetTop) {
+      draftOrderContainer.addEventListener('scroll', () => {
+         shouldScroll.current = false;
+      });
+      shouldScroll.current = true;
+      if (
+         draftOrderContainer &&
+         draftTileRef.current?.offsetTop &&
+         shouldScroll.current === true
+      ) {
          const scrollY =
             draftTileRef.current?.offsetTop -
             draftOrderContainer.offsetTop -
             40;
          draftOrderContainer.scrollTo({
             top: scrollY,
+            behavior: 'smooth',
          });
       }
    };
@@ -38,7 +48,7 @@ const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
             pick.playerID && ' cursor-pointer',
             'flex flex-row border-b dark:border-gray-300 p-1 text-black dark:text-white'
          )}
-         ref={draftTileRef}
+         ref={(currentPick === pick.draftPosition && draftTileRef) || null}
          onClick={handleUpdateFeaturedPlayer}
       >
          <span

@@ -37,6 +37,10 @@ module.exports = {
             orange: '#DE8F52',
          },
          gridTemplateColumns: {
+            2: 'repeat(2, minmax(0, 1fr))',
+            3: 'repeat(3, minmax(0, 1fr))',
+            4: 'repeat(4, minmax(0, 1fr))',
+            5: 'repeat(5, minmax(0, 1fr))',
             13: 'repeat(13, minmax(0, 1fr))',
             14: 'repeat(14, minmax(0, 1fr))',
             15: 'repeat(15, minmax(0, 1fr))',

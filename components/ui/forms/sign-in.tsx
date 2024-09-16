@@ -11,6 +11,16 @@ const SignInForm = (props: AuthFormProps) => {
 
    const { setFormType } = props;
 
+   const handleSubmit = (formData: FormData) => {
+      login(formData).catch((error) => {
+         if (error?.message?.includes('Invalid login credentials')) {
+            setInvalidCredentials(true);
+         } else {
+            setInvalidCredentials(false);
+         }
+      });
+   };
+
    return (
       <>
          <form className="flex-1 flex flex-col w-full lg:w-96 justify-center gap-2 text-foreground">
@@ -44,7 +54,7 @@ const SignInForm = (props: AuthFormProps) => {
             )}
             <button
                className="bg-emerald-primary rounded px-4 py-2 text-white mb-3"
-               formAction={login}
+               formAction={handleSubmit}
                type={'submit'}
             >
                Sign In

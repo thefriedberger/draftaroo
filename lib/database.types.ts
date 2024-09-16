@@ -137,6 +137,13 @@ export type Database = {
                   isOneToOne: false;
                   referencedRelation: 'teams';
                   referencedColumns: ['id'];
+               },
+               {
+                  foreignKeyName: 'fk_player_id';
+                  columns: ['player_id'];
+                  isOneToOne: false;
+                  referencedRelation: 'players';
+                  referencedColumns: ['id'];
                }
             ];
          };
@@ -288,6 +295,7 @@ export type Database = {
                first_name: string;
                headshot: string | null;
                id: number;
+               is_active: boolean;
                last_name: string;
                primary_position: string | null;
                stats: Json[] | null;
@@ -298,6 +306,7 @@ export type Database = {
                first_name: string;
                headshot?: string | null;
                id: number;
+               is_active?: boolean;
                last_name: string;
                primary_position?: string | null;
                stats?: Json[] | null;
@@ -308,6 +317,7 @@ export type Database = {
                first_name?: string;
                headshot?: string | null;
                id?: number;
+               is_active?: boolean;
                last_name?: string;
                primary_position?: string | null;
                stats?: Json[] | null;
@@ -532,7 +542,7 @@ export type Database = {
                {
                   foreignKeyName: 'watchlist_owner_fkey';
                   columns: ['owner'];
-                  isOneToOne: true;
+                  isOneToOne: false;
                   referencedRelation: 'profiles';
                   referencedColumns: ['id'];
                }

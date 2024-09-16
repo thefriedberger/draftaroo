@@ -26,12 +26,14 @@ const Draft = async ({
    const supabase = createClient();
 
    const draft: Awaited<Draft> = await fetchDraftById(supabase, params.draftId);
-   const { data: user }: Awaited<UserResponse> = await supabase.auth.getUser();
-   if (!user?.user) return;
+   const {
+      data: { user },
+   }: Awaited<UserResponse> = await supabase.auth.getUser();
+   if (!user) return;
 
    const watchlist: Awaited<Watchlist> = await fetchWatchlist(
       supabase,
-      user.user,
+      user.id,
       draft
    );
    const draftPicks: Awaited<DraftPick[]> = await fetchDraftPicks(
@@ -40,11 +42,7 @@ const Draft = async ({
    );
    const league: Awaited<League> = await fetchLeague(supabase, params.id);
    const players: Awaited<Player[]> = await getPlayers(params.id);
-   const team: Awaited<Team> = await fetchTeam(
-      supabase,
-      user.user.id,
-      params.id
-   );
+   const team: Awaited<Team> = await fetchTeam(supabase, user.id, params.id);
    const leagueRules: Awaited<LeagueRules> = await fetchLeagueRules(
       supabase,
       league
@@ -67,7 +65,7 @@ const Draft = async ({
       leagueID: params.id,
       draft: draft,
       watchlist: watchlist,
-      user: user.user,
+      user: user,
       draftPicks: draftPicks,
       players: players,
       team: team,

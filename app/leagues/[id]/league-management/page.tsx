@@ -81,6 +81,7 @@ const LeagueManagement = async ({
       tabs,
       className:
          'flex flex-col items-center w-full lg:max-w-screen-xl text-white mt-5',
+      gridColumns: 'grid-cols-5',
    };
    return (
       <div className={'container'}>

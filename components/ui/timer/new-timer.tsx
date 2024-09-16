@@ -38,7 +38,6 @@ const NewTimer = ({
       is_active: false,
    });
    var timerValue = useRef(TIMER_DURATION);
-   const shouldAutopick = useRef(false);
    const [timer, setTimer] = useState<string>(formatTime(TIMER_DURATION));
    const [userPick, setUserPick] = useState<number>();
    const [doMute, setDoMute] = useState<boolean>(false);
@@ -48,7 +47,7 @@ const NewTimer = ({
    useEffect(() => {
       subscribeToTimerRoom(draftId, onChange);
       getData();
-   }, []);
+   }, [draftId]);
 
    useEffect(() => {
       if (roomData.is_active) {
@@ -57,18 +56,18 @@ const NewTimer = ({
             const now = Date.now();
             const diff = end - now;
             setIsTimerRunning(true);
-            if (diff < 0) {
-               setTimer(formatTime(0));
-               timerValue.current = 0;
-            } else {
-               const finalTimer = Math.ceil(diff / 1000);
+            // if (diff < 0) {
+            //    setTimer(formatTime(0));
+            //    timerValue.current = 0;
+            // } else {
+            const finalTimer = Math.ceil(diff / 1000);
 
-               lastTick.current = performance.now();
+            lastTick.current = performance.now();
 
-               timerValue.current = finalTimer;
-               setTimer(formatTime(finalTimer));
-               setRunning(true);
-            }
+            timerValue.current = finalTimer;
+            setTimer(formatTime(finalTimer));
+            setRunning(true);
+            // }
          }
       } else {
          setRunning(false);
@@ -95,7 +94,6 @@ const NewTimer = ({
       if (tick > 0) {
          const now = performance.now();
 
-         // run only if timer is running
          if (isTimerRunning) {
             if (now - lastTick.current >= 950) {
                if (roomData.end_time) {
@@ -177,6 +175,12 @@ const NewTimer = ({
          ('0' + (Math.floor(t / 60) % 60)).slice(-2) +
          ':' +
          ('0' + (t % 60)).slice(-2);
+      if (
+         new Date(TIMER_DURATION * 1000).toISOString().substring(14, 19) <
+         finalTime
+      ) {
+         return new Date(TIMER_DURATION * 1000).toISOString().substring(14, 19);
+      }
       return finalTime;
    }
    return (

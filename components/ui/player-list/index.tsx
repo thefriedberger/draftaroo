@@ -102,7 +102,6 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
    const [playerSearch, setPlayerSearch] = useState<string>('');
    const [season, setSeason] = useState<number>(1);
    const [records, setRecords] = useState<number>(150);
-   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
    const options: IntersectionObserverInit = {
       root: null,
@@ -110,12 +109,13 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
       threshold: 0.5,
    };
 
-   const [playersRef, isVisible] = PlayerObserver(options);
+   const { playersRef, isVisible } = PlayerObserver(options);
    const seasons = ['Season', '2022-2023', '2023-2024'];
 
    useEffect(() => {
       if (isVisible) setRecords(records + 150);
    }, [isVisible]);
+
    const filterPlayers = () => {
       const playersByPostion = players
          .filter((player: Player) => !draftedIDs.includes(player.id))
@@ -141,7 +141,7 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
       });
 
       const playersSearched = playersByTeam.filter((player: Player) => {
-         if (playerSearch != '') {
+         if (playerSearch !== '') {
             const fullName = player.first_name + ' ' + player.last_name;
             return fullName.toLowerCase().includes(playerSearch.toLowerCase());
          } else {
@@ -149,12 +149,16 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
          }
       });
 
-      if (sort != '') {
+      if (sort !== '') {
          return sortPlayers(playersSearched, sort, season);
       } else {
          return playersSearched;
       }
    };
+
+   useEffect(() => {
+      setRecords(150);
+   }, [sort]);
 
    return (
       <>
@@ -343,7 +347,7 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
                      <tbody>
                         {players?.length > 0 &&
                            filterPlayers()
-                              .slice(0, records as number)
+                              .slice(0, records)
                               .map((player: Player) => {
                                  return (
                                     <PlayerComponent
@@ -354,11 +358,13 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
                                     />
                                  );
                               })}
-                        {(records as number) < filterPlayers().length && (
-                           <tr ref={playersRef as any}>
-                              <td>Loading...</td>
-                           </tr>
-                        )}
+
+                        <tr ref={playersRef}>
+                           {records >= 150 &&
+                              records < filterPlayers().length && (
+                                 <td>Loading...</td>
+                              )}
+                        </tr>
                      </tbody>
                   </table>
                </div>

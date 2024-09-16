@@ -37,6 +37,18 @@ export const fetchTeams = cache(
    }
 );
 
+export const fetchTeamHistory = async (
+   supabase: SupabaseClient,
+   team: Team
+): Promise<Array<TeamHistory>> => {
+   const { data: team_history, error } = await supabase
+      .from('team_history')
+      .select('*')
+      .match({ team_id: team.id });
+
+   return team_history as TeamHistory[];
+};
+
 export const fetchAllUserTeams = cache(
    async (
       supabase: SupabaseClient<Database>,
@@ -106,19 +118,31 @@ export const fetchLeague = cache(
    }
 );
 
+export const fetchOwnerByTeam = async (
+   supabase: SupabaseClient,
+   teamId: string
+): Promise<string> => {
+   const { data: team, error } = await supabase
+      .from('teams')
+      .select('owner')
+      .match({ id: teamId });
+
+   return team?.[0]?.owner as string;
+};
+
 export const fetchWatchlist = async (
    supabase: SupabaseClient<Database>,
-   user: User,
+   userId: string,
    draft: Draft
 ): Promise<Watchlist> => {
    const { data: watchlist } = await supabase
       .from('watchlist')
       .select('*')
-      .match({ owner: user?.id, draft_id: draft.id });
+      .match({ owner: userId, draft_id: draft.id });
    if (!watchlist?.length) {
       const { data } = await supabase
          .from('watchlist')
-         .insert({ owner: user?.id, players: [], draft_id: draft.id })
+         .insert({ owner: userId, players: [], draft_id: draft.id })
          .match({})
          .select('*');
       return data?.[0] as Watchlist;
@@ -293,7 +317,6 @@ export const handleDraftSelection = async ({
    currentRound,
    currentPick,
 }: HandleDraftSelectionsProps) => {
-   console.log('drafting a player', player.id);
    const { data, error } = await supabase.from('draft_selections').insert({
       player_id: player.id,
       team_id: teamId,

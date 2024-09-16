@@ -1,8 +1,9 @@
 'use client';
 
 import getPlayers from '@/app/utils/get-players';
+import { fetchTeamHistory } from '@/app/utils/helpers';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 export interface RosterProps {
    league: League;
@@ -15,6 +16,8 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
    const [rosteredPlayers, setRosteredPlayers] = useState<number[]>([]);
    const [draftablePlayers, setDraftablePlayers] = useState<Player[]>([]);
    const [numberOfTeams, setNumberOfTeams] = useState<number>(0);
+   const [teamToView, setTeamToView] = useState<Team>();
+   const [teamRoster, setTeamRoster] = useState<TeamHistory[]>([]);
    const [shouldFilterPlayers, setShouldFilterPlayers] =
       useState<boolean>(false);
 
@@ -78,6 +81,10 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
       }
    };
 
+   const updateTeamToView = (e: ChangeEvent<HTMLSelectElement>) => {
+      setTeamToView(teams.find((team) => team.id === e.target.value));
+   };
+
    useEffect(() => {
       const fetchPlayers = async () => {
          if (league !== undefined) {
@@ -93,6 +100,16 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
    }, [league]);
 
    useEffect(() => {
+      const getTeamHistory = async () => {
+         if (teamToView) {
+            const data = await fetchTeamHistory(supabase, teamToView);
+            setTeamRoster(data);
+         }
+      };
+      getTeamHistory();
+   }, [teamToView]);
+
+   useEffect(() => {
       if (players && players?.length > 0) {
          setDraftablePlayers(
             players.filter((player: Player) => {
@@ -102,18 +119,32 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
       }
    }, [rosteredPlayers, players]);
 
+   const rosterSelectorProps = {
+      picks: draftPicks?.[String(teamToView?.id)] ?? [],
+      team: teamToView ?? null,
+      players: draftablePlayers,
+      teamRoster: teamRoster,
+      handleSetRoster: handleSetRoster,
+   };
    return (
       <>
-         {teams?.map((team: Team, index: number) => {
-            const picks = draftPicks?.[String(team.id)];
-            const props = {
-               picks: picks,
-               team: team,
-               players: draftablePlayers,
-               handleSetRoster: handleSetRoster,
-            };
-            return <KeeperSelector key={index} {...props} />;
-         })}
+         <div className="flex flex-col mt-5">
+            <label htmlFor="team-selector">Select Team: </label>
+            <select
+               id="team-selector"
+               onChange={updateTeamToView}
+               className="text-black"
+            >
+               {teams?.map((team: Team) => {
+                  return (
+                     <option key={team.id} value={team.id}>
+                        {team.team_name}
+                     </option>
+                  );
+               })}
+            </select>
+         </div>
+         <KeeperSelector {...rosterSelectorProps} />
       </>
    );
 };
@@ -124,11 +155,13 @@ const KeeperSelector = ({
    picks,
    team,
    players,
+   teamRoster,
    handleSetRoster,
 }: {
    picks: number[];
-   team: Team;
+   team: Team | null;
    players: Player[];
+   teamRoster: TeamHistory[];
    handleSetRoster: (
       playerID: number,
       teamID: string,
@@ -138,12 +171,24 @@ const KeeperSelector = ({
    const [roster, setRoster] = useState<number>(0);
    const [pickUsed, setPickUsed] = useState<number>(picks && picks[0]);
    const [timesKept, setTimesKept] = useState<number>(0);
-   const { id } = team;
    return (
       <>
-         {id && (
-            <div className="grid grid-cols-5 w- my-5">
-               <h3 className="w-16">{team.team_name}</h3>
+         {team?.id && (
+            <div className="flex flex-col w-full my-5">
+               <h3>{team?.team_name}</h3>
+               <h3>Current roster: </h3>
+               <div className="grid grid-cols-3 gap-2 my-5">
+                  {teamRoster.map((rosterPlayer) => {
+                     const foundPlayer = players.find(
+                        (player) => player.id === rosterPlayer.player_id
+                     );
+                     return (
+                        <div key={rosterPlayer.player_id}>
+                           {foundPlayer?.first_name} {foundPlayer?.last_name}
+                        </div>
+                     );
+                  })}
+               </div>
                <input
                   required
                   type="text"
@@ -177,7 +222,7 @@ const KeeperSelector = ({
                <button
                   type="submit"
                   className="w-16"
-                  onClick={() => handleSetRoster(roster, id, timesKept)}
+                  onClick={() => handleSetRoster(roster, team.id, timesKept)}
                >
                   Submit
                </button>

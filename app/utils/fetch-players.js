@@ -91,6 +91,7 @@ const getPlayers = async () => {
          primary_position: player.positionCode,
          current_team: player.currentTeam,
          stats: [],
+         is_active: player?.isActive ?? true,
       };
    };
 
