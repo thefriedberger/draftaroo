@@ -581,29 +581,30 @@ const Board = ({
          >
             {user && team?.league_id === league.league_id && (
                <>
-                  {isOwner.current && !isActive ? (
-                     <button
-                        className={classNames(
-                           buttonClasses,
-                           'w-full lg:w-auto lg:h-full'
-                        )}
-                        type="button"
-                        onClick={startDraft}
-                     >
-                        Start Draft
-                     </button>
-                  ) : (
-                     <button
-                        className={classNames(
-                           buttonClasses,
-                           'w-full lg:w-auto lg:h-full'
-                        )}
-                        type="button"
-                        onClick={stopDraft}
-                     >
-                        Stop Draft
-                     </button>
-                  )}
+                  {isOwner.current &&
+                     (!isActive ? (
+                        <button
+                           className={classNames(
+                              buttonClasses,
+                              'w-full lg:w-auto lg:h-full'
+                           )}
+                           type="button"
+                           onClick={startDraft}
+                        >
+                           Start Draft
+                        </button>
+                     ) : (
+                        <button
+                           className={classNames(
+                              buttonClasses,
+                              'w-full lg:w-auto lg:h-full'
+                           )}
+                           type="button"
+                           onClick={stopDraft}
+                        >
+                           Stop Draft
+                        </button>
+                     ))}
                   {!isMobile ? (
                      <>
                         <div className="flex flex-col lg:max-w-[15vw] h-full w-full overflow-y-hidden">
