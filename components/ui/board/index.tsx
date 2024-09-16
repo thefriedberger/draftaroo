@@ -302,53 +302,52 @@ const Board = ({
                player: watchlistPlayerToDraft,
                teamId: autoDraftTeam.team_id,
             });
+            return;
          }
-      } else {
-         const playerIds: number[] = updateTeamsViewPlayers(
-            autoDraftTeam.team_id
-         ).map((player) => player.player_id);
-
-         const teamPlayers: Player[] = players.filter((player) =>
-            playerIds.includes(player.id)
-         );
-
-         const positionNeeded: string[] | null =
-            findPositionsNeeded(teamPlayers);
-
-         const positionPlayer =
-            sortPlayers(
-               players.filter((player) => {
-                  if (positionNeeded && player.primary_position) {
-                     return (
-                        positionNeeded.includes(player.primary_position) &&
-                        !draftedIDs.includes(player.id)
-                     );
-                  }
-               }),
-               'score',
-               1
-            )[0] || null;
-         const bpa =
-            sortPlayers(
-               players.filter((player) => {
-                  return !draftedIDs.includes(player.id);
-               }),
-               'score',
-               1
-            )[0] || null;
-
-         const playerToDraft =
-            positionPlayer && positionPlayer.primary_position === 'G'
-               ? positionPlayer
-               : sortPlayers([bpa, positionPlayer], 'score', 1)[0] || null;
-
-         if (!playerToDraft) return;
-         handleDraftSelection({
-            ...handleDraftSelectionProps,
-            player: playerToDraft,
-            teamId: autoDraftTeam.team_id,
-         });
       }
+      const playerIds: number[] = updateTeamsViewPlayers(
+         autoDraftTeam.team_id
+      ).map((player) => player.player_id);
+
+      const teamPlayers: Player[] = players.filter((player) =>
+         playerIds.includes(player.id)
+      );
+
+      const positionNeeded: string[] | null = findPositionsNeeded(teamPlayers);
+
+      const positionPlayer =
+         sortPlayers(
+            players.filter((player) => {
+               if (positionNeeded && player.primary_position) {
+                  return (
+                     positionNeeded.includes(player.primary_position) &&
+                     !draftedIDs.includes(player.id)
+                  );
+               }
+            }),
+            'score',
+            1
+         )[0] || null;
+      const bpa =
+         sortPlayers(
+            players.filter((player) => {
+               return !draftedIDs.includes(player.id);
+            }),
+            'score',
+            1
+         )[0] || null;
+
+      const playerToDraft =
+         positionPlayer && positionPlayer.primary_position === 'G'
+            ? positionPlayer
+            : sortPlayers([bpa, positionPlayer], 'score', 1)[0] || null;
+
+      if (!playerToDraft) return;
+      handleDraftSelection({
+         ...handleDraftSelectionProps,
+         player: playerToDraft,
+         teamId: autoDraftTeam.team_id,
+      });
    };
 
    const findPositionsNeeded = (teamRoster: Player[]) => {
