@@ -393,6 +393,10 @@ const Board = ({
       }
    };
 
+   const reorderWatchlist = (newWatchlist: number[]) => {
+      setWatchlistState(newWatchlist);
+   };
+
    useEffect(() => {
       updateSupabaseWatchlist(supabase, watchlistState, user?.id, draft.id);
    }, [watchlistState]);
@@ -547,6 +551,7 @@ const Board = ({
             value={{
                watchlist: watchlistState,
                updateWatchlist,
+               reorderWatchlist,
                updateFeaturedPlayer,
             }}
          >

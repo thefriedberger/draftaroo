@@ -10,6 +10,7 @@ export type DraftContextType = {
       player: FeaturedPlayerType,
       playerID?: number
    ) => void;
+   reorderWatchlist?: (watchlist: number[]) => void;
 };
 
 const initialValues: DraftContextType = {
