@@ -5,6 +5,7 @@ import {
 import { DraftPick } from '@/lib/types';
 import { SupabaseClient, User } from '@supabase/supabase-js';
 import { cache } from 'react';
+
 export const getUser = cache(async (supabase: SupabaseClient<Database>) => {
    const { data, error } = await supabase.auth.getUser();
    return data;
