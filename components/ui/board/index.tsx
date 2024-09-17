@@ -127,7 +127,11 @@ const Board = ({
                   }
                }
             );
-            setTeamsViewPlayers(tempTeams);
+            setTeamsViewPlayers(
+               updateTeamsViewPlayers(teamViewToShow).map(
+                  (player) => player.player_id
+               )
+            );
          }
       }
    }, [draftedPlayersState, teamViewToShow]);
@@ -397,11 +401,12 @@ const Board = ({
    };
 
    const updateTeamsViewPlayers = (teamId: string) => {
-      const teamPlayers = draftedPlayersState
-         .filter((player: DraftSelection) => {
-            return player.team_id === teamId;
-         })
-         .sort((a, b) => (a.pick < b.pick ? -1 : 1));
+      const teamPlayers =
+         draftedPlayersState
+            .filter((player: DraftSelection) => {
+               return player.team_id === teamId;
+            })
+            ?.sort((a, b) => (a.pick < b.pick ? -1 : 1)) ?? [];
       return teamPlayers;
    };
 

@@ -88,7 +88,7 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
 
    return (
       <table className="w-full">
-         <thead className="bg-gold text-left sticky top-0">
+         <thead className="bg-gold text-left sticky top-0 lg:top-[35px]">
             <tr>
                <th colSpan={1}>Pos</th>
                <th colSpan={2}>Player</th>

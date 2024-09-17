@@ -13,9 +13,18 @@ const TeamsList = ({
    const [doReset, setDoReset] = useState<boolean>(false);
 
    useEffect(() => {
-      const foundPlayers = players.filter((player) =>
-         playerIDs.includes(player.id)
-      );
+      const foundPlayers: Player[] = [];
+      for (let i = 0; i < playerIDs.length; i++) {
+         const foundPlayer = players.find(
+            (player) => player.id === playerIDs[i]
+         );
+         if (foundPlayer) {
+            foundPlayers.push(foundPlayer);
+         }
+      }
+      // const foundPlayers = players.filter((player) =>
+      //    playerIDs.includes(player.id)
+      // );
       setDraftedPlayers(foundPlayers);
    }, [playerIDs, players]);
 
@@ -28,35 +37,37 @@ const TeamsList = ({
       <div className="w-full h-full overflow-y-scroll">
          {user && teams && (
             <>
-               <select
-                  className="text-black p-1 lg:fixed h-[35px]"
-                  onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                     setTeamsViewPlayers(e.target.value);
-                     setDoReset(true);
-                  }}
-                  title="Select team"
-                  defaultValue={''}
-               >
-                  <option value="" disabled>
-                     Select team
-                  </option>
-                  {teams
-                     .filter((team: Team) => {
-                        return team.owner !== user.id;
-                     })
-                     .map((team: Team) => {
-                        return (
-                           <option
-                              className="text-black"
-                              key={team.id}
-                              value={team.id}
-                           >
-                              {team.team_name}
-                           </option>
-                        );
-                     })}
-               </select>
-               <div className={'lg:pt-[35px]'}>
+               <div className="w-full lg:sticky lg:top-0 h-[35px] bg-paper-primary dark:bg-gray-dark">
+                  <select
+                     className="text-black p-1 h-full"
+                     onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                        setTeamsViewPlayers(e.target.value);
+                        setDoReset(true);
+                     }}
+                     title="Select team"
+                     defaultValue={''}
+                  >
+                     <option value="" disabled>
+                        Select team
+                     </option>
+                     {teams
+                        .filter((team: Team) => {
+                           return team.owner !== user.id;
+                        })
+                        .map((team: Team) => {
+                           return (
+                              <option
+                                 className="text-black"
+                                 key={team.id}
+                                 value={team.id}
+                              >
+                                 {team.team_name}
+                              </option>
+                           );
+                        })}
+                  </select>
+               </div>
+               <div>
                   <Team {...teamProps} />
                </div>
             </>
