@@ -235,7 +235,7 @@ const KeeperForm = ({
                               </label>
                            </td>
                            <td className="p-2">
-                              {playerData[0].stats[1].stats.averageScore}
+                              {playerData[0]?.stats?.[1]?.stats?.averageScore}
                            </td>
                            <td className="p-2">
                               {player.draft_position ?? 'FA'}
