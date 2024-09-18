@@ -27,7 +27,6 @@ const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
             40;
          draftOrderContainer.scrollTo({
             top: scrollY,
-            behavior: 'smooth',
          });
       }
    };
