@@ -189,7 +189,9 @@ const KeeperForm = ({
                   )
                   .map((player: RosterPlayer, index: number) => {
                      const playerData: Player | any = players.filter(
-                        (playerToMatch) => playerToMatch.id === player.player_id
+                        (playerToMatch) => {
+                           return playerToMatch.id === player.player_id;
+                        }
                      );
                      const closestPick = findClosestPick(player.picks_needed);
 
@@ -235,7 +237,8 @@ const KeeperForm = ({
                               </label>
                            </td>
                            <td className="p-2">
-                              {playerData[0]?.stats?.[1]?.stats?.averageScore}
+                              {playerData[0]?.stats?.[1]?.stats?.averageScore ??
+                                 'NA'}
                            </td>
                            <td className="p-2">
                               {player.draft_position ?? 'FA'}

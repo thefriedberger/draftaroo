@@ -18,9 +18,26 @@ const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
       .select('*')
       .eq('id', String(league?.data?.[0]?.league_scoring) || '');
    const leagueScoring = league_scoring?.data?.[0] as LeagueScoring | any;
+   const seasons: string[] = [];
+   const currentYear = new Date().getFullYear();
+   for (let i = 2; i > 0; i--) {
+      seasons.push(`${currentYear - i}${currentYear - i + 1}`);
+   }
    if (players && players.length > 0 && leagueScoring !== undefined) {
       for (const player of players) {
          if (!player.is_active) continue;
+
+         if (player.stats.length < 2) {
+            seasons.forEach((season, index) => {
+               if (player?.stats[0]?.season !== season) {
+                  if (season < seasons[1]) {
+                     player.stats.unshift([{ stats: null, season: season }]);
+                  } else {
+                     player.stats.push({ stats: null, season: season });
+                  }
+               }
+            });
+         }
 
          const playerStats = player?.stats as PlayerStats[];
          for (const season in playerStats) {
