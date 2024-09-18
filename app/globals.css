@@ -41,9 +41,18 @@
       @apply border-foreground/20;
    }
 }
+.animate-pulse {
+   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
 
-.animate-in {
-   animation: animateIn 0.3s ease 0.15s both;
+@keyframes pulse {
+   0%,
+   100% {
+      opacity: 1;
+   }
+   50% {
+      opacity: 0.5;
+   }
 }
 
 .ReactModalPortal .ReactModal__Overlay {
@@ -71,10 +80,9 @@ table tr th {
 table tr td {
    @apply text-black dark:text-white;
 }
-table tr:nth-of-type(even) {
+table tr:nth-of-type(even):not(.skeleton) {
    @apply bg-paper-primary dark:bg-gray-primary;
 }
-
 @media screen and (min-width: theme(screens.md)) {
    ::-webkit-scrollbar {
       width: 10px;

@@ -1,5 +1,6 @@
 'use client';
 
+import PlayerListSkeleton from '@/components/skeletons/player-list-skeleton';
 import { PlayerListProps } from '@/lib/types';
 import { ChangeEvent, useEffect, useState } from 'react';
 import PlayerComponent from '../player';
@@ -162,7 +163,7 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
 
    return (
       <>
-         {players && (
+         {players.length > 0 ? (
             <div className="flex flex-col items-center h-full max-h-full w-full text-black dark:text-white">
                <div className="flex flex-col sticky top-0 z-10 bg-gray-primary lg:z-0 lg:bg-transparent lg:static lg:flex-row w-full lg:w-auto justify-start self-start items-stretch lg:items-end">
                   <div className="grid grid-cols-3">
@@ -369,6 +370,8 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
                   </table>
                </div>
             </div>
+         ) : (
+            <PlayerListSkeleton />
          )}
       </>
    );

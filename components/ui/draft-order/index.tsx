@@ -1,3 +1,4 @@
+import DraftOrderSkeleton from '@/components/skeletons/draft-order-skeleton';
 import { DraftOrderProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
@@ -105,7 +106,7 @@ const DraftOrder = ({
       picks.length > 0 && setPicks(updateDraftedPlayers());
    }, [draftedPlayers]);
 
-   return (
+   return picks.length > 0 ? (
       <div className="overflow-y-scroll h-full lg:h-[90dvh] lg:border-r lg:border-paper-dark dark:lg:border-gray-300">
          {picks?.map((pick: Pick, index: number) => {
             return (
@@ -132,6 +133,8 @@ const DraftOrder = ({
             );
          })}
       </div>
+   ) : (
+      <DraftOrderSkeleton />
    );
 };
 

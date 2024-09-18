@@ -15,6 +15,8 @@ import {
 } from '@/app/utils/helpers';
 import { DraftContext } from '@/components/context/draft-context';
 import { WatchlistAction } from '@/components/context/page-context';
+import DraftOrderSkeleton from '@/components/skeletons/draft-order-skeleton';
+import TimerSkeleton from '@/components/skeletons/timer-skeleton';
 import {
    BoardProps,
    ChatProps,
@@ -34,7 +36,6 @@ import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Chat from '../chat';
 import DraftOrder from '../draft-order';
-import DraftOrderLoading from '../draft-order/loading';
 import FeaturedPlayer from '../featured-player';
 import { buttonClasses } from '../helpers/buttons';
 import MyTeam from '../my-team';
@@ -42,7 +43,6 @@ import PlayerList, { sortPlayers } from '../player-list';
 import Tabs from '../tabs';
 import TeamsList from '../teams-list';
 import Timer, { NewTimerProps, TIMER_DURATION } from '../timer';
-import TimerLoader from '../timer/loading';
 import Watchlist from '../watchlist';
 
 const Board = ({
@@ -614,8 +614,10 @@ const Board = ({
                   {!isMobile ? (
                      <>
                         <div className="flex flex-col lg:max-w-[15vw] h-full w-full overflow-y-hidden">
-                           <Timer {...timerProps} />
-                           <Suspense fallback={<DraftOrderLoading />}>
+                           <Suspense fallback={<TimerSkeleton />}>
+                              <Timer {...timerProps} />
+                           </Suspense>
+                           <Suspense fallback={<DraftOrderSkeleton />}>
                               <DraftOrder {...draftOrderProps} />
                            </Suspense>
                         </div>
@@ -631,7 +633,7 @@ const Board = ({
                      </>
                   ) : (
                      <>
-                        <Suspense fallback={<TimerLoader />}>
+                        <Suspense fallback={<TimerSkeleton />}>
                            <Timer {...timerProps} />
                         </Suspense>
                         <Tabs {...mobileTabProps} />
