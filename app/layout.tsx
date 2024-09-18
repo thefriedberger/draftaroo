@@ -25,7 +25,6 @@ export default async function RootLayout({
    if (!user) {
       return (
          <PageContextProvider>
-            <SpeedInsights />
             <html lang="en">
                <body
                   id="DraftarooApp"
@@ -35,6 +34,7 @@ export default async function RootLayout({
                      <Nav />
                   </header>
                   <main className="flex flex-col items-center">{children}</main>
+                  <SpeedInsights />
                </body>
             </html>
          </PageContextProvider>
@@ -42,7 +42,6 @@ export default async function RootLayout({
    }
    return (
       <PageContextProvider user={user}>
-         <SpeedInsights />
          <html lang="en">
             <body
                id="DraftarooApp"
@@ -52,6 +51,7 @@ export default async function RootLayout({
                   <Nav />
                </header>
                <main className="flex flex-col items-center">{children}</main>
+               <SpeedInsights />
             </body>
          </html>
       </PageContextProvider>
