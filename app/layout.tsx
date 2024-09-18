@@ -2,6 +2,7 @@ import '@/app/globals.css';
 import { PageContextProvider } from '@/components/context/page-context';
 import Nav from '@/components/ui/nav';
 import { UserResponse } from '@supabase/supabase-js';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Metadata } from 'next';
 import { createClient } from './utils/supabase/server';
 export const metadata: Metadata = {
@@ -24,7 +25,7 @@ export default async function RootLayout({
    if (!user) {
       return (
          <PageContextProvider>
-            {/* <ContextWrapper> */}
+            <SpeedInsights />
             <html lang="en">
                <body
                   id="DraftarooApp"
@@ -36,13 +37,12 @@ export default async function RootLayout({
                   <main className="flex flex-col items-center">{children}</main>
                </body>
             </html>
-            {/* </ContextWrapper> */}
          </PageContextProvider>
       );
    }
    return (
       <PageContextProvider user={user}>
-         {/* <ContextWrapper> */}
+         <SpeedInsights />
          <html lang="en">
             <body
                id="DraftarooApp"
@@ -54,7 +54,6 @@ export default async function RootLayout({
                <main className="flex flex-col items-center">{children}</main>
             </body>
          </html>
-         {/* </ContextWrapper> */}
       </PageContextProvider>
    );
 }
