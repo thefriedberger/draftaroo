@@ -41,7 +41,8 @@ import MyTeam from '../my-team';
 import PlayerList, { sortPlayers } from '../player-list';
 import Tabs from '../tabs';
 import TeamsList from '../teams-list';
-import NewTimer, { NewTimerProps, TIMER_DURATION } from '../timer/new-timer';
+import Timer, { NewTimerProps, TIMER_DURATION } from '../timer';
+import TimerLoader from '../timer/loading';
 import Watchlist from '../watchlist';
 
 const Board = ({
@@ -613,7 +614,7 @@ const Board = ({
                   {!isMobile ? (
                      <>
                         <div className="flex flex-col lg:max-w-[15vw] h-full w-full overflow-y-hidden">
-                           <NewTimer {...timerProps} />
+                           <Timer {...timerProps} />
                            <Suspense fallback={<DraftOrderLoading />}>
                               <DraftOrder {...draftOrderProps} />
                            </Suspense>
@@ -630,7 +631,9 @@ const Board = ({
                      </>
                   ) : (
                      <>
-                        <NewTimer {...timerProps} />
+                        <Suspense fallback={<TimerLoader />}>
+                           <Timer {...timerProps} />
+                        </Suspense>
                         <Tabs {...mobileTabProps} />
                         {featuredPlayer && (
                            <FeaturedPlayer {...featuredPlayerProps} />

@@ -1,7 +1,4 @@
-import {
-   DraftTimerFields,
-   TIMER_DURATION,
-} from '@/components/ui/timer/new-timer';
+import { DraftTimerFields, TIMER_DURATION } from '@/components/ui/timer';
 import { DraftPick } from '@/lib/types';
 import { SupabaseClient, User } from '@supabase/supabase-js';
 import { cache } from 'react';
