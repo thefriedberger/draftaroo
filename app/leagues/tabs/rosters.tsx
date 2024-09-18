@@ -2,7 +2,7 @@
 
 import getPlayers from '@/app/utils/get-players';
 import { fetchTeamHistory } from '@/app/utils/helpers';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/app/utils/supabase/client';
 import { ChangeEvent, useEffect, useState } from 'react';
 
 export interface RosterProps {
@@ -21,7 +21,7 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
    const [shouldFilterPlayers, setShouldFilterPlayers] =
       useState<boolean>(false);
 
-   const supabase = createClientComponentClient<Database>();
+   const supabase = createClient();
 
    const fetchLeagueDraftRules = async () => {
       if (league) {
