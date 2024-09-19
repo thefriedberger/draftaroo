@@ -7,7 +7,7 @@ const PlayerListSkeleton = () => {
          <div className="flex flex-row lg:hidden bg-white p-3 min-h-10">
             <div className="h-full w-full bg-gray-light rounded-md animate-pulse"></div>
          </div>
-         <div className="flex flex-row bg-gold px-3 py-2 min-h-7">
+         <div className="flex flex-row bg-gold px-3 py-2 min-h-9 lg:min-h-7">
             <div className="h-full w-full bg-gray-light rounded-md animate-pulse"></div>
          </div>
          {Array.from({ length: 50 }).map((v, i) => {

@@ -103,6 +103,7 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
    const [playerSearch, setPlayerSearch] = useState<string>('');
    const [season, setSeason] = useState<number>(1);
    const [records, setRecords] = useState<number>(150);
+   const thClasses = 'p-2 lg:p-0 my-2 cursor-pointer';
 
    const options: IntersectionObserverInit = {
       root: null,
@@ -207,25 +208,25 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
                         <tr className="bg-gray-700 text-white dark:bg-gold min-w-full text-left">
                            <th></th>
                            <th
-                              className="my-2 cursor-pointer"
+                              className={thClasses}
                               onClick={(e) => setSort('')}
                            >
                               Name
                            </th>
                            <th
-                              className="my-2 cursor-pointer"
+                              className={thClasses}
                               onClick={(e) => setSort('score')}
                            >
                               Score
                            </th>
                            <th
-                              className="my-2 cursor-pointer"
+                              className={thClasses}
                               onClick={(e) => setSort('averageScore')}
                            >
                               Avg
                            </th>
                            <th
-                              className="my-2 cursor-pointer"
+                              className={thClasses}
                               onClick={(e) => setSort('games')}
                            >
                               GP
@@ -233,49 +234,49 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
                            {positionFilter !== 'G' ? (
                               <>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) => setSort('timeOnIcePerGame')}
                                  >
                                     ATOI
                                  </th>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) => setSort('goals')}
                                  >
                                     G
                                  </th>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) => setSort('assists')}
                                  >
                                     A
                                  </th>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) => setSort('pim')}
                                  >
                                     PIM
                                  </th>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) => setSort('powerPlayGoals')}
                                  >
                                     PPG
                                  </th>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) => setSort('powerPlayAssists')}
                                  >
                                     PPA
                                  </th>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) => setSort('shortHandedGoals')}
                                  >
                                     SHG
                                  </th>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) =>
                                        setSort('shortHandedAssists')
                                     }
@@ -283,19 +284,19 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
                                     SHA
                                  </th>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) => setSort('shots')}
                                  >
                                     SOG
                                  </th>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) => setSort('hits')}
                                  >
                                     HIT
                                  </th>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) => setSort('blocked')}
                                  >
                                     BLK
@@ -304,31 +305,31 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
                            ) : (
                               <>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) => setSort('wins')}
                                  >
                                     W
                                  </th>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) => setSort('losses')}
                                  >
                                     L
                                  </th>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) => setSort('saves')}
                                  >
                                     S
                                  </th>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) => setSort('goalsAgainst')}
                                  >
                                     GA
                                  </th>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) =>
                                        setSort('goalAgainstAverage')
                                     }
@@ -336,7 +337,7 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
                                     GAA
                                  </th>
                                  <th
-                                    className="my-2 cursor-pointer"
+                                    className={thClasses}
                                     onClick={(e) => setSort('shutouts')}
                                  >
                                     SO
