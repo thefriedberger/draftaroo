@@ -557,7 +557,7 @@ const Board = ({
       centerTabs: false,
       className:
          'flex flex-col w-full lg:max-w-screen-xl lg:h-[65%] text-white',
-      saveState: false,
+      saveState: true,
    };
 
    const mobileTabProps: TabProps = {
@@ -567,7 +567,7 @@ const Board = ({
          featuredPlayer &&
          (!draftedIDs.includes(featuredPlayer?.id) ? 'pb-[130px]' : 'pb-[90px]')
       }`,
-      saveState: false,
+      saveState: true,
       gridColumns: `grid-cols-5`,
    };
 

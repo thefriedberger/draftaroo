@@ -1,10 +1,6 @@
-import classNames from 'classnames';
+import BoardSkeleton from '@/components/skeletons/board-skeleton';
 
 const BoardLoader = () => {
-   return (
-      <div className={classNames('w-full flex flex-col lg:flex-row')}>
-         Loading
-      </div>
-   );
+   return <BoardSkeleton />;
 };
 export default BoardLoader;

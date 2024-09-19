@@ -103,7 +103,7 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
    const [playerSearch, setPlayerSearch] = useState<string>('');
    const [season, setSeason] = useState<number>(1);
    const [records, setRecords] = useState<number>(150);
-   const thClasses = 'p-2 lg:p-0 my-2 cursor-pointer';
+   const thClasses = 'p-2 lg:p-1 my-2 cursor-pointer';
 
    const options: IntersectionObserverInit = {
       root: null,

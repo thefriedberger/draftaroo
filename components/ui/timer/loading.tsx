@@ -1,10 +1,6 @@
-import classNames from 'classnames';
+import TimerSkeleton from '@/components/skeletons/timer-skeleton';
 
 const TimerLoader = () => {
-   return (
-      <div className={classNames('w-full flex flex-col lg:flex-row')}>
-         Loading timer
-      </div>
-   );
+   return <TimerSkeleton />;
 };
 export default TimerLoader;
