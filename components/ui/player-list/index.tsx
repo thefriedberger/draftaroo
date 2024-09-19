@@ -176,7 +176,7 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
                      <div className="flex flex-col">
                         <select
                            defaultValue={'1'}
-                           className="text-black p-1 lg:mr-2"
+                           className="text-black p-2 rounded-none lg:p-1 lg:mr-2"
                            onChange={(e: ChangeEvent) => {
                               const target = e.target as HTMLSelectElement;
                               setSeason(Number(target?.value));
@@ -188,7 +188,7 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
                      </div>
                   </div>
                   <input
-                     className="text-black p-1"
+                     className="text-black p-2 lg:p-1"
                      type="search"
                      placeholder="Search players"
                      value={playerSearch}
@@ -222,7 +222,7 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
                               className="my-2 cursor-pointer"
                               onClick={(e) => setSort('averageScore')}
                            >
-                              Avg Score
+                              Avg
                            </th>
                            <th
                               className="my-2 cursor-pointer"
@@ -381,7 +381,7 @@ const Filter = ({ values, labels, filterFun }: any) => {
    return (
       <select
          onChange={(e) => filterFun(e.target.value)}
-         className="text-black p-1 lg:mr-2"
+         className="text-black rounded-none p-2 lg:p-1 lg:mr-2"
       >
          {values.map((x: any) => {
             return (

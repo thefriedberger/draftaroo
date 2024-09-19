@@ -4,7 +4,7 @@ const TimerSkeleton = () => {
    const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
 
    return (
-      <div className="flex flex-col justify-between w-full h-[10dvh] lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative animate-pulse">
+      <div className="flex flex-col justify-between w-full h-[10dvh] lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative">
          {
             <>
                <button
@@ -15,23 +15,31 @@ const TimerSkeleton = () => {
                ></button>
                {!isMobile ? (
                   <>
-                     <p className="bg-orange text-black text-4xl p-2 text-center font-bold"></p>
-                     <p className="">{}&nbsp;Round</p>
-                     <p className="">{}&nbsp;Pick</p>
-                     <p className="">{}&nbsp;Overall</p>
-                     <div className="p-2 bg-paper-dark dark:bg-gray-primary">
-                        <p className="text-xl">{`Your turn in`}</p>
+                     <div className="bg-orange-primary min-h-14  text-black text-4xl p-2 text-center font-bold">
+                        <div className="w-[85%] h-10 mx-auto rounded-md bg-orange-muted animate-pulse"></div>
+                     </div>
+                     <div className="h-6 p-2">
+                        <div className="h-full w-full rounded-md bg-paper-dark dark:bg-gray-primary animate-pulse"></div>
+                     </div>
+                     <div className="h-6 p-2">
+                        <div className="h-full w-full rounded-md bg-paper-dark dark:bg-gray-primary animate-pulse"></div>
+                     </div>
+                     <div className="h-6 p-2">
+                        <div className="h-full w-full rounded-md bg-paper-dark dark:bg-gray-primary animate-pulse"></div>
+                     </div>
+                     <div className="h-11 p-2 bg-paper-dark dark:bg-gray-primary">
+                        <div className="h-full w-full rounded-md bg-paper-primary dark:bg-gray-dark animate-pulse"></div>
                      </div>
                   </>
                ) : (
                   <div className="bg-paper-primary dark:bg-gray-primary flex flex-row items-center h-full">
-                     <div className="flex items-center justify-center mr-2 text-xl w-[100px] bg-orange min-h-full">
-                        <p className="p-2 text-2xl">{}</p>
+                     <div className="flex items-center justify-center mr-2 text-xl w-[100px] bg-orange-primary min-h-full">
+                        <div className="w-[85%] h-10 mx-auto rounded-md bg-orange-muted animate-pulse"></div>
                      </div>
                      <div className="flex flex-col py-2">
-                        <p className="">{}&nbsp;Round</p>
-                        <p className="">{}&nbsp;Pick</p>
-                        <p className="">{}&nbsp;Overall</p>
+                        <div className="h-4 w-12 my-1 rounded-md bg-paper-dark dark:bg-gray-dark animate-pulse"></div>
+                        <div className="h-4 w-9 my-1 rounded-md bg-paper-dark dark:bg-gray-dark animate-pulse"></div>
+                        <div className="h-4 w-10 my-1 rounded-md bg-paper-dark dark:bg-gray-dark animate-pulse"></div>{' '}
                      </div>
                      <p className="self-end ml-auto pr-2 pb-1 text-lg"></p>
                   </div>

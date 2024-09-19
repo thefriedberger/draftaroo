@@ -4,6 +4,7 @@ module.exports = {
       './app/**/*.{js,ts,jsx,tsx}',
       './pages/**/*.{js,ts,jsx,tsx}',
       './components/ui/**/*.{js,ts,jsx,tsx}',
+      './components/skeletons/**/*.{js,ts,jsx,tsx}',
    ],
    theme: {
       extend: {
@@ -34,7 +35,7 @@ module.exports = {
                light: '#DBDBD2',
                button: '#EDEDE8',
             },
-            orange: '#DE8F52',
+            orange: { primary: '#DE8F52', muted: '#e6b58f' },
          },
          gridTemplateColumns: {
             2: 'repeat(2, minmax(0, 1fr))',

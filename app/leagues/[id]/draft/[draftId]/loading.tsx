@@ -1,5 +1,5 @@
-import Loader from '@/components/ui/loader';
+import BoardSkeleton from '@/components/skeletons/board-skeleton';
 
 export default function Loading() {
-   return <Loader text="draft" />;
+   return <BoardSkeleton />;
 }

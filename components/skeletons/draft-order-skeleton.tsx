@@ -6,10 +6,10 @@ const DraftOrderSkeleton = () => {
                <div
                   key={i}
                   className={
-                     'flex flex-row border-b border-paper-dark dark:border-gray-300 p-3 text-black dark:text-white h-10 w-full items-center justify-center animate-pulse'
+                     'flex flex-row border-b border-paper-dark dark:border-gray-300 p-3 text-black dark:text-white h-10 w-full items-center justify-center'
                   }
                >
-                  <div className="h-full w-full bg-paper-dark dark:bg-gray-primary rounded-md"></div>
+                  <div className="h-full w-full bg-paper-dark dark:bg-gray-primary rounded-md animate-pulse"></div>
                </div>
             );
          })}

@@ -209,7 +209,7 @@ const Timer = ({
                </button>
                {!isMobile ? (
                   <>
-                     <p className="bg-orange text-black text-4xl p-2 text-center font-bold">
+                     <p className="bg-orange-primary text-black text-4xl p-2 text-center font-bold">
                         {timer}
                      </p>
                      <p className="">{currentRound}&nbsp;Round</p>
@@ -225,7 +225,7 @@ const Timer = ({
                   </>
                ) : (
                   <div className="bg-paper-primary dark:bg-gray-primary flex flex-row items-center h-full">
-                     <div className="flex items-center justify-center mr-2 text-xl w-[100px] bg-orange min-h-full">
+                     <div className="flex items-center justify-center mr-2 text-xl w-[100px] bg-orange-primary min-h-full">
                         <p className="p-2 text-2xl">{timer}</p>
                      </div>
                      <div className="flex flex-col py-2">
