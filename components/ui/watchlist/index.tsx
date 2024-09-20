@@ -84,11 +84,7 @@ const WatchlistPlayer = ({
       let reorderedWatchlist = watchlistPlayers.filter(
          (toFind) => toFind.id !== player.id
       );
-      console.log(watchlistPosition.current, playerIndex, reorderedWatchlist);
       reorderedWatchlist.splice(watchlistPosition.current - 1, 0, player);
-      console.log(reorderedWatchlist);
-
-      console.log(watchlistPosition.current, playerIndex, reorderedWatchlist);
       reorderWatchlist?.(reorderedWatchlist.map((player) => player.id));
       if (inputRef.current) {
          inputRef.current.value = '';
