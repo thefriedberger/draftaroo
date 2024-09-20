@@ -7,7 +7,7 @@ import WatchlistSkeleton from './watchlist-skeleton';
 
 const BoardSkeleton = () => {
    return (
-      <div className="flex flex-col lg:flex-row items-center w-full overflow-y-hidden lg:overflow-y-hidden draft-board">
+      <div className="flex flex-col lg:flex-row items-center w-full overflow-y-scroll lg:overflow-y-hidden draft-board">
          <>
             <div className="hidden lg:flex flex-col lg:max-w-[15vw] h-full w-full overflow-y-hidden">
                <TimerSkeleton />

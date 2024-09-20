@@ -576,7 +576,6 @@ const Board = ({
    };
    return (
       <div className="flex flex-col lg:flex-row items-center w-full overflow-y-scroll lg:overflow-y-hidden draft-board">
-         {' '}
          <DraftContext.Provider
             value={{
                watchlist: watchlistState,
