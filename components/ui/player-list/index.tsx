@@ -41,8 +41,6 @@ export const sortPlayers = (
    return players;
 };
 const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
-   const [leagueScoring, setLeagueScoring] = useState<LeagueScoring | any>();
-   const [filteredPlayers, setFilteredPlayers] = useState<Player[]>();
    const [sort, setSort] = useState<SortValue>('score');
    const [positionFilter, setPositionFilter] = useState<string>('Skaters');
    const [teamFilter, setTeamFilter] = useState<string>('Team');
@@ -104,7 +102,6 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
       if (sort !== '') {
          return sortPlayers(playersSearched, sort, season);
       } else {
-         setFilteredPlayers(playersSearched);
          return playersSearched;
       }
    };
@@ -302,7 +299,6 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
                                     <PlayerComponent
                                        key={player.id}
                                        player={player}
-                                       leagueScoring={leagueScoring}
                                        season={season}
                                     />
                                  </Suspense>

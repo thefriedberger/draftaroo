@@ -48,7 +48,7 @@ const PlayerComponent = ({
    season,
 }: {
    player: Player;
-   leagueScoring: LeagueScoring | any;
+   leagueScoring?: LeagueScoring | any;
    season: number;
 }) => {
    const { updateFeaturedPlayer } = useContext(DraftContext);
