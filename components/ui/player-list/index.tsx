@@ -1,68 +1,13 @@
 'use client';
 
-import PlayerListSkeleton from '@/components/skeletons/player-list-skeleton';
+import { buildThresholdList } from '@/app/utils/helpers';
+import PlayerComponentSkeleton from '@/components/skeletons/player-component-skeleton';
+import { SortValue, teams } from '@/lib/constants';
 import { PlayerListProps } from '@/lib/types';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, Suspense, useEffect, useState } from 'react';
 import PlayerComponent from '../player';
 import PlayerObserver from './observer';
 
-export type SortValue =
-   | 'score'
-   | 'averageScore'
-   | 'timeOnIcePerGame'
-   | 'games'
-   | 'goals'
-   | 'assists'
-   | 'plusMinus'
-   | 'pim'
-   | 'powerPlayGoals'
-   | 'powerPlayAssists'
-   | 'shortHandedGoals'
-   | 'shortHandedAssists'
-   | 'shots'
-   | 'hits'
-   | 'blocked'
-   | 'goalsAgainst'
-   | 'wins'
-   | 'saves'
-   | 'shutouts'
-   | 'goalAgainstAverage'
-   | 'losses'
-   | '';
-export const teams = [
-   'Team',
-   'Arizona Coyotes',
-   'Anaheim Ducks',
-   'Boston Bruins',
-   'Buffalo Sabres',
-   'Calgary Flames',
-   'Carolina Hurricanes',
-   'Colorado Avalanche',
-   'Columbus Blue Jackets',
-   'Dallas Stars',
-   'Detroit Red Wings',
-   'Edmonton Oilers',
-   'Florida Panthers',
-   'Los Angeles Kings',
-   'Minnesota Wild',
-   'Montréal Canadiens',
-   'Nashville Predators',
-   'New Jersey Devils',
-   'New York Islanders',
-   'New York Rangers',
-   'Ottawa Senators',
-   'Philadelphia Flyers',
-   'Pittsburgh Penguins',
-   'San Jose Sharks',
-   'Seattle Kraken',
-   'St. Louis Blues',
-   'Tampa Bay Lightning',
-   'Tornto Maple Leafs',
-   'Vancouver Canucks',
-   'Vegas Golden Knights',
-   'Washington Capitals',
-   'Winnipeg Jets',
-];
 export const positions = ['Skaters', 'G', 'Forwards', 'C', 'L', 'R', 'D'];
 export const positionMap = {
    Skaters: 'Skaters',
@@ -97,6 +42,7 @@ export const sortPlayers = (
 };
 const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
    const [leagueScoring, setLeagueScoring] = useState<LeagueScoring | any>();
+   const [filteredPlayers, setFilteredPlayers] = useState<Player[]>();
    const [sort, setSort] = useState<SortValue>('score');
    const [positionFilter, setPositionFilter] = useState<string>('Skaters');
    const [teamFilter, setTeamFilter] = useState<string>('Team');
@@ -108,7 +54,7 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
    const options: IntersectionObserverInit = {
       root: null,
       rootMargin: '50px',
-      threshold: 0.5,
+      threshold: buildThresholdList,
    };
 
    const { playersRef, isVisible } = PlayerObserver(options);
@@ -117,6 +63,10 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
    useEffect(() => {
       if (isVisible) setRecords(records + 150);
    }, [isVisible]);
+
+   useEffect(() => {
+      filterPlayers();
+   }, [players]);
 
    const filterPlayers = () => {
       const playersByPostion = players
@@ -140,7 +90,7 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
          } else {
             return true;
          }
-      });
+      }, []);
 
       const playersSearched = playersByTeam.filter((player: Player) => {
          if (playerSearch !== '') {
@@ -154,6 +104,7 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
       if (sort !== '') {
          return sortPlayers(playersSearched, sort, season);
       } else {
+         setFilteredPlayers(playersSearched);
          return playersSearched;
       }
    };
@@ -164,216 +115,209 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
 
    return (
       <>
-         {players.length > 0 ? (
-            <div className="flex flex-col items-center h-full max-h-full w-full text-black dark:text-white">
-               <div className="flex flex-col sticky top-0 z-10 bg-gray-primary lg:z-0 lg:bg-transparent lg:static lg:flex-row w-full lg:w-auto justify-start self-start items-stretch lg:items-end">
-                  <div className="grid grid-cols-3">
-                     <Filter
-                        values={positions}
-                        labels={positionMap}
-                        filterFun={setPositionFilter}
-                     />
-                     <Filter values={teams} filterFun={setTeamFilter} />
-                     <div className="flex flex-col">
-                        <select
-                           defaultValue={'1'}
-                           className="text-black p-2 rounded-none lg:p-1 lg:mr-2"
-                           onChange={(e: ChangeEvent) => {
-                              const target = e.target as HTMLSelectElement;
-                              setSeason(Number(target?.value));
-                           }}
-                        >
-                           <option value="0">2022-2023</option>
-                           <option value="1">2023-2024</option>
-                        </select>
-                     </div>
-                  </div>
-                  <input
-                     className="text-black p-2 lg:p-1"
-                     type="search"
-                     placeholder="Search players"
-                     value={playerSearch}
-                     onChange={(e) => setPlayerSearch(e.target.value)}
+         <div className="flex flex-col items-center h-full max-h-full w-full text-black dark:text-white">
+            <div className="flex flex-col sticky top-0 z-10 bg-gray-primary lg:z-0 lg:bg-transparent lg:static lg:flex-row w-full lg:w-auto justify-start self-start items-stretch lg:items-end">
+               <div className="grid grid-cols-3">
+                  <Filter
+                     values={positions}
+                     labels={positionMap}
+                     filterFun={setPositionFilter}
                   />
+                  <Filter values={teams} filterFun={setTeamFilter} />
+                  <div className="flex flex-col">
+                     <select
+                        defaultValue={'1'}
+                        className="text-black p-2 rounded-none lg:p-1 lg:mr-2"
+                        onChange={(e: ChangeEvent) => {
+                           const target = e.target as HTMLSelectElement;
+                           setSeason(Number(target?.value));
+                        }}
+                     >
+                        <option value="0">2022-2023</option>
+                        <option value="1">2023-2024</option>
+                     </select>
+                  </div>
                </div>
-               <div
-                  className=" w-full lg:h-full overflow-y-scroll relative"
-                  id={'player-list-container'}
+               <input
+                  className="text-black p-2 lg:p-1"
+                  type="search"
+                  placeholder="Search players"
+                  value={playerSearch}
+                  onChange={(e) => setPlayerSearch(e.target.value)}
+               />
+            </div>
+            <div
+               className=" w-full lg:h-full overflow-y-scroll relative"
+               id={'player-list-container'}
+            >
+               <table
+                  className="w-full text-sm relative overflow-y-scroll"
+                  id={'player-list-table'}
                >
-                  <table
-                     className="w-full text-sm relative overflow-y-scroll"
-                     id={'player-list-table'}
-                  >
-                     <thead className="w-full sticky top-0">
-                        <tr className="bg-gray-700 text-white dark:bg-gold min-w-full text-left">
-                           <th></th>
-                           <th
-                              className={thClasses}
-                              onClick={(e) => setSort('')}
-                           >
-                              Name
-                           </th>
-                           <th
-                              className={thClasses}
-                              onClick={(e) => setSort('score')}
-                           >
-                              Score
-                           </th>
-                           <th
-                              className={thClasses}
-                              onClick={(e) => setSort('averageScore')}
-                           >
-                              Avg
-                           </th>
-                           <th
-                              className={thClasses}
-                              onClick={(e) => setSort('games')}
-                           >
-                              GP
-                           </th>
-                           {positionFilter !== 'G' ? (
-                              <>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) => setSort('timeOnIcePerGame')}
+                  <thead className="w-full sticky top-0">
+                     <tr className="bg-gray-700 text-white dark:bg-gold min-w-full text-left">
+                        <th></th>
+                        <th className={thClasses} onClick={(e) => setSort('')}>
+                           Name
+                        </th>
+                        <th
+                           className={thClasses}
+                           onClick={(e) => setSort('score')}
+                        >
+                           Score
+                        </th>
+                        <th
+                           className={thClasses}
+                           onClick={(e) => setSort('averageScore')}
+                        >
+                           Avg
+                        </th>
+                        <th
+                           className={thClasses}
+                           onClick={(e) => setSort('games')}
+                        >
+                           GP
+                        </th>
+                        {positionFilter !== 'G' ? (
+                           <>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('timeOnIcePerGame')}
+                              >
+                                 ATOI
+                              </th>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('goals')}
+                              >
+                                 G
+                              </th>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('assists')}
+                              >
+                                 A
+                              </th>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('pim')}
+                              >
+                                 PIM
+                              </th>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('powerPlayGoals')}
+                              >
+                                 PPG
+                              </th>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('powerPlayAssists')}
+                              >
+                                 PPA
+                              </th>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('shortHandedGoals')}
+                              >
+                                 SHG
+                              </th>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('shortHandedAssists')}
+                              >
+                                 SHA
+                              </th>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('shots')}
+                              >
+                                 SOG
+                              </th>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('hits')}
+                              >
+                                 HIT
+                              </th>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('blocked')}
+                              >
+                                 BLK
+                              </th>
+                           </>
+                        ) : (
+                           <>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('wins')}
+                              >
+                                 W
+                              </th>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('losses')}
+                              >
+                                 L
+                              </th>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('saves')}
+                              >
+                                 S
+                              </th>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('goalsAgainst')}
+                              >
+                                 GA
+                              </th>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('goalAgainstAverage')}
+                              >
+                                 GAA
+                              </th>
+                              <th
+                                 className={thClasses}
+                                 onClick={(e) => setSort('shutouts')}
+                              >
+                                 SO
+                              </th>
+                           </>
+                        )}
+                     </tr>
+                  </thead>
+                  <tbody>
+                     {players?.length > 0 &&
+                        filterPlayers()
+                           .slice(0, records)
+                           .map((player: Player) => {
+                              return (
+                                 <Suspense
+                                    key={player.id}
+                                    fallback={<PlayerComponentSkeleton />}
                                  >
-                                    ATOI
-                                 </th>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) => setSort('goals')}
-                                 >
-                                    G
-                                 </th>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) => setSort('assists')}
-                                 >
-                                    A
-                                 </th>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) => setSort('pim')}
-                                 >
-                                    PIM
-                                 </th>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) => setSort('powerPlayGoals')}
-                                 >
-                                    PPG
-                                 </th>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) => setSort('powerPlayAssists')}
-                                 >
-                                    PPA
-                                 </th>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) => setSort('shortHandedGoals')}
-                                 >
-                                    SHG
-                                 </th>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) =>
-                                       setSort('shortHandedAssists')
-                                    }
-                                 >
-                                    SHA
-                                 </th>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) => setSort('shots')}
-                                 >
-                                    SOG
-                                 </th>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) => setSort('hits')}
-                                 >
-                                    HIT
-                                 </th>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) => setSort('blocked')}
-                                 >
-                                    BLK
-                                 </th>
-                              </>
-                           ) : (
-                              <>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) => setSort('wins')}
-                                 >
-                                    W
-                                 </th>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) => setSort('losses')}
-                                 >
-                                    L
-                                 </th>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) => setSort('saves')}
-                                 >
-                                    S
-                                 </th>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) => setSort('goalsAgainst')}
-                                 >
-                                    GA
-                                 </th>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) =>
-                                       setSort('goalAgainstAverage')
-                                    }
-                                 >
-                                    GAA
-                                 </th>
-                                 <th
-                                    className={thClasses}
-                                    onClick={(e) => setSort('shutouts')}
-                                 >
-                                    SO
-                                 </th>
-                              </>
-                           )}
-                        </tr>
-                     </thead>
-                     <tbody>
-                        {players?.length > 0 &&
-                           filterPlayers()
-                              .slice(0, records)
-                              .map((player: Player) => {
-                                 return (
                                     <PlayerComponent
                                        key={player.id}
                                        player={player}
                                        leagueScoring={leagueScoring}
                                        season={season}
                                     />
-                                 );
-                              })}
+                                 </Suspense>
+                              );
+                           })}
 
-                        <tr ref={playersRef}>
-                           {records >= 150 &&
-                              records < filterPlayers().length && (
-                                 <td>Loading...</td>
-                              )}
-                        </tr>
-                     </tbody>
-                  </table>
-               </div>
+                     <tr ref={playersRef}>
+                        {records >= 150 && records < filterPlayers().length && (
+                           <td>Loading...</td>
+                        )}
+                     </tr>
+                  </tbody>
+               </table>
             </div>
-         ) : (
-            <PlayerListSkeleton />
-         )}
+         </div>
       </>
    );
 };

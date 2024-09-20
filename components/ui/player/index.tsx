@@ -52,7 +52,9 @@ const PlayerComponent = ({
    season: number;
 }) => {
    const { updateFeaturedPlayer } = useContext(DraftContext);
-   const [playerStats, setPlayerStats] = useState<PlayerStats[]>();
+   const [playerStats, setPlayerStats] = useState<PlayerStats[]>(
+      player?.stats as PlayerStats[]
+   );
 
    const getStatFromLastSeason = (player_stats: any, stat: string) => {
       if (!player_stats) {
@@ -80,7 +82,7 @@ const PlayerComponent = ({
          updateFeaturedPlayer?.(player);
    };
 
-   return player && playerStats ? (
+   return (
       <>
          <tr
             key={player.id}
@@ -223,16 +225,6 @@ const PlayerComponent = ({
             )}
          </tr>
       </>
-   ) : (
-      <tr
-         className={
-            'flex flex-row p-3 text-black dark:text-white h-10 w-[100dvw] skeleton items-center justify-center '
-         }
-      >
-         <p className="h-full w-full bg-paper-dark dark:bg-gray-primary rounded-md animate-pulse">
-            &nbsp;
-         </p>
-      </tr>
    );
 };
 

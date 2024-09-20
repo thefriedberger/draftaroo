@@ -567,7 +567,7 @@ const Board = ({
          featuredPlayer &&
          (!draftedIDs.includes(featuredPlayer?.id) ? 'pb-[130px]' : 'pb-[90px]')
       }`,
-      saveState: true,
+      saveState: false,
       gridColumns: `grid-cols-5`,
    };
 

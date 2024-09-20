@@ -89,3 +89,61 @@ export const GoalieStatsMap: { [key: string]: string } = {
    goalsAgainst: 'GA',
    shutouts: 'SO',
 };
+
+export type SortValue =
+   | 'score'
+   | 'averageScore'
+   | 'timeOnIcePerGame'
+   | 'games'
+   | 'goals'
+   | 'assists'
+   | 'plusMinus'
+   | 'pim'
+   | 'powerPlayGoals'
+   | 'powerPlayAssists'
+   | 'shortHandedGoals'
+   | 'shortHandedAssists'
+   | 'shots'
+   | 'hits'
+   | 'blocked'
+   | 'goalsAgainst'
+   | 'wins'
+   | 'saves'
+   | 'shutouts'
+   | 'goalAgainstAverage'
+   | 'losses'
+   | '';
+export const teams = [
+   'Team',
+   'Arizona Coyotes',
+   'Anaheim Ducks',
+   'Boston Bruins',
+   'Buffalo Sabres',
+   'Calgary Flames',
+   'Carolina Hurricanes',
+   'Colorado Avalanche',
+   'Columbus Blue Jackets',
+   'Dallas Stars',
+   'Detroit Red Wings',
+   'Edmonton Oilers',
+   'Florida Panthers',
+   'Los Angeles Kings',
+   'Minnesota Wild',
+   'Montréal Canadiens',
+   'Nashville Predators',
+   'New Jersey Devils',
+   'New York Islanders',
+   'New York Rangers',
+   'Ottawa Senators',
+   'Philadelphia Flyers',
+   'Pittsburgh Penguins',
+   'San Jose Sharks',
+   'Seattle Kraken',
+   'St. Louis Blues',
+   'Tampa Bay Lightning',
+   'Tornto Maple Leafs',
+   'Vancouver Canucks',
+   'Vegas Golden Knights',
+   'Washington Capitals',
+   'Winnipeg Jets',
+];

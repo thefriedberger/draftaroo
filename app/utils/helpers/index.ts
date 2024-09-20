@@ -328,3 +328,7 @@ export const handleDraftSelection = async ({
    }
    handlePick(supabase, draft, currentPick);
 };
+
+export const buildThresholdList = Array.from({ length: 20 }).map(
+   (v, k) => k / 20
+);
