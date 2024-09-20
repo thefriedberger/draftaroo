@@ -11,9 +11,10 @@ import {
 } from '@/app/utils/helpers';
 import { createClient } from '@/app/utils/supabase/server';
 import KeeperSkeleton from '@/components/skeletons/keeper-skeleton';
-import { KeeperFormProps } from '@/components/ui/forms/keepers';
+import KeeperForm, { KeeperFormProps } from '@/components/ui/forms/keepers';
 import { DraftPick } from '@/lib/types';
 import { UserResponse } from '@supabase/supabase-js';
+import { Suspense } from 'react';
 
 export interface RosterPlayer extends TeamHistory {
    picks_needed: number[];
@@ -128,10 +129,9 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
 
    return (
       <div className="lg:max-w-2xl w-full lg:px-5">
-         <KeeperSkeleton />
-         {/* <Suspense fallback={<KeeperSkeleton />}>
+         <Suspense fallback={<KeeperSkeleton />}>
             <KeeperForm {...keeperFormProps} />
-         </Suspense> */}
+         </Suspense>
       </div>
    );
 };
