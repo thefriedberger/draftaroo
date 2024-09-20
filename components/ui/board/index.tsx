@@ -83,7 +83,7 @@ const Board = ({
    const [isCompleted, setIsCompleted] = useState<boolean>(
       draft?.is_completed ?? false
    );
-   const [draftedIDs, setDraftedIDs] = useState<number[]>([]);
+   const [draftedIds, setdraftedIds] = useState<number[]>([]);
    const [yourPlayers, setYourPlayers] = useState<number[]>([]);
    const [teamsViewPlayers, setTeamsViewPlayers] = useState<number[]>([]);
    const [teamViewToShow, setTeamViewToShow] = useState<string>('');
@@ -100,7 +100,7 @@ const Board = ({
    useEffect(() => {
       if (draftedPlayersState.length > 0) {
          for (const player of draftedPlayersState) {
-            setDraftedIDs((prev) => [...prev, Number(player.player_id)]);
+            setdraftedIds((prev) => [...prev, Number(player.player_id)]);
          }
       }
    }, [draftedPlayersState]);
@@ -251,7 +251,7 @@ const Board = ({
 
    useEffect(() => {
       filterDraftedPlayers();
-   }, [draftedIDs]);
+   }, [draftedIds]);
 
    const updateFeaturedPlayer = useCallback(
       (player: FeaturedPlayerType, playerID?: number) => {
@@ -326,7 +326,7 @@ const Board = ({
                if (positionNeeded && player.primary_position) {
                   return (
                      positionNeeded.includes(player.primary_position) &&
-                     !draftedIDs.includes(player.id)
+                     !draftedIds.includes(player.id)
                   );
                }
             }),
@@ -336,7 +336,7 @@ const Board = ({
       const bpa =
          sortPlayers(
             players.filter((player) => {
-               return !draftedIDs.includes(player.id);
+               return !draftedIds.includes(player.id);
             }),
             'score',
             1
@@ -432,7 +432,7 @@ const Board = ({
 
    const filterDraftedPlayers = () => {
       players = players.filter((player: Player) => {
-         return !draftedIDs.includes(player.id);
+         return !draftedIds.includes(player.id);
       });
    };
 
@@ -462,13 +462,13 @@ const Board = ({
    };
 
    const watchlistProps: WatchlistProps = {
-      draftedIDs: draftedIDs,
+      draftedIds: draftedIds,
       leagueID: league?.league_id ?? '',
       players: players,
    };
 
    const featuredPlayerProps: FeaturedPlayerProps = {
-      draftedIDs: draftedIDs,
+      draftedIds: draftedIds,
       featuredPlayer: featuredPlayer || null,
       yourTurn: isYourTurn,
       handleDraftSelectionProps: handleDraftSelectionProps,
@@ -478,7 +478,7 @@ const Board = ({
 
    const playerListProps: PlayerListProps = {
       league: league,
-      draftedIDs: draftedIDs,
+      draftedIds: draftedIds,
       players: players,
       leagueScoring: leagueScoring,
    };
@@ -565,7 +565,7 @@ const Board = ({
       centerTabs: false,
       className: `flex flex-col-reverse w-full h-[calc(100%-66px)] overflow-y-scroll ${
          featuredPlayer &&
-         (!draftedIDs.includes(featuredPlayer?.id) ? 'pb-[130px]' : 'pb-[90px]')
+         (!draftedIds.includes(featuredPlayer?.id) ? 'pb-[130px]' : 'pb-[90px]')
       }`,
       saveState: false,
       gridColumns: `grid-cols-5`,

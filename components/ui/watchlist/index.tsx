@@ -5,13 +5,13 @@ import { WatchlistProps } from '@/lib/types';
 import { useContext, useEffect, useRef, useState } from 'react';
 import WatchlistStar from './watchlist-star';
 
-const Watchlist = ({ draftedIDs, players }: WatchlistProps) => {
+const Watchlist = ({ draftedIds, players }: WatchlistProps) => {
    const { watchlist, updateFeaturedPlayer, updateWatchlist } =
       useContext(DraftContext);
    const [watchlistPlayers, setWatchlistPlayers] = useState<Player[]>(
       players?.filter(
          (player: Player) =>
-            !draftedIDs.includes(player.id) && watchlist.includes(player.id)
+            !draftedIds.includes(player.id) && watchlist.includes(player.id)
       ) ?? []
    );
 
@@ -39,12 +39,14 @@ const Watchlist = ({ draftedIDs, players }: WatchlistProps) => {
          <h3 className="hidden lg:block text-xl font-bold">Watchlist</h3>
          {watchlistPlayers.length > 0 ? (
             watchlistPlayers
-               .filter((player: Player) => !draftedIDs.includes(player.id))
+               .filter((player: Player) => !draftedIds.includes(player.id))
                .map((player: Player, index: number) => {
                   const props = {
                      player,
                      handleUpdateFeaturedPlayer,
-                     watchlistPlayers,
+                     watchlistPlayers: watchlistPlayers.filter(
+                        (player: Player) => !draftedIds.includes(player.id)
+                     ),
                   };
                   return <WatchlistPlayer key={player.id} {...props} />;
                })
@@ -82,8 +84,11 @@ const WatchlistPlayer = ({
       let reorderedWatchlist = watchlistPlayers.filter(
          (toFind) => toFind.id !== player.id
       );
+      console.log(watchlistPosition.current, playerIndex, reorderedWatchlist);
       reorderedWatchlist.splice(watchlistPosition.current - 1, 0, player);
+      console.log(reorderedWatchlist);
 
+      console.log(watchlistPosition.current, playerIndex, reorderedWatchlist);
       reorderWatchlist?.(reorderedWatchlist.map((player) => player.id));
       if (inputRef.current) {
          inputRef.current.value = '';

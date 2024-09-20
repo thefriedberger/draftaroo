@@ -35,7 +35,7 @@ export interface DraftOrderProps {
 }
 
 export interface WatchlistProps {
-   draftedIDs: number[];
+   draftedIds: number[];
    leagueID: string;
    players: Player[];
 }
@@ -50,14 +50,14 @@ export interface FeaturedPlayerProps {
       draft: Draft;
       teamId: string;
    };
-   draftedIDs: number[];
+   draftedIds: number[];
    isActive: boolean;
    leagueScoring: LeagueScoring;
 }
 
 export interface PlayerListProps {
    league: League;
-   draftedIDs: number[];
+   draftedIds: number[];
    players: Player[];
    leagueScoring: LeagueScoring;
 }

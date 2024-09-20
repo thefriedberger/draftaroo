@@ -40,7 +40,7 @@ export const sortPlayers = (
 
    return players;
 };
-const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
+const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
    const [sort, setSort] = useState<SortValue>('score');
    const [positionFilter, setPositionFilter] = useState<string>('Skaters');
    const [teamFilter, setTeamFilter] = useState<string>('Team');
@@ -68,7 +68,7 @@ const PlayerList = ({ league, players, draftedIDs }: PlayerListProps) => {
 
    const filterPlayers = () => {
       const playersByPostion = players
-         .filter((player: Player) => !draftedIDs.includes(player.id))
+         .filter((player: Player) => !draftedIds.includes(player.id))
          .filter((player: Player) => {
             if (positionFilter === 'Skaters')
                return player.primary_position !== 'G';
