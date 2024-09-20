@@ -1,9 +1,10 @@
 import '@/app/globals.css';
 import { PageContextProvider } from '@/components/context/page-context';
 import Nav from '@/components/ui/nav';
-import { UserResponse } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Metadata } from 'next';
+import { getUser } from './utils/helpers';
 import { createClient } from './utils/supabase/server';
 export const metadata: Metadata = {
    title: 'Draftaroo',
@@ -18,9 +19,7 @@ export default async function RootLayout({
    children: React.ReactNode;
 }) {
    const supabase = createClient();
-   const {
-      data: { user },
-   }: Awaited<UserResponse> = await supabase.auth.getUser();
+   const user: Awaited<User | null> = await getUser(supabase);
 
    if (!user) {
       return (

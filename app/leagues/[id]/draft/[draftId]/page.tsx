@@ -12,11 +12,12 @@ import {
    fetchTeam,
    fetchTeams,
    fetchWatchlist,
+   getUser,
 } from '@/app/utils/helpers';
 import { createClient } from '@/app/utils/supabase/server';
 import Board from '@/components/ui/board';
 import { BoardProps, DraftPick } from '@/lib/types';
-import { UserResponse } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 
 const Draft = async ({
    params,
@@ -26,9 +27,7 @@ const Draft = async ({
    const supabase = createClient();
 
    const draft: Awaited<Draft> = await fetchDraftById(supabase, params.draftId);
-   const {
-      data: { user },
-   }: Awaited<UserResponse> = await supabase.auth.getUser();
+   const user: Awaited<User | null> = await getUser(supabase);
    if (!user) return;
 
    const watchlist: Awaited<Watchlist> = await fetchWatchlist(

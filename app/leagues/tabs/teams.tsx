@@ -1,13 +1,13 @@
 'use server';
-import { fetchTeams } from '@/app/utils/helpers';
+import { fetchTeams, getUser } from '@/app/utils/helpers';
 import { createClient } from '@/app/utils/supabase/server';
 import TeamAdmin from '@/components/ui/team-admin';
-import { UserResponse } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 
 const TeamsTab = async ({ league }: { league: League }) => {
    if (!league?.league_id) return;
    const supabase = createClient();
-   const user: Awaited<UserResponse> = await supabase.auth.getUser();
+   const user: Awaited<User | null> = await getUser(supabase);
 
    const teams: Awaited<Team[]> = await fetchTeams(supabase, league);
 

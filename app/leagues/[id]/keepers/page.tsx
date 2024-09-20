@@ -8,12 +8,13 @@ import {
    fetchLeagueRules,
    fetchRosters,
    fetchTeam,
+   getUser,
 } from '@/app/utils/helpers';
 import { createClient } from '@/app/utils/supabase/server';
 import KeeperSkeleton from '@/components/skeletons/keeper-skeleton';
 import KeeperForm, { KeeperFormProps } from '@/components/ui/forms/keepers';
 import { DraftPick } from '@/lib/types';
-import { UserResponse } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 import { Suspense } from 'react';
 
 export interface RosterPlayer extends TeamHistory {
@@ -24,14 +25,11 @@ export interface RosterPlayer extends TeamHistory {
 }
 const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
    const supabase = createClient();
-   const { data: user }: Awaited<UserResponse> = await supabase.auth.getUser();
+   const user: Awaited<User | null> = await getUser(supabase);
 
-   if (!user?.user) {
-      return;
-   }
    const team: Awaited<Team> = await fetchTeam(
       supabase,
-      user?.user?.id as string,
+      user?.id as string,
       id
    );
    const league: Awaited<League> = await fetchLeague(supabase, id);

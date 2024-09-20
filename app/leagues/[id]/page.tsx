@@ -4,6 +4,8 @@ import {
    fetchDraftByLeague,
    fetchLeague,
    fetchTeam,
+   getSession,
+   getUser,
 } from '@/app/utils/helpers';
 import { createClient } from '@/app/utils/supabase/server';
 import Tabs from '@/components/ui/tabs';
@@ -13,7 +15,7 @@ import {
    Tab,
    TabProps,
 } from '@/lib/types';
-import { UserResponse } from '@supabase/supabase-js';
+import { Session, User } from '@supabase/supabase-js';
 import KeepersTab from '../tabs/keepers';
 import TeamView from './team-view';
 
@@ -21,19 +23,19 @@ const League = async ({ params: { id } }: { params: { id: string } }) => {
    const supabase = createClient();
 
    const currentYear = new Date().getFullYear();
-   const { data: user }: Awaited<UserResponse> = await supabase.auth.getUser();
-   const { data: session } = await supabase.auth.getSession();
-   if (!user?.user || !session) {
+   const user: Awaited<User | null> = await getUser(supabase);
+   const session: Awaited<Session | null> = await getSession(supabase);
+   if (!user || !session) {
       return;
    }
    const league: Awaited<League> = await fetchLeague(supabase, id);
-   const owner: boolean = league?.owner === user?.user?.id;
+   const owner: boolean = league?.owner === user?.id;
    const draft: Awaited<Draft> = await fetchDraftByLeague(
       supabase,
       id,
       currentYear
    );
-   const team: Awaited<Team> = await fetchTeam(supabase, user.user.id, id);
+   const team: Awaited<Team> = await fetchTeam(supabase, user.id, id);
 
    const leagueTeamViewProps: LeagueTeamViewProps = {
       team: team,

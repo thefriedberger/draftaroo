@@ -2,14 +2,17 @@
 
 import { createClient } from '@/app/utils/supabase/server';
 import Callout from '@/components/ui/callout';
-import { UserResponse } from '@supabase/supabase-js';
-import { fetchAllUserTeams, fetchDrafts, fetchLeagues } from './utils/helpers';
+import { User } from '@supabase/supabase-js';
+import {
+   fetchAllUserTeams,
+   fetchDrafts,
+   fetchLeagues,
+   getUser,
+} from './utils/helpers';
 
 export default async function Home() {
    const supabase = createClient();
-   const {
-      data: { user },
-   }: Awaited<UserResponse> = await supabase.auth.getUser();
+   const user: Awaited<User | null> = await getUser(supabase);
 
    if (!user) {
       return;

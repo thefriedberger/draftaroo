@@ -4,8 +4,18 @@ import { SupabaseClient, User } from '@supabase/supabase-js';
 import { cache } from 'react';
 
 export const getUser = cache(async (supabase: SupabaseClient<Database>) => {
-   const { data, error } = await supabase.auth.getUser();
-   return data;
+   const {
+      data: { user },
+      error,
+   } = await supabase.auth.getUser();
+   return user;
+});
+export const getSession = cache(async (supabase: SupabaseClient<Database>) => {
+   const {
+      data: { session },
+      error,
+   } = await supabase.auth.getSession();
+   return session;
 });
 export const fetchTeam = cache(
    async (
