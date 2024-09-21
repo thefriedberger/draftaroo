@@ -342,3 +342,14 @@ export const handleDraftSelection = async ({
 export const buildThresholdList = Array.from({ length: 20 }).map(
    (v, k) => k / 20
 );
+
+export const setDraftCompleted = async (
+   supabase: SupabaseClient,
+   draft: Draft
+) => {
+   const { data, error } = await supabase
+      .from('draft')
+      .update({ is_completed: true, is_active: false })
+      .match({ id: draft.id });
+   console.log(data, error);
+};

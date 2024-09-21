@@ -10,6 +10,7 @@ import {
    fetchWatchlist,
    handleDraftSelection,
    handlePick,
+   setDraftCompleted,
    setMainTimer,
    updateSupabaseWatchlist,
 } from '@/app/utils/helpers';
@@ -215,7 +216,15 @@ const Board = ({
                filter: `id=eq.${draft.id}`,
             },
             (payload) => {
-               setCurrentPick(payload.new.current_pick);
+               const numberOfPicks =
+                  numberOfRounds.current &&
+                  numberOfTeams.current &&
+                  numberOfRounds.current * numberOfTeams.current;
+               if (numberOfPicks && payload.new.current_pick > numberOfPicks) {
+                  setDraftCompleted(supabase, draft);
+               } else {
+                  setCurrentPick(payload.new.current_pick);
+               }
             }
          )
          .subscribe();
@@ -233,6 +242,9 @@ const Board = ({
             },
             (payload: any) => {
                setIsActive(payload.new.is_active);
+               if (payload.new.is_completed === true) {
+                  setIsCompleted(true);
+               }
             }
          )
          .subscribe();
@@ -251,6 +263,9 @@ const Board = ({
 
    useEffect(() => {
       filterDraftedPlayers();
+      reorderWatchlist(
+         watchlistState.filter((player) => !draftedIds.includes(player))
+      );
    }, [draftedIds]);
 
    const updateFeaturedPlayer = useCallback(
@@ -587,28 +602,19 @@ const Board = ({
             {user && team?.league_id === league.league_id && (
                <>
                   {isOwner.current &&
-                     (!isActive ? (
+                     (!isCompleted ? (
                         <button
                            className={classNames(
                               buttonClasses,
-                              'w-full lg:w-auto lg:h-full'
+                              'w-28 lg:w-32 h-10 lg:z-10 text-lg absolute top-2 left-[calc(50%-56px)] lg:left-[calc(50%-64px)]'
                            )}
                            type="button"
-                           onClick={startDraft}
+                           onClick={!isActive ? startDraft : stopDraft}
                         >
-                           Start Draft
+                           {!isActive ? 'Start Draft' : 'Stop Draft'}
                         </button>
                      ) : (
-                        <button
-                           className={classNames(
-                              buttonClasses,
-                              'w-full lg:w-auto lg:h-full'
-                           )}
-                           type="button"
-                           onClick={stopDraft}
-                        >
-                           Stop Draft
-                        </button>
+                        <></>
                      ))}
                   {!isMobile ? (
                      <>

@@ -6,7 +6,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import WatchlistStar from './watchlist-star';
 
 const Watchlist = ({ draftedIds, players }: WatchlistProps) => {
-   const { watchlist, updateFeaturedPlayer, updateWatchlist } =
+   const { watchlist, updateFeaturedPlayer, reorderWatchlist } =
       useContext(DraftContext);
    const [watchlistPlayers, setWatchlistPlayers] = useState<Player[]>(
       players?.filter(

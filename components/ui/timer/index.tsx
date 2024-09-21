@@ -77,16 +77,21 @@ const Timer = ({
 
    useEffect(() => {
       if (turnOrder.length && userTeam?.id) {
-         setUserPick(
-            Math.abs(
-               Number(currentPick) -
-                  turnOrder
-                     .filter(
-                        (turn: DraftPick) => turn.team_id === userTeam.id
-                     )[0]
-                     .picks.find((pick: number) => Number(currentPick) <= pick)
-            )
-         );
+         turnOrder
+            .filter((turn: DraftPick) => turn.team_id === userTeam.id)[0]
+            .picks.find((pick: number) => Number(currentPick) <= pick) &&
+            setUserPick(
+               Math.abs(
+                  Number(currentPick) -
+                     turnOrder
+                        .filter(
+                           (turn: DraftPick) => turn.team_id === userTeam.id
+                        )[0]
+                        .picks.find(
+                           (pick: number) => Number(currentPick) <= pick
+                        )
+               )
+            );
       }
    }, [turnOrder, userTeam, currentPick]);
 
@@ -183,6 +188,10 @@ const Timer = ({
       }
       return finalTime;
    }
+
+   useEffect(() => {
+      console.log(userPick);
+   }, [userPick]);
    return (
       <div className="flex flex-col justify-between w-full h-[10dvh] lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative">
          {!isCompleted ? (
@@ -219,7 +228,11 @@ const Timer = ({
                         <p className="text-xl font-bold">Draft now!</p>
                      ) : (
                         <div className="p-2 bg-paper-dark dark:bg-gray-primary">
-                           <p className="text-xl">{`Your turn in ${userPick}`}</p>
+                           <p className="text-xl">
+                              {userPick
+                                 ? `Your turn in ${userPick}`
+                                 : 'No more picks'}
+                           </p>
                         </div>
                      )}
                   </>

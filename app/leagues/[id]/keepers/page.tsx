@@ -127,9 +127,15 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
 
    return (
       <div className="lg:max-w-2xl w-full lg:px-5">
-         <Suspense fallback={<KeeperSkeleton />}>
-            <KeeperForm {...keeperFormProps} />
-         </Suspense>
+         {draft.is_active || draft.is_completed ? (
+            <h1 className="dark:text-white text-2xl text-center mt-5">
+               You can&apos;t set keepers because draft is active or completed
+            </h1>
+         ) : (
+            <Suspense fallback={<KeeperSkeleton />}>
+               <KeeperForm {...keeperFormProps} />
+            </Suspense>
+         )}
       </div>
    );
 };
