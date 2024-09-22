@@ -16,8 +16,8 @@ const FeaturedPlayer = ({
    yourTurn,
    handleDraftSelectionProps,
    draftedIds,
-   leagueScoring,
    isActive,
+   timerDuration,
 }: FeaturedPlayerProps) => {
    const { updateFeaturedPlayer } = useContext(DraftContext);
    const watchlistStarProps: WatchlistStarProps = {
@@ -190,6 +190,7 @@ const FeaturedPlayer = ({
                                     handleDraftSelection({
                                        ...handleDraftSelectionProps,
                                        player: featuredPlayer,
+                                       timerDuration,
                                     });
                               }}
                               type="button"

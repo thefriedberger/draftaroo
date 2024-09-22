@@ -493,6 +493,7 @@ const Board = ({
       handleDraftSelectionProps: handleDraftSelectionProps,
       isActive: isActive,
       leagueScoring: leagueScoring,
+      timerDuration: timerDuration,
    };
 
    const playerListProps: PlayerListProps = {

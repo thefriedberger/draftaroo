@@ -53,6 +53,7 @@ export interface FeaturedPlayerProps {
    draftedIds: number[];
    isActive: boolean;
    leagueScoring: LeagueScoring;
+   timerDuration: number;
 }
 
 export interface PlayerListProps {
