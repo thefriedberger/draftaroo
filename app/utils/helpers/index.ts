@@ -1,4 +1,4 @@
-import { DraftTimerFields, TIMER_DURATION } from '@/components/ui/timer';
+import { DraftTimerFields } from '@/components/ui/timer';
 import { DraftPick } from '@/lib/types';
 import { SupabaseClient, User } from '@supabase/supabase-js';
 import { cache } from 'react';
@@ -300,9 +300,10 @@ export const convertTime = (time: number) => {
 export const handlePick = async (
    supabase: SupabaseClient,
    draft: Draft,
-   currentPick: number
+   currentPick: number,
+   timerDuration: number
 ) => {
-   setMainTimer(supabase, draft.id, Date.now() + TIMER_DURATION * 1000);
+   setMainTimer(supabase, draft.id, Date.now() + timerDuration * 1000);
 
    await supabase
       .from('draft')
@@ -316,6 +317,7 @@ export interface HandleDraftSelectionsProps {
    draft: Draft;
    currentRound: number;
    currentPick: number;
+   timerDuration: number;
 }
 export const handleDraftSelection = async ({
    supabase,
@@ -324,6 +326,7 @@ export const handleDraftSelection = async ({
    draft,
    currentRound,
    currentPick,
+   timerDuration,
 }: HandleDraftSelectionsProps) => {
    const { data, error } = await supabase.from('draft_selections').insert({
       player_id: player.id,
@@ -336,7 +339,7 @@ export const handleDraftSelection = async ({
       console.log(error);
       return;
    }
-   handlePick(supabase, draft, currentPick);
+   handlePick(supabase, draft, currentPick, timerDuration);
 };
 
 export const buildThresholdList = Array.from({ length: 20 }).map(
@@ -351,5 +354,15 @@ export const setDraftCompleted = async (
       .from('draft')
       .update({ is_completed: true, is_active: false })
       .match({ id: draft.id });
-   console.log(data, error);
 };
+
+export const getTimerDuration = async (
+   supabase: SupabaseClient,
+   leagueRulesId: string
+): Promise<number> => {
+   const { data, error } = await supabase
+      .from('league_rules')
+      .select('timer_duration')
+      .match({ id: leagueRulesId });
+   return data?.[0].timer_duration as number;
+}; // seconds

@@ -10,11 +10,10 @@ import { createRef, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 export interface NewTimerProps extends TimerProps {
    draftId: string;
+   timerDuration: number;
 }
 
 export type DraftTimerFields = { is_active: boolean; end_time?: number };
-
-export const TIMER_DURATION = Number(process.env.NEXT_PUBLIC_TIMER_DURATION); // seconds
 
 const Timer = ({
    draftId,
@@ -27,6 +26,7 @@ const Timer = ({
    autopick,
    owner,
    isActive,
+   timerDuration,
 }: NewTimerProps) => {
    const supabase = createClientComponentClient<Database>();
 
@@ -37,8 +37,8 @@ const Timer = ({
    const [roomData, setRoomData] = useState<DraftTimerFields>({
       is_active: false,
    });
-   var timerValue = useRef(TIMER_DURATION);
-   const [timer, setTimer] = useState<string>(formatTime(TIMER_DURATION));
+   var timerValue = useRef(timerDuration);
+   const [timer, setTimer] = useState<string>(formatTime(timerDuration));
    const [userPick, setUserPick] = useState<number>();
    const [doMute, setDoMute] = useState<boolean>(false);
    const chime = createRef<HTMLAudioElement>();
@@ -181,17 +181,14 @@ const Timer = ({
          ':' +
          ('0' + (t % 60)).slice(-2);
       if (
-         new Date(TIMER_DURATION * 1000).toISOString().substring(14, 19) <
+         new Date(timerDuration * 1000).toISOString().substring(14, 19) <
          finalTime
       ) {
-         return new Date(TIMER_DURATION * 1000).toISOString().substring(14, 19);
+         return new Date(timerDuration * 1000).toISOString().substring(14, 19);
       }
       return finalTime;
    }
 
-   useEffect(() => {
-      console.log(userPick);
-   }, [userPick]);
    return (
       <div className="flex flex-col justify-between w-full h-[10dvh] lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative">
          {!isCompleted ? (

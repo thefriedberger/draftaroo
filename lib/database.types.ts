@@ -156,6 +156,7 @@ export type Database = {
                keepers_enabled: boolean | null;
                number_of_rounds: number | null;
                number_of_teams: number | null;
+               timer_duration: number;
             };
             Insert: {
                created_at?: string;
@@ -165,6 +166,7 @@ export type Database = {
                keepers_enabled?: boolean | null;
                number_of_rounds?: number | null;
                number_of_teams?: number | null;
+               timer_duration?: number;
             };
             Update: {
                created_at?: string;
@@ -174,6 +176,7 @@ export type Database = {
                keepers_enabled?: boolean | null;
                number_of_rounds?: number | null;
                number_of_teams?: number | null;
+               timer_duration?: number;
             };
             Relationships: [];
          };

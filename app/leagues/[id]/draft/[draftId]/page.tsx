@@ -12,6 +12,7 @@ import {
    fetchTeam,
    fetchTeams,
    fetchWatchlist,
+   getTimerDuration,
    getUser,
 } from '@/app/utils/helpers';
 import { createClient } from '@/app/utils/supabase/server';
@@ -58,6 +59,10 @@ const Draft = async ({
       supabase,
       draft
    );
+   const timerDuration: Awaited<number> = await getTimerDuration(
+      supabase,
+      leagueRules.id
+   );
 
    const boardProps: BoardProps = {
       league: league,
@@ -72,6 +77,7 @@ const Draft = async ({
       leagueRules: leagueRules,
       leagueScoring: leagueScoring,
       draftedPlayers: draftedPlayers,
+      timerDuration: timerDuration ?? 120,
    };
 
    return (

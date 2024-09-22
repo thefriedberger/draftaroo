@@ -163,6 +163,7 @@ export interface BoardProps {
    leagueRules: LeagueRules;
    leagueScoring: LeagueScoring;
    draftedPlayers: DraftSelection[];
+   timerDuration: number;
 }
 export interface LeagueTeamViewProps {
    team: Team;
