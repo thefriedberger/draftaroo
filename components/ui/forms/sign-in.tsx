@@ -11,22 +11,13 @@ const SignInForm = (props: AuthFormProps) => {
 
    const { setFormType } = props;
 
-   const handleSubmit = (formData: FormData) => {
-      login(formData)
-         .then((response) => {
-            if (response?.message?.includes('Invalid login credentials')) {
-               setInvalidCredentials(true);
-            } else {
-               setInvalidCredentials(false);
-            }
-         })
-         .catch((error) => {
-            if (error) {
-               setInvalidCredentials(true);
-            } else {
-               setInvalidCredentials(false);
-            }
-         });
+   const handleSubmit = async (formData: FormData) => {
+      const response = await login(formData);
+      if (response.status !== 200) {
+         setInvalidCredentials(true);
+      } else {
+         setInvalidCredentials(false);
+      }
    };
 
    return (

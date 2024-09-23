@@ -7,33 +7,48 @@ import { useState } from 'react';
 
 const ForgotPasswordForm = (props: AuthFormProps) => {
    const [email, setEmail] = useState('');
+   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
    const supabase = createClientComponentClient<Database>();
 
    const { setFormType } = props;
 
-   // const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
-   //    await supabase.auth.resetPasswordForEmail(email, {
-   //       redirectTo: `${origin}/account-recovery`,
-   //    });
-   // };
+   const handleRequestPasswordReset = async (formData: FormData) => {
+      const response = await requestPasswordReset(formData);
+      if (!response) {
+         setHasSubmitted(false);
+      } else {
+         setHasSubmitted(true);
+      }
+   };
+
    return (
       <>
          <form
             className="flex-1 flex flex-col w-full lg:w-96 justify-center gap-2 text-foreground"
             // onSubmit={handleResetPassword}
          >
-            <label className="text-md" htmlFor="email">
-               Email
-            </label>
-            <input
-               className="rounded-md dark:text-white px-4 py-2 bg-inherit border mb-3"
-               type="email"
-               name="email"
-               autoComplete="email"
-               onChange={(e) => setEmail(e.target.value)}
-               value={email}
-               placeholder="you@example.com"
-            />
+            {!hasSubmitted ? (
+               <>
+                  <label className="text-md" htmlFor="email">
+                     Email
+                  </label>
+                  <input
+                     className="rounded-md dark:text-white px-4 py-2 bg-inherit border mb-3"
+                     type="email"
+                     name="email"
+                     autoComplete="email"
+                     onChange={(e) => setEmail(e.target.value)}
+                     value={email}
+                     placeholder="you@example.com"
+                  />
+               </>
+            ) : (
+               <>
+                  <p className="dark:text-white text-center py-2">
+                     Recovery email sent
+                  </p>
+               </>
+            )}
             <input
                className="hidden"
                id="origin"
@@ -42,8 +57,9 @@ const ForgotPasswordForm = (props: AuthFormProps) => {
                onChange={() => {}}
             />
             <button
-               className="bg-emerald-primary rounded px-4 py-2 text-white mb-3"
-               formAction={requestPasswordReset}
+               className="bg-emerald-primary rounded px-4 py-2 text-white mb-3 disabled:opacity-85 disabled:cursor-not-allowed"
+               formAction={handleRequestPasswordReset}
+               disabled={hasSubmitted}
             >
                Send recovery link
             </button>

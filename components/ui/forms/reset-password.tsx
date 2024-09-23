@@ -20,7 +20,6 @@ const ResetPasswordForm = () => {
          setPasswordsMatch(false);
       }
    };
-
    return (
       <form>
          <div className="flex flex-col max-w-96">
@@ -40,14 +39,13 @@ const ResetPasswordForm = () => {
                required
                minLength={10}
                pattern={
-                  '(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*])(?!.*?(pass))(?!.*?(code))(?!.*?(secret)).*'
+                  '(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*]).*'
                }
                className="peer invalid:border-red focus:invalid:border-red border-2"
             />
-            <p className="peer-invalid:block hidden mt-2 text-red-600 text-sm">
-               Password must include uppercase and lowercase, number, and
-               special character. Can&apos;t include following words: pass,
-               code, or secret
+            <p className="peer-invalid:block hidden mt-2 text-red-600 text-sm w-40">
+               Password must be 10 characters, include uppercase and lowercase,
+               number, and special character
             </p>
          </div>
          <div className="flex flex-col">
@@ -62,7 +60,7 @@ const ResetPasswordForm = () => {
                placeholder="••••••••"
                required={true}
                pattern={
-                  '(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*])(?!.*?(pass))(?!.*?(code))(?!.*?(secret)).*'
+                  '(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*]).*'
                }
                className="focus:outline-none focus:invalid:border-red invalid:border-red"
             />

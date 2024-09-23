@@ -17,7 +17,6 @@ export async function login(formData: FormData) {
 
    const { error } = await supabase.auth.signInWithPassword(data);
 
-   console.log('server error: ', error);
    if (error) {
       return error;
    }
@@ -39,7 +38,8 @@ export async function signup(formData: FormData) {
    const { error } = await supabase.auth.signUp(data);
 
    if (error) {
-      redirect('/error');
+      return error;
+      // redirect('/error');
    }
 
    revalidatePath('/');
@@ -55,6 +55,10 @@ export async function requestPasswordReset(formData: FormData) {
          redirectTo: `${formData.get('origin') as string}/auth/confirm`,
       }
    );
+   if (error) {
+      return false;
+   }
+   return true;
 }
 export async function resetPassword(formData: FormData) {
    const supabase = createClient();
