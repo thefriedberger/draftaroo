@@ -47,6 +47,7 @@ const Watchlist = ({ draftedIds, players }: WatchlistProps) => {
                      watchlistPlayers: watchlistPlayers.filter(
                         (player: Player) => !draftedIds.includes(player.id)
                      ),
+                     index: index + 1,
                   };
                   return <WatchlistPlayer key={player.id} {...props} />;
                })
@@ -65,10 +66,12 @@ const WatchlistPlayer = ({
    player,
    handleUpdateFeaturedPlayer,
    watchlistPlayers,
+   index,
 }: {
    player: Player;
    handleUpdateFeaturedPlayer: (player: Player, e: any) => void;
    watchlistPlayers: Player[];
+   index: number;
 }) => {
    const { reorderWatchlist } = useContext(DraftContext);
    const watchlistPosition = useRef<number>();
@@ -96,13 +99,17 @@ const WatchlistPlayer = ({
          className="flex flex-row items-center cursor-pointer"
          onClick={(e) => handleUpdateFeaturedPlayer(player, e)}
       >
+         <p className="w-4 mr-1 text-xs">{index}.</p>
          <div className="fill-emerald-500 w-[30px] flex items-center">
             <WatchlistStar player={player} />
          </div>
          <p className="ml-2 pt-1">
             {player.first_name} {player.last_name}
          </p>
-         <form action={handleReorderWatchlist} className="w-5 ml-auto">
+         <form
+            action={handleReorderWatchlist}
+            className="w-6 lg:w-5 ml-auto mr-2 lg:mr-1"
+         >
             <input
                type="number"
                max={watchlistPlayers.length}
