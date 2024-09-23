@@ -6,7 +6,6 @@ import { MyTeamIcon } from '@/app/assets/images/icons/my-team';
 import { TeamsIcon } from '@/app/assets/images/icons/teams';
 import { WatchlistIcon } from '@/app/assets/images/icons/watchlist';
 import {
-   currentTime,
    fetchOwnerByTeam,
    fetchWatchlist,
    handleDraftSelection,
@@ -285,12 +284,11 @@ const Board = ({
    );
 
    const startDraft = async () => {
-      console.log(currentTime(), Date.now());
+      setMainTimer(supabase, draft.id, Date.now() + timerDuration * 1000);
       await supabase
          .from('draft')
          .update({ is_active: true })
          .match({ id: draft.id });
-      setMainTimer(supabase, draft.id, currentTime() + timerDuration * 1000);
    };
 
    const stopDraft = async () => {

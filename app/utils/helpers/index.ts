@@ -125,7 +125,6 @@ export const fetchLeague = cache(
       return league?.[0] as League;
    }
 );
-export const currentTime = () => Date.now();
 
 export const fetchOwnerByTeam = async (
    supabase: SupabaseClient,
@@ -274,6 +273,7 @@ export const setMainTimer = async (
    draftId: string,
    timerValue: number
 ) => {
+   console.log(timerValue);
    const { data, error } = await supabase
       .from('draft')
       .update({ end_time: timerValue })
@@ -304,8 +304,7 @@ export const handlePick = async (
    currentPick: number,
    timerDuration: number
 ) => {
-   const { data: newTime, error } = await supabase.functions.invoke('timer');
-   setMainTimer(supabase, draft.id, newTime + timerDuration * 1000);
+   setMainTimer(supabase, draft.id, Date.now() + timerDuration * 1000);
 
    await supabase
       .from('draft')
