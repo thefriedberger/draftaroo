@@ -303,7 +303,8 @@ export const handlePick = async (
    currentPick: number,
    timerDuration: number
 ) => {
-   setMainTimer(supabase, draft.id, Date.now() + timerDuration * 1000);
+   const { data: newTime, error } = await supabase.functions.invoke('timer');
+   setMainTimer(supabase, draft.id, newTime + timerDuration * 1000);
 
    await supabase
       .from('draft')

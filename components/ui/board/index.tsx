@@ -284,11 +284,12 @@ const Board = ({
    );
 
    const startDraft = async () => {
+      const { data: newTime, error } = await supabase.functions.invoke('timer');
       await supabase
          .from('draft')
          .update({ is_active: true })
          .match({ id: draft.id });
-      setMainTimer(supabase, draft.id, Date.now() + timerDuration * 1000);
+      setMainTimer(supabase, draft.id, newTime + timerDuration * 1000);
    };
 
    const stopDraft = async () => {

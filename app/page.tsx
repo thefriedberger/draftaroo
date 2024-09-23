@@ -12,6 +12,12 @@ import {
 
 export default async function Home() {
    const supabase = createClient();
+   const { data: timer, error } = await supabase.functions.invoke('timer', {
+      body: { name: 'timer' },
+   });
+
+   console.log(timer, error);
+
    const user: Awaited<User | null> = await getUser(supabase);
 
    if (!user) {
