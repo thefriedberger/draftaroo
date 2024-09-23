@@ -125,6 +125,7 @@ export const fetchLeague = cache(
       return league?.[0] as League;
    }
 );
+export const currentTime = () => Date.now();
 
 export const fetchOwnerByTeam = async (
    supabase: SupabaseClient,

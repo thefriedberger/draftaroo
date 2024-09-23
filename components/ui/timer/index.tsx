@@ -42,7 +42,6 @@ const Timer = ({
    const [userPick, setUserPick] = useState<number>();
    const [doMute, setDoMute] = useState<boolean>(false);
    const chime = createRef<HTMLAudioElement>();
-   const currentTime = useRef<number>(Date.now());
 
    // use effects
    useEffect(() => {
@@ -50,17 +49,12 @@ const Timer = ({
       getData();
    }, [draftId]);
 
-   const getServerTime = async () => {
-      const { data: newTime, error } = await supabase.functions.invoke('timer');
-      currentTime.current = newTime;
-      return newTime as number;
-   };
    useEffect(() => {
       if (roomData.is_active) {
          const end = roomData.end_time;
          if (end) {
-            const now = getServerTime();
-            const diff = end - currentTime.current;
+            const now = Date.now();
+            const diff = end - now;
             setIsTimerRunning(true);
             // if (diff < 0) {
             //    setTimer(formatTime(0));
@@ -109,8 +103,7 @@ const Timer = ({
             if (now - lastTick.current >= 950) {
                if (roomData.end_time) {
                   const end = roomData.end_time;
-                  getServerTime();
-                  const diff = end - currentTime.current;
+                  const diff = end - Date.now();
                   if (diff < 0) {
                      setTimer(formatTime(0));
                      timerValue.current = 0;
