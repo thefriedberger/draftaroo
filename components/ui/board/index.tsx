@@ -141,7 +141,7 @@ const Board = ({
 
    // checking for keepers is handled here
    useEffect(() => {
-      if (isActive && isOwner.current) {
+      if (isActive && isOwner.current === true) {
          if (draftedPlayersState.length > 0) {
             for (const player of draftedPlayersState) {
                if (player.pick === currentPick && player.is_keeper) {

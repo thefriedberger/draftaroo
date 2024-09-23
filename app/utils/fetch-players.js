@@ -207,9 +207,7 @@ const getPlayers = async () => {
       const goalies = await goaliesResponse.json();
       extractGoalieStats(goalies.data, season);
    }
-   // const deleteAllRows = async () => {
-   //    const { error } = await supabase.from('players').delete().neq('id', 0); // deletes all rows
-   // };
+
    const insertPlayerRows = async () => {
       const { data, error } = await supabase
          .from('players')
@@ -217,7 +215,6 @@ const getPlayers = async () => {
          .select();
    };
 
-   // deleteAllRows();
    insertPlayerRows();
 };
 
