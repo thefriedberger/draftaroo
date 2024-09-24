@@ -2,6 +2,7 @@ import { DraftTimerFields } from '@/components/ui/timer';
 import { DraftPick } from '@/lib/types';
 import { SupabaseClient, User } from '@supabase/supabase-js';
 import { cache } from 'react';
+import getTime from '../get-time';
 
 export const getUser = cache(async (supabase: SupabaseClient<Database>) => {
    const {
@@ -304,7 +305,8 @@ export const handlePick = async (
    currentPick: number,
    timerDuration: number
 ) => {
-   setMainTimer(supabase, draft.id, Date.now() + timerDuration * 1000);
+   const serverTime = await getTime();
+   setMainTimer(supabase, draft.id, serverTime + timerDuration * 1000);
 
    await supabase
       .from('draft')

@@ -103,7 +103,7 @@ const Timer = ({
             if (now - lastTick.current >= 950) {
                if (roomData.end_time) {
                   const end = roomData.end_time;
-                  const diff = end - Date.now();
+                  const diff = end - now;
                   if (diff < 0) {
                      setTimer(formatTime(0));
                      timerValue.current = 0;

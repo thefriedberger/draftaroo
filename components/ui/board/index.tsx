@@ -5,6 +5,7 @@ import { DraftOrderIcon } from '@/app/assets/images/icons/draft-order';
 import { MyTeamIcon } from '@/app/assets/images/icons/my-team';
 import { TeamsIcon } from '@/app/assets/images/icons/teams';
 import { WatchlistIcon } from '@/app/assets/images/icons/watchlist';
+import getTime from '@/app/utils/get-time';
 import {
    fetchOwnerByTeam,
    fetchWatchlist,
@@ -284,7 +285,8 @@ const Board = ({
    );
 
    const startDraft = async () => {
-      setMainTimer(supabase, draft.id, Date.now() + timerDuration * 1000);
+      const serverTime = await getTime();
+      setMainTimer(supabase, draft.id, serverTime + timerDuration * 1000);
       await supabase
          .from('draft')
          .update({ is_active: true })
