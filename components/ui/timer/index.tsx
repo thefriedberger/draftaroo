@@ -2,6 +2,7 @@
 
 import { MicIcon } from '@/app/assets/images/icons/mic-icon';
 import { MutedIcon } from '@/app/assets/images/icons/muted-icon';
+import getTime from '@/app/utils/get-time';
 import { getTimerData } from '@/app/utils/helpers';
 import { useWorkerTimeout } from '@/components/worker/worker-timeout';
 import { DraftPick, TimerProps } from '@/lib/types';
@@ -42,6 +43,7 @@ const Timer = ({
    const [userPick, setUserPick] = useState<number>();
    const [doMute, setDoMute] = useState<boolean>(false);
    const chime = createRef<HTMLAudioElement>();
+   const serverTime = useRef<number>(Date.now());
 
    // use effects
    useEffect(() => {
@@ -50,24 +52,24 @@ const Timer = ({
    }, [draftId]);
 
    useEffect(() => {
+      const updateServerTime = async () => {
+         serverTime.current = await getTime();
+      };
       if (roomData.is_active) {
          const end = roomData.end_time;
          if (end) {
-            const now = Date.now();
-            const diff = end - now;
-            setIsTimerRunning(true);
-            // if (diff < 0) {
-            //    setTimer(formatTime(0));
-            //    timerValue.current = 0;
-            // } else {
-            const finalTimer = Math.ceil(diff / 1000);
+            updateServerTime().then(() => {
+               const now = serverTime.current;
+               const diff = end - now;
+               setIsTimerRunning(true);
+               const finalTimer = Math.ceil(diff / 1000);
 
-            lastTick.current = performance.now();
+               lastTick.current = performance.now();
 
-            timerValue.current = finalTimer;
-            setTimer(formatTime(finalTimer));
-            setRunning(true);
-            // }
+               timerValue.current = finalTimer;
+               setTimer(formatTime(finalTimer));
+               setRunning(true);
+            });
          }
       } else {
          setRunning(false);
