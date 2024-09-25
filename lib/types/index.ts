@@ -179,18 +179,23 @@ export interface KeeperViewProps {
    team: Team;
    draft: Draft;
 }
+
+export interface DraftedPlayer extends Player {
+   is_keeper: boolean;
+   pick: number;
+}
 export interface TeamViewProps {
-   players: Player[];
+   players: DraftedPlayer[];
    doReset?: boolean;
    setDoReset?: (reset: boolean) => void;
 }
 
-export interface MyTeamProps extends TeamViewProps {
-   playerIDs: number[];
+export interface MyTeamProps {
+   draftedPlayers: DraftedPlayer[];
 }
 
-export interface TeamsListProps extends TeamViewProps {
-   playerIDs: number[];
+export interface TeamsListProps {
+   draftedPlayers: DraftedPlayer[];
    setTeamsViewPlayers: (teamID: string) => void;
    teams: Team[];
    user: User | undefined;

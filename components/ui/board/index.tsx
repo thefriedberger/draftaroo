@@ -23,6 +23,7 @@ import {
    BoardProps,
    ChatProps,
    DraftOrderProps,
+   DraftedPlayer,
    FeaturedPlayerProps,
    FeaturedPlayerType,
    MyTeamProps,
@@ -89,8 +90,10 @@ const Board = ({
       draft?.is_completed ?? false
    );
    const [draftedIds, setdraftedIds] = useState<number[]>([]);
-   const [yourPlayers, setYourPlayers] = useState<number[]>([]);
-   const [teamsViewPlayers, setTeamsViewPlayers] = useState<number[]>([]);
+   const [yourPlayers, setYourPlayers] = useState<DraftedPlayer[]>([]);
+   const [teamsViewPlayers, setTeamsViewPlayers] = useState<DraftedPlayer[]>(
+      []
+   );
    const [teamViewToShow, setTeamViewToShow] = useState<string>('');
 
    const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
@@ -112,32 +115,70 @@ const Board = ({
 
    // set my team and other teams players
    useEffect(() => {
-      updateTeamsViewPlayers(team.id).forEach(
-         (player: DraftSelection) =>
-            player &&
-            !yourPlayers.includes(player.player_id) &&
-            setYourPlayers((prev) => [...prev, player.player_id])
-      );
+      const tempPlayers = updateTeamsViewPlayers(team.id);
+
+      const userPlayers: DraftedPlayer[] = players
+         .filter((player) =>
+            tempPlayers.map((player) => player.player_id).includes(player.id)
+         )
+         .map((player) => {
+            const foundPlayer = tempPlayers.find(
+               (tempPlayer) => tempPlayer.player_id === player.id
+            );
+            return {
+               ...player,
+               is_keeper: foundPlayer?.is_keeper ?? false,
+               pick: foundPlayer?.pick ?? 23,
+            };
+         });
+      setYourPlayers(userPlayers);
+
+      // updateTeamsViewPlayers(team.id).forEach(
+      //    (player: DraftSelection) =>
+      //       player &&
+      //       !yourPlayers.includes(player.player_id) &&
+      //       setYourPlayers((prev) => [...prev, player.player_id])
+      // );
       if (teamViewToShow !== '') {
          if (updateTeamsViewPlayers(teamViewToShow).length === 0) {
             setTeamsViewPlayers([]);
          } else {
-            let tempTeams: number[] = [];
-            updateTeamsViewPlayers(teamViewToShow).forEach(
-               (player: DraftSelection) => {
-                  if (
-                     player.player_id &&
-                     !teamsViewPlayers.includes(player.player_id)
-                  ) {
-                     tempTeams.push(player.player_id);
-                  }
-               }
-            );
-            setTeamsViewPlayers(
-               updateTeamsViewPlayers(teamViewToShow).map(
-                  (player) => player.player_id
+            const otherPlayers = updateTeamsViewPlayers(teamViewToShow);
+
+            const teamPlayers: DraftedPlayer[] = players
+               .filter((player) =>
+                  otherPlayers
+                     .map((player) => player.player_id)
+                     .includes(player.id)
                )
-            );
+               .map((player) => {
+                  const foundPlayer = otherPlayers.find(
+                     (tempPlayer) => tempPlayer.player_id === player.id
+                  );
+                  return {
+                     ...player,
+                     is_keeper: foundPlayer?.is_keeper ?? false,
+                     pick: foundPlayer?.pick ?? 23, // 23 should never populate here
+                  };
+               });
+            setTeamsViewPlayers(teamPlayers);
+
+            // let tempTeams: number[] = [];
+            // updateTeamsViewPlayers(teamViewToShow).forEach(
+            //    (player: DraftSelection) => {
+            //       if (
+            //          player.player_id &&
+            //          !teamsViewPlayers.includes(player.player_id)
+            //       ) {
+            //          tempTeams.push(player.player_id);
+            //       }
+            //    }
+            // );
+            // setTeamsViewPlayers(
+            //    updateTeamsViewPlayers(teamViewToShow).map(
+            //       (player) => player.player_id
+            //    )
+            // );
          }
       }
    }, [draftedPlayersState, teamViewToShow]);
@@ -528,15 +569,13 @@ const Board = ({
    };
 
    const myTeamProps: MyTeamProps = {
-      playerIDs: yourPlayers,
-      players: players,
+      draftedPlayers: yourPlayers,
    };
 
    const teamsViewProps: TeamsListProps = {
-      playerIDs: teamsViewPlayers,
+      draftedPlayers: teamsViewPlayers,
       setTeamsViewPlayers: setTeamViewToShow,
       teams: teams,
-      players: players,
       user: user,
    };
    const tabs: Tab[] = [

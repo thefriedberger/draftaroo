@@ -1,23 +1,30 @@
 import { DraftContext } from '@/components/context/draft-context';
-import { TeamViewProps } from '@/lib/types';
+import { DraftedPlayer, TeamViewProps } from '@/lib/types';
 import { useContext, useEffect, useState } from 'react';
 
 const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
    const { updateFeaturedPlayer } = useContext(DraftContext);
    const forwardCodes = ['C', 'L', 'R'];
-   const [forwards, setForwards] = useState<Player[]>([]);
-   const [defenseman, setDefenseman] = useState<Player[]>([]);
-   const [goalies, setGoalies] = useState<Player[]>([]);
-   const [goaliesBench, setGoaliesBench] = useState<Player[]>([]);
-   const [bench, setBench] = useState<Player[]>([]);
+   const [forwards, setForwards] = useState<DraftedPlayer[]>([]);
+   const [defenseman, setDefenseman] = useState<DraftedPlayer[]>([]);
+   const [goalies, setGoalies] = useState<DraftedPlayer[]>([]);
+   const [goaliesBench, setGoaliesBench] = useState<DraftedPlayer[]>([]);
+   const [bench, setBench] = useState<DraftedPlayer[]>([]);
 
-   const [playersArray, setPlayersArray] = useState<Player[]>([]);
-
-   const setDisplayName = (player: Player) => {
+   const setDisplayName = (player: DraftedPlayer) => {
       const displayName =
-         player?.first_name !== undefined && player?.last_name !== undefined
-            ? `${player?.first_name.charAt(0)}. ${player?.last_name}`
-            : '';
+         player?.first_name !== undefined && player?.last_name !== undefined ? (
+            <span className="flex flex-row items-center justify-between">
+               {player?.first_name.charAt(0)}. {player?.last_name}
+               {player.is_keeper && (
+                  <span className="flex items-center justify-center w-[15px] h-[15px] mr-2 border border-white bg-blue-primary text-white font-bold text-[10px] text-center self-center ml-2">
+                     K
+                  </span>
+               )}
+            </span>
+         ) : (
+            ''
+         );
       return displayName;
    };
 
@@ -31,7 +38,6 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
    useEffect(() => {
       if (doReset) {
          resetPlayers();
-         setPlayersArray([]);
       }
       return () => {
          setDoReset?.(false);
@@ -40,12 +46,13 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
 
    useEffect(() => {
       if (players.length && !doReset) {
-         const tempForwards: Player[] = [];
-         const tempDefensemen: Player[] = [];
-         const tempGoalies: Player[] = [];
-         const tempBench: Player[] = [];
-         const tempGoaliesBench: Player[] = [];
-         for (const player of players) {
+         const tempForwards: DraftedPlayer[] = [];
+         const tempDefensemen: DraftedPlayer[] = [];
+         const tempGoalies: DraftedPlayer[] = [];
+         const tempBench: DraftedPlayer[] = [];
+         const tempGoaliesBench: DraftedPlayer[] = [];
+
+         for (const player of players.sort((a, b) => a.pick - b.pick)) {
             const { primary_position } = player;
             if (primary_position) {
                if (forwardCodes.includes(primary_position)) {
@@ -79,12 +86,12 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
       }
    }, [players]);
 
-   const getPlayer = (position: string, index: number) => {
-      const playerToDisplay: Player = players.filter((player: Player) => {
-         return player.primary_position === position;
-      })[index];
-      return setDisplayName(playerToDisplay);
-   };
+   // const getPlayer = (position: string, index: number) => {
+   //    const playerToDisplay: Player = players.filter((player: Player) => {
+   //       return player.primary_position === position;
+   //    })[index];
+   //    return setDisplayName(playerToDisplay);
+   // };
 
    return (
       <table className="w-full">
@@ -130,7 +137,7 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
                   </tr>
                );
             })}
-            {bench.map((player: Player) => {
+            {bench.map((player: DraftedPlayer) => {
                return (
                   <tr
                      key={player.id}

@@ -63,7 +63,7 @@ const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
                {pick.playerName && <p>{pick.playerName}</p>}
             </div>
             {pick.isKeeper && (
-               <div className="flex items-center justify-center w-[20px] h-[20px] mr-2 border border-white bg-blue-primary text-white font-bold text-[10px] text-center self-center ml-auto">
+               <div className="flex items-center justify-center w-[15px] h-[15px] mr-2 border border-white bg-blue-primary text-white font-bold text-[10px] text-center self-center ml-auto">
                   K
                </div>
             )}

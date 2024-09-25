@@ -1,32 +1,14 @@
 import { TeamViewProps, TeamsListProps } from '@/lib/types';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import Team from '../team';
 
 const TeamsList = ({
-   playerIDs,
+   draftedPlayers,
    setTeamsViewPlayers,
    teams,
-   players,
    user,
 }: TeamsListProps) => {
-   const [draftedPlayers, setDraftedPlayers] = useState<Player[]>([]);
    const [doReset, setDoReset] = useState<boolean>(false);
-
-   useEffect(() => {
-      const foundPlayers: Player[] = [];
-      for (let i = 0; i < playerIDs.length; i++) {
-         const foundPlayer = players.find(
-            (player) => player.id === playerIDs[i]
-         );
-         if (foundPlayer) {
-            foundPlayers.push(foundPlayer);
-         }
-      }
-      // const foundPlayers = players.filter((player) =>
-      //    playerIDs.includes(player.id)
-      // );
-      setDraftedPlayers(foundPlayers);
-   }, [playerIDs, players]);
 
    const teamProps: TeamViewProps = {
       players: draftedPlayers,

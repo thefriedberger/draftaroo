@@ -75,7 +75,11 @@ export default async function Home() {
                   const leagueLinks = [
                      {
                         href: `/leagues/${league.league_id}/keepers`,
-                        text: 'Set Keepers',
+                        text: 'Set keepers',
+                     },
+                     {
+                        href: `/leagues/${league.league_id}/my-team`,
+                        text: 'Change team name',
                      },
                   ];
                   if (leagueManagementLink) {

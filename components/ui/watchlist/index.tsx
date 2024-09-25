@@ -108,7 +108,7 @@ const WatchlistPlayer = ({
          </p>
          <form
             action={handleReorderWatchlist}
-            className="w-6 lg:w-5 ml-auto mr-2 lg:mr-1"
+            className="min-w-5 w-6 lg:w-5 ml-auto mr-2 lg:mr-1"
          >
             <input
                type="number"
