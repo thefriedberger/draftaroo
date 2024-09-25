@@ -47,7 +47,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
    const [playerSearch, setPlayerSearch] = useState<string>('');
    const [season, setSeason] = useState<number>(1);
    const [records, setRecords] = useState<number>(150);
-   const [minGP, setMinGP] = useState<number>();
+   const [minGP, setMinGP] = useState<number | ''>('');
    const thClasses = 'p-2 lg:p-1 my-2 cursor-pointer';
 
    const options: IntersectionObserverInit = {
@@ -164,7 +164,11 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                         type="number"
                         id={'min-gp'}
                         className="h-full lg:w-8 text-black p-2 lg:p-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        onChange={(e) => setMinGP(Number(e.target.value))}
+                        onChange={(e) =>
+                           e.target.value.length
+                              ? setMinGP(Number(e.target.value))
+                              : setMinGP('')
+                        }
                         value={minGP}
                      />
                   </div>
