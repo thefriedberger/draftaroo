@@ -9,10 +9,6 @@ import { DraftPick, TimerProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { createRef, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
-export interface NewTimerProps extends TimerProps {
-   draftId: string;
-   timerDuration: number;
-}
 
 export type DraftTimerFields = { is_active: boolean; end_time?: number };
 
@@ -28,7 +24,8 @@ const Timer = ({
    owner,
    isActive,
    timerDuration,
-}: NewTimerProps) => {
+   pickIsKeeper,
+}: TimerProps) => {
    const supabase = createClientComponentClient<Database>();
 
    const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
@@ -192,10 +189,10 @@ const Timer = ({
    }
 
    return (
-      <div className="flex flex-col justify-between w-full h-[10dvh] lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative">
+      <div className="flex flex-col justify-between w-full h-[10dvh] lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative lg:border-b lg:border-gray-light">
          {!isCompleted ? (
             <>
-               {yourTurn && isActive && (
+               {yourTurn && isActive && !pickIsKeeper && (
                   <audio ref={chime} controls={false} autoPlay={!doMute}>
                      <source
                         src={
@@ -220,13 +217,15 @@ const Timer = ({
                      <p className="bg-orange-primary text-black text-4xl p-2 text-center font-bold">
                         {timer}
                      </p>
-                     <p className="">{currentRound}&nbsp;Round</p>
-                     <p className="">{currentPick}&nbsp;Pick</p>
-                     <p className="">{currentPick}&nbsp;Overall</p>
+                     <p className="ml-2">{currentRound}&nbsp;Round</p>
+                     <p className="ml-2">{currentPick}&nbsp;Pick</p>
+                     <p className="ml-2">{currentPick}&nbsp;Overall</p>
                      {yourTurn ? (
-                        <p className="text-xl font-bold">Draft now!</p>
+                        <p className="ml-2 text-xl font-bold h-9">
+                           {pickIsKeeper ? '✨🎉✨' : 'Draft now!'}
+                        </p>
                      ) : (
-                        <div className="p-2 bg-paper-dark dark:bg-gray-primary">
+                        <div className="ml-2 p-2 bg-paper-dark dark:bg-gray-primary">
                            <p className="text-xl">
                               {userPick
                                  ? `Your turn in ${userPick}`
@@ -247,7 +246,7 @@ const Timer = ({
                      </div>
                      {yourTurn ? (
                         <p className="bg-fuscia-primary flex items-center h-full ml-auto align-middle p-2 text-xl font-bold">
-                           Draft now!
+                           {pickIsKeeper ? '✨🎉✨' : 'Draft now!'}
                         </p>
                      ) : (
                         userPick && (

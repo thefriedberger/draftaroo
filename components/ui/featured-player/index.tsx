@@ -219,7 +219,7 @@ const FeaturedPlayer = ({
                   <div className={'flex flex-row'}>
                      <PlayerHeadshot {...featuredPlayer} />
                      <div className="flex flex-col">
-                        <div className="dark:text-white text-xl whitespace-nowrap mt-2">
+                        <div className="dark:text-white text-xl whitespace-nowrap lg:mt-2">
                            {featuredPlayer.first_name}{' '}
                            {featuredPlayer.last_name}
                            &nbsp;&nbsp;&nbsp;

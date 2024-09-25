@@ -149,6 +149,9 @@ export interface TimerProps {
    turnOrder: any;
    userTeam: Team;
    isCompleted: boolean;
+   draftId: string;
+   timerDuration: number;
+   pickIsKeeper: boolean;
 }
 
 export interface BoardProps {

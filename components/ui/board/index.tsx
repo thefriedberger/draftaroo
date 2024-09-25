@@ -30,6 +30,7 @@ import {
    Tab,
    TabProps,
    TeamsListProps,
+   TimerProps,
    WatchlistProps,
 } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -44,7 +45,7 @@ import MyTeam from '../my-team';
 import PlayerList, { sortPlayers } from '../player-list';
 import Tabs from '../tabs';
 import TeamsList from '../teams-list';
-import Timer, { NewTimerProps } from '../timer';
+import Timer from '../timer';
 import Watchlist from '../watchlist';
 
 const Board = ({
@@ -67,6 +68,7 @@ const Board = ({
    const numberOfRounds = useRef(leagueRules.number_of_rounds);
    const numberOfTeams = useRef(leagueRules.number_of_teams);
    const [isYourTurn, setIsYourTurn] = useState<boolean>(false);
+   const [pickIsKeeper, setPickIsKeeper] = useState<boolean>(false);
 
    /*** Channels ***/
    const draftChannel = supabase.channel('draft-channel');
@@ -158,6 +160,11 @@ const Board = ({
 
    // set if user can pick
    useEffect(() => {
+      const draftedPlayer = draftedPlayersState.find(
+         (player) => player.pick === currentPick
+      );
+
+      setPickIsKeeper(draftedPlayer?.team_id === team.id);
       setIsYourTurn(
          turnOrder.current
             .filter((turn) => turn.team_id === team.id)?.[0]
@@ -456,7 +463,7 @@ const Board = ({
       });
    };
 
-   const timerProps: NewTimerProps = {
+   const timerProps: TimerProps = {
       owner: isOwner.current,
       currentPick: currentPick,
       currentRound: currentRound,
@@ -468,6 +475,7 @@ const Board = ({
       isCompleted: isCompleted,
       draftId: draft.id,
       timerDuration,
+      pickIsKeeper: pickIsKeeper,
    };
 
    const draftOrderProps: DraftOrderProps = {

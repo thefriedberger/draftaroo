@@ -86,16 +86,16 @@ const PlayerComponent = ({
       <>
          <tr
             key={player.id}
-            className="my-1 min-w-full"
+            className="my-1 min-w-full cursor-pointer"
             onClick={(e: any) => {
                handleUpdateFeaturedPlayer(player, e);
             }}
          >
-            <td className="mr-2 cursor-pointer table-cell align-middle w-[30px] fill-emerald-500">
+            <td className="mr-2 table-cell align-middle w-[30px] fill-emerald-500">
                <WatchlistStar player={player} />
             </td>
             <td className="py-2 px-1">
-               <span className="cursor-pointer whitespace-nowrap">
+               <span className="whitespace-nowrap">
                   {player.first_name} {player.last_name}
                   &nbsp;&nbsp;&nbsp;
                   <span className="dark:text-gray-300 text-[11px] leading-3 whitespace-nowrap">
@@ -108,24 +108,22 @@ const PlayerComponent = ({
                </span>
             </td>
             <td className="py-2 px-1">
-               <span className="cursor-pointer">
-                  {playerStats?.[season]?.stats?.score}
-               </span>
+               <span className="">{playerStats?.[season]?.stats?.score}</span>
             </td>
             <td className="py-2 px-1">
-               <span className="cursor-pointer">
+               <span className="">
                   {playerStats?.[season]?.stats?.averageScore}
                </span>
             </td>
             <td className="py-2 px-1">
-               <span className="cursor-pointer">
+               <span className="">
                   {playerStats?.[season]?.stats?.games || 0}
                </span>
             </td>
             {player.primary_position !== 'G' ? (
                <>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {playerStats?.[season]?.stats?.timeOnIcePerGame !==
                         undefined
                            ? convertTime(
@@ -136,52 +134,52 @@ const PlayerComponent = ({
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {playerStats?.[season]?.stats?.goals || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {playerStats?.[season]?.stats?.assists || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {playerStats?.[season]?.stats?.pim || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {playerStats?.[season]?.stats?.powerPlayGoals || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {playerStats?.[season]?.stats?.powerPlayAssists || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {playerStats?.[season]?.stats?.shortHandedGoals || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {playerStats?.[season]?.stats?.shortHandedAssists || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {playerStats?.[season]?.stats?.shots || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {playerStats?.[season]?.stats?.hits || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {playerStats?.[season]?.stats?.blocked || 0}
                      </span>
                   </td>
@@ -189,27 +187,27 @@ const PlayerComponent = ({
             ) : (
                <>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {playerStats?.[season]?.stats?.wins || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {playerStats?.[season]?.stats?.losses || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {playerStats?.[season]?.stats?.saves || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {playerStats?.[season]?.stats?.goalsAgainst || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {Math.round(
                            (playerStats?.[season]?.stats?.goalAgainstAverage ||
                               1) * 100
@@ -217,7 +215,7 @@ const PlayerComponent = ({
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="cursor-pointer">
+                     <span className="">
                         {playerStats?.[season]?.stats?.shutouts || 0}
                      </span>
                   </td>

@@ -103,6 +103,7 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
                         forwards?.[index] &&
                            updateFeaturedPlayer?.(forwards[index]);
                      }}
+                     className={forwards?.[index] && 'cursor-pointer'}
                   >
                      <td>F</td>
                      <td>
@@ -119,6 +120,7 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
                         defenseman?.[index] &&
                            updateFeaturedPlayer?.(defenseman[index]);
                      }}
+                     className={forwards?.[index] && 'cursor-pointer'}
                   >
                      <td>D</td>
                      <td>
@@ -133,6 +135,7 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
                   <tr
                      key={player.id}
                      onClick={() => updateFeaturedPlayer?.(player)}
+                     className={'cursor-pointer'}
                   >
                      <td>Bench</td>
                      <td>{setDisplayName(player)}</td>
@@ -147,6 +150,7 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
                         goalies?.[index] &&
                            updateFeaturedPlayer?.(goalies[index]);
                      }}
+                     className={forwards?.[index] && 'cursor-pointer'}
                   >
                      <td>G</td>
                      <td>
@@ -160,6 +164,7 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
                   <tr
                      key={player.id}
                      onClick={() => updateFeaturedPlayer?.(player)}
+                     className={'cursor-pointer'}
                   >
                      <td>Bench</td>
                      <td>{setDisplayName(player)}</td>
