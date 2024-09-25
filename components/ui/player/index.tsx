@@ -122,6 +122,16 @@ const PlayerComponent = ({
             </td>
             {player.primary_position !== 'G' ? (
                <>
+                  {/* {Object.keys(playerStats?.[season]?.stats ?? {}).map(
+                     (stat: any) => (
+                        <PlayerRow
+                           key={`${player.id}-${stat}`}
+                           stat={stat}
+                           player={player}
+                           playerStats={playerStats?.[season]?.stats?.[stat]}
+                        />
+                     )
+                  )} */}
                   <td className="py-2 px-1">
                      <span className="">
                         {playerStats?.[season]?.stats?.timeOnIcePerGame !==
@@ -227,3 +237,15 @@ const PlayerComponent = ({
 };
 
 export default PlayerComponent;
+
+export const PlayerRow = ({
+   stat,
+   player,
+   playerStats,
+}: {
+   stat: any;
+   player: Player;
+   playerStats: PlayerStats[];
+}) => {
+   return <></>;
+};

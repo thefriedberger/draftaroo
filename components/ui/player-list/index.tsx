@@ -3,7 +3,7 @@
 import { buildThresholdList } from '@/app/utils/helpers';
 import PlayerComponentSkeleton from '@/components/skeletons/player-component-skeleton';
 import { SortValue, teams } from '@/lib/constants';
-import { PlayerListProps } from '@/lib/types';
+import { PlayerListProps, PlayerStats } from '@/lib/types';
 import { ChangeEvent, Suspense, useEffect, useState } from 'react';
 import PlayerComponent from '../player';
 import PlayerObserver from './observer';
@@ -47,6 +47,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
    const [playerSearch, setPlayerSearch] = useState<string>('');
    const [season, setSeason] = useState<number>(1);
    const [records, setRecords] = useState<number>(150);
+   const [minGP, setMinGP] = useState<number>();
    const thClasses = 'p-2 lg:p-1 my-2 cursor-pointer';
 
    const options: IntersectionObserverInit = {
@@ -90,7 +91,18 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
          }
       }, []);
 
-      const playersSearched = playersByTeam.filter((player: Player) => {
+      const playersByGP = playersByTeam.filter((player) => {
+         const currentStats = player.stats?.[season] as PlayerStats;
+         if (!minGP) {
+            return true;
+         }
+         if (currentStats && currentStats.stats?.games) {
+            return currentStats.stats.games >= minGP;
+         }
+         return false;
+      });
+
+      const playersSearched = playersByGP.filter((player: Player) => {
          if (playerSearch !== '') {
             const fullName = player.first_name + ' ' + player.last_name;
             return fullName.toLowerCase().includes(playerSearch.toLowerCase());
@@ -108,13 +120,13 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
 
    useEffect(() => {
       setRecords(150);
-   }, [sort]);
+   }, [sort, minGP]);
 
    return (
       <>
          <div className="flex flex-col items-center h-full max-h-full w-full text-black dark:text-white">
             <div className="flex flex-col sticky top-0 z-10 bg-gray-primary lg:z-0 lg:bg-transparent lg:static lg:flex-row w-full lg:w-auto justify-start self-start items-stretch lg:items-end">
-               <div className="grid grid-cols-3">
+               <div className="grid grid-cols-3 lg:grid-cols-5">
                   <Filter
                      values={positions}
                      labels={positionMap}
@@ -134,14 +146,29 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                         <option value="1">2023-2024</option>
                      </select>
                   </div>
+                  <input
+                     className="text-black p-2 col-span-2 lg:col-span-1 lg:p-1 lg:mr-2"
+                     type="search"
+                     placeholder="Search players"
+                     value={playerSearch}
+                     onChange={(e) => setPlayerSearch(e.target.value)}
+                  />
+                  <div className="flex flex-row ml-auto lg:ml-0">
+                     <label
+                        htmlFor="min-gp"
+                        className="self-end mr-1 w-16 text-right lg:w-auto"
+                     >
+                        Min GP:
+                     </label>
+                     <input
+                        type="number"
+                        id={'min-gp'}
+                        className="h-full lg:w-8 text-black p-2 lg:p-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        onChange={(e) => setMinGP(Number(e.target.value))}
+                        value={minGP}
+                     />
+                  </div>
                </div>
-               <input
-                  className="text-black p-2 lg:p-1"
-                  type="search"
-                  placeholder="Search players"
-                  value={playerSearch}
-                  onChange={(e) => setPlayerSearch(e.target.value)}
-               />
             </div>
             <div
                className=" w-full lg:h-full overflow-y-scroll relative"
