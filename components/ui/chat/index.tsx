@@ -21,7 +21,7 @@ const Chat = ({ user }: ChatProps) => {
    const [message, setMessage] = useState<string>();
    const [chat, setChat] = useState<ChatType[]>([]);
    const [isOpen, setIsOpen] = useState<boolean>(false);
-   const [unseenMessage, setUnseenMessage] = useState<boolean>(true);
+   const [unseenMessage, setUnseenMessage] = useState<boolean>(false);
    const supabase = createClientComponentClient<Database>();
 
    const chatChannel = supabase.channel('chat-channel', {
