@@ -1,8 +1,9 @@
 'use client';
 
 import getPlayers from '@/app/utils/get-players';
-import { fetchTeamHistory } from '@/app/utils/helpers';
+import { fetchTeamHistory, removeRosterPlayer } from '@/app/utils/helpers';
 import { createClient } from '@/app/utils/supabase/client';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { ChangeEvent, useEffect, useState } from 'react';
 
 export interface RosterProps {
@@ -125,6 +126,7 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
       players: draftablePlayers,
       teamRoster: teamRoster,
       handleSetRoster: handleSetRoster,
+      supabase: supabase,
    };
    return (
       <>
@@ -135,6 +137,9 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
                onChange={updateTeamToView}
                className="text-black"
             >
+               <option disabled selected>
+                  Select team:
+               </option>
                {teams?.map((team: Team) => {
                   return (
                      <option key={team.id} value={team.id}>
@@ -157,11 +162,13 @@ const KeeperSelector = ({
    players,
    teamRoster,
    handleSetRoster,
+   supabase,
 }: {
    picks: number[];
    team: Team | null;
    players: Player[];
    teamRoster: TeamHistory[];
+   supabase: SupabaseClient;
    handleSetRoster: (
       playerID: number,
       teamID: string,
@@ -177,16 +184,35 @@ const KeeperSelector = ({
             <div className="flex flex-col w-full my-5">
                <h3>{team?.team_name}</h3>
                <h3>Current roster: </h3>
-               <div className="grid grid-cols-3 gap-2 my-5">
+               <div className="grid grid-cols-2 gap-2 my-5">
                   {teamRoster.map((rosterPlayer) => {
                      const foundPlayer = players.find(
                         (player) => player.id === rosterPlayer.player_id
                      );
-                     return (
-                        <div key={rosterPlayer.player_id}>
-                           {foundPlayer?.first_name} {foundPlayer?.last_name}
-                        </div>
-                     );
+                     if (foundPlayer)
+                        return (
+                           <div
+                              key={rosterPlayer.player_id}
+                              className="flex items-center justify-between"
+                           >
+                              {foundPlayer?.first_name} {foundPlayer?.last_name}
+                              <button
+                                 type="button"
+                                 className="ml-2 mr-2 rounded-full flex items-center justify-center bg-emerald-primary w-4 h-4 appearance-none"
+                                 onClick={() =>
+                                    removeRosterPlayer(
+                                       supabase,
+                                       foundPlayer,
+                                       team
+                                    )
+                                 }
+                              >
+                                 <p className="text-center leading-[0.8] w-full h-full">
+                                    -
+                                 </p>
+                              </button>
+                           </div>
+                        );
                   })}
                </div>
                <input

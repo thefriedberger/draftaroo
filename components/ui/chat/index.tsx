@@ -20,7 +20,7 @@ const Chat = ({ user }: ChatProps) => {
    const sendMessage = useRef<boolean>(false);
    const [message, setMessage] = useState<string>();
    const [chat, setChat] = useState<ChatType[]>([]);
-   const [isOpen, setIsOpen] = useState<boolean>(true);
+   const [isOpen, setIsOpen] = useState<boolean>(false);
    const [unseenMessage, setUnseenMessage] = useState<boolean>(true);
    const supabase = createClientComponentClient<Database>();
 

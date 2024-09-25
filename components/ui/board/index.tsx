@@ -321,19 +321,33 @@ const Board = ({
       );
 
       if (autoDraftWatchlist?.players?.length) {
-         const watchlistPlayerToDraft: Player | null =
-            players.find(
-               (player) => player.id === autoDraftWatchlist.players?.[0]
-            ) ?? null;
+         const autoDraftWatchlistPlayers = autoDraftWatchlist?.players.filter(
+            (player) => !draftedIds.includes(player)
+         );
+         if (autoDraftWatchlistPlayers.length) {
+            const watchlistPlayerToDraft: Player | null =
+               players.find(
+                  (player) => player.id === autoDraftWatchlistPlayers?.[0]
+               ) ?? null;
 
-         if (watchlistPlayerToDraft) {
-            handleDraftSelection({
-               ...handleDraftSelectionProps,
-               player: watchlistPlayerToDraft,
-               teamId: autoDraftTeam.team_id,
-               timerDuration,
-            });
-            return;
+            updateSupabaseWatchlist(
+               supabase,
+               autoDraftWatchlist.players.filter(
+                  (player) => !draftedIds.includes(player)
+               ),
+               teamOwner,
+               draft.id
+            );
+
+            if (watchlistPlayerToDraft) {
+               handleDraftSelection({
+                  ...handleDraftSelectionProps,
+                  player: watchlistPlayerToDraft,
+                  teamId: autoDraftTeam.team_id,
+                  timerDuration,
+               });
+               return;
+            }
          }
       }
       const playerIds: number[] = updateTeamsViewPlayers(

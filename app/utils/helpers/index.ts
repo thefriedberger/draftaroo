@@ -274,7 +274,6 @@ export const setMainTimer = async (
    draftId: string,
    timerValue: number
 ) => {
-   console.log(timerValue);
    const { data, error } = await supabase
       .from('draft')
       .update({ end_time: timerValue })
@@ -369,3 +368,14 @@ export const getTimerDuration = async (
       .match({ id: leagueRulesId });
    return data?.[0].timer_duration as number;
 }; // seconds
+
+export const removeRosterPlayer = async (
+   supabase: SupabaseClient,
+   player: Player,
+   team: Team
+) => {
+   const { data, error } = await supabase
+      .from('team_history')
+      .delete()
+      .match({ player_id: player.id, team_id: team.id });
+};
