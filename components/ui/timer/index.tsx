@@ -7,6 +7,7 @@ import { getTimerData } from '@/app/utils/helpers';
 import { useWorkerTimeout } from '@/components/worker/worker-timeout';
 import { DraftPick, TimerProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import classNames from 'classnames';
 import { createRef, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
@@ -220,19 +221,24 @@ const Timer = ({
                      <p className="ml-2">{currentRound}&nbsp;Round</p>
                      <p className="ml-2">{currentPick}&nbsp;Pick</p>
                      <p className="ml-2">{currentPick}&nbsp;Overall</p>
-                     {yourTurn ? (
-                        <p className="ml-2 text-xl font-bold h-9">
-                           {pickIsKeeper ? '✨🎉✨' : 'Draft now!'}
+                     <div
+                        className={classNames(
+                           yourTurn
+                              ? 'bg-gold'
+                              : 'bg-paper-dark dark:bg-gray-primary',
+                           'p-2 bg-gold'
+                        )}
+                     >
+                        <p className="text-xl leading-none">
+                           {yourTurn
+                              ? pickIsKeeper
+                                 ? '✨🎉✨'
+                                 : 'Draft now!'
+                              : userPick
+                              ? `Your turn in ${userPick}`
+                              : 'No more picks'}
                         </p>
-                     ) : (
-                        <div className="ml-2 p-2 bg-paper-dark dark:bg-gray-primary">
-                           <p className="text-xl">
-                              {userPick
-                                 ? `Your turn in ${userPick}`
-                                 : 'No more picks'}
-                           </p>
-                        </div>
-                     )}
+                     </div>
                   </>
                ) : (
                   <div className="bg-paper-primary dark:bg-gray-primary flex flex-row items-center h-full">
@@ -244,20 +250,22 @@ const Timer = ({
                         <p className="">{currentPick}&nbsp;Pick</p>
                         <p className="">{currentPick}&nbsp;Overall</p>
                      </div>
-                     {yourTurn ? (
-                        <p className="bg-fuscia-primary flex items-center h-full ml-auto align-middle p-2 text-xl font-bold">
-                           {pickIsKeeper ? '✨🎉✨' : 'Draft now!'}
+                     <div
+                        className={classNames(
+                           yourTurn && 'bg-fuscia-primary',
+                           'flex items-center h-full ml-auto align-middle p-2 text-xl'
+                        )}
+                     >
+                        <p className="text-center w-full">
+                           {yourTurn
+                              ? pickIsKeeper
+                                 ? '✨🎉✨'
+                                 : 'Draft now!'
+                              : userPick
+                              ? `Your turn in ${userPick}`
+                              : 'No more picks'}
                         </p>
-                     ) : (
-                        userPick && (
-                           <p className="self-end ml-auto pr-2 pb-1 text-lg">
-                              {userPick &&
-                                 `${userPick} pick${
-                                    userPick === 1 ? '' : 's'
-                                 } until your turn`}
-                           </p>
-                        )
-                     )}
+                     </div>
                   </div>
                )}
             </>

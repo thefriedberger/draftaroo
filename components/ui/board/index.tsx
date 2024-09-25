@@ -164,7 +164,7 @@ const Board = ({
          (player) => player.pick === currentPick
       );
 
-      setPickIsKeeper(draftedPlayer?.team_id === team.id);
+      setPickIsKeeper(draftedPlayer?.is_keeper ? true : false);
       setIsYourTurn(
          turnOrder.current
             .filter((turn) => turn.team_id === team.id)?.[0]
