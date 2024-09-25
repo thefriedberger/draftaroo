@@ -153,17 +153,17 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                      value={playerSearch}
                      onChange={(e) => setPlayerSearch(e.target.value)}
                   />
-                  <div className="flex flex-row ml-auto lg:ml-0">
+                  <div className="flex flex-row ml-auto col-span-1 w-full lg:ml-0 bg-white dark:bg-transparent lg:bg-transparent">
                      <label
                         htmlFor="min-gp"
-                        className="self-end mr-1 w-16 text-right lg:w-auto"
+                        className="h-full border-r lg:border-r-0 self-end pt-2 pr-1 min-w-16 text-right w-full lg:w-auto"
                      >
                         Min GP:
                      </label>
                      <input
                         type="number"
                         id={'min-gp'}
-                        className="h-full lg:w-8 text-black p-2 lg:p-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="h-full w-full lg:w-8 text-black p-2 lg:p-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         onChange={(e) =>
                            e.target.value.length
                               ? setMinGP(Number(e.target.value))

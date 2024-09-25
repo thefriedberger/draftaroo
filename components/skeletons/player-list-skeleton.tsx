@@ -5,7 +5,7 @@ const PlayerListSkeleton = () => {
       'h-full w-full bg-paper-dark dark:bg-gray-light rounded-md animate-pulse';
    return (
       <div className="flex flex-col justify-between min-h-full w-full lg:border-r lg:border-paper-dark dark:lg:border-gray-300">
-         <div className="grid grid-cols-3 lg:gap-1 lg:grid-cols-6 min-h-10 lg:min-h-7">
+         <div className="grid grid-cols-3 lg:gap-1 lg:grid-cols-5 min-h-10 lg:min-h-8">
             <div className="h-full w-full bg-white lg:px-3 lg:py-2 p-3">
                <div className="h-full w-full bg-gray-light rounded-md animate-pulse"></div>
             </div>
@@ -13,6 +13,9 @@ const PlayerListSkeleton = () => {
                <div className="h-full w-full bg-gray-light rounded-md animate-pulse"></div>
             </div>
             <div className="h-full w-full bg-white lg:px-3 lg:py-2 p-3">
+               <div className="h-full w-full bg-gray-light rounded-md animate-pulse"></div>
+            </div>
+            <div className="hidden lg:block h-full w-full bg-white lg:px-3 lg:py-2 p-3">
                <div className="h-full w-full bg-gray-light rounded-md animate-pulse"></div>
             </div>
             <div className="hidden lg:block h-full w-full bg-white lg:px-3 lg:py-2 p-3">
