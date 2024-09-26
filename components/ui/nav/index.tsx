@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { RefObject, useContext, useEffect, useRef, useState } from 'react';
+import { buttonClasses } from '../helpers/buttons';
 
 export default function Nav(props: NavProps) {
    const supabase = createClientComponentClient();
@@ -22,7 +23,7 @@ export default function Nav(props: NavProps) {
       router.refresh();
    };
 
-   const buttonClasses =
+   const buttonClass =
       'min-h-full text-white text-bold hover:text-gray-100 dark:bg-gray-light dark:hover:bg-gray-scrollhover p-2 text-center';
    const { user } = useContext(PageContext);
    useOnClickOutside(navContainer, () => setIsOpen(false));
@@ -53,7 +54,7 @@ export default function Nav(props: NavProps) {
                               type="button"
                               onClick={() => setIsOpen(!isOpen)}
                            >
-                              <span className="text-white hidden lg:block">
+                              <span className="text-white block">
                                  {user?.user_metadata?.first_name
                                     ? user.user_metadata.first_name.charAt(0)
                                     : user?.email && user.email.charAt(0)}
@@ -62,7 +63,7 @@ export default function Nav(props: NavProps) {
                            <div
                               className={classNames(
                                  isOpen && 'animate-show',
-                                 !isOpen && 'animate-hide',
+                                 !isOpen && 'hidden',
                                  'transition duration-150 w-52 absolute top-14 left-[-10rem] shadow-md bg-paper-primary dark:bg-gray-primary rounded-md'
                               )}
                            >
@@ -71,7 +72,7 @@ export default function Nav(props: NavProps) {
                                     href={'/update-account'}
                                     className={classNames(
                                        'rounded-tl-md',
-                                       buttonClasses
+                                       buttonClass
                                     )}
                                     onClick={() => setIsOpen(!isOpen)}
                                  >
@@ -81,7 +82,7 @@ export default function Nav(props: NavProps) {
                                  <button
                                     className={classNames(
                                        'rounded-tr-md',
-                                       buttonClasses
+                                       buttonClass
                                     )}
                                     onClick={() => {
                                        setIsOpen(!isOpen);
