@@ -59,6 +59,64 @@
    @apply !bg-black !bg-opacity-80 h-full w-full flex items-center justify-center;
 }
 
+@keyframes show {
+   from {
+      opacity: 0;
+      display: none;
+   }
+   to {
+      opacity: 100%;
+      display: block;
+   }
+}
+
+@keyframes hide {
+   from {
+      opacity: 100%;
+      display: block;
+   }
+   to {
+      opacity: 0;
+      display: none;
+   }
+}
+
+@keyframes party {
+   0% {
+      background-color: transparent;
+   }
+   5% {
+      background-color: blue;
+   }
+   20% {
+      background-color: transparent;
+   }
+   25% {
+      background-color: orangered;
+   }
+   40% {
+      background-color: transparent;
+   }
+   45% {
+      background-color: green;
+   }
+   60% {
+      background-color: transparent;
+   }
+   65% {
+      background-color: purple;
+   }
+   80% {
+      background-color: transparent;
+   }
+   85% {
+      background-color: gold;
+   }
+   100% {
+      background-color: transparent;
+   }
+}
+
 @keyframes animateIn {
    from {
       opacity: 0;

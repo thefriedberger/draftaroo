@@ -8,6 +8,17 @@ export interface DraftSelections extends DraftSelection {
    first_name: string;
    last_name: string;
 }
+
+export interface NavProps {
+   user?: User;
+}
+
+export interface AccountMenuProps {
+   user: User;
+   isOpen: boolean;
+   setIsOpen: (isOpen: boolean) => void;
+}
+
 export interface BaseProps {
    title?: string;
 }

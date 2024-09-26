@@ -46,7 +46,7 @@ const SetPassword = () => {
                   onSubmit={(e: React.FormEvent<HTMLFormElement>) =>
                      handleSubmit(e)
                   }
-                  className=""
+                  className="mt-5"
                >
                   <div className="flex flex-col">
                      <label
