@@ -113,6 +113,17 @@ export const fetchLeagues = cache(
    }
 );
 
+export const fetchUserLeagues = cache(
+   async (supabase: SupabaseClient<Database>, team: Team): Promise<League> => {
+      const { data, error } = await supabase
+         .from('leagues')
+         .select('*')
+         .match({ league_id: team.league_id });
+
+      return data?.[0] as League;
+   }
+);
+
 export const fetchLeague = cache(
    async (
       supabase: SupabaseClient<Database>,

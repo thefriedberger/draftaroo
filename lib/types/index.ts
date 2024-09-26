@@ -11,6 +11,14 @@ export interface DraftSelections extends DraftSelection {
 
 export interface NavProps {
    user?: User;
+   userTeams?: Team[];
+   leagues?: League[];
+   drafts?: Draft[];
+}
+
+export interface NavMenuProps extends NavProps {
+   navIsOpen: boolean;
+   setNavIsOpen: (value: boolean) => void;
 }
 
 export interface AccountMenuProps {

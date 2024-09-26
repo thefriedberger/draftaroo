@@ -8,13 +8,16 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { RefObject, useContext, useEffect, useRef, useState } from 'react';
 import { buttonClasses } from '../helpers/buttons';
+import NavMenu from './nav-menu';
 
-export default function Nav(props: NavProps) {
+export default function Nav({ user, userTeams, leagues, drafts }: NavProps) {
    const supabase = createClientComponentClient();
    const router = useRouter();
    const { userSignout } = useContext(PageContext);
    const navContainer = useRef<HTMLDivElement>(null);
-   const [isOpen, setIsOpen] = useState<boolean>(false);
+   const accountNavContainer = useRef<HTMLDivElement>(null);
+   const [accountMenuIsOpen, setAccountMenuIsOpen] = useState<boolean>(false);
+   const [navIsOpen, setNavIsOpen] = useState<boolean>(false);
    const [partyOn, setPartyOn] = useState<boolean>(false);
 
    const signOut = async () => {
@@ -24,35 +27,81 @@ export default function Nav(props: NavProps) {
    };
 
    const buttonClass =
-      'min-h-full text-white text-bold hover:text-gray-100 dark:bg-gray-light dark:hover:bg-gray-scrollhover p-2 text-center';
-   const { user } = useContext(PageContext);
-   useOnClickOutside(navContainer, () => setIsOpen(false));
+      'min-h-full text-white text-bold hover:text-gray-100 dark:bg-gray-light bg-paper-dark hover:bg-paper-primary dark:hover:bg-gray-scrollhover p-2 text-center';
+
+   useOnClickOutside(navContainer, () => setNavIsOpen(false));
+   useOnClickOutside(accountNavContainer, () => setAccountMenuIsOpen(false));
+
    return (
       <>
          <div
             className={classNames(
-               'absolute top-0 r-0 w-dvw h-dvh animate-party opacity-85',
+               'absolute top-0 r-0 w-dvw h-dvh animate-party opacity-85 z-40',
                !partyOn && 'hidden'
             )}
          ></div>
-         <nav className="h-[57px] relative z-100">
+         <nav className="h-[57px] relative z-50">
             <div className="bg-emerald-600 w-full flex justify-center border-b border-b-foreground/10">
                <div className="w-full max-w-4xl flex justify-between items-center p-2 flex-row">
+                  <div ref={navContainer} className="flex items-center">
+                     <button
+                        onClick={() => setNavIsOpen(!navIsOpen)}
+                        className="h-7 w-8 relative"
+                     >
+                        <span className="sr-only">Toggle navigation</span>
+                        {Array.from({ length: 3 }).map((v, k) => {
+                           const positionClass =
+                              k === 0
+                                 ? navIsOpen
+                                    ? 'top-3 -rotate-45'
+                                    : 'top-0 -rotate-0'
+                                 : k === 1
+                                 ? navIsOpen
+                                    ? '!bg-transparent'
+                                    : 'top-3'
+                                 : navIsOpen
+                                 ? 'top-3 rotate-45'
+                                 : 'top-[1.475rem] rotate-0';
+                           return (
+                              <div
+                                 key={k}
+                                 className={classNames(
+                                    positionClass,
+                                    'w-full h-1 rounded-sm bg-white absolute left-0 transition-all duration-75'
+                                 )}
+                              ></div>
+                           );
+                        })}
+                     </button>
+                     <NavMenu
+                        user={user}
+                        userTeams={userTeams}
+                        leagues={leagues}
+                        drafts={drafts}
+                        navIsOpen={navIsOpen}
+                        setNavIsOpen={setNavIsOpen}
+                     />
+                  </div>
                   <Link
                      className="flex flex-row items-center text-2xl text-white hover:opacity-80 transition-all duration-75"
                      href="/"
                   >
-                     <p className="ml-2">Draftaroo</p>
+                     <p className="">Draftaroo</p>
                   </Link>
                   {user?.id ? (
                      <div className="flex flex-col bg-transparent items-center gap-4">
-                        <div ref={navContainer} className="w-10 h-10 relative">
+                        <div
+                           ref={accountNavContainer}
+                           className="w-10 h-10 relative"
+                        >
                            <button
                               className={
                                  'h-full w-full bg-paper-primary dark:bg-gray-primary text-black dark:text-white text-2xl text-center rounded-full hover:bg-paper-dark dark:hover:bg-gray-dark transition duration-150'
                               }
                               type="button"
-                              onClick={() => setIsOpen(!isOpen)}
+                              onClick={() =>
+                                 setAccountMenuIsOpen(!accountMenuIsOpen)
+                              }
                            >
                               <span className="text-white block">
                                  {user?.user_metadata?.first_name
@@ -62,8 +111,8 @@ export default function Nav(props: NavProps) {
                            </button>
                            <div
                               className={classNames(
-                                 isOpen && 'animate-show',
-                                 !isOpen && 'hidden',
+                                 accountMenuIsOpen && 'animate-show',
+                                 !accountMenuIsOpen && 'hidden',
                                  'transition duration-150 w-52 absolute top-14 left-[-10rem] shadow-md bg-paper-primary dark:bg-gray-primary rounded-md'
                               )}
                            >
@@ -74,7 +123,9 @@ export default function Nav(props: NavProps) {
                                        'rounded-tl-md',
                                        buttonClass
                                     )}
-                                    onClick={() => setIsOpen(!isOpen)}
+                                    onClick={() =>
+                                       setAccountMenuIsOpen(!accountMenuIsOpen)
+                                    }
                                  >
                                     Manage Account
                                  </Link>
@@ -85,7 +136,7 @@ export default function Nav(props: NavProps) {
                                        buttonClass
                                     )}
                                     onClick={() => {
-                                       setIsOpen(!isOpen);
+                                       setAccountMenuIsOpen(!accountMenuIsOpen);
                                        signOut();
                                     }}
                                  >
@@ -117,7 +168,7 @@ export default function Nav(props: NavProps) {
    );
 }
 
-function useOnClickOutside(
+export function useOnClickOutside(
    ref: RefObject<HTMLDivElement>,
    handler: () => void
 ) {

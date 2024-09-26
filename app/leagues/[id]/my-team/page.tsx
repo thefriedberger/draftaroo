@@ -19,7 +19,7 @@ const MyTeam = async ({ params: { id } }: { params: { id: string } }) => {
          {team && (
             <>
                <h2
-                  className="font-bold text-xl text-black dark:text-white mb-2"
+                  className="font-bold text-xl text-black dark:text-white mt-5 mb-2"
                   key={team.id}
                >
                   {team?.team_name}

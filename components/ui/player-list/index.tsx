@@ -156,7 +156,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                   <div className="flex flex-row ml-auto col-span-1 w-full lg:ml-0 bg-white dark:bg-transparent lg:bg-transparent">
                      <label
                         htmlFor="min-gp"
-                        className="h-full border-r lg:border-r-0 self-end pt-2 pr-1 min-w-16 text-right w-full lg:w-auto"
+                        className="h-full border-r text-black lg:text-inherit bg-white lg:bg-transparent lg:border-r-0 self-end pt-2 pr-1 min-w-16 text-right w-full lg:w-auto"
                      >
                         Min GP:
                      </label>
