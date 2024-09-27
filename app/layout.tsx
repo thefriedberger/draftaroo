@@ -49,8 +49,27 @@ export default async function RootLayout({
       supabase,
       user.id
    );
+   if (!userTeams.length) {
+      return (
+         <PageContextProvider user={user}>
+            <html lang="en">
+               <body
+                  id="DraftarooApp"
+                  className="min-h-screen bg-paper-light dark:bg-gray-dark"
+               >
+                  <header>
+                     <Nav user={user} />
+                  </header>
+                  <main className="flex flex-col items-center">{children}</main>
+                  <SpeedInsights />
+               </body>
+            </html>
+         </PageContextProvider>
+      );
+   }
 
    const leagues: Awaited<League[]> = [];
+
    for (const team of userTeams) {
       if (team) {
          const foundLeague: Awaited<League> = await fetchUserLeagues(
@@ -61,7 +80,22 @@ export default async function RootLayout({
       }
    }
    if (!leagues.length) {
-      return <></>;
+      return (
+         <PageContextProvider user={user}>
+            <html lang="en">
+               <body
+                  id="DraftarooApp"
+                  className="min-h-screen bg-paper-light dark:bg-gray-dark"
+               >
+                  <header>
+                     <Nav user={user} />
+                  </header>
+                  <main className="flex flex-col items-center">{children}</main>
+                  <SpeedInsights />
+               </body>
+            </html>
+         </PageContextProvider>
+      );
    }
 
    let drafts: Awaited<Draft[]> = [];
