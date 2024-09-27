@@ -3,8 +3,7 @@
 import { signup } from '@/app/login/actions';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { ChangeEvent, useState } from 'react';
-
+import { ChangeEvent, useEffect, useState } from 'react';
 const SignUpForm = () => {
    const searchParams = useSearchParams();
    const [email, setEmail] = useState<string>(searchParams.get('email') ?? '');
@@ -16,7 +15,7 @@ const SignUpForm = () => {
    const [passwordsMatch, setPasswordsMatch] = useState<boolean>(true);
    const [validPassword, setValidPassword] = useState<boolean>(true);
    const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
-   const [origin, setOrigin] = useState<string>(location.origin);
+   const [origin, setOrigin] = useState<string>();
 
    const passwordPattern = new RegExp(
       /(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*]).*/gi
@@ -30,6 +29,9 @@ const SignUpForm = () => {
          setPasswordsMatch(false);
       }
    };
+   useEffect(() => {
+      setOrigin(`${location.origin}`);
+   }, []);
 
    const handleSignup = async (formData: FormData) => {
       const response = await signup(formData);
