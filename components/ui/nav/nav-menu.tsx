@@ -15,7 +15,7 @@ const NavMenu = ({
          className={classNames(
             navIsOpen && 'h-fit py-4',
             !navIsOpen && 'h-0',
-            'absolute w-[100vw] overflow-hidden transition-all duration-100 left-0 top-[61px] z-50 bg-paper-primary dark:bg-gray-light'
+            'absolute w-[100vw] overflow-hidden transition-all duration-100 left-0 top-[57px] z-50 bg-paper-primary dark:bg-gray-light'
          )}
       >
          <div className="flex flex-col mx-auto h-full max-w-full lg:max-w-4xl">

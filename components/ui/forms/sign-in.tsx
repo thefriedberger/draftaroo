@@ -1,15 +1,13 @@
 'use client';
 
 import { login } from '@/app/login/actions';
-import { AuthFormProps } from '@/lib/types';
+import Link from 'next/link';
 import { useState } from 'react';
 
-const SignInForm = (props: AuthFormProps) => {
+const SignInForm = () => {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const [invalidCredentials, setInvalidCredentials] = useState(false);
-
-   const { setFormType } = props;
 
    const handleSubmit = async (formData: FormData) => {
       const response = await login(formData);
@@ -59,27 +57,19 @@ const SignInForm = (props: AuthFormProps) => {
                Sign In
             </button>
 
-            {setFormType && (
-               <div className="flex flex-col lg:flex-row lg:justify-around lg:items-end">
-                  <button
-                     className="underline"
-                     onClick={() => setFormType('FORGOT_PASSWORD')}
-                  >
-                     Forgot Password
-                  </button>
-                  <div className="flex flex-col mt-5 lg:mt-0 text-center lg:text-left items-center lg:items-start">
-                     <p className="text-sm text-center">
-                        Don&rsquo;t have an account?
-                     </p>
-                     <button
-                        className="underline"
-                        onClick={() => setFormType('SIGN_UP')}
-                     >
-                        Sign Up Now
-                     </button>
-                  </div>
+            <div className="flex flex-col lg:flex-row lg:justify-around lg:items-end">
+               <Link className="underline" href="/auth/forgot-password">
+                  Forgot Password
+               </Link>
+               <div className="flex flex-col mt-5 lg:mt-0 text-center lg:text-left items-center lg:items-start">
+                  <p className="text-sm text-center">
+                     Don&rsquo;t have an account?
+                  </p>
+                  <Link className="underline" href="/auth/sign-up">
+                     Sign Up Now
+                  </Link>
                </div>
-            )}
+            </div>
          </form>
       </>
    );
