@@ -36,10 +36,15 @@ export default function Nav({ user, userTeams, leagues, drafts }: NavProps) {
       <>
          <div
             className={classNames(
-               'absolute top-0 r-0 w-dvw h-dvh animate-party opacity-85 z-40',
+               'absolute top-0 r-0 w-dvw h-dvh animate-party-delay opacity-85 z-40',
                !partyOn && 'hidden'
             )}
          ></div>
+         {partyOn && (
+            <audio className="hidden" controls={false} autoPlay={partyOn}>
+               <source src="https://mfiegmjwkqpipahwvcbz.supabase.co/storage/v1/object/sign/audio/sandstorm.mp3?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhdWRpby9zYW5kc3Rvcm0ubXAzIiwiaWF0IjoxNzI3NDQ4MjY0LCJleHAiOjE4ODUxMjgyNjR9.QGQaxzRMDz_rs4BBTvIIqr035zFlovuxVbrGCoqpPsw&t=2024-09-27T14%3A44%3A24.051Z" />
+            </audio>
+         )}
          <nav className="h-[57px] relative z-50">
             <div className="bg-emerald-600 w-full flex justify-center border-b border-b-foreground/10">
                <div className="w-full max-w-4xl flex justify-between items-center p-2 flex-row">

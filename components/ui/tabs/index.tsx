@@ -29,7 +29,7 @@ const Tabs = ({
                key={key}
                className={classNames(
                   isActive ? styles['nav-active'] : styles['nav-inactive'],
-                  'h-[66px] inline-flex text-center p-0 items-end lg:items-center justify-center lg:h-auto lg:border-r-2 lg:border-r-emerald-600 lg:last-of-type:border-none'
+                  'h-[66px] inline-flex text-center p-0 items-center justify-center lg:h-auto lg:border-r-2 lg:border-r-emerald-600 lg:last-of-type:border-none'
                )}
             >
                <button
@@ -38,7 +38,7 @@ const Tabs = ({
                      setActiveTabIndex(index);
                   }}
                   className={
-                     'flex flex-col items-center pb-1 text-white lg:block text-center lg:p-2'
+                     'flex flex-col items-center text-white lg:block text-center lg:p-2'
                   }
                >
                   {tab.tabButton}
