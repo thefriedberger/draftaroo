@@ -36,18 +36,13 @@ export async function signup(formData: FormData) {
       email: formData.get('email') as string,
       password: formData.get('password') as string,
       options: {
-         emailRedirectTo: `${location.origin}/auth/confirm`,
+         emailRedirectTo: `${formData.get('origin')}/auth/confirm`,
       },
    };
-   const {
-      data: { user },
-      error,
-   } = await supabase.auth.signUp(data);
+   const { error } = await supabase.auth.signUp(data);
    if (error) {
-      return { error: error };
+      return error;
    }
-
-   return { response: user };
 
    // revalidatePath('/');
    // redirect('/');

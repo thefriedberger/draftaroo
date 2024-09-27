@@ -16,6 +16,7 @@ const SignUpForm = () => {
    const [passwordsMatch, setPasswordsMatch] = useState<boolean>(true);
    const [validPassword, setValidPassword] = useState<boolean>(true);
    const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
+   const [origin, setOrigin] = useState<string>(location.origin);
 
    const passwordPattern = new RegExp(
       /(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*]).*/gi
@@ -31,9 +32,14 @@ const SignUpForm = () => {
    };
 
    const handleSignup = async (formData: FormData) => {
-      const { response, error } = await signup(formData);
-      console.log(response, error);
-      if (!error) {
+      const response = await signup(formData);
+      if (!response) {
+         setFormSubmitted(true);
+      } else {
+         // if (response.status === 422) {
+         //    login(formData);
+         // }
+         setFormSubmitted(false);
       }
    };
 
@@ -140,6 +146,12 @@ const SignUpForm = () => {
                {!passwordsMatch && (
                   <p className="text-red-700 mb-3">Passwords must match</p>
                )}
+               <input
+                  className="hidden"
+                  name="origin"
+                  id="origin"
+                  value={origin}
+               />
                <button
                   className={`disabled:opacity-50 disabled:cursor-not-allowed bg-emerald-primary rounded px-4 py-2 text-white mb-3 `}
                   disabled={passwordsMatch && validPassword ? false : true}
@@ -155,7 +167,7 @@ const SignUpForm = () => {
                </p>
             </form>
          ) : (
-            <h1 className="mt-5 text-xl">
+            <h1 className="mt-5 text-xl dark:text-white">
                Invite sent, check email for confirmation link
             </h1>
          )}
