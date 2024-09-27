@@ -105,8 +105,11 @@ export default function Nav({ user, userTeams, leagues, drafts }: NavProps) {
                            >
                               <span className="text-white block">
                                  {user?.user_metadata?.first_name
-                                    ? user.user_metadata.first_name.charAt(0)
-                                    : user?.email && user.email.charAt(0)}
+                                    ? user.user_metadata.first_name
+                                         .charAt(0)
+                                         .toLocaleUpperCase()
+                                    : user?.email &&
+                                      user.email.charAt(0).toLocaleUpperCase()}
                               </span>
                            </button>
                            <div
@@ -162,7 +165,6 @@ export default function Nav({ user, userTeams, leagues, drafts }: NavProps) {
                   )}
                </div>
             </div>
-            <div className="sub-nav bg-emerald-500 w-full flex justify-center border-b border-b-foreground/10 h-1"></div>
          </nav>
       </>
    );
