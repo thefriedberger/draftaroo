@@ -1,5 +1,4 @@
 import { Pick } from '@/components/ui/draft-order';
-import { formStatus, formType } from '@/components/ui/form-wrappers/login';
 import { SupabaseClient, User } from '@supabase/supabase-js';
 import { AnchorHTMLAttributes, ReactNode } from 'react';
 
@@ -147,11 +146,6 @@ export interface DropdownProps {
    parentText: string;
    links: ReactNode[] | Link[] | any[];
    className?: string;
-}
-
-export interface AuthFormProps {
-   setFormType: (formType: formType) => void;
-   setView?: (view: formStatus) => void;
 }
 
 export interface TimerProps {
