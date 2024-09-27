@@ -9,7 +9,7 @@ export type UserInvite = {
    email: string;
    callback: string;
    teamId: string;
-   leagueId: string;
+   leagueID: string;
 };
 const TeamAdmin = ({ team }: { team: Team }) => {
    const supabase = createClientComponentClient<Database>();
@@ -54,12 +54,16 @@ const TeamAdmin = ({ team }: { team: Team }) => {
       if (league_id && id) {
          const formData: UserInvite = {
             email: newUserEmail,
-            callback: String(`${location.origin}/auth/sign-up`),
+            callback: String(
+               `${location.origin}/leagues/${league_id}/callback`
+            ),
             teamId: id,
-            leagueId: league_id,
+            leagueID: league_id,
          };
          const response = await inviteUser(formData);
-         if (!response) {
+         if (response) {
+            console.log(response);
+         } else {
             router.refresh();
          }
       }

@@ -1,13 +1,11 @@
 'use client';
 
 import { signup } from '@/app/login/actions';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { AuthFormProps } from '@/lib/types';
 import { ChangeEvent, useState } from 'react';
 
-const SignUpForm = () => {
-   const searchParams = useSearchParams();
-   const [email, setEmail] = useState<string>(searchParams.get('email') ?? '');
+const SignUpForm = (props: AuthFormProps) => {
+   const [email, setEmail] = useState<string>('');
    const [password, setPassword] = useState<string>('');
    const [firstName, setFirstName] = useState<string>('');
    const [lastName, setLastName] = useState<string>('');
@@ -17,7 +15,7 @@ const SignUpForm = () => {
    const [validPassword, setValidPassword] = useState<boolean>(true);
 
    const passwordPattern = new RegExp(
-      /(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*]).*/gi
+      /(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*])(?!.*?(pass))(?!.*?(code))(?!.*?(secret)).*/gi
    );
 
    const checkPassword = (e: ChangeEvent<HTMLInputElement>) => {
@@ -28,6 +26,7 @@ const SignUpForm = () => {
          setPasswordsMatch(false);
       }
    };
+   const { setFormType } = props;
 
    return (
       <>
@@ -97,12 +96,13 @@ const SignUpForm = () => {
                   required
                   minLength={10}
                   pattern={
-                     '(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*]).*'
+                     '(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*])(?!.*?(pass))(?!.*?(code))(?!.*?(secret)).*'
                   }
                />
                <p className="hidden peer-invalid:block mb-2 text-red-600 text-sm">
-                  Password must be 10 characters and include uppercase and
-                  lowercase, number, and special character.
+                  Password must include uppercase and lowercase, number, and
+                  special character. Can&apos;t include following words: pass,
+                  code, or secret
                </p>
             </div>
             <div className="flex flex-col">
@@ -123,7 +123,7 @@ const SignUpForm = () => {
                   required
                   minLength={10}
                   pattern={
-                     '(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*]).*'
+                     '(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*])(?!.*?(pass))(?!.*?(code))(?!.*?(secret)).*'
                   }
                />
             </div>
@@ -140,9 +140,12 @@ const SignUpForm = () => {
             </button>
             <p className="text-sm text-center">
                Already have an account?
-               <Link className="ml-1 underline" href="/login">
+               <button
+                  className="ml-1 underline"
+                  onClick={() => setFormType('SIGN_IN')}
+               >
                   Sign In Now
-               </Link>
+               </button>
             </p>
          </form>
       </>

@@ -1,9 +1,9 @@
-import SignInForm from '@/components/ui/forms/sign-in';
+import LoginFormWrapper from '@/components/ui/form-wrappers/login';
 
 export default function LoginPage() {
    return (
       <div className="my-5">
-         <SignInForm />
+         <LoginFormWrapper />
       </div>
    );
 }

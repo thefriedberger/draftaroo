@@ -1,12 +1,16 @@
 'use client';
 
 import { requestPasswordReset } from '@/app/login/actions';
-import Link from 'next/link';
+import { AuthFormProps } from '@/lib/types';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useState } from 'react';
 
-const ForgotPasswordForm = () => {
+const ForgotPasswordForm = (props: AuthFormProps) => {
    const [email, setEmail] = useState('');
    const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
+   const supabase = createClientComponentClient<Database>();
+
+   const { setFormType } = props;
 
    const handleRequestPasswordReset = async (formData: FormData) => {
       const response = await requestPasswordReset(formData);
@@ -60,16 +64,22 @@ const ForgotPasswordForm = () => {
                Send recovery link
             </button>
             <div className="flex flex-col lg:flex-row lg:justify-around items-center lg:items-end">
-               <Link className="underline" href="/login">
+               <button
+                  className="underline"
+                  onClick={() => setFormType('SIGN_IN')}
+               >
                   Sign In
-               </Link>
+               </button>
                <div className="flex flex-col mt-5 lg:mt-0 text-center lg:text-left items-center lg:items-start">
                   <p className="text-sm text-center">
                      Don&rsquo;t have an account?
                   </p>
-                  <Link className="underline" href="/auth/sign-up">
+                  <button
+                     className="underline"
+                     onClick={() => setFormType('SIGN_UP')}
+                  >
                      Sign Up Now
-                  </Link>
+                  </button>
                </div>
             </div>
          </form>

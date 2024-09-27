@@ -9,7 +9,7 @@ const ResetPasswordForm = () => {
    const [passwordsMatch, setPasswordsMatch] = useState(true);
    const [validPassword, setValidPassword] = useState<boolean>(true);
    const passwordPattern = new RegExp(
-      /(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*]).*/gi
+      /(?=^.{10,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!?@#$%^&*])(?!.*?(pass))(?!.*?(code))(?!.*?(secret)).*/gi
    );
 
    const checkPassword = (e: ChangeEvent<HTMLInputElement>) => {
@@ -44,8 +44,8 @@ const ResetPasswordForm = () => {
                className="peer invalid:border-red focus:invalid:border-red border-2"
             />
             <p className="peer-invalid:block hidden mt-2 text-red-600 text-sm w-40">
-               Password must be 10 characters and include uppercase and
-               lowercase, number, and special character
+               Password must be 10 characters, include uppercase and lowercase,
+               number, and special character
             </p>
          </div>
          <div className="flex flex-col">
