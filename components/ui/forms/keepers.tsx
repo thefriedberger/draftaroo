@@ -110,6 +110,7 @@ const KeeperForm = ({
    };
    const submitKeepers = (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+      if (draft?.is_active || draft?.is_completed) return;
       rosterState.map(async (player) => {
          if (player.player_id && player.is_keeper) {
             const { error: draftSelectionsError } = await supabase

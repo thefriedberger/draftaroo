@@ -687,16 +687,27 @@ const Board = ({
                <>
                   {isOwner.current &&
                      (!isCompleted ? (
-                        <button
-                           className={classNames(
-                              buttonClasses,
-                              'w-20 lg:w-32 h-10 !p-1 !lg:p-2 lg:z-[100] text-sm lg:text-lg absolute top-2 right-[calc(25%-2.5rem)] lg:right-[calc(25%-64px)] xl:right-[calc(30%-64px)] z-[100]'
-                           )}
-                           type="button"
-                           onClick={!isActive ? startDraft : stopDraft}
-                        >
-                           {!isActive ? 'Start Draft' : 'Stop Draft'}
-                        </button>
+                        <>
+                           <button
+                              onClick={autoDraft}
+                              className={classNames(
+                                 buttonClasses,
+                                 'w-20 lg:w-32 h-10 !p-1 !lg:p-2 lg:z-[100] text-sm lg:text-lg absolute top-2 right-[calc(25%-4.5rem)] lg:right-[calc(25%-130px)] xl:right-[calc(30%-130px)] z-[100]'
+                              )}
+                           >
+                              Auto Draft
+                           </button>
+                           <button
+                              className={classNames(
+                                 buttonClasses,
+                                 'w-20 lg:w-32 h-10 !p-1 !lg:p-2 lg:z-[100] text-sm lg:text-lg absolute top-2 right-[calc(25%-2.5rem)] lg:right-[calc(25%-64px)] xl:right-[calc(30%-64px)] z-[100]'
+                              )}
+                              type="button"
+                              onClick={!isActive ? startDraft : stopDraft}
+                           >
+                              {!isActive ? 'Start Draft' : 'Stop Draft'}
+                           </button>
+                        </>
                      ) : (
                         <></>
                      ))}
