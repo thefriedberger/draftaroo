@@ -690,7 +690,7 @@ const Board = ({
                         <button
                            className={classNames(
                               buttonClasses,
-                              'w-20 lg:w-32 h-10 !p-1 !lg:p-2 lg:z-[100] text-sm lg:text-lg absolute top-2 right-[calc(25%-2.5rem)] lg:right-[calc(20%-64px)] z-[100]'
+                              'w-20 lg:w-32 h-10 !p-1 !lg:p-2 lg:z-[100] text-sm lg:text-lg absolute top-2 right-[calc(25%-2.5rem)] lg:right-[calc(25%-64px)] xl:right-[calc(30%-64px)] z-[100]'
                            )}
                            type="button"
                            onClick={!isActive ? startDraft : stopDraft}
