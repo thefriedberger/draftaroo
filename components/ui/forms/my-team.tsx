@@ -1,20 +1,30 @@
 'use client';
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 const MyTeamForm = ({ team }: { team: Team }) => {
    const [newTeamName, setNewTeamName] = useState<string>('');
+   const [isValid, setIsValid] = useState<boolean>(false);
    const supabase = createClientComponentClient<Database>();
+
    const updateTeamName = (e: ChangeEvent<HTMLInputElement>) => {
       setNewTeamName(e.target.value);
    };
 
+   useEffect(() => {
+      if (newTeamName.trim().length > 0) {
+         setIsValid(true);
+      } else {
+         setIsValid(false);
+      }
+   }, [newTeamName]);
+
    const handleChangeName = async () => {
-      if (team) {
+      if (team && newTeamName.trim().length > 0) {
          const { error } = await supabase
             .from('teams')
-            .update({ team_name: newTeamName })
+            .update({ team_name: newTeamName.trim() })
             .match({ id: team.id });
          console.log(error);
       }
@@ -30,12 +40,12 @@ const MyTeamForm = ({ team }: { team: Team }) => {
             name="team_name"
             id="team_name"
             min={1}
-            pattern={'/^S*$/'}
             onChange={updateTeamName}
          />
          <button
-            className="p-2 bg-white rounded-md text-black"
+            className="p-2 bg-white rounded-md text-black disabled:opacity-50 disabled:cursor-not-allowed"
             type="submit"
+            disabled={!isValid}
             onClick={handleChangeName}
          >
             Update
