@@ -12,6 +12,11 @@ const nextConfig = {
             hostname: 'assets.nhle.com',
             port: '',
          },
+         {
+            protocol: 'https',
+            hostname: 'mfiegmjwkqpipahwvcbz.supabase.co',
+            port: '',
+         },
       ],
    },
    webpack(config, options) {

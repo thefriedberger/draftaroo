@@ -278,7 +278,14 @@ const Board = ({
             }
          )
          .subscribe();
-   }, [supabase, draft]);
+
+      return () => {
+         if (isCompleted) {
+            supabase.removeChannel(draftChannel);
+            supabase.removeChannel(pickChannel);
+         }
+      };
+   }, [supabase, draft, isCompleted]);
 
    useEffect(() => {
       draftStatusChannel
@@ -402,18 +409,20 @@ const Board = ({
       const positionNeeded: string[] | null = findPositionsNeeded(teamPlayers);
 
       const positionPlayer =
-         sortPlayers(
-            players.filter((player) => {
-               if (positionNeeded && player.primary_position) {
-                  return (
-                     positionNeeded.includes(player.primary_position) &&
-                     !draftedIds.includes(player.id)
-                  );
-               }
-            }),
-            'score',
-            1
-         )[0] || null;
+         (positionNeeded &&
+            sortPlayers(
+               players.filter((player) => {
+                  if (positionNeeded && player.primary_position) {
+                     return (
+                        positionNeeded.includes(player.primary_position) &&
+                        !draftedIds.includes(player.id)
+                     );
+                  }
+               }),
+               'score',
+               1
+            )[0]) ||
+         null;
       const bpa =
          sortPlayers(
             players.filter((player) => {
@@ -422,11 +431,18 @@ const Board = ({
             'score',
             1
          )[0] || null;
-
       const playerToDraft =
          positionPlayer && positionPlayer.primary_position === 'G'
             ? positionPlayer
-            : sortPlayers([bpa, positionPlayer], 'score', 1)[0] || null;
+            : sortPlayers(
+                 positionPlayer
+                    ? [bpa, positionPlayer]
+                    : players.filter((player) => {
+                         return !draftedIds.includes(player.id);
+                      }),
+                 'score',
+                 1
+              )[0] || null;
 
       if (!playerToDraft) return;
       handleDraftSelection({

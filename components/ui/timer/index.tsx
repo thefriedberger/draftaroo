@@ -43,6 +43,8 @@ const Timer = ({
    const chime = createRef<HTMLAudioElement>();
    const serverTime = useRef<number>(Date.now());
 
+   const timerTrack = supabase.channel(`public:draft:id=eq.${draftId}`);
+
    // use effects
    useEffect(() => {
       subscribeToTimerRoom(draftId, onChange);
@@ -123,14 +125,16 @@ const Timer = ({
       }
    }, [timer]);
 
+   useEffect(() => {
+      if (isCompleted) supabase.removeChannel(timerTrack);
+   }, [isCompleted]);
    // end of use effects
 
    const subscribeToTimerRoom = (
       draftId: string,
       changeCallback: (payload: any) => void
    ) => {
-      var timerTrack = supabase
-         .channel(`public:draft:id=eq.${draftId}`)
+      timerTrack
          .on(
             'postgres_changes',
             {
