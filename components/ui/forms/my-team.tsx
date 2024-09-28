@@ -29,6 +29,8 @@ const MyTeamForm = ({ team }: { team: Team }) => {
             type="text"
             name="team_name"
             id="team_name"
+            min={1}
+            pattern={'/^S*$/'}
             onChange={updateTeamName}
          />
          <button
