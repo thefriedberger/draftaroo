@@ -1,6 +1,6 @@
 const TimerSkeleton = () => {
    return (
-      <div className="flex flex-col justify-between w-full h-[10dvh] lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative">
+      <div className="flex flex-col justify-between w-full h-20 lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative">
          {
             <>
                <button

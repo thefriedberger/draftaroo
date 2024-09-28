@@ -35,8 +35,8 @@ export interface Link {
    target?: AnchorHTMLAttributes<HTMLAnchorElement>;
 }
 export interface CalloutProps {
-   calloutText?: string;
-   links?: Link[];
+   calloutText: string;
+   links: Link[];
    classes?: string;
 }
 

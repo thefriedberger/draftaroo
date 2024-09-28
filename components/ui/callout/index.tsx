@@ -13,7 +13,7 @@ const Callout = (props: CalloutProps) => {
          )}
       >
          <p className="mb-2">{props.calloutText}</p>
-         {links?.map((link, index) => {
+         {links.map((link, index) => {
             return (
                <Link
                   key={index}

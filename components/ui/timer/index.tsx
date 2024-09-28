@@ -93,7 +93,7 @@ const Timer = ({
                )
             );
       }
-   }, [turnOrder, userTeam, currentPick]);
+   }, [userTeam, currentPick]);
 
    useEffect(() => {
       if (tick > 0) {
@@ -190,7 +190,7 @@ const Timer = ({
    }
 
    return (
-      <div className="flex flex-col justify-between w-full h-[10dvh] lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative lg:border-b lg:border-gray-light">
+      <div className="flex flex-col justify-between w-full h-20 lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative lg:border-b lg:border-gray-light">
          {!isCompleted ? (
             <>
                {yourTurn && isActive && !pickIsKeeper && (

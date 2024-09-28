@@ -15,11 +15,11 @@ const BoardSkeleton = () => {
             </div>
             <div className="hidden lg:flex flex-col lg:max-w-[70vw] h-full w-full">
                <div className="lg:min-h-[35%]"></div>
-               <div className="flex flex-row bg-emerald-primary w-52 min-h-[48px]">
-                  <div className="flex items-center w-[50%] h-[48px] p-4">
+               <div className="flex flex-row bg-emerald-primary w-52 min-h-[40px]">
+                  <div className="flex items-center w-[50%] h-full p-4">
                      <div className="w-full h-full bg-white rounded-md animate-pulse"></div>
                   </div>
-                  <div className="flex items-center w-[50%] h-[48px] p-4">
+                  <div className="flex items-center w-[50%] h-full p-4">
                      <div className="w-full h-full bg-white rounded-md animate-pulse"></div>
                   </div>
                </div>
