@@ -75,9 +75,9 @@ const DraftResults = ({
 
    return (
       <>
-         <div className="flex flex-col mt-5">
+         <div className="flex flex-col mt-5 lg:mx-0 w-full">
             <div className="flex flex-row flex-wrap justify-center">
-               <div className="flex flex-row flex-1 ml-8 min-w-full">
+               <div className="flex flex-row flex-1 pl-2 lg:pl-8 min-w-full">
                   <button
                      className={classNames(buttonClass)}
                      type="button"
