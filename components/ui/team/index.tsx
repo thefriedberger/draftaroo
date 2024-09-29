@@ -1,3 +1,4 @@
+import KeeperIcon from '@/app/assets/images/icons/keeper-icon';
 import { DraftContext } from '@/components/context/draft-context';
 import { DraftedPlayer, TeamViewProps } from '@/lib/types';
 import { useContext, useEffect, useState } from 'react';
@@ -16,11 +17,7 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
          player?.first_name !== undefined && player?.last_name !== undefined ? (
             <span className="flex flex-row items-center justify-between">
                {player?.first_name.charAt(0)}. {player?.last_name}
-               {player.is_keeper && (
-                  <span className="flex items-center justify-center w-[15px] h-[15px] mr-2 border border-white bg-blue-primary text-white font-bold text-[10px] text-center self-center ml-2">
-                     K
-                  </span>
-               )}
+               {player.is_keeper && <KeeperIcon />}
             </span>
          ) : (
             ''

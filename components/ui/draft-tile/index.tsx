@@ -1,3 +1,4 @@
+import KeeperIcon from '@/app/assets/images/icons/keeper-icon';
 import { DraftContext } from '@/components/context/draft-context';
 import { DraftTileProps } from '@/lib/types';
 import classNames from 'classnames';
@@ -62,11 +63,7 @@ const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
                <p className="grid items-center">{pick.username}</p>
                {pick.playerName && <p>{pick.playerName}</p>}
             </div>
-            {pick.isKeeper && (
-               <div className="flex items-center justify-center w-[15px] h-[15px] mr-2 border border-white bg-blue-primary text-white font-bold text-[10px] text-center self-center ml-auto">
-                  K
-               </div>
-            )}
+            {pick.isKeeper && <KeeperIcon />}
          </div>
       </div>
    );

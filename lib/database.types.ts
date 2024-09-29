@@ -154,8 +154,8 @@ export type Database = {
                draft_style: string | null;
                id: string;
                keepers_enabled: boolean | null;
-               number_of_rounds: number | null;
-               number_of_teams: number | null;
+               number_of_rounds: number;
+               number_of_teams: number;
                timer_duration: number;
             };
             Insert: {
@@ -164,8 +164,8 @@ export type Database = {
                draft_style?: string | null;
                id?: string;
                keepers_enabled?: boolean | null;
-               number_of_rounds?: number | null;
-               number_of_teams?: number | null;
+               number_of_rounds?: number;
+               number_of_teams: number;
                timer_duration?: number;
             };
             Update: {
@@ -174,8 +174,8 @@ export type Database = {
                draft_style?: string | null;
                id?: string;
                keepers_enabled?: boolean | null;
-               number_of_rounds?: number | null;
-               number_of_teams?: number | null;
+               number_of_rounds?: number;
+               number_of_teams?: number;
                timer_duration?: number;
             };
             Relationships: [];
@@ -328,33 +328,6 @@ export type Database = {
             };
             Relationships: [];
          };
-         players_backup: {
-            Row: {
-               current_team: string;
-               first_name: string;
-               id: number;
-               last_name: string;
-               primary_position: string | null;
-               stats: Json[] | null;
-            };
-            Insert: {
-               current_team: string;
-               first_name: string;
-               id: number;
-               last_name: string;
-               primary_position?: string | null;
-               stats?: Json[] | null;
-            };
-            Update: {
-               current_team?: string;
-               first_name?: string;
-               id?: number;
-               last_name?: string;
-               primary_position?: string | null;
-               stats?: Json[] | null;
-            };
-            Relationships: [];
-         };
          profiles: {
             Row: {
                email: string;
@@ -378,55 +351,6 @@ export type Database = {
                username?: string | null;
             };
             Relationships: [];
-         };
-         rosters: {
-            Row: {
-               created_at: string;
-               id: string;
-               is_keeper: boolean | null;
-               league_id: string | null;
-               player_id: number | null;
-               team_id: string | null;
-            };
-            Insert: {
-               created_at?: string;
-               id: string;
-               is_keeper?: boolean | null;
-               league_id?: string | null;
-               player_id?: number | null;
-               team_id?: string | null;
-            };
-            Update: {
-               created_at?: string;
-               id?: string;
-               is_keeper?: boolean | null;
-               league_id?: string | null;
-               player_id?: number | null;
-               team_id?: string | null;
-            };
-            Relationships: [
-               {
-                  foreignKeyName: 'rosters_league_id_fkey';
-                  columns: ['league_id'];
-                  isOneToOne: false;
-                  referencedRelation: 'leagues';
-                  referencedColumns: ['league_id'];
-               },
-               {
-                  foreignKeyName: 'rosters_player_id_fkey';
-                  columns: ['player_id'];
-                  isOneToOne: false;
-                  referencedRelation: 'players';
-                  referencedColumns: ['id'];
-               },
-               {
-                  foreignKeyName: 'rosters_team_id_fkey';
-                  columns: ['team_id'];
-                  isOneToOne: false;
-                  referencedRelation: 'teams';
-                  referencedColumns: ['id'];
-               }
-            ];
          };
          team_history: {
             Row: {
