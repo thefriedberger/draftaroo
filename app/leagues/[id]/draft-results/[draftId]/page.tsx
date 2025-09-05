@@ -26,7 +26,10 @@ const DraftResultsPage = async ({
       params.draftId
    );
    const players: Awaited<Player[]> = await getPlayers(params.id);
-   const teams: Awaited<Team[]> = await fetchTeams(supabase, league);
+   const teams: Awaited<Team[]> = await fetchTeams(
+      supabase,
+      league.league_id as string
+   );
    return (
       <>
          {!draftResults ? (

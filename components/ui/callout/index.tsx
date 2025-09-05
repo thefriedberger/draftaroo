@@ -1,3 +1,5 @@
+'use client';
+
 import { CalloutProps } from '@/lib/types';
 import classNames from 'classnames';
 import Link from 'next/link';

@@ -21,6 +21,7 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
    const [teamRoster, setTeamRoster] = useState<TeamHistory[]>([]);
    const [shouldFilterPlayers, setShouldFilterPlayers] =
       useState<boolean>(false);
+   const [file, setFile] = useState<File>();
 
    const supabase = createClient();
 
@@ -120,6 +121,10 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
       }
    }, [rosteredPlayers, players]);
 
+   useEffect(() => {
+      console.log(file);
+   }, [file]);
+
    const rosterSelectorProps = {
       picks: draftPicks?.[String(teamToView?.id)] ?? [],
       team: teamToView ?? null,
@@ -150,6 +155,7 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
             </select>
          </div>
          <KeeperSelector {...rosterSelectorProps} />
+         {/* <FileSave file={file} setFile={setFile} classnames={'flex'} /> */}
       </>
    );
 };
@@ -184,7 +190,7 @@ const KeeperSelector = ({
             <div className="flex flex-col w-full my-5">
                <h3>{team?.team_name}</h3>
                <h3>Current roster: </h3>
-               <div className="grid grid-cols-2 gap-2 my-5">
+               <div className="flex flex-row flex-wrap gap-2 my-5">
                   {teamRoster.map((rosterPlayer) => {
                      const foundPlayer = players.find(
                         (player) => player.id === rosterPlayer.player_id
@@ -193,14 +199,14 @@ const KeeperSelector = ({
                         return (
                            <div
                               key={rosterPlayer.player_id}
-                              className="flex items-center justify-between"
+                              className="flex min-w-60 items-center justify-between"
                            >
                               {foundPlayer?.first_name} {foundPlayer?.last_name}
                               <button
                                  type="button"
                                  className="ml-2 mr-2 rounded-full flex items-center justify-center bg-emerald-primary w-4 h-4 appearance-none"
-                                 onClick={() =>
-                                    removeRosterPlayer(
+                                 onClick={async () =>
+                                    await removeRosterPlayer(
                                        supabase,
                                        foundPlayer,
                                        team
