@@ -1,4 +1,4 @@
-import { Pick } from '@/components/ui/draft-order';
+import { Pick } from '@/components/ui/draft/components/draft-order';
 import { SupabaseClient, User } from '@supabase/supabase-js';
 import { AnchorHTMLAttributes, ReactNode } from 'react';
 

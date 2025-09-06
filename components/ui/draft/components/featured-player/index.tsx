@@ -19,7 +19,6 @@ const FeaturedPlayer = ({
    isActive,
    timerDuration,
 }: FeaturedPlayerProps) => {
-   const { updateFeaturedPlayer } = useContext(DraftContext);
    const watchlistStarProps: WatchlistStarProps = {
       player: featuredPlayer as Player,
       isButton: true,
@@ -29,6 +28,14 @@ const FeaturedPlayer = ({
    const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
    const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
+
+   const scoreProjector = (player: Player) => {
+      return (
+         <div>
+            <p>Projected Stats</p>
+         </div>
+      );
+   };
 
    const playerStats = (player: Player) => {
       return (
@@ -66,7 +73,7 @@ const FeaturedPlayer = ({
                </tr>
             </thead>
             <tbody>
-               {player.stats?.map((seasonStats: any, index: number) => {
+               {player?.stats?.map((seasonStats: any, index: number) => {
                   const { stats, season } = seasonStats;
                   return (
                      <Fragment key={index}>
@@ -148,14 +155,7 @@ const FeaturedPlayer = ({
    return (
       <div
          className={classNames(
-            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:max-w-[600px] z-10 fixed lg:relative bottom-[66px] lg:w lg:flex lg:flex-col lg:bottom-auto w-full p-2 lg:py-0',
-            isExpanded
-               ? featuredPlayer && !draftedIds.includes(featuredPlayer.id)
-                  ? 'h-[235px]'
-                  : 'h-[205px]'
-               : featuredPlayer && !draftedIds.includes(featuredPlayer.id)
-               ? 'h-[130px]'
-               : 'h-[90px]'
+            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:max-w-[600px] z-10 fixed lg:relative bottom-[66px] lg:w lg:flex lg:flex-col lg:bottom-auto w-full p-2 lg:py-0 h-fit'
          )}
       >
          {featuredPlayer &&

@@ -91,6 +91,7 @@ export const GoalieStatsMap: { [key: string]: string } = {
 };
 
 export type SortValue =
+   | 'season'
    | 'score'
    | 'averageScore'
    | 'timeOnIcePerGame'

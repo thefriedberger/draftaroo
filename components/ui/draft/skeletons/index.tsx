@@ -1,9 +1,9 @@
 'use client';
-import DraftOrderSkeleton from './draft-order-skeleton';
-import MyTeamSkeleton from './my-team-skeleton';
-import PlayerListSkeleton from './player-list-skeleton';
-import TimerSkeleton from './timer-skeleton';
-import WatchlistSkeleton from './watchlist-skeleton';
+import DraftOrderSkeleton from './draft-order';
+import MyTeamSkeleton from './my-team';
+import PlayerListSkeleton from './player-list';
+import TimerSkeleton from './timer';
+import WatchlistSkeleton from './watchlist';
 
 const BoardSkeleton = () => {
    return (

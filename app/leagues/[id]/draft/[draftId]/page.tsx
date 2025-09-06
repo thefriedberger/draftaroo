@@ -16,7 +16,7 @@ import {
    getUser,
 } from '@/app/utils/helpers';
 import { createClient } from '@/app/utils/supabase/server';
-import Board from '@/components/ui/board';
+import Board from '@/components/ui/draft/board';
 import { BoardProps, DraftPick } from '@/lib/types';
 import { User } from '@supabase/supabase-js';
 

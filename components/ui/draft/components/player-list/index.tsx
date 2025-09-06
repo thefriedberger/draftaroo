@@ -1,7 +1,7 @@
 'use client';
 
 import { buildThresholdList } from '@/app/utils/helpers';
-import PlayerComponentSkeleton from '@/components/skeletons/player-component-skeleton';
+import PlayerComponentSkeleton from '@/components/ui/draft/skeletons/player-card';
 import { SortValue, teams } from '@/lib/constants';
 import { PlayerListProps, PlayerStats } from '@/lib/types';
 import { ChangeEvent, Suspense, useEffect, useState } from 'react';
