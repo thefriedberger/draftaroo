@@ -57,7 +57,6 @@ const FeaturedPlayer = ({
                         ) / 100;
                   } else {
                      if (numberOfSeasons === 1 && key !== 'games') {
-                        console.log(key);
                         projected.stats[key] =
                            (Math.round(
                               (statsB[key] + (statsA?.[key] || 0)) * 1.2
@@ -79,7 +78,7 @@ const FeaturedPlayer = ({
       return (
          <div className="dark:text-white">
             <p>Projected Stats</p>
-            <table className="text-sm">
+            <table className="text-sm overflow-x-scroll lg:overflow-auto max-w-[100vw] lg:max-w-auto block">
                <thead>
                   <tr className="text-left">
                      <th className="pl-0">Score</th>
