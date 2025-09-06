@@ -21,7 +21,7 @@ const FeaturedPlayer = ({
 }: FeaturedPlayerProps) => {
    const watchlistStarProps: WatchlistStarProps = {
       player: featuredPlayer as Player,
-      isButton: true,
+      isButton: false,
       className:
          'flex flex-row bg-paper-dark dark:bg-gray-primary text-black dark:text-white fill-emerald-700 p-2 rounded-md whitespace-nowrap',
    };
@@ -30,9 +30,130 @@ const FeaturedPlayer = ({
    const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
 
    const scoreProjector = (player: Player) => {
+      if (!player?.stats?.length) return;
+      let projectedStats = player.stats
+         .filter((stats) => stats?.['stats'])
+         .reduce(
+            (a, b, index) => {
+               const numberOfSeasons = (player?.stats || []).filter(
+                  (stats) => stats?.['stats']
+               ).length;
+               const statsA = a?.['stats'];
+               const statsB = b?.['stats'];
+               const keys = Object.keys(statsB || {});
+               const projected = { stats: {} };
+               for (const key of keys) {
+                  if (
+                     player?.stats?.length &&
+                     index === player?.stats?.length - 1
+                  ) {
+                     projected.stats[key] =
+                        Math.round(
+                           (Math.round(
+                              (statsB[key] + (statsA?.[key] || 0)) * 10
+                           ) /
+                              10 /
+                              numberOfSeasons || 3) * 100
+                        ) / 100;
+                  } else {
+                     if (numberOfSeasons === 1 && key !== 'games') {
+                        projected.stats[key] =
+                           (Math.round(
+                              (statsB[key] + (statsA?.[key] || 0)) * 1.2
+                           ) *
+                              100) /
+                           100;
+                     } else {
+                        projected.stats[key] =
+                           statsB[key] + (statsA?.[key] || 0);
+                     }
+                  }
+               }
+               return projected;
+            },
+            { stats: {} }
+         );
+      const stats = projectedStats?.['stats'];
+
       return (
-         <div>
+         <div className="dark:text-white">
             <p>Projected Stats</p>
+            <table className="text-sm overflow-x-scroll lg:overflow-auto max-w-[100vw] lg:max-w-auto block">
+               <thead>
+                  <tr className="text-left">
+                     <th className="pl-0">Score</th>
+                     <th>Avg</th>
+                     <th>GP</th>
+                     {featuredPlayer?.primary_position !== 'G' ? (
+                        <>
+                           <th>ATOI</th>
+                           <th>G</th>
+                           <th>A</th>
+                           <th>PIM</th>
+                           <th>PPG</th>
+                           <th>PPA</th>
+                           <th>SHG</th>
+                           <th>SHA</th>
+                           <th>SOG</th>
+                           <th>HIT</th>
+                           <th>BLK</th>
+                        </>
+                     ) : (
+                        <>
+                           <th>W</th>
+                           <th>L</th>
+                           <th>S</th>
+                           <th>GA</th>
+                           <th>GAA</th>
+                           <th>SO</th>
+                        </>
+                     )}
+                  </tr>
+               </thead>
+               <tbody>
+                  <Fragment>
+                     {stats && (
+                        <tr>
+                           <td className="pl-0">{stats?.['score']}</td>
+                           <td>{stats?.['averageScore']}</td>
+                           <td>{stats?.['games']}</td>
+                           {player.primary_position !== 'G' ? (
+                              <>
+                                 <td>
+                                    {convertTime(
+                                       stats?.['timeOnIcePerGame'] ?? 0
+                                    )}
+                                 </td>
+                                 <td>{stats?.['goals']}</td>
+                                 <td>{stats?.['assists']}</td>
+                                 <td>{stats?.['pim']}</td>
+                                 <td>{stats?.['powerPlayGoals']}</td>
+                                 <td>{stats?.['powerPlayAssists']}</td>
+                                 <td>{stats?.['shortHandedGoals']}</td>
+                                 <td>{stats?.['shortHandedAssists']}</td>
+                                 <td>{stats?.['shots']}</td>
+                                 <td>{stats?.['hits']}</td>
+                                 <td>{stats?.['blocked']}</td>
+                              </>
+                           ) : (
+                              <>
+                                 <td>{stats?.['wins']}</td>
+                                 <td>{stats?.['losses']}</td>
+                                 <td>{stats?.['saves']}</td>
+                                 <td>{stats?.['goalsAgainst']}</td>
+                                 <td>
+                                    {(
+                                       stats?.['goalAgainstAverage'] ?? 0.0
+                                    ).toFixed(2)}
+                                 </td>
+                                 <td>{stats?.['shutouts']}</td>
+                              </>
+                           )}
+                        </tr>
+                     )}
+                  </Fragment>
+               </tbody>
+            </table>
          </div>
       );
    };
@@ -155,7 +276,7 @@ const FeaturedPlayer = ({
    return (
       <div
          className={classNames(
-            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:max-w-[600px] z-10 fixed lg:relative bottom-[66px] lg:w lg:flex lg:flex-col lg:bottom-auto w-full p-2 lg:py-0 h-fit'
+            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:max-w-full z-10 fixed lg:relative bottom-[66px] lg:w lg:flex lg:flex-col lg:bottom-auto w-full p-2 lg:py-0 h-fit'
          )}
       >
          {featuredPlayer &&
@@ -164,47 +285,50 @@ const FeaturedPlayer = ({
                   <div className={'flex flex-row'}>
                      <PlayerHeadshot {...featuredPlayer} />
                      <div className="flex flex-col">
-                        <div className="dark:text-white text-xl">
-                           {featuredPlayer.first_name}{' '}
-                           {featuredPlayer.last_name}
-                           &nbsp;&nbsp;&nbsp;
-                           <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap">
-                              {teamAbbreviations?.[
-                                 featuredPlayer.current_team
-                              ] || 'FA'}{' '}
-                              -{' '}
-                              {featuredPlayer.primary_position &&
-                                 featuredPlayer.primary_position
+                        <div className="dark:text-white text-xl flex items-center mt-2">
+                           <span>
+                              {featuredPlayer.first_name}{' '}
+                              {featuredPlayer.last_name}
+                              &nbsp;&nbsp;&nbsp;
+                              <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap">
+                                 {teamAbbreviations?.[
+                                    featuredPlayer.current_team
+                                 ] || 'FA'}{' '}
+                                 -{' '}
+                                 {featuredPlayer.primary_position &&
+                                    featuredPlayer.primary_position
+                                       .split(' ')
+                                       .map((char: string) => char[0])}
+                              </span>
+                           </span>
+                           <div className="ml-2 flex flex-row h-10">
+                              <button
+                                 className={classNames(
+                                    'bg-fuscia-primary p-2 rounded-md mr-2 disabled:cursor-not-allowed disabled:saturate-[25%] whitespace-nowrap flex items-center !text-sm'
+                                 )}
+                                 onClick={() => {
+                                    isActive &&
+                                       yourTurn &&
+                                       handleDraftSelection({
+                                          ...handleDraftSelectionProps,
+                                          player: featuredPlayer,
+                                          timerDuration,
+                                       });
+                                 }}
+                                 type="button"
+                                 disabled={!isActive || !yourTurn}
+                              >
+                                 Draft{' '}
+                                 {featuredPlayer.first_name
                                     .split(' ')
                                     .map((char: string) => char[0])}
-                           </span>
+                                 {'. '}
+                                 {featuredPlayer.last_name}
+                              </button>
+                              <WatchlistStar {...watchlistStarProps} />
+                           </div>
                         </div>
-                        <div className="flex flex-row h-10">
-                           <button
-                              className={classNames(
-                                 'bg-fuscia-primary p-2 rounded-md mr-2 disabled:cursor-not-allowed disabled:saturate-[25%] whitespace-nowrap'
-                              )}
-                              onClick={() => {
-                                 isActive &&
-                                    yourTurn &&
-                                    handleDraftSelection({
-                                       ...handleDraftSelectionProps,
-                                       player: featuredPlayer,
-                                       timerDuration,
-                                    });
-                              }}
-                              type="button"
-                              disabled={!isActive || !yourTurn}
-                           >
-                              Draft{' '}
-                              {featuredPlayer.first_name
-                                 .split(' ')
-                                 .map((char: string) => char[0])}
-                              {'. '}
-                              {featuredPlayer.last_name}
-                           </button>
-                           <WatchlistStar {...watchlistStarProps} />
-                        </div>
+                        {scoreProjector(featuredPlayer)}
                      </div>
                   </div>
                   <div className="hidden lg:block">
@@ -234,6 +358,7 @@ const FeaturedPlayer = ({
                                     .map((char: string) => char[0])}
                            </span>
                         </div>
+                        {scoreProjector(featuredPlayer)}
                      </div>
                   </div>
                   <div className="hidden lg:block">
