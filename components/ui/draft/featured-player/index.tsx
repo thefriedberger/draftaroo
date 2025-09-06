@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import Image from 'next/image';
 import { Fragment, useContext, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
-import { teamAbbreviations } from '../player';
+import { teamAbbreviations } from '../../player';
 import WatchlistStar, { WatchlistStarProps } from '../watchlist/watchlist-star';
 
 const FeaturedPlayer = ({

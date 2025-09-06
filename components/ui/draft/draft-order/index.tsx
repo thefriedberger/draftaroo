@@ -1,8 +1,8 @@
-import DraftOrderSkeleton from '@/components/skeletons/draft-order-skeleton';
+import DraftOrderSkeleton from '@/components/ui/draft/skeleton/draft-order';
 import { DraftOrderProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
-import DraftTile from '../draft-tile';
+import DraftTile from '../components/draft-tile';
 
 export type Pick = {
    playerID?: number;

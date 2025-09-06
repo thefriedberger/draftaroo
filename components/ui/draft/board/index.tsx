@@ -17,8 +17,8 @@ import {
 } from '@/app/utils/helpers';
 import { DraftContext } from '@/components/context/draft-context';
 import { WatchlistAction } from '@/components/context/page-context';
-import DraftOrderSkeleton from '@/components/skeletons/draft-order-skeleton';
-import TimerSkeleton from '@/components/skeletons/timer-skeleton';
+import DraftOrderSkeleton from '@/components/ui/draft/skeleton/draft-order';
+import TimerSkeleton from '@/components/ui/draft/skeleton/timer';
 import {
    BoardProps,
    ChatProps,
@@ -38,14 +38,14 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
-import Chat from '../chat';
+import Chat from '../../chat';
+import { buttonClasses } from '../../helpers/buttons';
+import PlayerList, { sortPlayers } from '../../player-list';
+import Tabs from '../../tabs';
+import TeamsList from '../../teams-list';
+import MyTeam from '../components/my-team';
 import DraftOrder from '../draft-order';
 import FeaturedPlayer from '../featured-player';
-import { buttonClasses } from '../helpers/buttons';
-import MyTeam from '../my-team';
-import PlayerList, { sortPlayers } from '../player-list';
-import Tabs from '../tabs';
-import TeamsList from '../teams-list';
 import Timer from '../timer';
 import Watchlist from '../watchlist';
 

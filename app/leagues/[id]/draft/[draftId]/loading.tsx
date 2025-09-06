@@ -1,4 +1,4 @@
-import BoardSkeleton from '@/components/skeletons/board-skeleton';
+import BoardSkeleton from '@/components/ui/draft/skeleton';
 
 export default function Loading() {
    return <BoardSkeleton />;

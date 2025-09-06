@@ -1,5 +1,5 @@
 import { MyTeamProps, TeamViewProps } from '@/lib/types';
-import Team from '../team';
+import Team from '../../../team';
 
 const MyTeam = ({ draftedPlayers }: MyTeamProps) => {
    const teamProps: TeamViewProps = {

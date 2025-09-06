@@ -4,7 +4,7 @@ import { convertTime } from '@/app/utils/helpers';
 import { DraftContext } from '@/components/context/draft-context';
 import { PlayerStats } from '@/lib/types';
 import { useContext, useEffect, useState } from 'react';
-import WatchlistStar from '../watchlist/watchlist-star';
+import WatchlistStar from '../draft/watchlist/watchlist-star';
 
 export const teamAbbreviations: string | any = {
    'Anaheim Ducks': 'ANA',

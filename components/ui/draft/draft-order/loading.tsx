@@ -1,4 +1,4 @@
-import DraftOrderSkeleton from '@/components/skeletons/draft-order-skeleton';
+import DraftOrderSkeleton from '@/components/ui/draft/skeleton/draft-order';
 
 const DraftOrderLoading = () => {
    return <DraftOrderSkeleton />;

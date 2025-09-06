@@ -1,4 +1,4 @@
-import TimerSkeleton from '@/components/skeletons/timer-skeleton';
+import TimerSkeleton from '@/components/ui/draft/skeleton/timer';
 
 const TimerLoader = () => {
    return <TimerSkeleton />;
