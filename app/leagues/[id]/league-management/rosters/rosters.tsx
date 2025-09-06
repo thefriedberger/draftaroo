@@ -3,8 +3,10 @@
 import getPlayers from '@/app/utils/get-players';
 import { fetchTeamHistory, removeRosterPlayer } from '@/app/utils/helpers';
 import { createClient } from '@/app/utils/supabase/client';
+import { buttonClasses } from '@/components/ui/helpers/buttons';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { ChangeEvent, useEffect, useState } from 'react';
+import classNames from 'classnames';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 export interface RosterProps {
    league: League;
@@ -12,7 +14,7 @@ export interface RosterProps {
    players: Player[];
    draft: Draft;
 }
-const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
+const Rosters = ({ league, teams, players, draft }: RosterProps) => {
    const [draftPicks, setDraftPicks] = useState<any[] | any>({});
    const [rosteredPlayers, setRosteredPlayers] = useState<number[]>([]);
    const [draftablePlayers, setDraftablePlayers] = useState<Player[]>([]);
@@ -51,7 +53,8 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
          .match({ league_id: league.league_id });
       const draftToUse: Draft = drafts
          ? drafts.filter(
-              (d) => Number(d.draft_year) === new Date().getFullYear() - 1
+              ({ draft_year }) =>
+                 Number(draft_year) === new Date().getFullYear() - 1
            )[0]
          : draft;
       const { data: draft_selections } = await supabase
@@ -64,20 +67,24 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
       const round = draft_selections?.[0]?.round ?? null;
       console.log('round: ', round);
       if (teamID !== '') {
-         const { data, error } = await supabase.from('team_history').upsert(
-            {
-               player_id: playerID,
-               team_id: teamID,
-               draft_position: round ?? null,
-               is_keeper: false,
-               times_kept: timesKept,
-            },
-            { onConflict: 'player_id,team_id' }
-         );
+         const { data, error } = await supabase
+            .from('team_history')
+            .upsert(
+               {
+                  player_id: playerID,
+                  team_id: teamID,
+                  draft_position: round ?? null,
+                  is_keeper: false,
+                  times_kept: timesKept,
+               },
+               { onConflict: 'player_id,team_id' }
+            )
+            .select();
          if (error) {
             console.log(error);
             return;
          } else {
+            data?.[0] && setTeamRoster((prev) => [...prev, data[0]]);
             setRosteredPlayers((prev) => [...prev, playerID]);
          }
       }
@@ -121,10 +128,6 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
       }
    }, [rosteredPlayers, players]);
 
-   useEffect(() => {
-      console.log(file);
-   }, [file]);
-
    const rosterSelectorProps = {
       picks: draftPicks?.[String(teamToView?.id)] ?? [],
       team: teamToView ?? null,
@@ -136,7 +139,9 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
    return (
       <>
          <div className="flex flex-col mt-5">
-            <label htmlFor="team-selector">Select Team: </label>
+            <label htmlFor="team-selector" className="dark:text-white">
+               Select Team:{' '}
+            </label>
             <select
                id="team-selector"
                onChange={updateTeamToView}
@@ -160,7 +165,7 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
    );
 };
 
-export default RostersTab;
+export default Rosters;
 
 const KeeperSelector = ({
    picks,
@@ -184,13 +189,14 @@ const KeeperSelector = ({
    const [roster, setRoster] = useState<number>(0);
    const [pickUsed, setPickUsed] = useState<number>(picks && picks[0]);
    const [timesKept, setTimesKept] = useState<number>(0);
+   const datalistRef = useRef<HTMLInputElement>(null);
    return (
       <>
          {team?.id && (
             <div className="flex flex-col w-full my-5">
-               <h3>{team?.team_name}</h3>
-               <h3>Current roster: </h3>
-               <div className="flex flex-row flex-wrap gap-2 my-5">
+               <h3 className="dark:text-white">{team?.team_name}</h3>
+               <h3 className="dark:text-white">Current roster: </h3>
+               <div className="flex flex-row flex-wrap gap-2 my-5 ">
                   {teamRoster.map((rosterPlayer) => {
                      const foundPlayer = players.find(
                         (player) => player.id === rosterPlayer.player_id
@@ -199,7 +205,7 @@ const KeeperSelector = ({
                         return (
                            <div
                               key={rosterPlayer.player_id}
-                              className="flex min-w-60 items-center justify-between"
+                              className="flex min-w-60 items-center justify-between dark:text-white border dark:border-white rounded-md p-1"
                            >
                               {foundPlayer?.first_name} {foundPlayer?.last_name}
                               <button
@@ -221,43 +227,56 @@ const KeeperSelector = ({
                         );
                   })}
                </div>
-               <input
-                  required
-                  type="text"
-                  list="roster"
-                  id="roster-input"
-                  onChange={(e: any) => {
-                     setRoster(e.target.value);
+               <form
+                  onSubmit={(e) => {
+                     e.preventDefault();
+                     handleSetRoster(roster, team.id, timesKept);
+                     if (datalistRef?.current) {
+                        datalistRef.current.value === '';
+                        datalistRef.current.innerHTML = '';
+                     }
                   }}
-                  className={'col-span-2 mr-2'}
-               />
-               <datalist id="roster">
-                  {players.map((player: Player) => {
-                     return (
-                        <option
-                           key={player.id}
-                           value={player.id}
-                        >{`${player.first_name} ${player.last_name}`}</option>
-                     );
-                  })}
-               </datalist>
-               <div className="flex flex-col w-[88px]">
-                  <label htmlFor="time-kept">Times kept:</label>
-                  <input
-                     type="number"
-                     id="times-kept"
-                     min="0"
-                     defaultValue={0}
-                     onChange={(e: any) => setTimesKept(e.target.value)}
-                  />
-               </div>
-               <button
-                  type="submit"
-                  className="w-16"
-                  onClick={() => handleSetRoster(roster, team.id, timesKept)}
                >
-                  Submit
-               </button>
+                  <input
+                     required
+                     type="text"
+                     list="roster"
+                     id="roster-input"
+                     onChange={(e: any) => {
+                        setRoster(e.target.value);
+                     }}
+                     ref={datalistRef}
+                     className={'col-span-2 mr-2'}
+                  />
+                  <datalist id="roster">
+                     {players.map((player: Player) => {
+                        return (
+                           <option
+                              key={player.id}
+                              value={player.id}
+                           >{`${player.first_name} ${player.last_name}`}</option>
+                        );
+                     })}
+                  </datalist>
+                  <div className="flex flex-col w-[88px]">
+                     <label htmlFor="time-kept" className="dark:text-white">
+                        Times kept:
+                     </label>
+                     <input
+                        type="number"
+                        id="times-kept"
+                        min="0"
+                        defaultValue={0}
+                        onChange={(e: any) => setTimesKept(e.target.value)}
+                     />
+                  </div>
+                  <button
+                     type="submit"
+                     className={classNames(buttonClasses, 'mt-4 w-fit')}
+                  >
+                     Submit
+                  </button>
+               </form>
             </div>
          )}
       </>

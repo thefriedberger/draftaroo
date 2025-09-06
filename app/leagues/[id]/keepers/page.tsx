@@ -107,14 +107,20 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
       );
       return [foundPlayer?.[0]?.round] ?? null;
    };
-
-   teamHistory.map(
-      (player: any) => (
+   teamHistory.map((player: any) => {
+      const foundPlayer = draftSelections.find(
+         (selection) =>
+            selection.player_id === player.player_id &&
+            selection.team_id === team.id
+      );
+      return (
+         (player.times_kept = foundPlayer?.is_keeper
+            ? player.times_kept + 1
+            : 0),
          (player.picks_needed = populatePicksNeeded(player as RosterPlayer)),
          (player.picks_used = populatePicksUsed(player as RosterPlayer))
-      )
-   );
-
+      );
+   });
    const keeperFormProps: KeeperFormProps = {
       team: team,
       userPicks: userPicks?.picks ?? [],

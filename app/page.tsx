@@ -2,6 +2,7 @@
 
 import { createClient } from '@/app/utils/supabase/server';
 import Callout from '@/components/ui/callout';
+import { CalloutLink } from '@/lib/types';
 import { User } from '@supabase/supabase-js';
 import {
    fetchAllUserTeams,
@@ -9,7 +10,6 @@ import {
    fetchLeagues,
    getUser,
 } from './utils/helpers';
-
 export default async function Home() {
    const supabase = createClient();
 
@@ -60,19 +60,23 @@ export default async function Home() {
                            text: 'Manage league',
                         };
                      });
-                  const draftLinks = leagueDrafts.map((draft: Draft) => {
-                     const draftLink = draft.is_completed
-                        ? {
-                             href: `/leagues/${team.league_id}/draft-results/${draft.id}`,
-                             text: 'View draft results',
-                          }
-                        : {
-                             href: `/leagues/${team.league_id}/draft/${draft.id}`,
-                             text: 'View draft',
-                          };
-                     return draftLink;
-                  });
-                  const leagueLinks = [
+                  const draftLinks = leagueDrafts
+                     .filter(
+                        (draft) =>
+                           draft?.draft_year &&
+                           parseInt(draft.draft_year) ===
+                              new Date().getUTCFullYear()
+                     )
+                     .map((draft: Draft) =>
+                        !draft.is_completed
+                           ? {
+                                href: `/leagues/${team.league_id}/draft/${draft.id}`,
+                                text: 'View draft',
+                             }
+                           : { href: '', text: '' }
+                     )
+                     .filter((link) => link?.href && link?.text);
+                  const leagueLinks: CalloutLink[] = [
                      {
                         href: `/leagues/${league.league_id}/keepers`,
                         text: 'Set keepers',
@@ -84,6 +88,12 @@ export default async function Home() {
                   ];
                   if (leagueManagementLink) {
                      leagueLinks.push(...leagueManagementLink);
+                  }
+                  if (leagueDrafts.some((draft) => draft.is_completed)) {
+                     leagueLinks.push({
+                        href: `/leagues/${league.league_id}/draft-results`,
+                        text: 'Draft history',
+                     });
                   }
                   if (draftLinks) {
                      leagueLinks.push(...draftLinks);

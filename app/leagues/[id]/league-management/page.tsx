@@ -2,7 +2,7 @@
 
 import getPlayers from '@/app/utils/get-players';
 import {
-   fetchDraftById,
+   fetchDraftByLeague,
    fetchLeague,
    fetchLeagueRules,
    fetchLeagueScoring,
@@ -25,8 +25,15 @@ const LeagueManagement = async ({
    const supabase = createClient();
    const players: Awaited<Player[]> = await getPlayers(id);
    const league: Awaited<League> = await fetchLeague(supabase, id);
-   const teams: Awaited<Team[]> = await fetchTeams(supabase, league);
-   const draft: Awaited<Draft> = await fetchDraftById(supabase, id);
+   const teams: Awaited<Team[]> = await fetchTeams(
+      supabase,
+      league.league_id as string
+   );
+   const draft: Awaited<Draft> = await fetchDraftByLeague(
+      supabase,
+      id,
+      new Date().getUTCFullYear()
+   );
 
    const leagueRules: Awaited<LeagueRules> = await fetchLeagueRules(
       supabase,

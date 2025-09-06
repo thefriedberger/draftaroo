@@ -7,5 +7,6 @@ export const createDraft = async ({
 }) => {
    await supabase.from('draft').insert({
       league_id: params.id,
+      draft_year: new Date().getUTCFullYear(),
    });
 };

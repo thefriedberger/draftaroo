@@ -3,6 +3,7 @@
 import { RosterPlayer } from '@/app/leagues/tabs/keepers';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
+import { isArray } from 'lodash';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import Confetti from 'react-confetti';
 import { buttonClasses } from '../helpers/buttons';
@@ -93,7 +94,11 @@ const KeeperForm = ({
          );
       }
       if (!target.checked) {
-         setPicksAvailable([...picksAvailable, ...picks_used]);
+         if (isArray(picks_used)) {
+            setPicksAvailable([...picksAvailable, ...picks_used]);
+         } else {
+            setPicksAvailable([...picksAvailable, picks_used]);
+         }
          setRosterState(
             rosterState.map((rosterPlayer) => {
                if (rosterPlayer.player_id === player.player_id) {
@@ -178,6 +183,7 @@ const KeeperForm = ({
                   <th className="p-2">Player</th>
                   <th className="p-2">Avg. Points</th>
                   <th className="w-[20px] p-2">Round Drafted</th>
+                  <th className="p-2">Times kept</th>
                   <th className="p-2">Pick(s) Used</th>
                </tr>
             </thead>
@@ -193,7 +199,7 @@ const KeeperForm = ({
                         (playerToMatch) => {
                            return playerToMatch.id === player.player_id;
                         }
-                     );
+                     )[0];
                      const closestPick = findClosestPick(player.picks_needed);
 
                      const canKeep =
@@ -202,6 +208,7 @@ const KeeperForm = ({
                            (pick) => !picksAvailable.includes(pick)
                         );
 
+                     if (!playerData) return <></>;
                      return (
                         <tr key={player.player_id}>
                            <td className="p-2">
@@ -226,24 +233,26 @@ const KeeperForm = ({
                               <label
                                  htmlFor={`keep-player-${player.player_id}-checkbox`}
                               >
-                                 {playerData[0].primary_position}
+                                 {playerData?.primary_position}
                               </label>
                            </td>
                            <td className="p-2">
                               <label
                                  htmlFor={`keep-player-${player.player_id}-checkbox`}
                               >
-                                 {playerData[0].first_name}{' '}
-                                 {playerData[0].last_name}
+                                 {playerData?.first_name}{' '}
+                                 {playerData?.last_name}
                               </label>
                            </td>
                            <td className="p-2">
-                              {playerData[0]?.stats?.[1]?.stats?.averageScore ??
-                                 'NA'}
+                              {playerData?.stats?.[
+                                 playerData?.stats?.length - 1
+                              ]?.stats?.averageScore ?? 'NA'}
                            </td>
                            <td className="p-2">
                               {player.draft_position ?? 'FA'}
                            </td>
+                           <td className="p-2">{player.times_kept}</td>
                            <td className="p-2">
                               <select
                                  className="text-black"

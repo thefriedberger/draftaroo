@@ -9,7 +9,10 @@ const TeamsTab = async ({ league }: { league: League }) => {
    const supabase = createClient();
    const user: Awaited<User | null> = await getUser(supabase);
 
-   const teams: Awaited<Team[]> = await fetchTeams(supabase, league);
+   const teams: Awaited<Team[]> = await fetchTeams(
+      supabase,
+      league.league_id as string
+   );
 
    return (
       <>

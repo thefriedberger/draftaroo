@@ -29,7 +29,7 @@ const DraftOrder = ({
    const supabase = createClientComponentClient<Database>();
 
    const populatePicks = () => {
-      const tempPicksArray = [];
+      const tempPicksArray: Pick[] = [];
       for (let j = 1; j <= numberOfPicks; j++) {
          const draftPosition = j;
          const pick: Pick = {

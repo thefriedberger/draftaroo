@@ -34,9 +34,16 @@ export interface Link {
    text?: string;
    target?: AnchorHTMLAttributes<HTMLAnchorElement>;
 }
+
+export interface CalloutLink extends Link {
+   renewLeague?: boolean;
+   completeDraft?: boolean;
+   draftId?: string;
+   leagueId?: string;
+}
 export interface CalloutProps {
    calloutText: string;
-   links: Link[];
+   links: CalloutLink[];
    classes?: string;
 }
 

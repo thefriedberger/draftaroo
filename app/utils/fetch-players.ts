@@ -72,14 +72,14 @@ const teamMap = {
    WSH: 'Washington Capitals',
 };
 
-const getPlayers = async () => {
+const updatePlayers = async () => {
    const headers = {
       mode: 'no-cors',
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
    };
 
-   const players = [];
+   const players: Player[] = [];
 
    const populatePlayer = (player) => {
       return {
@@ -126,10 +126,9 @@ const getPlayers = async () => {
    }
    const extractStats = async (realtimePlayers, summaryPlayers, season) => {
       realtimePlayers.forEach((realtimeStat) => {
-         let tempPlayer = {};
-         summaryPlayers.forEach((summaryStat) => {
+         const tempPlayer: Player = summaryPlayers.map((summaryStat) => {
             if (realtimeStat.playerId === summaryStat.playerId) {
-               tempPlayer = {
+               return {
                   id: realtimeStat.playerId,
                   stats: {
                      season,
@@ -151,35 +150,64 @@ const getPlayers = async () => {
                   },
                };
             }
-         });
-         players.forEach((player) => {
-            if (player.id === tempPlayer.id) {
-               player.stats.push(tempPlayer.stats);
-            }
-         });
+         })[0];
+         console.log(tempPlayer);
+         if (tempPlayer) {
+            players.forEach((player) => {
+               if (player.id === tempPlayer?.id) {
+                  if (player?.stats) {
+                     player.stats.push(tempPlayer.stats);
+                  } else {
+                     player.stats = tempPlayer.stats;
+                  }
+               }
+            });
+         }
       });
    };
    const extractGoalieStats = (allGoalies, season) => {
       allGoalies.forEach((goalie) => {
          players.forEach((player) => {
             if (goalie.playerId === player.id) {
-               player.stats.push({
-                  season,
-                  stats: {
-                     timeOnIce: goalie.timeOnIce,
-                     ot: goalie.otLosses,
-                     shutouts: goalie.shutouts,
-                     wins: goalie.wins,
-                     losses: goalie.losses,
-                     saves: goalie.saves,
-                     savePercentage: goalie.savePct,
-                     goalAgainstAverage: goalie.goalsAgainstAverage,
-                     games: goalie.gamesPlayed,
-                     gamesStarted: goalie.gamesStarted,
-                     shotsAgainst: goalie.shotsAgainst,
-                     goalsAgainst: goalie.goalsAgainst,
-                  },
-               });
+               if (player?.stats) {
+                  player.stats.push({
+                     season,
+                     stats: {
+                        timeOnIce: goalie.timeOnIce,
+                        ot: goalie.otLosses,
+                        shutouts: goalie.shutouts,
+                        wins: goalie.wins,
+                        losses: goalie.losses,
+                        saves: goalie.saves,
+                        savePercentage: goalie.savePct,
+                        goalAgainstAverage: goalie.goalsAgainstAverage,
+                        games: goalie.gamesPlayed,
+                        gamesStarted: goalie.gamesStarted,
+                        shotsAgainst: goalie.shotsAgainst,
+                        goalsAgainst: goalie.goalsAgainst,
+                     },
+                  });
+               } else {
+                  player.stats = [
+                     {
+                        season,
+                        stats: {
+                           timeOnIce: goalie.timeOnIce,
+                           ot: goalie.otLosses,
+                           shutouts: goalie.shutouts,
+                           wins: goalie.wins,
+                           losses: goalie.losses,
+                           saves: goalie.saves,
+                           savePercentage: goalie.savePct,
+                           goalAgainstAverage: goalie.goalsAgainstAverage,
+                           games: goalie.gamesPlayed,
+                           gamesStarted: goalie.gamesStarted,
+                           shotsAgainst: goalie.shotsAgainst,
+                           goalsAgainst: goalie.goalsAgainst,
+                        },
+                     },
+                  ];
+               }
             }
          });
       });
@@ -218,4 +246,4 @@ const getPlayers = async () => {
    insertPlayerRows();
 };
 
-getPlayers();
+export default updatePlayers;

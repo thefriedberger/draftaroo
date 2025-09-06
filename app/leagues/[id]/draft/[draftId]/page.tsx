@@ -53,7 +53,10 @@ const Draft = async ({
       league
    );
 
-   const teams: Awaited<Team[]> = await fetchTeams(supabase, league);
+   const teams: Awaited<Team[]> = await fetchTeams(
+      supabase,
+      league.league_id as string
+   );
 
    const draftedPlayers: Awaited<DraftSelection[]> = await fetchDraftedPlayers(
       supabase,
