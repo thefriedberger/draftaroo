@@ -62,7 +62,6 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
             draft_id: draftToUse.id,
          });
       const round = draft_selections?.[0]?.round ?? null;
-      console.log('round: ', round);
       if (teamID !== '') {
          const { data, error } = await supabase.from('team_history').upsert(
             {

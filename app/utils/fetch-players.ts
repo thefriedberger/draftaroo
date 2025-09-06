@@ -151,7 +151,6 @@ const updatePlayers = async () => {
                };
             }
          })[0];
-         console.log(tempPlayer);
          if (tempPlayer) {
             players.forEach((player) => {
                if (player.id === tempPlayer?.id) {

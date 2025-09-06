@@ -91,7 +91,7 @@ const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
                   stats.shortHandedAssists = shortHandedAssists;
                }
                if (stats && tempPoints > 0) {
-                  stats.score = Math.round(tempPoints * 100) / 100;
+                  stats.score = tempPoints;
                   stats.averageScore =
                      Math.round((tempPoints / (stats?.games || 1)) * 100) / 100;
                }
@@ -100,6 +100,7 @@ const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
          playersArray.push(player);
       }
    }
+
    return playersArray as Player[];
 });
 

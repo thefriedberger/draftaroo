@@ -1,6 +1,6 @@
 import { TeamViewProps, TeamsListProps } from '@/lib/types';
 import { ChangeEvent, useState } from 'react';
-import Team from '../team';
+import Team from './team';
 
 const TeamsList = ({
    draftedPlayers,

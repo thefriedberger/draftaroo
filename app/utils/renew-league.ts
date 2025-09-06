@@ -49,13 +49,11 @@ const renewLeague = async (leagueId: string) => {
             !draftResults.some((result) => result.player_id === team.player_id)
       );
 
-      console.log(teamHistoryToRemove.length);
       for (const player of teamHistoryToRemove) {
          const { data, error } = await supabase
             .from('team_history')
             .delete()
             .eq('id', player.id);
-         console.log(data, error);
       }
       for (const player of draftResults) {
          const { data, error } = await supabase.from('team_history').upsert(
