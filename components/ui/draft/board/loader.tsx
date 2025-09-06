@@ -1,4 +1,4 @@
-import BoardSkeleton from '@/components/ui/draft/skeleton';
+import BoardSkeleton from '@/components/ui/draft/skeletons';
 
 const BoardLoader = () => {
    return <BoardSkeleton />;
