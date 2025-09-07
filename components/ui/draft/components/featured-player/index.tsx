@@ -290,8 +290,7 @@ const FeaturedPlayer = ({
                            <span className="flex flex-col items-start lg:items-center lg:flex-row">
                               {featuredPlayer.first_name}{' '}
                               {featuredPlayer.last_name}
-                              &nbsp;&nbsp;&nbsp;
-                              <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap lg:pt-1">
+                              <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap lg:ml-2 lg:pt-1">
                                  {teamAbbreviations?.[
                                     featuredPlayer.current_team
                                  ] || 'FA'}{' '}
@@ -302,7 +301,7 @@ const FeaturedPlayer = ({
                                        .map((char: string) => char[0])}
                               </span>
                            </span>
-                           <div className="ml-2 flex flex-row h-10">
+                           <div className="ml-auto lg:ml-2 pr-2 lg:pr-0 flex flex-row">
                               <button
                                  className={classNames(
                                     'bg-fuscia-primary p-2 rounded-md mr-1 disabled:cursor-not-allowed disabled:saturate-[25%] whitespace-nowrap flex items-center !text-sm'
