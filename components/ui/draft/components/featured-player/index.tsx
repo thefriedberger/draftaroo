@@ -85,7 +85,7 @@ const FeaturedPlayer = ({
       return (
          <div className="dark:text-white">
             <p>Projected Stats</p>
-            <table className="text-sm overflow-x-scroll lg:overflow-auto max-w-[100vw] lg:max-w-auto block">
+            <table className="text-sm overflow-x-scroll lg:overflow-auto max-w-[100vw] lg:max-w-auto block pr-3 lg:pr-0">
                <thead>
                   <tr className="text-left">
                      <th className="pl-0">Score</th>
@@ -166,7 +166,7 @@ const FeaturedPlayer = ({
                <tr className="text-left bg-gold">
                   <th>Season</th>
                   <th>Score</th>
-                  <th>Avg Score</th>
+                  <th>Avg</th>
                   <th>GP</th>
                   {featuredPlayer?.primary_position !== 'G' ? (
                      <>
@@ -249,7 +249,8 @@ const FeaturedPlayer = ({
 
    const statsToggle = (featuredPlayer: Player) => {
       return (
-         <details className="block lg:hidden">
+         <details className="flex flex-col-reverse lg:hidden">
+            {playerStats(featuredPlayer)}
             <summary
                className="block lg:hidden w-fit"
                onClick={() => setIsExpanded(!isExpanded)}
@@ -258,7 +259,6 @@ const FeaturedPlayer = ({
                   {isExpanded ? 'Hide' : 'Show'} stats
                </div>
             </summary>
-            {playerStats(featuredPlayer)}
          </details>
       );
    };
@@ -286,12 +286,12 @@ const FeaturedPlayer = ({
                   <div className={'flex flex-row'}>
                      <PlayerHeadshot {...featuredPlayer} />
                      <div className="flex flex-col">
-                        <div className="dark:text-white text-xl flex items-center mt-2">
-                           <span>
+                        <div className="dark:text-white text-xl flex items-center mt-2 mb-1 lg:mb-0">
+                           <span className="flex flex-col items-start lg:items-center lg:flex-row">
                               {featuredPlayer.first_name}{' '}
                               {featuredPlayer.last_name}
                               &nbsp;&nbsp;&nbsp;
-                              <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap">
+                              <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap lg:pt-1">
                                  {teamAbbreviations?.[
                                     featuredPlayer.current_team
                                  ] || 'FA'}{' '}
@@ -380,7 +380,7 @@ const CloseFeaturedPlayer = () => {
 
    return (
       <button
-         className="block absolute top-1 right-1"
+         className="block absolute top-auto bottom-1 right-1"
          type="button"
          onClick={() => updateFeaturedPlayer?.(null)}
       >
