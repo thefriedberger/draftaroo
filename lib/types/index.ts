@@ -57,6 +57,8 @@ export interface DraftOrderProps {
    players: Player[];
    teamID: string;
    numberOfRounds: number;
+   picks: Pick[];
+   populatePicks: () => void;
 }
 
 export interface WatchlistProps {

@@ -17,8 +17,6 @@ import {
 } from '@/app/utils/helpers';
 import { DraftContext } from '@/components/context/draft-context';
 import { WatchlistAction } from '@/components/context/page-context';
-import DraftOrderSkeleton from '@/components/ui/draft/skeletons/draft-order';
-import TimerSkeleton from '@/components/ui/draft/skeletons/timer';
 import {
    BoardProps,
    ChatProps,
@@ -36,18 +34,19 @@ import {
 } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
-import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Chat from '../../chat';
 import { buttonClasses } from '../../helpers/buttons';
 import Tabs from '../../tabs';
 import TeamsList from '../components';
-import DraftOrder from '../components/draft-order';
+import DraftOrder, { Pick } from '../components/draft-order';
 import FeaturedPlayer from '../components/featured-player';
 import MyTeam from '../components/my-team';
 import PlayerList, { sortPlayers } from '../components/player-list';
 import Timer from '../components/timer';
 import Watchlist from '../components/watchlist';
+import BoardSkeleton from '../skeletons';
 
 const Board = ({
    league,
@@ -70,6 +69,7 @@ const Board = ({
    const numberOfTeams = useRef(leagueRules.number_of_teams);
    const [isYourTurn, setIsYourTurn] = useState<boolean>(false);
    const [pickIsKeeper, setPickIsKeeper] = useState<boolean>(false);
+   const [picks, setPicks] = useState<Pick[]>([]);
 
    /*** Channels ***/
    const draftChannel = supabase.channel('draft-channel');
@@ -533,6 +533,81 @@ const Board = ({
          return !draftedIds.includes(player.id);
       });
    };
+   const populatePicks = () => {
+      const tempPicksArray: Pick[] = [];
+      for (let j = 1; j <= numberOfRounds.current ?? 23; j++) {
+         const draftPosition = j;
+         const pick: Pick = {
+            draftPosition: draftPosition,
+            username: '',
+            yourPick: false,
+            isKeeper: false,
+         };
+         for (const draftedPlayer of draftedPlayers) {
+            if (pick.draftPosition === draftedPlayer.pick) {
+               const player = players.find(
+                  (p) => p.id === draftedPlayer.player_id
+               );
+               pick.playerID = draftedPlayer.player_id;
+               pick.isKeeper = draftedPlayer.is_keeper;
+               pick.playerName = `${player?.first_name.charAt(0)}. ${
+                  player?.last_name
+               }`;
+               break;
+            }
+         }
+         for (const turn of turnOrder.current) {
+            if (turn.picks.includes(draftPosition)) {
+               pick.username = teams.filter((team: Team) => {
+                  return team.id === turn.team_id;
+               })?.[0]?.team_name;
+               if (turn.team_id === team.id) {
+                  pick.yourPick = true;
+               }
+            }
+         }
+         tempPicksArray.push(pick);
+      }
+      setPicks(tempPicksArray);
+   };
+   const updateDraftedPlayers = () => {
+      const tempPicks: Pick[] = picks.map((pick) => {
+         let foundPlayer;
+         for (const draftedPlayer of draftedPlayers) {
+            if (pick.draftPosition === draftedPlayer.pick) {
+               const player = players.find(
+                  (p) => p.id === draftedPlayer.player_id
+               );
+               foundPlayer = {
+                  draftPosition: draftedPlayer.pick,
+                  playerID: draftedPlayer.player_id,
+                  username: pick.username,
+                  yourPick: pick.yourPick,
+                  isKeeper: draftedPlayer.is_keeper,
+                  playerName: `${player?.first_name.charAt(0)}. ${
+                     player?.last_name
+                  }`,
+               };
+               break;
+            }
+         }
+         if (foundPlayer?.playerID) {
+            return {
+               ...foundPlayer,
+            };
+         }
+         return pick;
+      });
+      return tempPicks;
+   };
+   useEffect(() => {
+      if (teams.length > 0 && turnOrder.current.length) {
+         populatePicks();
+      }
+   }, [teams, numberOfRounds, turnOrder]);
+   useEffect(() => {
+      picks.length > 0 && setPicks(updateDraftedPlayers());
+   }, [draftedPlayers]);
 
    const timerProps: TimerProps = {
       owner: isOwner.current,
@@ -559,6 +634,8 @@ const Board = ({
       players: players,
       teamID: team.id,
       numberOfRounds: numberOfRounds.current ?? 23,
+      picks,
+      populatePicks,
    };
 
    const watchlistProps: WatchlistProps = {
@@ -673,6 +750,7 @@ const Board = ({
    const chatProps: ChatProps = {
       user: user,
    };
+
    return (
       <div className="flex flex-col lg:flex-row items-center w-full overflow-y-scroll lg:overflow-y-hidden draft-board">
          <DraftContext.Provider
@@ -683,7 +761,7 @@ const Board = ({
                updateFeaturedPlayer,
             }}
          >
-            {user && team?.league_id === league.league_id && (
+            {user && team?.league_id === league.league_id && picks.length ? (
                <>
                   {isOwner.current &&
                      (!isCompleted ? (
@@ -714,12 +792,8 @@ const Board = ({
                   {!isMobile ? (
                      <>
                         <div className="flex flex-col lg:max-w-[15vw] h-full w-full overflow-y-hidden">
-                           <Suspense fallback={<TimerSkeleton />}>
-                              <Timer {...timerProps} />
-                           </Suspense>
-                           <Suspense fallback={<DraftOrderSkeleton />}>
-                              <DraftOrder {...draftOrderProps} />
-                           </Suspense>
+                           <Timer {...timerProps} />
+                           <DraftOrder {...draftOrderProps} />
                         </div>
                         <div className="flex flex-col lg:max-w-[70vw] h-full w-full">
                            <FeaturedPlayer {...featuredPlayerProps} />
@@ -733,9 +807,7 @@ const Board = ({
                      </>
                   ) : (
                      <>
-                        <Suspense fallback={<TimerSkeleton />}>
-                           <Timer {...timerProps} />
-                        </Suspense>
+                        <Timer {...timerProps} />
                         <Tabs {...mobileTabProps} />
                         {featuredPlayer && (
                            <FeaturedPlayer {...featuredPlayerProps} />
@@ -743,6 +815,8 @@ const Board = ({
                      </>
                   )}
                </>
+            ) : (
+               <BoardSkeleton />
             )}
          </DraftContext.Provider>
       </div>
