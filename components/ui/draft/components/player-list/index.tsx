@@ -45,7 +45,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
    const [positionFilter, setPositionFilter] = useState<string>('Skaters');
    const [teamFilter, setTeamFilter] = useState<string>('Team');
    const [playerSearch, setPlayerSearch] = useState<string>('');
-   const [season, setSeason] = useState<number>(1);
+   const [season, setSeason] = useState<number>(2);
    const [records, setRecords] = useState<number>(150);
    const [minGP, setMinGP] = useState<number | ''>('');
    const thClasses = 'p-2 lg:p-1 my-2 cursor-pointer';
@@ -135,7 +135,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                   <Filter values={teams} filterFun={setTeamFilter} />
                   <div className="flex flex-col">
                      <select
-                        defaultValue={'1'}
+                        defaultValue={'2'}
                         className="text-black p-2 rounded-none lg:p-1 lg:mr-2"
                         onChange={(e: ChangeEvent) => {
                            const target = e.target as HTMLSelectElement;
@@ -144,6 +144,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                      >
                         <option value="0">2022-2023</option>
                         <option value="1">2023-2024</option>
+                        <option value="2">2024-2025</option>
                      </select>
                   </div>
                   <input
