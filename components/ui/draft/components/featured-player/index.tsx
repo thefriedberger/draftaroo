@@ -47,22 +47,29 @@ const FeaturedPlayer = ({
                      player?.stats?.length &&
                      index === player?.stats?.length - 1
                   ) {
-                     projected.stats[key] =
-                        Math.round(
-                           (Math.round(
-                              (statsB[key] + (statsA?.[key] || 0)) * 10
-                           ) /
-                              10 /
-                              numberOfSeasons || 3) * 100
-                        ) / 100;
+                     if (
+                        statsB?.[key] === 0 &&
+                        (statsA?.[key] === 0 || !statsA?.[key])
+                     ) {
+                        projected.stats[key] = 0;
+                     } else {
+                        projected.stats[key] =
+                           Math.round(
+                              (Math.round(
+                                 (statsB[key] + (statsA?.[key] || 0)) * 10
+                              ) /
+                                 10 /
+                                 numberOfSeasons || 3) * 10
+                           ) / 10;
+                     }
                   } else {
                      if (numberOfSeasons === 1 && key !== 'games') {
                         projected.stats[key] =
                            (Math.round(
                               (statsB[key] + (statsA?.[key] || 0)) * 1.2
                            ) *
-                              100) /
-                           100;
+                              10) /
+                           10;
                      } else {
                         projected.stats[key] =
                            statsB[key] + (statsA?.[key] || 0);
@@ -86,7 +93,6 @@ const FeaturedPlayer = ({
                      <th>GP</th>
                      {featuredPlayer?.primary_position !== 'G' ? (
                         <>
-                           <th>ATOI</th>
                            <th>G</th>
                            <th>A</th>
                            <th>PIM</th>
@@ -119,11 +125,6 @@ const FeaturedPlayer = ({
                            <td>{stats?.['games']}</td>
                            {player.primary_position !== 'G' ? (
                               <>
-                                 <td>
-                                    {convertTime(
-                                       stats?.['timeOnIcePerGame'] ?? 0
-                                    )}
-                                 </td>
                                  <td>{stats?.['goals']}</td>
                                  <td>{stats?.['assists']}</td>
                                  <td>{stats?.['pim']}</td>
@@ -304,7 +305,7 @@ const FeaturedPlayer = ({
                            <div className="ml-2 flex flex-row h-10">
                               <button
                                  className={classNames(
-                                    'bg-fuscia-primary p-2 rounded-md mr-2 disabled:cursor-not-allowed disabled:saturate-[25%] whitespace-nowrap flex items-center !text-sm'
+                                    'bg-fuscia-primary p-2 rounded-md mr-1 disabled:cursor-not-allowed disabled:saturate-[25%] whitespace-nowrap flex items-center !text-sm'
                                  )}
                                  onClick={() => {
                                     isActive &&
