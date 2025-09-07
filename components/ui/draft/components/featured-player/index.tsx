@@ -380,7 +380,7 @@ const CloseFeaturedPlayer = () => {
 
    return (
       <button
-         className="block absolute top-auto bottom-1 right-1"
+         className="block absolute top-auto bottom-1 lg:bottom-auto lg:top-1 right-1"
          type="button"
          onClick={() => updateFeaturedPlayer?.(null)}
       >
