@@ -8,7 +8,26 @@ const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
    const playersArray: Player[] = [];
    if (!leagueID) return playersArray;
    const supabase = createClient();
-   let { data: players, error } = await supabase.from('players').select('*');
+   let skip = 0;
+   let total = 1000;
+   let players: Player[] = [];
+
+   do {
+      const { data, count } = await supabase
+         .from('players')
+         .select('*', { count: 'exact' })
+         .range(skip, total);
+      if (data) {
+         for (const player of data) {
+            if (!players.some((p) => player.id === p.id)) {
+               players.push(player);
+            }
+         }
+      }
+      total = count ?? 5000;
+      skip = players?.length ?? 0;
+   } while (skip < total);
+
    const league = await supabase
       .from('leagues')
       .select('*')
@@ -29,12 +48,16 @@ const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
             continue;
          }
 
+         // @ts-expect-error: this isn't a problem
          if (player.stats.length < 3) {
             seasons.forEach((season, index) => {
+               // @ts-expect-error: this isn't a problem
                if (player?.stats[0]?.season !== season) {
                   if (season < seasons[1]) {
+                     // @ts-expect-error: this isn't a problem
                      player.stats.unshift([{ stats: null, season: season }]);
                   } else {
+                     // @ts-expect-error: this isn't a problem
                      player.stats.push({ stats: null, season: season });
                   }
                }
@@ -91,7 +114,7 @@ const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
                   stats.shortHandedAssists = shortHandedAssists;
                }
                if (stats && tempPoints > 0) {
-                  stats.score = tempPoints;
+                  stats.score = Math.round(tempPoints * 100) / 100;
                   stats.averageScore =
                      Math.round((tempPoints / (stats?.games || 1)) * 100) / 100;
                }

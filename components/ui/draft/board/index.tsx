@@ -44,7 +44,7 @@ import DraftOrder, { Pick } from '../components/draft-order';
 import FeaturedPlayer from '../components/featured-player';
 import MyTeam from '../components/my-team';
 import PlayerList, { sortPlayers } from '../components/player-list';
-import Timer from '../components/timer';
+import Timer, { DraftPicksFields } from '../components/timer';
 import Watchlist from '../components/watchlist';
 import BoardSkeleton from '../skeletons';
 
@@ -605,9 +605,14 @@ const Board = ({
          populatePicks();
       }
    }, [teams, numberOfRounds, turnOrder]);
+
    useEffect(() => {
       picks.length > 0 && setPicks(updateDraftedPlayers());
    }, [draftedPlayers]);
+
+   useEffect(() => {
+      console.log(players?.length);
+   }, [players]);
 
    const timerProps: TimerProps = {
       owner: isOwner.current,
@@ -616,7 +621,7 @@ const Board = ({
       isActive: isActive,
       autopick: autoDraft,
       yourTurn: isYourTurn,
-      turnOrder: turnOrder.current,
+      turnOrder: turnOrder.current as DraftPicksFields[],
       userTeam: team,
       isCompleted: isCompleted,
       draftId: draft.id,

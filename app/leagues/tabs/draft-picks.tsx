@@ -62,6 +62,7 @@ const DraftPicksTab = ({
                return {
                   ...draftPick,
                   picks: tempPicks,
+                  auto_draft: false,
                };
             }
 

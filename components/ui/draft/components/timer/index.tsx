@@ -1,9 +1,10 @@
 'use client';
 
+import { AutoDraftIcon } from '@/app/assets/images/icons/auto-draft';
 import { MicIcon } from '@/app/assets/images/icons/mic-icon';
 import { MutedIcon } from '@/app/assets/images/icons/muted-icon';
 import getTime from '@/app/utils/get-time';
-import { getTimerData } from '@/app/utils/helpers';
+import { fetchAutoDraftStatus, getTimerData } from '@/app/utils/helpers';
 import { useWorkerTimeout } from '@/components/worker/worker-timeout';
 import { DraftPick, TimerProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -12,6 +13,14 @@ import { createRef, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
 export type DraftTimerFields = { is_active: boolean; end_time?: number };
+export type DraftPicksFields = {
+   auto_draft: boolean;
+   picks: number[];
+   created_at: number;
+   draft_id: string;
+   id: string;
+   team_id: string;
+};
 
 const Timer = ({
    draftId,
@@ -40,16 +49,34 @@ const Timer = ({
    const [timer, setTimer] = useState<string>(formatTime(timerDuration));
    const [userPick, setUserPick] = useState<number>();
    const [doMute, setDoMute] = useState<boolean>(false);
+   const [autoDraftTeams, setAutoDraftTeams] = useState<DraftPicksFields[]>([]);
    const chime = createRef<HTMLAudioElement>();
    const serverTime = useRef<number>(Date.now());
 
    const timerTrack = supabase.channel(`public:draft:id=eq.${draftId}`);
+   const draftPicks = supabase.channel(
+      `public:draft_picks:draft_id=eq.${draftId}`
+   );
+
+   const [shouldAutoDraft, setShouldAutoDraft] = useState(false);
 
    // use effects
    useEffect(() => {
-      subscribeToTimerRoom(draftId, onChange);
+      subscribeToTimerRoom(draftId, onTimerChange);
+      subscribeToDraftPicksRoom(draftId, onDraftPicksChange);
       getData();
    }, [draftId]);
+
+   useEffect(() => {
+      const getAutoDraftStatus = async () => {
+         setShouldAutoDraft(
+            await fetchAutoDraftStatus(supabase, userTeam.id, draftId)
+         );
+      };
+      if (userTeam) {
+         getAutoDraftStatus();
+      }
+   }, [userTeam, draftId]);
 
    useEffect(() => {
       const updateServerTime = async () => {
@@ -81,17 +108,17 @@ const Timer = ({
       if (turnOrder.length && userTeam?.id) {
          turnOrder
             .filter((turn: DraftPick) => turn.team_id === userTeam.id)[0]
-            .picks.find((pick: number) => Number(currentPick) <= pick) &&
+            .picks.some((pick: number) => Number(currentPick) <= pick) &&
             setUserPick(
                Math.abs(
                   Number(currentPick) -
-                     turnOrder
+                     (turnOrder
                         .filter(
                            (turn: DraftPick) => turn.team_id === userTeam.id
                         )[0]
                         .picks.find(
                            (pick: number) => Number(currentPick) <= pick
-                        )
+                        ) ?? 0)
                )
             );
       }
@@ -120,14 +147,37 @@ const Timer = ({
    }, [tick]);
 
    useEffect(() => {
-      if (timer === '00:00' && owner) {
-         autopick();
+      if (owner) {
+         if (
+            isActive &&
+            autoDraftTeams.some((team) =>
+               turnOrder.some((turn) => turn.team_id === team.team_id)
+            )
+         ) {
+            setTimeout(autopick, 5000);
+         }
+         if (timer === '00:00') {
+            autopick();
+         }
       }
    }, [timer]);
 
    useEffect(() => {
       if (isCompleted) supabase.removeChannel(timerTrack);
    }, [isCompleted]);
+
+   useEffect(() => {
+      const updateAutoDraft = async () => {
+         const { data, error } = await supabase
+            .from('draft_picks')
+            .update({ auto_draft: shouldAutoDraft })
+            .eq('team_id', userTeam.id)
+            .eq('draft_id', draftId)
+            .select('*');
+      };
+      updateAutoDraft();
+   }, [shouldAutoDraft]);
+
    // end of use effects
 
    const subscribeToTimerRoom = (
@@ -151,14 +201,61 @@ const Timer = ({
 
       return timerTrack;
    };
+   const subscribeToDraftPicksRoom = (
+      draftId: string,
+      changeCallback: (payload: any) => void
+   ) => {
+      draftPicks
+         .on(
+            'postgres_changes',
+            {
+               event: '*',
+               schema: 'public',
+               table: 'draft_picks',
+               filter: `draft_id=eq.${draftId}`,
+            },
+            (payload) => {
+               changeCallback(payload.new);
+            }
+         )
+         .subscribe();
 
-   const onChange = (payload: DraftTimerFields) => {
+      return draftPicks;
+   };
+
+   const onTimerChange = (payload: DraftTimerFields) => {
       if (payload?.end_time) {
          setRoomData({
             end_time: payload.end_time,
             is_active: payload.is_active,
          });
       }
+   };
+
+   useEffect(() => {
+      console.log(autoDraftTeams);
+   }, [autoDraftTeams]);
+
+   const onDraftPicksChange = (payload: DraftPicksFields) => {
+      if (!autoDraftTeams.length && payload.auto_draft) {
+         setAutoDraftTeams([payload]);
+      } else if (
+         autoDraftTeams.some((team) => team.team_id === payload.team_id) &&
+         !payload.auto_draft
+      ) {
+         setAutoDraftTeams(
+            autoDraftTeams.filter((team) => team.team_id !== payload.team_id)
+         );
+      } else if (payload.auto_draft) {
+         setAutoDraftTeams((prev) => [...prev, payload]);
+      }
+
+      // if (payload?.end_time) {
+      //    setRoomData({
+      //       end_time: payload.end_time,
+      //       is_active: payload.is_active,
+      //    });
+      // }
    };
 
    const getData = async () => {
@@ -209,13 +306,29 @@ const Timer = ({
                )}
                <button
                   type="button"
+                  title={`${doMute ? 'Unmute' : 'Mute'} draft chime`}
                   className={
                      'w-[20px] stroke-black dark:stroke-white dark:lg:stroke-black absolute top-1 right-1 z-10'
                   }
                   onClick={() => setDoMute(!doMute)}
                >
-                  <span className="sr-only">Mute draft chime</span>
+                  <span className="sr-only">
+                     {doMute ? 'Unmute' : 'Mute'} draft chime
+                  </span>
                   {doMute ? <MutedIcon /> : <MicIcon />}
+               </button>
+               <button
+                  title={`${shouldAutoDraft ? 'Disable' : 'Enable'} autodraft`}
+                  type="button"
+                  onClick={() => setShouldAutoDraft(!shouldAutoDraft)}
+                  className={
+                     'w-[20px] stroke-black dark:stroke-white dark:lg:stroke-black absolute bottom-1 lg:bottom-auto lg:top-9 right-1 z-10'
+                  }
+               >
+                  <span className="sr-only">
+                     {shouldAutoDraft ? 'Disable' : 'Enable'} autodraft
+                  </span>
+                  {<AutoDraftIcon active={shouldAutoDraft} />}
                </button>
                {!isMobile ? (
                   <>
