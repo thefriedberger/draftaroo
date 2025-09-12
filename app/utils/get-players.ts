@@ -1,12 +1,12 @@
 'use server';
 
 import { PlayerStats } from '@/lib/types';
-import { fetchLeague } from './helpers';
 import { createClient } from './supabase/server';
 
-const getPlayers = async (leagueID: string): Promise<Player[]> => {
-   console.log(leagueID);
-   if (!leagueID) return [];
+const getPlayers = async (
+   league: League,
+   league_scoring: LeagueScoring
+): Promise<Player[]> => {
    const supabase = createClient();
    let skip = 0;
    let total = 1000;
@@ -28,16 +28,7 @@ const getPlayers = async (leagueID: string): Promise<Player[]> => {
       skip = players?.length ?? 0;
    } while (skip < total);
 
-   const league = await fetchLeague(supabase, leagueID);
-   console.log('League: ', league);
-   const league_scoring = await supabase
-      .from('league_scoring')
-      .select('*')
-      .match({ id: league?.[0]?.league_scoring });
-
-   console.log('League scoring: ', league_scoring);
-
-   const leagueScoring = league_scoring?.data?.[0] as LeagueScoring;
+   const leagueScoring = league_scoring?.[0] as LeagueScoring;
    const seasons: string[] = [];
    const currentYear = new Date().getFullYear();
    for (let i = 3; i > 0; i--) {
