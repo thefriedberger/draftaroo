@@ -4,6 +4,7 @@ import { PlayerStats } from '@/lib/types';
 import { createClient } from './supabase/server';
 
 const getPlayers = async (leagueID: string): Promise<Player[]> => {
+   console.log(leagueID);
    if (!leagueID) return [];
    const supabase = createClient();
    let skip = 0;
@@ -24,7 +25,6 @@ const getPlayers = async (leagueID: string): Promise<Player[]> => {
       }
       total = count ?? 5000;
       skip = players?.length ?? 0;
-      if (error) console.log('Players initial fetch error: ', error);
    } while (skip < total);
 
    const league = await supabase
@@ -34,7 +34,7 @@ const getPlayers = async (leagueID: string): Promise<Player[]> => {
    const league_scoring = await supabase
       .from('league_scoring')
       .select('*')
-      .eq('id', league?.data?.[0]?.league_scoring);
+      .match({ id: league?.data?.[0]?.league_scoring });
    const leagueScoring = league_scoring?.data?.[0] as LeagueScoring;
    const seasons: string[] = [];
    const currentYear = new Date().getFullYear();

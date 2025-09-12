@@ -123,8 +123,6 @@ const Draft = async ({
 
    if (!players.length) {
       console.log("We didn't get the players");
-      const playerRefetch = await getPlayers(params.id);
-      console.log(playerRefetch);
       revalidatePath(`/leagues/${params.id}/draft/${params.draftId}`);
    }
 
