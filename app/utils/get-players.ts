@@ -4,8 +4,7 @@ import { PlayerStats } from '@/lib/types';
 import { createClient } from './supabase/server';
 
 const getPlayers = async (leagueID: string): Promise<Player[]> => {
-   const playersArray: Player[] = [];
-   if (!leagueID) return playersArray;
+   if (!leagueID) return [];
    const supabase = createClient();
    let skip = 0;
    let total = 1000;
@@ -25,7 +24,7 @@ const getPlayers = async (leagueID: string): Promise<Player[]> => {
       }
       total = count ?? 5000;
       skip = players?.length ?? 0;
-      if (error) console.log(error);
+      if (error) console.log('Players initial fetch error: ', error);
    } while (skip < total);
 
    const league = await supabase
@@ -42,6 +41,9 @@ const getPlayers = async (leagueID: string): Promise<Player[]> => {
    for (let i = 3; i > 0; i--) {
       seasons.push(`${currentYear - i}${currentYear - i + 1}`);
    }
+   console.log(leagueScoring);
+
+   const playersArray: Player[] = [];
    if (players && players.length > 0 && leagueScoring !== undefined) {
       for (const player of players) {
          if (!player.is_active) {
@@ -119,6 +121,9 @@ const getPlayers = async (leagueID: string): Promise<Player[]> => {
                      Math.round((tempPoints / (stats?.games || 1)) * 100) / 100;
                }
             }
+         }
+         if (player) {
+            console.log(player);
          }
          playersArray.push(player);
       }
