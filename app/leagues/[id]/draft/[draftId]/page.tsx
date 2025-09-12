@@ -19,7 +19,6 @@ import { createClient } from '@/app/utils/supabase/server';
 import Board from '@/components/ui/draft/board';
 import { BoardProps, DraftPick } from '@/lib/types';
 import { User } from '@supabase/supabase-js';
-import { revalidatePath } from 'next/cache';
 import { cache } from 'react';
 
 type DraftProps = {
@@ -59,8 +58,7 @@ const getDraftProps = cache(
          draftId
       );
       const league: Awaited<League> = await fetchLeague(supabase, id);
-      const players: Awaited<Player[]> = await getPlayers(id);
-      const team: Awaited<Team> = await fetchTeam(supabase, user.id, id);
+      const players: Awaited<Player[]> = await getPlayers(league);
       const leagueRules: Awaited<LeagueRules> = await fetchLeagueRules(
          supabase,
          league
@@ -69,6 +67,7 @@ const getDraftProps = cache(
          supabase,
          league
       );
+      const team: Awaited<Team> = await fetchTeam(supabase, user.id, id);
       const teams: Awaited<Team[]> = await fetchTeams(
          supabase,
          league.league_id as string
@@ -122,7 +121,12 @@ const Draft = async ({
    } = await getDraftProps({ draftId: params.draftId, id: params.id });
 
    if (!players.length) {
-      revalidatePath(`/leagues/${params.id}/draft/${params.draftId}`);
+      console.error('Failed to fetch players');
+      return (
+         <h1 className="text-2xl dark:text-white">
+            Failed to fetch players :(
+         </h1>
+      );
    }
 
    const boardProps: BoardProps = {

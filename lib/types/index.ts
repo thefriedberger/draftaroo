@@ -59,7 +59,7 @@ export interface DraftOrderProps {
    teamID: string;
    numberOfRounds: number;
    picks: Pick[];
-   populatePicks: () => void;
+   populatePicks?: () => void;
 }
 
 export interface WatchlistProps {

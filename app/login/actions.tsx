@@ -20,11 +20,8 @@ export async function login(formData: FormData) {
       error,
    } = await supabase.auth.signInWithPassword(data);
    if (error) {
-      return error;
+      return { status: 401 };
    }
-
-   revalidatePath('/');
-   redirect('/');
 }
 
 export async function signup(formData: FormData) {

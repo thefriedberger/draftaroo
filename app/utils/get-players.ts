@@ -1,19 +1,16 @@
 'use server';
 
 import { PlayerStats } from '@/lib/types';
-import { cache } from 'react';
 import { createClient } from './supabase/server';
 
-const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
-   const playersArray: Player[] = [];
-   if (!leagueID) return playersArray;
+const getPlayers = async (league: League): Promise<Player[]> => {
    const supabase = createClient();
    let skip = 0;
    let total = 1000;
    let players: Player[] = [];
 
    do {
-      const { data, count } = await supabase
+      const { data, count, error } = await supabase
          .from('players')
          .select('*', { count: 'exact' })
          .range(skip, total);
@@ -28,20 +25,19 @@ const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
       skip = players?.length ?? 0;
    } while (skip < total);
 
-   const league = await supabase
-      .from('leagues')
-      .select('*')
-      .match({ league_id: leagueID });
    const league_scoring = await supabase
       .from('league_scoring')
       .select('*')
-      .eq('id', String(league?.data?.[0]?.league_scoring) || '');
-   const leagueScoring = league_scoring?.data?.[0] as LeagueScoring | any;
+      .match({ id: league?.league_scoring });
+
+   const leagueScoring = league_scoring?.data?.[0] as LeagueScoring;
    const seasons: string[] = [];
    const currentYear = new Date().getFullYear();
    for (let i = 3; i > 0; i--) {
       seasons.push(`${currentYear - i}${currentYear - i + 1}`);
    }
+
+   const playersArray: Player[] = [];
    if (players && players.length > 0 && leagueScoring !== undefined) {
       for (const player of players) {
          if (!player.is_active) {
@@ -81,7 +77,8 @@ const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
                      if (key === 'powerPlayPoints') {
                         if (
                            stats?.['powerPlayPoints'] !== undefined &&
-                           stats?.['powerPlayGoals'] !== undefined
+                           stats?.['powerPlayGoals'] !== undefined &&
+                           leagueScoring?.['powerPlayAssists']
                         ) {
                            powerPlayAssists =
                               stats?.['powerPlayPoints'] -
@@ -94,7 +91,8 @@ const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
                      } else if (key === 'shortHandedPoints') {
                         if (
                            stats?.['shortHandedPoints'] !== undefined &&
-                           stats?.['shortHandedGoals'] !== undefined
+                           stats?.['shortHandedGoals'] !== undefined &&
+                           leagueScoring?.['shortHandedAssists']
                         ) {
                            shortHandedAssists =
                               stats['shortHandedPoints'] -
@@ -125,6 +123,6 @@ const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
    }
 
    return playersArray as Player[];
-});
+};
 
 export default getPlayers;

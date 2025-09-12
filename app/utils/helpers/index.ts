@@ -158,6 +158,9 @@ export const fetchLeague = cache(
          .select('*')
          .match({ league_id: leagueId });
 
+      if (error) {
+         console.log(error);
+      }
       return league?.[0] as League;
    }
 );

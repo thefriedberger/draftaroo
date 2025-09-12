@@ -96,7 +96,7 @@ const Rosters = ({ league, teams, players, draft }: RosterProps) => {
    useEffect(() => {
       const fetchPlayers = async () => {
          if (league !== undefined) {
-            const data = await getPlayers(String(league?.league_id));
+            const data = await getPlayers(league);
             // setPlayers(data as Player[]);
          }
       };

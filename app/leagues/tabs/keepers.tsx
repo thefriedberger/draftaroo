@@ -34,7 +34,7 @@ const KeepersTab = async ({ league, team, draft }: KeeperViewProps) => {
    const userPicks = draftPicks.filter(
       (draftPick) => draftPick.team_id === team.id
    )[0];
-   const players: Awaited<Player[]> = await getPlayers(league.league_id);
+   const players: Awaited<Player[]> = await getPlayers(league);
    const numberOfTeams = leagueRules.number_of_teams;
    const numberOfRounds = leagueRules.number_of_rounds;
    const teamHistory: Awaited<TeamHistory[]> = await fetchRosters(
