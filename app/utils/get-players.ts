@@ -31,17 +31,18 @@ const getPlayers = async (leagueID: string): Promise<Player[]> => {
       .from('leagues')
       .select('*')
       .match({ league_id: leagueID });
+   console.log('League: ', league);
    const league_scoring = await supabase
       .from('league_scoring')
       .select('*')
       .match({ id: league?.data?.[0]?.league_scoring });
+   console.log('League scoring: ', league_scoring);
    const leagueScoring = league_scoring?.data?.[0] as LeagueScoring;
    const seasons: string[] = [];
    const currentYear = new Date().getFullYear();
    for (let i = 3; i > 0; i--) {
       seasons.push(`${currentYear - i}${currentYear - i + 1}`);
    }
-   console.log(league, league_scoring, leagueScoring);
 
    const playersArray: Player[] = [];
    if (players && players.length > 0 && leagueScoring !== undefined) {
