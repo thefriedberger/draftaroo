@@ -7,15 +7,18 @@ import {
    fetchLeagueRules,
    fetchLeagueScoring,
    fetchTeams,
+   getUser,
 } from '@/app/utils/helpers';
 import { createClient } from '@/app/utils/supabase/server';
 import Tabs from '@/components/ui/tabs';
 import { Tab, TabProps } from '@/lib/types';
+import { User } from '@supabase/supabase-js';
 import DraftPicksTab, { DraftPicksProps } from '../../tabs/draft-picks';
 import RostersTab, { RosterProps } from '../../tabs/rosters';
 import RulesTab from '../../tabs/rules';
 import ScoringTab, { ScoringTabProps } from '../../tabs/scoring';
 import TeamsTab from '../../tabs/teams';
+import CreateDraftButton from './create-draft-button';
 
 const LeagueManagement = async ({
    params: { id },
@@ -23,6 +26,8 @@ const LeagueManagement = async ({
    params: { id: string };
 }) => {
    const supabase = createClient();
+
+   const user: Awaited<User | null> = await getUser(supabase);
    const players: Awaited<Player[]> = await getPlayers(id);
    const league: Awaited<League> = await fetchLeague(supabase, id);
    const teams: Awaited<Team[]> = await fetchTeams(
@@ -92,6 +97,9 @@ const LeagueManagement = async ({
    };
    return (
       <div className={'container'}>
+         {league && user && league.owner === user.id && !draft && (
+            <CreateDraftButton league={league} />
+         )}
          <Tabs {...tabProps} />
       </div>
    );

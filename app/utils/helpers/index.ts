@@ -97,6 +97,18 @@ export const fetchDraftSelections = cache(
    }
 );
 
+export const fetchAutoDraftStatus = async (
+   supabase: SupabaseClient<Database>,
+   team_id: string,
+   draft_id: string
+): Promise<boolean> => {
+   const { data, error } = await supabase
+      .from('draft_picks')
+      .select('auto_draft')
+      .match({ team_id: team_id, draft_id: draft_id });
+   return (data?.[0]?.auto_draft as boolean) || false;
+};
+
 export const fetchDraftedPlayers = async (
    supabase: SupabaseClient,
    draft: Draft
