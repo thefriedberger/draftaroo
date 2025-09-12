@@ -29,7 +29,7 @@ const getPlayers = async (league: League): Promise<Player[]> => {
    const league_scoring = await supabase
       .from('league_scoring')
       .select('*')
-      .match({ id: league?.[0]?.league_scoring });
+      .match({ id: league?.league_scoring });
 
    console.log('League scoring: ', league_scoring);
 
