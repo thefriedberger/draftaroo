@@ -2,7 +2,9 @@
 
 import { convertTime } from '@/app/utils/helpers';
 import { DraftContext } from '@/components/context/draft-context';
+import { SortValue } from '@/lib/constants';
 import { PlayerStats } from '@/lib/types';
+import classNames from 'classnames';
 import { useContext, useEffect, useState } from 'react';
 import WatchlistStar from '../watchlist/watchlist-star';
 
@@ -46,10 +48,12 @@ const PlayerComponent = ({
    player,
    leagueScoring,
    season,
+   sort,
 }: {
    player: Player;
    leagueScoring?: LeagueScoring | any;
    season: number;
+   sort: SortValue;
 }) => {
    const { updateFeaturedPlayer } = useContext(DraftContext);
    const [playerStats, setPlayerStats] = useState<PlayerStats[]>(
@@ -91,7 +95,7 @@ const PlayerComponent = ({
                handleUpdateFeaturedPlayer(player, e);
             }}
          >
-            <td className="mr-2 table-cell align-middle w-[30px] fill-emerald-500">
+            <td className="w-[20px] align-middle">
                <WatchlistStar player={player} />
             </td>
             <td className="py-2 px-1">
@@ -108,15 +112,19 @@ const PlayerComponent = ({
                </span>
             </td>
             <td className="py-2 px-1">
-               <span className="">{playerStats?.[season]?.stats?.score}</span>
+               <span className={classNames(sort === 'score' && 'font-bold')}>
+                  {playerStats?.[season]?.stats?.score}
+               </span>
             </td>
             <td className="py-2 px-1">
-               <span className="">
+               <span
+                  className={classNames(sort === 'averageScore' && 'font-bold')}
+               >
                   {playerStats?.[season]?.stats?.averageScore}
                </span>
             </td>
             <td className="py-2 px-1">
-               <span className="">
+               <span className={classNames(sort === 'games' && 'font-bold')}>
                   {playerStats?.[season]?.stats?.games || 0}
                </span>
             </td>
@@ -133,7 +141,11 @@ const PlayerComponent = ({
                      )
                   )} */}
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(
+                           sort === 'timeOnIcePerGame' && 'font-bold'
+                        )}
+                     >
                         {playerStats?.[season]?.stats?.timeOnIcePerGame !==
                         undefined
                            ? convertTime(
@@ -144,52 +156,84 @@ const PlayerComponent = ({
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(sort === 'goals' && 'font-bold')}
+                     >
                         {playerStats?.[season]?.stats?.goals || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(
+                           sort === 'assists' && 'font-bold'
+                        )}
+                     >
                         {playerStats?.[season]?.stats?.assists || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(sort === 'pim' && 'font-bold')}
+                     >
                         {playerStats?.[season]?.stats?.pim || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(
+                           sort === 'powerPlayGoals' && 'font-bold'
+                        )}
+                     >
                         {playerStats?.[season]?.stats?.powerPlayGoals || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(
+                           sort === 'powerPlayAssists' && 'font-bold'
+                        )}
+                     >
                         {playerStats?.[season]?.stats?.powerPlayAssists || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(
+                           sort === 'shortHandedGoals' && 'font-bold'
+                        )}
+                     >
                         {playerStats?.[season]?.stats?.shortHandedGoals || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(
+                           sort === 'shortHandedAssists' && 'font-bold'
+                        )}
+                     >
                         {playerStats?.[season]?.stats?.shortHandedAssists || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(sort === 'shots' && 'font-bold')}
+                     >
                         {playerStats?.[season]?.stats?.shots || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(sort === 'hits' && 'font-bold')}
+                     >
                         {playerStats?.[season]?.stats?.hits || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(
+                           sort === 'blocked' && 'font-bold'
+                        )}
+                     >
                         {playerStats?.[season]?.stats?.blocked || 0}
                      </span>
                   </td>
@@ -197,27 +241,41 @@ const PlayerComponent = ({
             ) : (
                <>
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(sort === 'wins' && 'font-bold')}
+                     >
                         {playerStats?.[season]?.stats?.wins || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(sort === 'losses' && 'font-bold')}
+                     >
                         {playerStats?.[season]?.stats?.losses || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(sort === 'saves' && 'font-bold')}
+                     >
                         {playerStats?.[season]?.stats?.saves || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(
+                           sort === 'goalsAgainst' && 'font-bold'
+                        )}
+                     >
                         {playerStats?.[season]?.stats?.goalsAgainst || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(
+                           sort === 'goalAgainstAverage' && 'font-bold'
+                        )}
+                     >
                         {Math.round(
                            (playerStats?.[season]?.stats?.goalAgainstAverage ||
                               1) * 100
@@ -225,7 +283,11 @@ const PlayerComponent = ({
                      </span>
                   </td>
                   <td className="py-2 px-1">
-                     <span className="">
+                     <span
+                        className={classNames(
+                           sort === 'shutouts' && 'font-bold'
+                        )}
+                     >
                         {playerStats?.[season]?.stats?.shutouts || 0}
                      </span>
                   </td>

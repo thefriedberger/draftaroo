@@ -570,7 +570,7 @@ const Board = ({
             length: numberOfRounds * numberOfTeams,
          }).map((v, i) => {
             const pick: Pick = {
-               draftPosition: i,
+               draftPosition: i + 1,
                username: '',
                yourPick: false,
                isKeeper: false,
@@ -589,7 +589,7 @@ const Board = ({
                }
             }
             for (const turn of turnOrder.current) {
-               if (turn.picks.includes(i)) {
+               if (turn.picks.includes(i + 1)) {
                   pick.username = teams.filter((team: Team) => {
                      return team.id === turn.team_id;
                   })?.[0]?.team_name;
@@ -600,39 +600,6 @@ const Board = ({
             }
             return pick;
          });
-         // for (let j = 1; j <= numberOfRounds ?? 23; j++) {
-         //    const draftPosition = j;
-         //    const pick: Pick = {
-         //       draftPosition: draftPosition,
-         //       username: '',
-         //       yourPick: false,
-         //       isKeeper: false,
-         //    };
-         //    for (const draftedPlayer of draftedPlayers) {
-         //       if (pick.draftPosition === draftedPlayer.pick) {
-         //          const player = players.find(
-         //             (p) => p.id === draftedPlayer.player_id
-         //          );
-         //          pick.playerID = draftedPlayer.player_id;
-         //          pick.isKeeper = draftedPlayer.is_keeper;
-         //          pick.playerName = `${player?.first_name.charAt(0)}. ${
-         //             player?.last_name
-         //          }`;
-         //          break;
-         //       }
-         //    }
-         //    for (const turn of turnOrder.current) {
-         //       if (turn.picks.includes(draftPosition)) {
-         //          pick.username = teams.filter((team: Team) => {
-         //             return team.id === turn.team_id;
-         //          })?.[0]?.team_name;
-         //          if (turn.team_id === team.id) {
-         //             pick.yourPick = true;
-         //          }
-         //       }
-         //    }
-         //    tempPicksArray.push(pick);
-         // }
          setPicks(tempPicksArray);
       };
       if (teams.length > 0 && turnOrder.current.length) {
@@ -784,10 +751,6 @@ const Board = ({
    const chatProps: ChatProps = {
       user: user,
    };
-
-   // useEffect(() => {
-   //    console.log(user, team?.league_id, league.league_id, picks.length);
-   // }, [user, team?.league_id, league.league_id, picks.length]);
 
    return (
       <div className="flex flex-col lg:flex-row items-center w-full overflow-y-scroll lg:overflow-y-hidden draft-board">

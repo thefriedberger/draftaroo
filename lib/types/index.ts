@@ -211,6 +211,7 @@ export interface TeamViewProps {
    players: DraftedPlayer[];
    doReset?: boolean;
    setDoReset?: (reset: boolean) => void;
+   myTeam?: boolean;
 }
 
 export interface MyTeamProps {

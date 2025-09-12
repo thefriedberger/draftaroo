@@ -4,6 +4,7 @@ import { buildThresholdList } from '@/app/utils/helpers';
 import PlayerComponentSkeleton from '@/components/ui/draft/skeletons/player-card';
 import { SortValue, teams } from '@/lib/constants';
 import { PlayerListProps, PlayerStats } from '@/lib/types';
+import classNames from 'classnames';
 import { ChangeEvent, Suspense, useEffect, useState } from 'react';
 import PlayerComponent from '../player';
 import PlayerObserver from './observer';
@@ -48,7 +49,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
    const [season, setSeason] = useState<number>(2);
    const [records, setRecords] = useState<number>(150);
    const [minGP, setMinGP] = useState<number | ''>('');
-   const thClasses = 'p-2 lg:p-1 my-2 cursor-pointer';
+   const thClasses = classNames('p-2 lg:p-1 my-2 cursor-pointer');
 
    const options: IntersectionObserverInit = {
       root: null,
@@ -145,6 +146,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                         <option value="0">2022-2023</option>
                         <option value="1">2023-2024</option>
                         <option value="2">2024-2025</option>
+                        {/* <option value="3">2025-2026 (proj.)</option> */}
                      </select>
                   </div>
                   <input
@@ -332,6 +334,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                                        key={player.id}
                                        player={player}
                                        season={season}
+                                       sort={sort}
                                     />
                                  </Suspense>
                               );
