@@ -1,10 +1,9 @@
 'use server';
 
 import { PlayerStats } from '@/lib/types';
-import { cache } from 'react';
 import { createClient } from './supabase/server';
 
-const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
+const getPlayers = async (leagueID: string): Promise<Player[]> => {
    const playersArray: Player[] = [];
    if (!leagueID) return playersArray;
    const supabase = createClient();
@@ -125,6 +124,6 @@ const getPlayers = cache(async (leagueID: string): Promise<Player[]> => {
    }
 
    return playersArray as Player[];
-});
+};
 
 export default getPlayers;
