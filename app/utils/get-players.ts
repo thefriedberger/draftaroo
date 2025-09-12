@@ -27,15 +27,15 @@ const getPlayers = async (leagueID: string): Promise<Player[]> => {
       skip = players?.length ?? 0;
    } while (skip < total);
 
-   const league = await supabase
+   const { data: league, error: leagueError } = await supabase
       .from('leagues')
       .select('*')
       .match({ league_id: leagueID });
-   console.log('League: ', league);
+   console.log('League: ', league, 'League error: ', leagueError);
    const league_scoring = await supabase
       .from('league_scoring')
       .select('*')
-      .match({ id: league?.data?.[0]?.league_scoring });
+      .match({ id: league?.[0]?.league_scoring });
    console.log('League scoring: ', league_scoring);
    const leagueScoring = league_scoring?.data?.[0] as LeagueScoring;
    const seasons: string[] = [];
