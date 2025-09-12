@@ -4,7 +4,6 @@ import { PlayerStats } from '@/lib/types';
 import { createClient } from './supabase/server';
 
 const getPlayers = async (league: League): Promise<Player[]> => {
-   console.log('League: ', league);
    const supabase = createClient();
    let skip = 0;
    let total = 1000;
@@ -30,8 +29,6 @@ const getPlayers = async (league: League): Promise<Player[]> => {
       .from('league_scoring')
       .select('*')
       .match({ id: league?.league_scoring });
-
-   console.log('League scoring: ', league_scoring);
 
    const leagueScoring = league_scoring?.data?.[0] as LeagueScoring;
    const seasons: string[] = [];
@@ -121,14 +118,10 @@ const getPlayers = async (league: League): Promise<Player[]> => {
                }
             }
          }
-         if (player) {
-            console.log(player);
-         }
          playersArray.push(player);
       }
    }
 
-   console.log(playersArray.length, players.length);
    return playersArray as Player[];
 };
 
