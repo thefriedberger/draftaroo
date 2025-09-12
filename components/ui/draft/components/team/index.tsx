@@ -1,9 +1,15 @@
 import KeeperIcon from '@/app/assets/images/icons/keeper-icon';
 import { DraftContext } from '@/components/context/draft-context';
 import { DraftedPlayer, TeamViewProps } from '@/lib/types';
+import classNames from 'classnames';
 import { useContext, useEffect, useState } from 'react';
 
-const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
+const Team = ({
+   players,
+   doReset = false,
+   setDoReset,
+   myTeam,
+}: TeamViewProps) => {
    const { updateFeaturedPlayer } = useContext(DraftContext);
    const forwardCodes = ['C', 'L', 'R'];
    const [forwards, setForwards] = useState<DraftedPlayer[]>([]);
@@ -15,9 +21,18 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
    const setDisplayName = (player: DraftedPlayer) => {
       const displayName =
          player?.first_name !== undefined && player?.last_name !== undefined ? (
-            <span className="flex flex-row items-center justify-between">
+            <span
+               className={classNames(
+                  !myTeam && 'min-w-40 max-w-fit',
+                  'flex flex-row items-center justify-between'
+               )}
+            >
                {player?.first_name.charAt(0)}. {player?.last_name}
-               {player.is_keeper && <KeeperIcon />}
+               {player.is_keeper && (
+                  <span className="ml-auto">
+                     <KeeperIcon />
+                  </span>
+               )}
             </span>
          ) : (
             ''
@@ -94,8 +109,9 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
       <table className="w-full">
          <thead className="bg-gold text-left sticky top-0 lg:top-[35px]">
             <tr>
-               <th colSpan={1}>Pos</th>
-               <th colSpan={2}>Player</th>
+               <th>Pos</th>
+               <th>Player</th>
+               {!myTeam && <th>Pick</th>}
             </tr>
          </thead>
          <tbody>
@@ -113,6 +129,7 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
                      <td>
                         {forwards?.[index] && setDisplayName(forwards[index])}
                      </td>
+                     {!myTeam && <td>{forwards?.[index]?.pick}</td>}
                   </tr>
                );
             })}
@@ -124,13 +141,14 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
                         defenseman?.[index] &&
                            updateFeaturedPlayer?.(defenseman[index]);
                      }}
-                     className={forwards?.[index] && 'cursor-pointer'}
+                     className={defenseman?.[index] && 'cursor-pointer'}
                   >
                      <td>D</td>
                      <td>
                         {defenseman?.[index] &&
                            setDisplayName(defenseman[index])}
                      </td>
+                     {!myTeam && <td>{defenseman?.[index]?.pick}</td>}
                   </tr>
                );
             })}
@@ -143,6 +161,7 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
                   >
                      <td>Bench</td>
                      <td>{setDisplayName(player)}</td>
+                     {!myTeam && <td>{player.pick}</td>}
                   </tr>
                );
             })}
@@ -154,12 +173,13 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
                         goalies?.[index] &&
                            updateFeaturedPlayer?.(goalies[index]);
                      }}
-                     className={forwards?.[index] && 'cursor-pointer'}
+                     className={goalies?.[index] && 'cursor-pointer'}
                   >
                      <td>G</td>
                      <td>
                         {goalies?.[index] && setDisplayName(goalies[index])}
                      </td>
+                     {!myTeam && <td>{goalies?.[index]?.pick}</td>}
                   </tr>
                );
             })}
@@ -172,6 +192,7 @@ const Team = ({ players, doReset = false, setDoReset }: TeamViewProps) => {
                   >
                      <td>Bench</td>
                      <td>{setDisplayName(player)}</td>
+                     {!myTeam && <td>{player.pick}</td>}
                   </tr>
                );
             })}
