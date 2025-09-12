@@ -21,7 +21,6 @@ const DraftOrder = ({
    teamID,
    numberOfRounds,
    picks,
-   populatePicks,
 }: DraftOrderProps) => {
    const numberOfPicks = teams.length * numberOfRounds;
 

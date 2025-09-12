@@ -65,8 +65,8 @@ const Board = ({
    const supabase = createClientComponentClient<Database>();
    const isOwner = useRef(league.owner === user.id);
    const turnOrder = useRef(draftPicks);
-   const numberOfRounds = useRef(leagueRules.number_of_rounds);
-   const numberOfTeams = useRef(leagueRules.number_of_teams);
+   const numberOfRounds = leagueRules.number_of_rounds;
+   const numberOfTeams = leagueRules.number_of_teams;
    const [isYourTurn, setIsYourTurn] = useState<boolean>(false);
    const [pickIsKeeper, setPickIsKeeper] = useState<boolean>(false);
    const [picks, setPicks] = useState<Pick[]>([]);
@@ -227,9 +227,9 @@ const Board = ({
 
    // set round
    useEffect(() => {
-      if (numberOfTeams.current) {
-         if (currentPick >= numberOfTeams.current) {
-            setCurrentRound(Math.ceil(currentPick / numberOfTeams.current));
+      if (numberOfTeams) {
+         if (currentPick >= numberOfTeams) {
+            setCurrentRound(Math.ceil(currentPick / numberOfTeams));
          } else {
             setCurrentRound(1);
          }
@@ -267,9 +267,9 @@ const Board = ({
             },
             (payload) => {
                const numberOfPicks =
-                  numberOfRounds.current &&
-                  numberOfTeams.current &&
-                  numberOfRounds.current * numberOfTeams.current;
+                  numberOfRounds &&
+                  numberOfTeams &&
+                  numberOfRounds * numberOfTeams;
                if (numberOfPicks && payload.new.current_pick > numberOfPicks) {
                   setDraftCompleted(supabase, draft);
                } else {
@@ -533,43 +533,7 @@ const Board = ({
          return !draftedIds.includes(player.id);
       });
    };
-   const populatePicks = () => {
-      const tempPicksArray: Pick[] = [];
-      for (let j = 1; j <= numberOfRounds.current ?? 23; j++) {
-         const draftPosition = j;
-         const pick: Pick = {
-            draftPosition: draftPosition,
-            username: '',
-            yourPick: false,
-            isKeeper: false,
-         };
-         for (const draftedPlayer of draftedPlayers) {
-            if (pick.draftPosition === draftedPlayer.pick) {
-               const player = players.find(
-                  (p) => p.id === draftedPlayer.player_id
-               );
-               pick.playerID = draftedPlayer.player_id;
-               pick.isKeeper = draftedPlayer.is_keeper;
-               pick.playerName = `${player?.first_name.charAt(0)}. ${
-                  player?.last_name
-               }`;
-               break;
-            }
-         }
-         for (const turn of turnOrder.current) {
-            if (turn.picks.includes(draftPosition)) {
-               pick.username = teams.filter((team: Team) => {
-                  return team.id === turn.team_id;
-               })?.[0]?.team_name;
-               if (turn.team_id === team.id) {
-                  pick.yourPick = true;
-               }
-            }
-         }
-         tempPicksArray.push(pick);
-      }
-      setPicks(tempPicksArray);
-   };
+
    const updateDraftedPlayers = () => {
       const tempPicks: Pick[] = picks.map((pick) => {
          let foundPlayer;
@@ -601,6 +565,76 @@ const Board = ({
       return tempPicks;
    };
    useEffect(() => {
+      const populatePicks = () => {
+         const tempPicksArray: Pick[] = Array.from({
+            length: numberOfRounds * numberOfTeams,
+         }).map((v, i) => {
+            const pick: Pick = {
+               draftPosition: i,
+               username: '',
+               yourPick: false,
+               isKeeper: false,
+            };
+            for (const draftedPlayer of draftedPlayers) {
+               if (pick.draftPosition === draftedPlayer.pick) {
+                  const player = players.find(
+                     (p) => p.id === draftedPlayer.player_id
+                  );
+                  pick.playerID = draftedPlayer.player_id;
+                  pick.isKeeper = draftedPlayer.is_keeper;
+                  pick.playerName = `${player?.first_name.charAt(0)}. ${
+                     player?.last_name
+                  }`;
+                  break;
+               }
+            }
+            for (const turn of turnOrder.current) {
+               if (turn.picks.includes(i)) {
+                  pick.username = teams.filter((team: Team) => {
+                     return team.id === turn.team_id;
+                  })?.[0]?.team_name;
+                  if (turn.team_id === team.id) {
+                     pick.yourPick = true;
+                  }
+               }
+            }
+            return pick;
+         });
+         // for (let j = 1; j <= numberOfRounds ?? 23; j++) {
+         //    const draftPosition = j;
+         //    const pick: Pick = {
+         //       draftPosition: draftPosition,
+         //       username: '',
+         //       yourPick: false,
+         //       isKeeper: false,
+         //    };
+         //    for (const draftedPlayer of draftedPlayers) {
+         //       if (pick.draftPosition === draftedPlayer.pick) {
+         //          const player = players.find(
+         //             (p) => p.id === draftedPlayer.player_id
+         //          );
+         //          pick.playerID = draftedPlayer.player_id;
+         //          pick.isKeeper = draftedPlayer.is_keeper;
+         //          pick.playerName = `${player?.first_name.charAt(0)}. ${
+         //             player?.last_name
+         //          }`;
+         //          break;
+         //       }
+         //    }
+         //    for (const turn of turnOrder.current) {
+         //       if (turn.picks.includes(draftPosition)) {
+         //          pick.username = teams.filter((team: Team) => {
+         //             return team.id === turn.team_id;
+         //          })?.[0]?.team_name;
+         //          if (turn.team_id === team.id) {
+         //             pick.yourPick = true;
+         //          }
+         //       }
+         //    }
+         //    tempPicksArray.push(pick);
+         // }
+         setPicks(tempPicksArray);
+      };
       if (teams.length > 0 && turnOrder.current.length) {
          populatePicks();
       }
@@ -609,10 +643,6 @@ const Board = ({
    useEffect(() => {
       picks.length > 0 && setPicks(updateDraftedPlayers());
    }, [draftedPlayers]);
-
-   useEffect(() => {
-      console.log(players?.length);
-   }, [players]);
 
    const timerProps: TimerProps = {
       owner: isOwner.current,
@@ -638,9 +668,8 @@ const Board = ({
       league: league,
       players: players,
       teamID: team.id,
-      numberOfRounds: numberOfRounds.current ?? 23,
+      numberOfRounds: numberOfRounds ?? 23,
       picks,
-      populatePicks,
    };
 
    const watchlistProps: WatchlistProps = {
@@ -755,6 +784,10 @@ const Board = ({
    const chatProps: ChatProps = {
       user: user,
    };
+
+   // useEffect(() => {
+   //    console.log(user, team?.league_id, league.league_id, picks.length);
+   // }, [user, team?.league_id, league.league_id, picks.length]);
 
    return (
       <div className="flex flex-col lg:flex-row items-center w-full overflow-y-scroll lg:overflow-y-hidden draft-board">
