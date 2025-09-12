@@ -34,7 +34,9 @@ const getPlayers = async (leagueID: string): Promise<Player[]> => {
       .from('league_scoring')
       .select('*')
       .match({ id: league?.[0]?.league_scoring });
+
    console.log('League scoring: ', league_scoring);
+
    const leagueScoring = league_scoring?.data?.[0] as LeagueScoring;
    const seasons: string[] = [];
    const currentYear = new Date().getFullYear();
