@@ -28,8 +28,8 @@ const LeagueManagement = async ({
    const supabase = createClient();
 
    const user: Awaited<User | null> = await getUser(supabase);
-   const players: Awaited<Player[]> = await getPlayers(id);
    const league: Awaited<League> = await fetchLeague(supabase, id);
+   const players: Awaited<Player[]> = await getPlayers(league);
    const teams: Awaited<Team[]> = await fetchTeams(
       supabase,
       league.league_id as string

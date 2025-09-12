@@ -59,6 +59,7 @@ const getDraftProps = cache(
          draftId
       );
       const league: Awaited<League> = await fetchLeague(supabase, id);
+      const players: Awaited<Player[]> = await getPlayers(league);
       const leagueRules: Awaited<LeagueRules> = await fetchLeagueRules(
          supabase,
          league
@@ -66,10 +67,6 @@ const getDraftProps = cache(
       const leagueScoring: Awaited<LeagueScoring> = await fetchLeagueScoring(
          supabase,
          league
-      );
-      const players: Awaited<Player[]> = await getPlayers(
-         league,
-         leagueScoring
       );
       const team: Awaited<Team> = await fetchTeam(supabase, user.id, id);
       const teams: Awaited<Team[]> = await fetchTeams(

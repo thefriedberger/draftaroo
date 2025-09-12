@@ -9,8 +9,8 @@ import Rosters, { RosterProps } from './rosters';
 
 const RosterPage = async ({ params: { id } }: { params: { id: string } }) => {
    const supabase = createClient();
-   const players: Awaited<Player[]> = await getPlayers(id);
    const league: Awaited<League> = await fetchLeague(supabase, id);
+   const players: Awaited<Player[]> = await getPlayers(league);
    const teams: Awaited<Team[]> = await fetchTeams(
       supabase,
       league.league_id as string
