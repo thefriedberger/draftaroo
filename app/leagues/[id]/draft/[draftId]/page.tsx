@@ -106,7 +106,7 @@ const Draft = async ({
    params: { id: string; draftId: string };
 }) => {
    const supabase = createClient();
-   const {
+   let {
       league,
       draft,
       watchlist,
@@ -122,6 +122,8 @@ const Draft = async ({
    } = await getDraftProps({ draftId: params.draftId, id: params.id });
 
    if (!players.length) {
+      console.log("We didn't get the players");
+      players = await getPlayers(params.id);
       revalidatePath(`/leagues/${params.id}/draft/${params.draftId}`);
    }
 
