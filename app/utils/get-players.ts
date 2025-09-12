@@ -12,7 +12,7 @@ const getPlayers = async (leagueID: string): Promise<Player[]> => {
    let players: Player[] = [];
 
    do {
-      const { data, count } = await supabase
+      const { data, count, error } = await supabase
          .from('players')
          .select('*', { count: 'exact' })
          .range(skip, total);
@@ -25,6 +25,7 @@ const getPlayers = async (leagueID: string): Promise<Player[]> => {
       }
       total = count ?? 5000;
       skip = players?.length ?? 0;
+      if (error) console.log(error);
    } while (skip < total);
 
    const league = await supabase
@@ -123,6 +124,7 @@ const getPlayers = async (leagueID: string): Promise<Player[]> => {
       }
    }
 
+   console.log(playersArray.length, players.length);
    return playersArray as Player[];
 };
 
