@@ -4,6 +4,7 @@ import { PlayerStats } from '@/lib/types';
 import { createClient } from './supabase/server';
 
 const getPlayers = async (league: League): Promise<Player[]> => {
+   console.log('League: ', league);
    const supabase = createClient();
    let skip = 0;
    let total = 1000;
