@@ -1,4 +1,7 @@
-import { DraftTimerFields } from '@/components/ui/draft/components/timer';
+import {
+   DraftPicksFields,
+   DraftTimerFields,
+} from '@/components/ui/draft/components/timer';
 import { DraftPick } from '@/lib/types';
 import { SupabaseClient, User } from '@supabase/supabase-js';
 import { cache } from 'react';
@@ -96,8 +99,18 @@ export const fetchDraftSelections = cache(
       return draftSelections as DraftSelection[];
    }
 );
+export const fetchAutoDraftStatusByDraft = async (
+   supabase: SupabaseClient<Database>,
+   draft_id: string
+): Promise<DraftPicksFields[] | null> => {
+   const { data } = await supabase
+      .from('draft_picks')
+      .select('*')
+      .match({ draft_id: draft_id });
+   return data;
+};
 
-export const fetchAutoDraftStatus = async (
+export const fetchAutoDraftStatusByTeam = async (
    supabase: SupabaseClient<Database>,
    team_id: string,
    draft_id: string

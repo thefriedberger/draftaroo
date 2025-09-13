@@ -132,8 +132,13 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                      values={positions}
                      labels={positionMap}
                      filterFun={setPositionFilter}
+                     name={'Filter positions'}
                   />
-                  <Filter values={teams} filterFun={setTeamFilter} />
+                  <Filter
+                     values={teams}
+                     filterFun={setTeamFilter}
+                     name={'Filter teams'}
+                  />
                   <div className="flex flex-col">
                      <select
                         defaultValue={'2'}
@@ -142,6 +147,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                            const target = e.target as HTMLSelectElement;
                            setSeason(Number(target?.value));
                         }}
+                        name={'Change season'}
                      >
                         <option value="0">2022-2023</option>
                         <option value="1">2023-2024</option>
@@ -152,6 +158,8 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                   <input
                      className="text-black p-2 col-span-2 lg:col-span-1 lg:p-1 lg:mr-2"
                      type="search"
+                     name="Player search"
+                     aria-label="Player search"
                      placeholder="Search players"
                      value={playerSearch}
                      onChange={(e) => setPlayerSearch(e.target.value)}
@@ -353,11 +361,12 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
    );
 };
 
-const Filter = ({ values, labels, filterFun }: any) => {
+const Filter = ({ values, labels, filterFun, name }: any) => {
    return (
       <select
          onChange={(e) => filterFun(e.target.value)}
          className="text-black rounded-none p-2 lg:p-1 lg:mr-2"
+         name={name}
       >
          {values.map((x: any) => {
             return (

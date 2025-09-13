@@ -89,10 +89,12 @@ const Chat = ({ user }: ChatProps) => {
          >
             <button
                onClick={() => setIsOpen(!isOpen)}
+               type="button"
                className={classNames(
                   'w-full flex items-center sticky top-0 min-h-7 px-2 justify-end h-7 bg-fuscia-primary hover:bg-fuscia-dark outline-none'
                )}
             >
+               <p className="sr-only">Toggle chat</p>
                {unseenMessage && (
                   <span className="relative flex h-3 w-3 mr-auto">
                      <span
@@ -143,6 +145,8 @@ const Chat = ({ user }: ChatProps) => {
             >
                <input
                   type="text"
+                  name="Message input"
+                  aria-label="Message input"
                   placeholder="Enter message"
                   className="w-full text-sm self-center p-1 min-h-[25px] pr-[30px] whitespace-nowrap"
                />
@@ -164,6 +168,7 @@ const Chat = ({ user }: ChatProps) => {
                         strokeLinejoin="round"
                      />
                   </svg>
+                  <p className="sr-only">Send message</p>
                </button>
             </form>
          </div>

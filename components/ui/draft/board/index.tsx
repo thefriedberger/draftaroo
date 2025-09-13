@@ -420,7 +420,7 @@ const Board = ({
                   }
                }),
                'score',
-               1
+               2
             )[0]) ||
          null;
       const bpa =
@@ -429,7 +429,7 @@ const Board = ({
                return !draftedIds.includes(player.id);
             }),
             'score',
-            1
+            2
          )[0] || null;
       const playerToDraft =
          positionPlayer && positionPlayer.primary_position === 'G'
@@ -441,7 +441,7 @@ const Board = ({
                          return !draftedIds.includes(player.id);
                       }),
                  'score',
-                 1
+                 2
               )[0] || null;
 
       if (!playerToDraft) return;
@@ -537,7 +537,7 @@ const Board = ({
    const updateDraftedPlayers = () => {
       const tempPicks: Pick[] = picks.map((pick) => {
          let foundPlayer;
-         for (const draftedPlayer of draftedPlayers) {
+         for (const draftedPlayer of draftedPlayersState) {
             if (pick.draftPosition === draftedPlayer.pick) {
                const player = players.find(
                   (p) => p.id === draftedPlayer.player_id
@@ -575,7 +575,7 @@ const Board = ({
                yourPick: false,
                isKeeper: false,
             };
-            for (const draftedPlayer of draftedPlayers) {
+            for (const draftedPlayer of draftedPlayersState) {
                if (pick.draftPosition === draftedPlayer.pick) {
                   const player = players.find(
                      (p) => p.id === draftedPlayer.player_id
@@ -609,7 +609,7 @@ const Board = ({
 
    useEffect(() => {
       picks.length > 0 && setPicks(updateDraftedPlayers());
-   }, [draftedPlayers]);
+   }, [draftedPlayersState]);
 
    const timerProps: TimerProps = {
       owner: isOwner.current,
@@ -769,22 +769,23 @@ const Board = ({
                         <>
                            <button
                               onClick={autoDraft}
+                              type="button"
                               className={classNames(
                                  buttonClasses,
-                                 'w-20 lg:w-32 h-10 !p-1 !lg:p-2 lg:z-[100] text-sm lg:text-lg absolute top-2 right-[calc(25%-4.5rem)] lg:right-[calc(25%-130px)] xl:right-[calc(30%-130px)] z-[100]'
+                                 'w-20 h-10 !p-1 !lg:p-2 lg:z-[100] text-sm lg:text-lg absolute top-2 right-auto left-16 lg:left-auto lg:right-80 z-[100]'
                               )}
                            >
-                              Auto Draft
+                              Auto
                            </button>
                            <button
                               className={classNames(
                                  buttonClasses,
-                                 'w-20 lg:w-32 h-10 !p-1 !lg:p-2 lg:z-[100] text-sm lg:text-lg absolute top-2 right-[calc(25%-2.5rem)] lg:right-[calc(25%-64px)] xl:right-[calc(30%-64px)] z-[100]'
+                                 'w-20 h-10 !p-1 !lg:p-2 lg:z-[100] text-sm lg:text-lg absolute top-2 right-[calc(25%-2.5rem)] lg:right-60 z-[100]'
                               )}
                               type="button"
                               onClick={!isActive ? startDraft : stopDraft}
                            >
-                              {!isActive ? 'Start Draft' : 'Stop Draft'}
+                              {!isActive ? 'Start' : 'Stop'}
                            </button>
                         </>
                      ) : (

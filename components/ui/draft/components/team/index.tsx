@@ -107,7 +107,7 @@ const Team = ({
 
    return (
       <table className="w-full">
-         <thead className="bg-gold text-left sticky top-0 lg:top-[35px]">
+         <thead className="bg-gold text-left sticky top-0 lg:top-[35px] text-white">
             <tr>
                <th>Pos</th>
                <th>Player</th>
