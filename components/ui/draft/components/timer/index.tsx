@@ -4,7 +4,11 @@ import { AutoDraftIcon } from '@/app/assets/images/icons/auto-draft';
 import { MicIcon } from '@/app/assets/images/icons/mic-icon';
 import { MutedIcon } from '@/app/assets/images/icons/muted-icon';
 import getTime from '@/app/utils/get-time';
-import { fetchAutoDraftStatus, getTimerData } from '@/app/utils/helpers';
+import {
+   fetchAutoDraftStatusByDraft,
+   fetchAutoDraftStatusByTeam,
+   getTimerData,
+} from '@/app/utils/helpers';
 import { useWorkerTimeout } from '@/components/worker/worker-timeout';
 import { DraftPick, TimerProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -16,7 +20,7 @@ export type DraftTimerFields = { is_active: boolean; end_time?: number };
 export type DraftPicksFields = {
    auto_draft: boolean;
    picks: number[];
-   created_at: number;
+   created_at: string;
    draft_id: string;
    id: string;
    team_id: string;
@@ -49,7 +53,7 @@ const Timer = ({
    const [timer, setTimer] = useState<string>(formatTime(timerDuration));
    const [userPick, setUserPick] = useState<number>();
    const [doMute, setDoMute] = useState<boolean>(false);
-   const [autoDraftTeams, setAutoDraftTeams] = useState<DraftPicksFields[]>([]);
+   const autoDraftTeams = useRef<DraftPicksFields[]>([]);
    const chime = createRef<HTMLAudioElement>();
    const serverTime = useRef<number>(Date.now());
 
@@ -70,7 +74,7 @@ const Timer = ({
    useEffect(() => {
       const getAutoDraftStatus = async () => {
          setShouldAutoDraft(
-            await fetchAutoDraftStatus(supabase, userTeam.id, draftId)
+            await fetchAutoDraftStatusByTeam(supabase, userTeam.id, draftId)
          );
       };
       if (userTeam) {
@@ -150,11 +154,12 @@ const Timer = ({
       if (owner) {
          if (
             isActive &&
-            autoDraftTeams.some((team) =>
-               turnOrder.some((turn) => turn.team_id === team.team_id)
-            )
+            autoDraftTeams.current.some((team) =>
+               team.picks.includes(currentPick as number)
+            ) &&
+            timer === formatTime(timerDuration - 5)
          ) {
-            setTimeout(autopick, 5000);
+            autopick();
          }
          if (timer === '00:00') {
             autopick();
@@ -172,8 +177,7 @@ const Timer = ({
             .from('draft_picks')
             .update({ auto_draft: shouldAutoDraft })
             .eq('team_id', userTeam.id)
-            .eq('draft_id', draftId)
-            .select('*');
+            .eq('draft_id', draftId);
       };
       updateAutoDraft();
    }, [shouldAutoDraft]);
@@ -232,30 +236,31 @@ const Timer = ({
       }
    };
 
+   const getAutoDraft = async () => {
+      const response = await fetchAutoDraftStatusByDraft(supabase, draftId);
+      autoDraftTeams.current = response?.filter(
+         (team) => team.auto_draft
+      ) as DraftPicksFields[];
+   };
    useEffect(() => {
-      console.log(autoDraftTeams);
-   }, [autoDraftTeams]);
+      getAutoDraft();
+   }, [supabase]);
 
    const onDraftPicksChange = (payload: DraftPicksFields) => {
-      if (!autoDraftTeams.length && payload.auto_draft) {
-         setAutoDraftTeams([payload]);
-      } else if (
-         autoDraftTeams.some((team) => team.team_id === payload.team_id) &&
-         !payload.auto_draft
+      if (
+         !payload.auto_draft &&
+         autoDraftTeams.current.some((team) => team.team_id === payload.team_id)
       ) {
-         setAutoDraftTeams(
-            autoDraftTeams.filter((team) => team.team_id !== payload.team_id)
+         autoDraftTeams.current = autoDraftTeams.current.filter(
+            (team) => team.team_id !== payload.team_id
          );
-      } else if (payload.auto_draft) {
-         setAutoDraftTeams((prev) => [...prev, payload]);
       }
-
-      // if (payload?.end_time) {
-      //    setRoomData({
-      //       end_time: payload.end_time,
-      //       is_active: payload.is_active,
-      //    });
-      // }
+      if (
+         payload.auto_draft &&
+         autoDraftTeams.current.some((team) => team.team_id !== payload.team_id)
+      ) {
+         autoDraftTeams.current.push(payload);
+      }
    };
 
    const getData = async () => {
