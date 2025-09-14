@@ -1,6 +1,6 @@
 import { TeamViewProps, TeamsListProps } from '@/lib/types';
 import { ChangeEvent, useState } from 'react';
-import Team from './team';
+import Team from '../team';
 
 const TeamsList = ({
    draftedPlayers,
@@ -32,21 +32,17 @@ const TeamsList = ({
                      <option value="" disabled>
                         Select team
                      </option>
-                     {teams
-                        .filter((team: Team) => {
-                           return team.owner !== user.id;
-                        })
-                        .map((team: Team) => {
-                           return (
-                              <option
-                                 className="text-black"
-                                 key={team.id}
-                                 value={team.id}
-                              >
-                                 {team.team_name}
-                              </option>
-                           );
-                        })}
+                     {teams.map((team: Team) => {
+                        return (
+                           <option
+                              className="text-black"
+                              key={team.id}
+                              value={team.id}
+                           >
+                              {team.team_name}
+                           </option>
+                        );
+                     })}
                   </select>
                </div>
                <div>
