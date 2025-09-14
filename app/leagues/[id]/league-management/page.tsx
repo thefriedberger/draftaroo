@@ -100,6 +100,7 @@ const LeagueManagement = async ({
          {league && user && league.owner === user.id && !draft && (
             <CreateDraftButton league={league} />
          )}
+         {/* <UpdatePlayersButton /> */}
          <Tabs {...tabProps} />
       </div>
    );

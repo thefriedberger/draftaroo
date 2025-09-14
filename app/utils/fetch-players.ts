@@ -110,10 +110,10 @@ const updatePlayers = async () => {
       players.forEach((player) => (player.stats = []));
    };
 
-   const seasonCodes = ['20222023', '20232024'];
+   const seasonCodes = ['20222023', '20232024', '20242025'];
    for (const team of teamTriCodes) {
       const rosterResponse = await fetch(
-         `https://api-web.nhle.com/v1/roster/${team}/20242025`
+         `https://api-web.nhle.com/v1/roster/${team}/20252026`
       );
       const roster = await rosterResponse.json();
       extractPlayers(roster, team);
@@ -125,44 +125,45 @@ const updatePlayers = async () => {
       extractPlayers(prospects, team);
    }
    const extractStats = async (realtimePlayers, summaryPlayers, season) => {
-      realtimePlayers.forEach((realtimeStat) => {
-         const tempPlayer: Player = summaryPlayers.map((summaryStat) => {
-            if (realtimeStat.playerId === summaryStat.playerId) {
-               return {
-                  id: realtimeStat.playerId,
+      const mappedPlayers: Player[] = summaryPlayers.map((summaryStat) => {
+         const realtimeStats = realtimePlayers.find(
+            (rtPlayer) => rtPlayer.playerId === summaryStat.playerId
+         );
+         if (realtimeStats) {
+            return {
+               id: realtimeStats.playerId,
+               stats: {
+                  season,
                   stats: {
-                     season,
-                     stats: {
-                        hits: realtimeStat.hits,
-                        blocked: realtimeStat.blockedShots,
-                        timeOnIcePerGame: realtimeStat.timeOnIcePerGame,
-                        assists: summaryStat.assists,
-                        goals: summaryStat.goals,
-                        pim: summaryStat.penaltyMinutes,
-                        powerPlayGoals: summaryStat.ppGoals,
-                        powerPlayPoints: summaryStat.ppPoints,
-                        shortHandedGoals: summaryStat.shGoals,
-                        shortHandedPoints: summaryStat.shPoints,
-                        shots: summaryStat.shots,
-                        games: summaryStat.gamesPlayed,
-                        plusMinus: summaryStat.plusMinus,
-                     },
+                     hits: realtimeStats.hits,
+                     blocked: realtimeStats.blockedShots,
+                     timeOnIcePerGame: realtimeStats.timeOnIcePerGame,
+                     assists: summaryStat.assists,
+                     goals: summaryStat.goals,
+                     pim: summaryStat.penaltyMinutes,
+                     powerPlayGoals: summaryStat.ppGoals,
+                     powerPlayPoints: summaryStat.ppPoints,
+                     shortHandedGoals: summaryStat.shGoals,
+                     shortHandedPoints: summaryStat.shPoints,
+                     shots: summaryStat.shots,
+                     games: summaryStat.gamesPlayed,
+                     plusMinus: summaryStat.plusMinus,
                   },
-               };
-            }
-         })[0];
-         if (tempPlayer) {
-            players.forEach((player) => {
-               if (player.id === tempPlayer?.id) {
-                  if (player?.stats) {
-                     player.stats.push(tempPlayer.stats);
-                  } else {
-                     player.stats = tempPlayer.stats;
-                  }
-               }
-            });
+               },
+            };
          }
       });
+      for (const tempPlayer of mappedPlayers) {
+         players.forEach((player) => {
+            if (player.id === tempPlayer?.id) {
+               if (player?.stats) {
+                  player.stats.push(tempPlayer.stats);
+               } else {
+                  player.stats = tempPlayer.stats;
+               }
+            }
+         });
+      }
    };
    const extractGoalieStats = (allGoalies, season) => {
       allGoalies.forEach((goalie) => {
@@ -235,13 +236,20 @@ const updatePlayers = async () => {
       extractGoalieStats(goalies.data, season);
    }
 
+   const deleteAllRows = async () => {
+      const { error } = await supabase.from('players').delete().neq('id', 0); // deletes all rows
+   };
+   // deleteAllRows();
    const insertPlayerRows = async () => {
+      const playersWithStats = players.filter(
+         (player) => player.stats && player.stats.length > 0
+      );
       const { data, error } = await supabase
          .from('players')
          .upsert(players)
          .select();
+      console.log(playersWithStats.length, data.length);
    };
-
    insertPlayerRows();
 };
 
