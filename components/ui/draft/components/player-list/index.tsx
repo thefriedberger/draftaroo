@@ -152,7 +152,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                         <option value="0">2022-2023</option>
                         <option value="1">2023-2024</option>
                         <option value="2">2024-2025</option>
-                        {/* <option value="3">2025-2026 (proj.)</option> */}
+                        <option value="3">2025-2026 (proj.)</option>
                      </select>
                   </div>
                   <input
