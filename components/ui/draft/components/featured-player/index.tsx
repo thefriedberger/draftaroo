@@ -145,53 +145,55 @@ const FeaturedPlayer = ({
                </tr>
             </thead>
             <tbody>
-               {player?.stats?.map((seasonStats: any, index: number) => {
-                  const { stats, season } = seasonStats;
-                  return (
-                     <Fragment key={index}>
-                        {season && stats && (
-                           <tr key={index}>
-                              <td>
-                                 {season.substring(2, 4) +
-                                    '-' +
-                                    season.substring(6)}
-                              </td>
-                              <td>{stats.score}</td>
-                              <td>{stats.averageScore}</td>
-                              <td>{stats.games}</td>
-                              {player.primary_position !== 'G' ? (
-                                 <>
-                                    <td>
-                                       {convertTime(stats.timeOnIcePerGame)}
-                                    </td>
-                                    <td>{stats.goals}</td>
-                                    <td>{stats.assists}</td>
-                                    <td>{stats.pim}</td>
-                                    <td>{stats.powerPlayGoals}</td>
-                                    <td>{stats.powerPlayAssists}</td>
-                                    <td>{stats.shortHandedGoals}</td>
-                                    <td>{stats.shortHandedAssists}</td>
-                                    <td>{stats.shots}</td>
-                                    <td>{stats.hits}</td>
-                                    <td>{stats.blocked}</td>
-                                 </>
-                              ) : (
-                                 <>
-                                    <td>{stats.wins}</td>
-                                    <td>{stats.losses}</td>
-                                    <td>{stats.saves}</td>
-                                    <td>{stats.goalsAgainst}</td>
-                                    <td>
-                                       {stats.goalAgainstAverage.toFixed(2)}
-                                    </td>
-                                    <td>{stats.shutouts}</td>
-                                 </>
-                              )}
-                           </tr>
-                        )}
-                     </Fragment>
-                  );
-               })}
+               {player?.stats
+                  ?.filter((stats) => stats?.['season'] !== 'Projected')
+                  ?.map((seasonStats: any, index: number) => {
+                     const { stats, season } = seasonStats;
+                     return (
+                        <Fragment key={index}>
+                           {season && stats && (
+                              <tr key={index}>
+                                 <td>
+                                    {season.substring(2, 4) +
+                                       '-' +
+                                       season.substring(6)}
+                                 </td>
+                                 <td>{stats.score}</td>
+                                 <td>{stats.averageScore}</td>
+                                 <td>{stats.games}</td>
+                                 {player.primary_position !== 'G' ? (
+                                    <>
+                                       <td>
+                                          {convertTime(stats.timeOnIcePerGame)}
+                                       </td>
+                                       <td>{stats.goals}</td>
+                                       <td>{stats.assists}</td>
+                                       <td>{stats.pim}</td>
+                                       <td>{stats.powerPlayGoals}</td>
+                                       <td>{stats.powerPlayAssists}</td>
+                                       <td>{stats.shortHandedGoals}</td>
+                                       <td>{stats.shortHandedAssists}</td>
+                                       <td>{stats.shots}</td>
+                                       <td>{stats.hits}</td>
+                                       <td>{stats.blocked}</td>
+                                    </>
+                                 ) : (
+                                    <>
+                                       <td>{stats.wins}</td>
+                                       <td>{stats.losses}</td>
+                                       <td>{stats.saves}</td>
+                                       <td>{stats.goalsAgainst}</td>
+                                       <td>
+                                          {stats.goalAgainstAverage.toFixed(2)}
+                                       </td>
+                                       <td>{stats.shutouts}</td>
+                                    </>
+                                 )}
+                              </tr>
+                           )}
+                        </Fragment>
+                     );
+                  })}
             </tbody>
          </table>
       );
@@ -267,7 +269,11 @@ const FeaturedPlayer = ({
                                           });
                                     }}
                                     type="button"
-                                    disabled={!isActive || !yourTurn}
+                                    disabled={
+                                       !isActive ||
+                                       !yourTurn ||
+                                       featuredPlayer.id === 8476346
+                                    }
                                  >
                                     Draft{' '}
                                     {featuredPlayer.first_name
