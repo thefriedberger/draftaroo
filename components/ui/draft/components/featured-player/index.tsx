@@ -202,6 +202,7 @@ const FeaturedPlayer = ({
    const statsToggle = (featuredPlayer: Player) => {
       return (
          <details className="flex flex-col-reverse lg:hidden">
+            {scoreProjector(featuredPlayer)}
             {playerStats(featuredPlayer)}
             <summary
                className="block lg:hidden w-fit"
@@ -235,11 +236,11 @@ const FeaturedPlayer = ({
          {featuredPlayer &&
             (!draftedIds.includes(featuredPlayer.id) ? (
                <>
-                  <div className="w-fit">
+                  <div className="w-full lg:w-fit">
                      <div className={'flex flex-row'}>
                         <PlayerHeadshot {...featuredPlayer} />
                         <div className="flex flex-col w-full">
-                           <div className="dark:text-white text-xl flex items-center mt-2 mb-1 lg:mb-0 w-full lg:w-fit">
+                           <div className="dark:text-white text-xl flex items-center justify-evenly lg:justify-start mt-2 mb-1 lg:mb-0 w-full lg:w-fit">
                               <span className="flex flex-col items-start lg:items-center lg:flex-row">
                                  <h2>
                                     {featuredPlayer.first_name}{' '}
@@ -289,7 +290,9 @@ const FeaturedPlayer = ({
                                  <WatchlistStar {...watchlistStarProps} />
                               </div>
                            </div>
-                           {scoreProjector(featuredPlayer)}
+                           <div className="hidden lg:block">
+                              {scoreProjector(featuredPlayer)}
+                           </div>
                         </div>
                      </div>
                      <div className="hidden lg:block">
