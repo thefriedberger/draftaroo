@@ -9,6 +9,7 @@ import {
    fetchAutoDraftStatusByTeam,
    getTimerData,
 } from '@/app/utils/helpers';
+import { buttonClasses } from '@/components/ui/helpers/buttons';
 import { useWorkerTimeout } from '@/components/worker/worker-timeout';
 import { DraftPick, TimerProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -313,7 +314,7 @@ const Timer = ({
                   type="button"
                   title={`${doMute ? 'Unmute' : 'Mute'} draft chime`}
                   className={
-                     'w-[20px] stroke-black dark:stroke-white dark:lg:stroke-black absolute top-1 right-1 z-10'
+                     'w-[20px] stroke-black dark:stroke-white dark:lg:stroke-black absolute top-1 left-1 lg:left-auto lg:right-1 z-10'
                   }
                   onClick={() => setDoMute(!doMute)}
                >
@@ -322,27 +323,31 @@ const Timer = ({
                   </span>
                   {doMute ? <MutedIcon /> : <MicIcon />}
                </button>
-               <button
-                  title={`${shouldAutoDraft ? 'Disable' : 'Enable'} autodraft`}
-                  type="button"
-                  onClick={() => setShouldAutoDraft(!shouldAutoDraft)}
-                  className={
-                     'w-[20px] stroke-black dark:stroke-white dark:lg:stroke-black absolute bottom-1 lg:bottom-auto lg:top-9 right-1 z-10'
-                  }
-               >
-                  <span className="sr-only">
-                     {shouldAutoDraft ? 'Disable' : 'Enable'} autodraft
-                  </span>
-                  {<AutoDraftIcon active={shouldAutoDraft} />}
-               </button>
                {!isMobile ? (
                   <>
                      <p className="bg-orange-primary text-black text-4xl p-2 text-center font-bold">
                         {timer}
-                     </p>
+                     </p>{' '}
+                     <button
+                        title={`${
+                           shouldAutoDraft ? 'Disable' : 'Enable'
+                        } autodraft`}
+                        type="button"
+                        onClick={() => setShouldAutoDraft(!shouldAutoDraft)}
+                        className={classNames(
+                           buttonClasses,
+                           'w-full py-1 px-2 rounded-md flex justify-center items-center  stroke-black dark:!stroke-white dark:lg:stroke-black'
+                        )}
+                     >
+                        <span className="sr-only">
+                           {shouldAutoDraft ? 'Disable' : 'Enable'} autodraft
+                        </span>
+                        {shouldAutoDraft ? 'Disable' : 'Enable'} Autodraft
+                        &nbsp;
+                        {<AutoDraftIcon active={shouldAutoDraft} />}
+                     </button>
                      <p className="ml-2">{currentRound}&nbsp;Round</p>
                      <p className="ml-2">{currentPick}&nbsp;Pick</p>
-                     <p className="ml-2">{currentPick}&nbsp;Overall</p>
                      <div
                         className={classNames(
                            yourTurn
@@ -370,14 +375,31 @@ const Timer = ({
                      <div className="flex flex-col py-2">
                         <p className="">{currentRound}&nbsp;Round</p>
                         <p className="">{currentPick}&nbsp;Pick</p>
-                        <p className="">{currentPick}&nbsp;Overall</p>
                      </div>
                      <div
                         className={classNames(
                            yourTurn && 'bg-fuscia-primary',
-                           'flex items-center h-full ml-auto align-middle p-2 text-xl'
+                           'flex flex-col items-center h-full ml-auto align-middle p-2 text-xl'
                         )}
                      >
+                        <button
+                           title={`${
+                              shouldAutoDraft ? 'Disable' : 'Enable'
+                           } autodraft`}
+                           type="button"
+                           onClick={() => setShouldAutoDraft(!shouldAutoDraft)}
+                           className={classNames(
+                              buttonClasses,
+                              'w-fit py-1 px-2 rounded-md flex items-center  stroke-black dark:!stroke-white dark:lg:stroke-black'
+                           )}
+                        >
+                           <span className="sr-only">
+                              {shouldAutoDraft ? 'Disable' : 'Enable'} autodraft
+                           </span>
+                           {shouldAutoDraft ? 'Disable' : 'Enable'} Autodraft
+                           &nbsp;
+                           {<AutoDraftIcon active={shouldAutoDraft} />}
+                        </button>
                         <p className="text-center w-full">
                            {yourTurn
                               ? pickIsKeeper
