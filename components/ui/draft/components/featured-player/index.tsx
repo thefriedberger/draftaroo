@@ -34,7 +34,7 @@ const FeaturedPlayer = ({
 
       return (
          <div className="dark:text-white">
-            <p>Projected Stats</p>
+            <h3 className="text-lg font-bold">Projected Stats</h3>
             <table className="text-sm overflow-x-scroll lg:overflow-auto max-w-[100vw] lg:max-w-auto block pr-3 lg:pr-0">
                <thead>
                   <tr className="text-left">
@@ -241,17 +241,21 @@ const FeaturedPlayer = ({
                         <div className="flex flex-col w-full">
                            <div className="dark:text-white text-xl flex items-center mt-2 mb-1 lg:mb-0 w-full lg:w-fit">
                               <span className="flex flex-col items-start lg:items-center lg:flex-row">
-                                 {featuredPlayer.first_name}{' '}
-                                 {featuredPlayer.last_name}
+                                 <h2>
+                                    {featuredPlayer.first_name}{' '}
+                                    {featuredPlayer.last_name}
+                                 </h2>
                                  <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap lg:ml-2 lg:pt-1">
-                                    {teamAbbreviations?.[
-                                       featuredPlayer.current_team
-                                    ] || 'FA'}{' '}
-                                    -{' '}
-                                    {featuredPlayer.primary_position &&
-                                       featuredPlayer.primary_position
-                                          .split(' ')
-                                          .map((char: string) => char[0])}
+                                    <h3>
+                                       {teamAbbreviations?.[
+                                          featuredPlayer.current_team
+                                       ] || 'FA'}{' '}
+                                       -{' '}
+                                       {featuredPlayer.primary_position &&
+                                          featuredPlayer.primary_position
+                                             .split(' ')
+                                             .map((char: string) => char[0])}
+                                    </h3>
                                  </span>
                               </span>
                               <div className="ml-auto lg:ml-2 flex flex-row">

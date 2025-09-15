@@ -733,7 +733,7 @@ const Board = ({
       tabs,
       centerTabs: false,
       className:
-         'flex flex-col w-full lg:max-w-screen-xl lg:h-[65%] text-white',
+         'flex flex-col w-full lg:max-w-screen-2xl lg:h-[65%] text-white',
       saveState: true,
    };
 
