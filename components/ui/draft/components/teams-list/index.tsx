@@ -21,7 +21,7 @@ const TeamsList = ({
             <>
                <div className="w-full lg:sticky lg:top-0 h-[35px] bg-paper-primary dark:bg-gray-dark">
                   <select
-                     className="text-black p-1 h-full"
+                     className="text-black p-1 h-full w-full lg:w-fit"
                      onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                         setTeamsViewPlayers(e.target.value);
                         setDoReset(true);
