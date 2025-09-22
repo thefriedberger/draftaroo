@@ -112,7 +112,7 @@ const FeaturedPlayer = ({
 
    const playerStats = (player: Player) => {
       return (
-         <table className="text-sm mt-2 overflow-x-scroll lg:overflow-auto max-w-[100vw] w-full table">
+         <table className="text-sm mt-2 overflow-x-scroll lg:overflow-auto max-w-[100vw] w-full block lg:table">
             <thead>
                <tr className="text-left bg-gold">
                   <th>Season</th>
@@ -234,107 +234,89 @@ const FeaturedPlayer = ({
             'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:max-w-full z-10 fixed lg:relative bottom-[66px] lg:w lg:flex lg:flex-col lg:bottom-auto w-full p-2 lg:py-0 h-fit'
          )}
       >
-         {featuredPlayer &&
-            (!draftedIds.includes(featuredPlayer.id) ? (
-               <>
-                  <div className="w-full lg:w-fit">
-                     <div className={'flex flex-row'}>
-                        <PlayerHeadshot {...featuredPlayer} />
-                        <div className="flex flex-col w-full">
-                           <div className="dark:text-white text-xl flex items-center justify-evenly lg:justify-start mt-2 mb-1 lg:mb-0 w-full lg:w-fit">
-                              <span className="flex flex-col items-start lg:items-center lg:flex-row">
-                                 <h2>
-                                    {featuredPlayer.first_name}{' '}
-                                    {featuredPlayer.last_name}
-                                 </h2>
-                                 <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap lg:ml-2 lg:pt-1">
-                                    <h3>
-                                       {teamAbbreviations?.[
-                                          featuredPlayer.current_team
-                                       ] || 'FA'}{' '}
-                                       -{' '}
-                                       {featuredPlayer.primary_position &&
-                                          featuredPlayer.primary_position
-                                             .split(' ')
-                                             .map((char: string) => char[0])}
-                                    </h3>
-                                 </span>
+         {featuredPlayer && (
+            <>
+               <div className="w-full lg:w-fit">
+                  <div className={'flex flex-row'}>
+                     <PlayerHeadshot {...featuredPlayer} />
+                     <div className="flex flex-col w-full">
+                        <div
+                           className={classNames(
+                              !draftedIds.includes(featuredPlayer.id)
+                                 ? 'justify-evenly'
+                                 : 'justify-start',
+                              'dark:text-white text-xl flex lg:justify-start mt-2 mb-1 lg:mb-0 w-full lg:w-fit'
+                           )}
+                        >
+                           <span className="flex flex-col items-start lg:items-center lg:flex-row">
+                              <h2>
+                                 {featuredPlayer.first_name}{' '}
+                                 {featuredPlayer.last_name}
+                              </h2>
+                              <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap lg:ml-2 lg:pt-1">
+                                 <h3>
+                                    {teamAbbreviations?.[
+                                       featuredPlayer.current_team
+                                    ] || 'FA'}{' '}
+                                    -{' '}
+                                    {featuredPlayer.primary_position &&
+                                       featuredPlayer.primary_position
+                                          .split(' ')
+                                          .map((char: string) => char[0])}
+                                 </h3>
                               </span>
-                              <div className="ml-auto lg:ml-2 flex flex-row">
-                                 <button
-                                    className={classNames(
-                                       'bg-fuscia-primary p-2 rounded-md mr-1 disabled:cursor-not-allowed disabled:saturate-[25%] whitespace-nowrap flex items-center !text-sm'
-                                    )}
-                                    onClick={() => {
-                                       isActive &&
-                                          yourTurn &&
-                                          handleDraftSelection({
-                                             ...handleDraftSelectionProps,
-                                             player: featuredPlayer,
-                                             timerDuration,
-                                          });
-                                    }}
-                                    type="button"
-                                    disabled={
-                                       !isActive ||
-                                       !yourTurn ||
-                                       featuredPlayer.id === 8476346
-                                    }
-                                 >
-                                    Draft{' '}
-                                    {featuredPlayer.first_name
-                                       .split(' ')
-                                       .map((char: string) => char[0])}
-                                    {'. '}
-                                    {featuredPlayer.last_name}
-                                 </button>
-                                 <WatchlistStar {...watchlistStarProps} />
-                              </div>
-                           </div>
-                           <div className="hidden lg:block">
-                              {scoreProjector(featuredPlayer)}
+                           </span>
+                           <div
+                              className={classNames(
+                                 draftedIds.includes(featuredPlayer.id) &&
+                                    'hidden',
+                                 'ml-auto lg:ml-2 flex flex-row'
+                              )}
+                           >
+                              <button
+                                 className={classNames(
+                                    'bg-fuscia-primary p-2 rounded-md mr-1 disabled:cursor-not-allowed disabled:saturate-[25%] whitespace-nowrap flex items-center !text-sm'
+                                 )}
+                                 onClick={() => {
+                                    isActive &&
+                                       yourTurn &&
+                                       handleDraftSelection({
+                                          ...handleDraftSelectionProps,
+                                          player: featuredPlayer,
+                                          timerDuration,
+                                       });
+                                 }}
+                                 type="button"
+                                 disabled={
+                                    !isActive ||
+                                    !yourTurn ||
+                                    featuredPlayer.id === 8476346
+                                 }
+                              >
+                                 Draft{' '}
+                                 {featuredPlayer.first_name
+                                    .split(' ')
+                                    .map((char: string) => char[0])}
+                                 {'. '}
+                                 {featuredPlayer.last_name}
+                              </button>
+                              <WatchlistStar {...watchlistStarProps} />
                            </div>
                         </div>
-                     </div>
-                     <div className="hidden lg:block">
-                        {playerStats(featuredPlayer)}
-                     </div>
-                  </div>
-                  {statsToggle(featuredPlayer)}
-                  <p>{yourTurn}</p>
-                  <CloseFeaturedPlayer />
-               </>
-            ) : (
-               <>
-                  <div className="w-fit">
-                     <div className={'flex flex-row'}>
-                        <PlayerHeadshot {...featuredPlayer} />
-                        <div className="flex flex-col">
-                           <div className="dark:text-white text-xl whitespace-nowrap lg:mt-3">
-                              {featuredPlayer.first_name}{' '}
-                              {featuredPlayer.last_name}
-                              <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap lg:ml-2 lg:pt-1">
-                                 {teamAbbreviations?.[
-                                    featuredPlayer.current_team
-                                 ] || 'FA'}{' '}
-                                 -{' '}
-                                 {featuredPlayer.primary_position &&
-                                    featuredPlayer.primary_position
-                                       .split(' ')
-                                       .map((char: string) => char[0])}
-                              </span>
-                           </div>
+                        <div className="hidden lg:block">
                            {scoreProjector(featuredPlayer)}
                         </div>
                      </div>
-                     <div className="hidden lg:block">
-                        {playerStats(featuredPlayer)}
-                     </div>
                   </div>
-                  {statsToggle(featuredPlayer)}
-                  <CloseFeaturedPlayer />
-               </>
-            ))}
+                  <div className="hidden lg:block">
+                     {playerStats(featuredPlayer)}
+                  </div>
+               </div>
+               {statsToggle(featuredPlayer)}
+               <p>{yourTurn}</p>
+               <CloseFeaturedPlayer />
+            </>
+         )}
       </div>
    );
 };
