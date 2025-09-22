@@ -34,6 +34,7 @@ import {
 } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Chat from '../../chat';
@@ -42,7 +43,11 @@ import Tabs from '../../tabs';
 import DraftOrder, { Pick } from '../components/draft-order';
 import FeaturedPlayer from '../components/featured-player';
 import MyTeam from '../components/my-team';
-import PlayerList, { sortPlayers } from '../components/player-list';
+import PlayerList, {
+   cleanSeasons,
+   seasons,
+   sortPlayers,
+} from '../components/player-list';
 import TeamsList from '../components/teams-list';
 import Timer, { DraftPicksFields } from '../components/timer';
 import Watchlist from '../components/watchlist';
@@ -70,6 +75,7 @@ const Board = ({
    const [isYourTurn, setIsYourTurn] = useState<boolean>(false);
    const [pickIsKeeper, setPickIsKeeper] = useState<boolean>(false);
    const [picks, setPicks] = useState<Pick[]>([]);
+   const router = useRouter();
 
    /*** Channels ***/
    const draftChannel = supabase.channel('draft-channel');
@@ -420,7 +426,7 @@ const Board = ({
                   }
                }),
                'score',
-               2
+               cleanSeasons(seasons[2])
             )[0]) ||
          null;
       const bpa =
@@ -429,7 +435,7 @@ const Board = ({
                return !draftedIds.includes(player.id);
             }),
             'score',
-            2
+            cleanSeasons(seasons[2])
          )[0] || null;
       const playerToDraft =
          positionPlayer && positionPlayer.primary_position === 'G'
@@ -441,7 +447,7 @@ const Board = ({
                          return !draftedIds.includes(player.id);
                       }),
                  'score',
-                 2
+                 cleanSeasons(seasons[2])
               )[0] || null;
 
       if (!playerToDraft) return;
@@ -786,6 +792,23 @@ const Board = ({
                               onClick={!isActive ? startDraft : stopDraft}
                            >
                               {!isActive ? 'Start' : 'Stop'}
+                           </button>
+                           <button
+                              className={classNames(
+                                 buttonClasses,
+                                 'w-20 h-10 !p-1 !lg:p-2 lg:z-[100] text-sm lg:text-lg absolute top-2 left-[calc(25%-2.5rem)] lg:left-60 z-[100]'
+                              )}
+                              type="button"
+                              onClick={async () =>
+                                 await fetch('/reset-draft-selections', {
+                                    method: 'POST',
+                                    body: JSON.stringify({
+                                       draft_id: draft.id,
+                                    }),
+                                 }).then(() => router.refresh())
+                              }
+                           >
+                              Reset
                            </button>
                         </>
                      ) : (

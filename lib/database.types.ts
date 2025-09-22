@@ -302,7 +302,7 @@ export type Database = {
                is_active: boolean;
                last_name: string;
                primary_position: string | null;
-               stats: Json[] | null;
+               stats: Json | null;
                sweater_number: number | null;
             };
             Insert: {
@@ -313,7 +313,7 @@ export type Database = {
                is_active?: boolean;
                last_name: string;
                primary_position?: string | null;
-               stats?: Json[] | null;
+               stats?: Json | null;
                sweater_number?: number | null;
             };
             Update: {
@@ -324,7 +324,7 @@ export type Database = {
                is_active?: boolean;
                last_name?: string;
                primary_position?: string | null;
-               stats?: Json[] | null;
+               stats?: Json | null;
                sweater_number?: number | null;
             };
             Relationships: [];

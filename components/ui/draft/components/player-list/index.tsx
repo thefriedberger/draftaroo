@@ -22,16 +22,14 @@ export const positionMap = {
 export const getStatFromLastSeason = (
    player_stats: any,
    stat: string,
-   season: number
+   season: string
 ) => {
-   return !player_stats?.[season]?.['stats']?.[stat]
-      ? 0
-      : player_stats[season]['stats'][stat];
+   return !player_stats?.[season]?.[stat] ? 0 : player_stats[season][stat];
 };
 export const sortPlayers = (
    players: Player[],
    sort: string,
-   season: number
+   season: string
 ) => {
    players.sort((a: Player, b: Player) => {
       const statForA = getStatFromLastSeason(a.stats, sort, season);
@@ -41,12 +39,23 @@ export const sortPlayers = (
 
    return players;
 };
+export const seasons = Array.from({ length: 4 })
+   .map((k, i) => {
+      const currentYear = new Date().getUTCFullYear();
+      return `${currentYear - i}-${currentYear - i + 1}${
+         i === 0 ? ' (proj.)' : ''
+      }`;
+   })
+   .reverse();
+
+export const cleanSeasons = (season: string) => season.replace('-', '');
+
 const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
    const [sort, setSort] = useState<SortValue>('score');
    const [positionFilter, setPositionFilter] = useState<string>('Skaters');
    const [teamFilter, setTeamFilter] = useState<string>('Team');
    const [playerSearch, setPlayerSearch] = useState<string>('');
-   const [season, setSeason] = useState<number>(2);
+   const [season, setSeason] = useState<string>(cleanSeasons(seasons[2]));
    const [records, setRecords] = useState<number>(150);
    const [minGP, setMinGP] = useState<number | ''>('');
    const thClasses = classNames('p-2 lg:p-1 my-2 cursor-pointer');
@@ -58,7 +67,6 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
    };
 
    const { playersRef, isVisible } = PlayerObserver(options);
-   const seasons = ['Season', '2022-2023', '2023-2024'];
 
    useEffect(() => {
       if (isVisible) setRecords(records + 150);
@@ -141,18 +149,19 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                   />
                   <div className="flex flex-col">
                      <select
-                        defaultValue={'2'}
+                        defaultValue={cleanSeasons(seasons[2])}
                         className="text-black p-2 rounded-none lg:p-1 lg:mr-2"
                         onChange={(e: ChangeEvent) => {
                            const target = e.target as HTMLSelectElement;
-                           setSeason(Number(target?.value));
+                           setSeason(target?.value);
                         }}
                         name={'Change season'}
                      >
-                        <option value="0">2022-2023</option>
-                        <option value="1">2023-2024</option>
-                        <option value="2">2024-2025</option>
-                        <option value="3">2025-2026 (proj.)</option>
+                        {seasons.map((season) => (
+                           <option key={season} value={season.replace('-', '')}>
+                              {season}
+                           </option>
+                        ))}
                      </select>
                   </div>
                   <input

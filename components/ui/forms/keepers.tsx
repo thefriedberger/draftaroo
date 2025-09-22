@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { isArray } from 'lodash';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import Confetti from 'react-confetti';
+import { cleanSeasons, seasons } from '../draft/components/player-list';
 import { buttonClasses } from '../helpers/buttons';
 
 export interface KeeperFormProps {
@@ -195,11 +196,12 @@ const KeeperForm = ({
                         (b?.draft_position ?? numberOfRounds + 1)
                   )
                   .map((player: RosterPlayer, index: number) => {
-                     const playerData: Player | any = players.filter(
+                     const playerData: Player | any = players.find(
                         (playerToMatch) => {
                            return playerToMatch.id === player.player_id;
                         }
-                     )[0];
+                     );
+
                      const closestPick = findClosestPick(player.picks_needed);
 
                      const canKeep =
@@ -245,9 +247,8 @@ const KeeperForm = ({
                               </label>
                            </td>
                            <td className="p-2">
-                              {playerData?.stats?.[
-                                 playerData?.stats?.length - 1
-                              ]?.stats?.averageScore ?? 'NA'}
+                              {playerData?.stats?.[cleanSeasons(seasons[2])]
+                                 ?.averageScore ?? 'NA'}
                            </td>
                            <td className="p-2">
                               {player.draft_position ?? 'FA'}

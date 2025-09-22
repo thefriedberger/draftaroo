@@ -1,6 +1,6 @@
 'use server';
 
-import { PlayerStats } from '@/lib/types';
+import { PlayerStats, stats } from '@/lib/types';
 import projectStats from './project-stats';
 import { createClient } from './supabase/server';
 
@@ -32,12 +32,6 @@ const getPlayers = async (league: League): Promise<Player[]> => {
       .match({ id: league?.league_scoring });
 
    const leagueScoring = league_scoring?.data?.[0] as LeagueScoring;
-   const seasons: string[] = [];
-   const currentYear = new Date().getFullYear();
-   for (let i = 3; i > 0; i--) {
-      seasons.push(`${currentYear - i}${currentYear - i + 1}`);
-   }
-
    const playersArray: Player[] = [];
    if (players && players.length > 0 && leagueScoring !== undefined) {
       for (const player of players) {
@@ -45,26 +39,27 @@ const getPlayers = async (league: League): Promise<Player[]> => {
             continue;
          }
 
-         // @ts-expect-error: this isn't a problem
-         if (player.stats.length < 3) {
-            seasons.forEach((season, index) => {
-               // @ts-expect-error: this isn't a problem
-               if (player?.stats[0]?.season !== season) {
-                  if (season < seasons[1]) {
-                     // @ts-expect-error: this isn't a problem
-                     player.stats.unshift([{ stats: null, season: season }]);
-                  } else {
-                     // @ts-expect-error: this isn't a problem
-                     player.stats.push({ stats: null, season: season });
-                  }
-               }
-            });
-         }
+         // // @ts-expect-error: this isn't a problem
+         // if (player.stats.length < 3) {
+         //    seasons.forEach((season, index) => {
+         //       // @ts-expect-error: this isn't a problem
+         //       if (player?.stats[0]?.season !== season) {
+         //          if (season < seasons[1]) {
+         //             // @ts-expect-error: this isn't a problem
+         //             player.stats.unshift([{ stats: null, season: season }]);
+         //          } else {
+         //             // @ts-expect-error: this isn't a problem
+         //             player.stats.push({ stats: null, season: season });
+         //          }
+         //       }
+         //    });
+         // }
 
          const playerStats = player?.stats as PlayerStats[];
+
          for (const season in playerStats) {
             if (playerStats?.[season] !== undefined) {
-               const { stats } = playerStats?.[season];
+               const stats = playerStats?.[season] as stats;
                let tempPoints: number = 0;
                let powerPlayAssists = 0;
                let shortHandedAssists = 0;
@@ -119,13 +114,12 @@ const getPlayers = async (league: League): Promise<Player[]> => {
                }
             }
          }
-         if (player?.stats?.length) {
+         if (player?.stats) {
             let projectedStats = projectStats(player);
 
-            player.stats.push({
-               stats: projectedStats?.['stats'],
-               season: 'Projected',
-            });
+            const currentYear = new Date().getUTCFullYear();
+            player.stats[`${currentYear}${currentYear + 1} (proj.)`] =
+               projectedStats?.['stats'];
          }
          playersArray.push(player);
       }
