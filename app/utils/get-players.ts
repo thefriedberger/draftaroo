@@ -39,22 +39,6 @@ const getPlayers = async (league: League): Promise<Player[]> => {
             continue;
          }
 
-         // // @ts-expect-error: this isn't a problem
-         // if (player.stats.length < 3) {
-         //    seasons.forEach((season, index) => {
-         //       // @ts-expect-error: this isn't a problem
-         //       if (player?.stats[0]?.season !== season) {
-         //          if (season < seasons[1]) {
-         //             // @ts-expect-error: this isn't a problem
-         //             player.stats.unshift([{ stats: null, season: season }]);
-         //          } else {
-         //             // @ts-expect-error: this isn't a problem
-         //             player.stats.push({ stats: null, season: season });
-         //          }
-         //       }
-         //    });
-         // }
-
          const playerStats = player?.stats as PlayerStats[];
 
          for (const season in playerStats) {
@@ -119,7 +103,7 @@ const getPlayers = async (league: League): Promise<Player[]> => {
 
             const currentYear = new Date().getUTCFullYear();
             player.stats[`${currentYear}${currentYear + 1} (proj.)`] =
-               projectedStats?.['stats'];
+               projectedStats?.[`${currentYear}${currentYear + 1} (proj.)`];
          }
          playersArray.push(player);
       }
