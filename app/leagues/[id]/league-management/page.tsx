@@ -19,6 +19,7 @@ import RulesTab from '../../tabs/rules';
 import ScoringTab, { ScoringTabProps } from '../../tabs/scoring';
 import TeamsTab from '../../tabs/teams';
 import CreateDraftButton from './create-draft-button';
+import UpdatePlayersButton from './update-players';
 
 const LeagueManagement = async ({
    params: { id },
@@ -100,7 +101,7 @@ const LeagueManagement = async ({
          {league && user && league.owner === user.id && !draft && (
             <CreateDraftButton league={league} />
          )}
-         {/* <UpdatePlayersButton /> */}
+         <UpdatePlayersButton />
          <Tabs {...tabProps} />
       </div>
    );

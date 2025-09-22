@@ -278,8 +278,7 @@ export type stats = {
    averageScore?: number;
 };
 export interface PlayerStats {
-   stats?: stats;
-   season?: string | number;
+   [key: string]: stats;
 }
 
 export type watchlist = Watchlist;

@@ -52,7 +52,7 @@ const PlayerComponent = ({
 }: {
    player: Player;
    leagueScoring?: LeagueScoring | any;
-   season: number;
+   season: string;
    sort: SortValue;
 }) => {
    const { updateFeaturedPlayer } = useContext(DraftContext);
@@ -113,30 +113,30 @@ const PlayerComponent = ({
             </td>
             <td className="py-2 px-1">
                <span className={classNames(sort === 'score' && 'font-bold')}>
-                  {playerStats?.[season]?.stats?.score}
+                  {playerStats?.[season]?.score}
                </span>
             </td>
             <td className="py-2 px-1">
                <span
                   className={classNames(sort === 'averageScore' && 'font-bold')}
                >
-                  {playerStats?.[season]?.stats?.averageScore}
+                  {playerStats?.[season]?.averageScore}
                </span>
             </td>
             <td className="py-2 px-1">
                <span className={classNames(sort === 'games' && 'font-bold')}>
-                  {playerStats?.[season]?.stats?.games || 0}
+                  {playerStats?.[season]?.games || 0}
                </span>
             </td>
             {player.primary_position !== 'G' ? (
                <>
-                  {/* {Object.keys(playerStats?.[season]?.stats ?? {}).map(
+                  {/* {Object.keys(playerStats?.[season] ?? {}).map(
                      (stat: any) => (
                         <PlayerRow
                            key={`${player.id}-${stat}`}
                            stat={stat}
                            player={player}
-                           playerStats={playerStats?.[season]?.stats?.[stat]}
+                           playerStats={playerStats?.[season]?.[stat]}
                         />
                      )
                   )} */}
@@ -146,11 +146,9 @@ const PlayerComponent = ({
                            sort === 'timeOnIcePerGame' && 'font-bold'
                         )}
                      >
-                        {playerStats?.[season]?.stats?.timeOnIcePerGame !==
-                        undefined
+                        {playerStats?.[season]?.timeOnIcePerGame !== undefined
                            ? convertTime(
-                                playerStats?.[season]?.stats
-                                   ?.timeOnIcePerGame ?? 0
+                                playerStats?.[season]?.timeOnIcePerGame ?? 0
                              )
                            : 0}
                      </span>
@@ -159,7 +157,7 @@ const PlayerComponent = ({
                      <span
                         className={classNames(sort === 'goals' && 'font-bold')}
                      >
-                        {playerStats?.[season]?.stats?.goals || 0}
+                        {playerStats?.[season]?.goals || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
@@ -168,14 +166,14 @@ const PlayerComponent = ({
                            sort === 'assists' && 'font-bold'
                         )}
                      >
-                        {playerStats?.[season]?.stats?.assists || 0}
+                        {playerStats?.[season]?.assists || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
                      <span
                         className={classNames(sort === 'pim' && 'font-bold')}
                      >
-                        {playerStats?.[season]?.stats?.pim || 0}
+                        {playerStats?.[season]?.pim || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
@@ -184,7 +182,7 @@ const PlayerComponent = ({
                            sort === 'powerPlayGoals' && 'font-bold'
                         )}
                      >
-                        {playerStats?.[season]?.stats?.powerPlayGoals || 0}
+                        {playerStats?.[season]?.powerPlayGoals || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
@@ -193,7 +191,7 @@ const PlayerComponent = ({
                            sort === 'powerPlayAssists' && 'font-bold'
                         )}
                      >
-                        {playerStats?.[season]?.stats?.powerPlayAssists || 0}
+                        {playerStats?.[season]?.powerPlayAssists || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
@@ -202,7 +200,7 @@ const PlayerComponent = ({
                            sort === 'shortHandedGoals' && 'font-bold'
                         )}
                      >
-                        {playerStats?.[season]?.stats?.shortHandedGoals || 0}
+                        {playerStats?.[season]?.shortHandedGoals || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
@@ -211,21 +209,21 @@ const PlayerComponent = ({
                            sort === 'shortHandedAssists' && 'font-bold'
                         )}
                      >
-                        {playerStats?.[season]?.stats?.shortHandedAssists || 0}
+                        {playerStats?.[season]?.shortHandedAssists || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
                      <span
                         className={classNames(sort === 'shots' && 'font-bold')}
                      >
-                        {playerStats?.[season]?.stats?.shots || 0}
+                        {playerStats?.[season]?.shots || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
                      <span
                         className={classNames(sort === 'hits' && 'font-bold')}
                      >
-                        {playerStats?.[season]?.stats?.hits || 0}
+                        {playerStats?.[season]?.hits || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
@@ -234,7 +232,7 @@ const PlayerComponent = ({
                            sort === 'blocked' && 'font-bold'
                         )}
                      >
-                        {playerStats?.[season]?.stats?.blocked || 0}
+                        {playerStats?.[season]?.blocked || 0}
                      </span>
                   </td>
                </>
@@ -244,21 +242,21 @@ const PlayerComponent = ({
                      <span
                         className={classNames(sort === 'wins' && 'font-bold')}
                      >
-                        {playerStats?.[season]?.stats?.wins || 0}
+                        {playerStats?.[season]?.wins || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
                      <span
                         className={classNames(sort === 'losses' && 'font-bold')}
                      >
-                        {playerStats?.[season]?.stats?.losses || 0}
+                        {playerStats?.[season]?.losses || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
                      <span
                         className={classNames(sort === 'saves' && 'font-bold')}
                      >
-                        {playerStats?.[season]?.stats?.saves || 0}
+                        {playerStats?.[season]?.saves || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
@@ -267,7 +265,7 @@ const PlayerComponent = ({
                            sort === 'goalsAgainst' && 'font-bold'
                         )}
                      >
-                        {playerStats?.[season]?.stats?.goalsAgainst || 0}
+                        {playerStats?.[season]?.goalsAgainst || 0}
                      </span>
                   </td>
                   <td className="py-2 px-1">
@@ -277,8 +275,8 @@ const PlayerComponent = ({
                         )}
                      >
                         {Math.round(
-                           (playerStats?.[season]?.stats?.goalAgainstAverage ||
-                              1) * 100
+                           (playerStats?.[season]?.goalAgainstAverage || 1) *
+                              100
                         ) / 100}
                      </span>
                   </td>
@@ -288,7 +286,7 @@ const PlayerComponent = ({
                            sort === 'shutouts' && 'font-bold'
                         )}
                      >
-                        {playerStats?.[season]?.stats?.shutouts || 0}
+                        {playerStats?.[season]?.shutouts || 0}
                      </span>
                   </td>
                </>

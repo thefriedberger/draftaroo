@@ -31,7 +31,6 @@ const TimerSkeleton = () => {
                      <div className="w-[85%] h-10 mx-auto rounded-md bg-orange-muted animate-pulse"></div>
                   </div>
                   <div className="flex flex-col py-2">
-                     <div className="h-4 w-12 my-1 rounded-md bg-paper-dark dark:bg-gray-dark animate-pulse"></div>
                      <div className="h-4 w-9 my-1 rounded-md bg-paper-dark dark:bg-gray-dark animate-pulse"></div>
                      <div className="h-4 w-10 my-1 rounded-md bg-paper-dark dark:bg-gray-dark animate-pulse"></div>{' '}
                   </div>

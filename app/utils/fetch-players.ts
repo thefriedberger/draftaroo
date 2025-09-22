@@ -90,8 +90,8 @@ const updatePlayers = async () => {
          sweater_number: player.sweaterNumber,
          primary_position: player.positionCode,
          current_team: player.currentTeam,
-         stats: [],
-         is_active: player?.isActive ?? true,
+         stats: {},
+         is_active: player.isActive ?? true,
       };
    };
 
@@ -107,10 +107,14 @@ const updatePlayers = async () => {
                : players.push(populatePlayer(player));
          });
       }
-      players.forEach((player) => (player.stats = []));
    };
 
-   const seasonCodes = ['20222023', '20232024', '20242025'];
+   const seasonCodes = Array.from({ length: 3 })
+      .map((k, i) => {
+         const currentYear = new Date().getUTCFullYear();
+         return `${currentYear - i - 1}${currentYear - i}`;
+      })
+      .reverse();
    for (const team of teamTriCodes) {
       const rosterResponse = await fetch(
          `https://api-web.nhle.com/v1/roster/${team}/20252026`
@@ -133,8 +137,7 @@ const updatePlayers = async () => {
             return {
                id: realtimeStats.playerId,
                stats: {
-                  season,
-                  stats: {
+                  [season]: {
                      hits: realtimeStats.hits,
                      blocked: realtimeStats.blockedShots,
                      timeOnIcePerGame: realtimeStats.timeOnIcePerGame,
@@ -156,11 +159,10 @@ const updatePlayers = async () => {
       for (const tempPlayer of mappedPlayers) {
          players.forEach((player) => {
             if (player.id === tempPlayer?.id) {
-               if (player?.stats) {
-                  player.stats.push(tempPlayer.stats);
-               } else {
-                  player.stats = tempPlayer.stats;
+               if (!player?.stats) {
+                  player.stats = {};
                }
+               player.stats[season] = tempPlayer?.stats?.[season];
             }
          });
       }
@@ -169,45 +171,23 @@ const updatePlayers = async () => {
       allGoalies.forEach((goalie) => {
          players.forEach((player) => {
             if (goalie.playerId === player.id) {
-               if (player?.stats) {
-                  player.stats.push({
-                     season,
-                     stats: {
-                        timeOnIce: goalie.timeOnIce,
-                        ot: goalie.otLosses,
-                        shutouts: goalie.shutouts,
-                        wins: goalie.wins,
-                        losses: goalie.losses,
-                        saves: goalie.saves,
-                        savePercentage: goalie.savePct,
-                        goalAgainstAverage: goalie.goalsAgainstAverage,
-                        games: goalie.gamesPlayed,
-                        gamesStarted: goalie.gamesStarted,
-                        shotsAgainst: goalie.shotsAgainst,
-                        goalsAgainst: goalie.goalsAgainst,
-                     },
-                  });
-               } else {
-                  player.stats = [
-                     {
-                        season,
-                        stats: {
-                           timeOnIce: goalie.timeOnIce,
-                           ot: goalie.otLosses,
-                           shutouts: goalie.shutouts,
-                           wins: goalie.wins,
-                           losses: goalie.losses,
-                           saves: goalie.saves,
-                           savePercentage: goalie.savePct,
-                           goalAgainstAverage: goalie.goalsAgainstAverage,
-                           games: goalie.gamesPlayed,
-                           gamesStarted: goalie.gamesStarted,
-                           shotsAgainst: goalie.shotsAgainst,
-                           goalsAgainst: goalie.goalsAgainst,
-                        },
-                     },
-                  ];
+               if (!player?.stats) {
+                  player.stats = {};
                }
+               player.stats[season] = {
+                  timeOnIce: goalie.timeOnIce,
+                  ot: goalie.otLosses,
+                  shutouts: goalie.shutouts,
+                  wins: goalie.wins,
+                  losses: goalie.losses,
+                  saves: goalie.saves,
+                  savePercentage: goalie.savePct,
+                  goalAgainstAverage: goalie.goalsAgainstAverage,
+                  games: goalie.gamesPlayed,
+                  gamesStarted: goalie.gamesStarted,
+                  shotsAgainst: goalie.shotsAgainst,
+                  goalsAgainst: goalie.goalsAgainst,
+               };
             }
          });
       });
@@ -241,14 +221,10 @@ const updatePlayers = async () => {
    };
    // deleteAllRows();
    const insertPlayerRows = async () => {
-      const playersWithStats = players.filter(
-         (player) => player.stats && player.stats.length > 0
-      );
       const { data, error } = await supabase
          .from('players')
          .upsert(players)
          .select();
-      console.log(playersWithStats.length, data.length);
    };
    insertPlayerRows();
 };

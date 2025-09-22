@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { Fragment, useContext, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { teamAbbreviations } from '../player';
+import { cleanSeasons, seasons } from '../player-list';
 import WatchlistStar, { WatchlistStarProps } from '../watchlist/watchlist-star';
 
 const FeaturedPlayer = ({
@@ -30,7 +31,7 @@ const FeaturedPlayer = ({
    const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
 
    const scoreProjector = (player: Player) => {
-      const stats = player.stats?.[player.stats.length - 1]?.['stats'];
+      const stats = player.stats?.[cleanSeasons(seasons[3])];
 
       return (
          <div className="dark:text-white">
@@ -145,13 +146,13 @@ const FeaturedPlayer = ({
                </tr>
             </thead>
             <tbody>
-               {player?.stats
-                  ?.filter((stats) => stats?.['season'] !== 'Projected')
-                  ?.map((seasonStats: any, index: number) => {
-                     const { stats, season } = seasonStats;
+               {Object.keys(player?.stats || {})
+                  ?.filter((stats) => !stats.includes('(proj.)'))
+                  ?.map((season: string, index: number) => {
+                     const stats = player?.stats?.[season];
                      return (
                         <Fragment key={index}>
-                           {season && stats && (
+                           {stats && (
                               <tr key={index}>
                                  <td>
                                     {season.substring(2, 4) +
