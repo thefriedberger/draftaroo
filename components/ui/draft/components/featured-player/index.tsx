@@ -228,6 +228,9 @@ const FeaturedPlayer = ({
          />
       );
    };
+
+   console.log(featuredPlayer);
+
    return (
       <div
          className={classNames(
@@ -303,16 +306,25 @@ const FeaturedPlayer = ({
                               <WatchlistStar {...watchlistStarProps} />
                            </div>
                         </div>
-                        <div className="hidden lg:block">
-                           {scoreProjector(featuredPlayer)}
-                        </div>
+                        {Object.keys(featuredPlayer.stats ?? {}).length > 1 ? (
+                           <div className="hidden lg:block">
+                              {scoreProjector(featuredPlayer)}
+                           </div>
+                        ) : (
+                           <h2 className="dark:text-white text-lg">
+                              I don&apos;t have any stats :&apos;(
+                           </h2>
+                        )}
                      </div>
                   </div>
-                  <div className="hidden lg:block">
-                     {playerStats(featuredPlayer)}
-                  </div>
+                  {Object.keys(featuredPlayer.stats ?? {}).length > 1 && (
+                     <div className="hidden lg:block">
+                        {playerStats(featuredPlayer)}
+                     </div>
+                  )}
                </div>
-               {statsToggle(featuredPlayer)}
+               {Object.keys(featuredPlayer.stats ?? {}).length > 1 &&
+                  statsToggle(featuredPlayer)}
                <p>{yourTurn}</p>
                <CloseFeaturedPlayer />
             </>
