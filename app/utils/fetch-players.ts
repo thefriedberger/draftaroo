@@ -39,7 +39,7 @@ const teamTriCodes = [
 ];
 const teamMap = {
    ANA: 'Anaheim Ducks',
-   UTA: 'Utah Hockey Club',
+   UTA: 'Utah Mammoth',
    BUF: 'Buffalo Sabres',
    BOS: 'Boston Bruins',
    CGY: 'Calgary Flames',

@@ -116,7 +116,6 @@ export type SortValue =
    | '';
 export const teams = [
    'Team',
-   'Arizona Coyotes',
    'Anaheim Ducks',
    'Boston Bruins',
    'Buffalo Sabres',
@@ -143,6 +142,7 @@ export const teams = [
    'St. Louis Blues',
    'Tampa Bay Lightning',
    'Tornto Maple Leafs',
+   'Utah Mammoth',
    'Vancouver Canucks',
    'Vegas Golden Knights',
    'Washington Capitals',

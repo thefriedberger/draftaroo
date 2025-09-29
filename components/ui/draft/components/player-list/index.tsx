@@ -105,8 +105,8 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
          if (!minGP) {
             return true;
          }
-         if (currentStats && currentStats.stats?.games) {
-            return currentStats.stats.games >= minGP;
+         if (currentStats && currentStats?.games) {
+            return Number(currentStats.games) >= minGP;
          }
          return false;
       });

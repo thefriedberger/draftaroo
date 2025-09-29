@@ -229,8 +229,6 @@ const FeaturedPlayer = ({
       );
    };
 
-   console.log(featuredPlayer);
-
    return (
       <div
          className={classNames(
