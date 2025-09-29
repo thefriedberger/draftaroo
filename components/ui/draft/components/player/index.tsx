@@ -10,7 +10,6 @@ import WatchlistStar from '../watchlist/watchlist-star';
 
 export const teamAbbreviations: string | any = {
    'Anaheim Ducks': 'ANA',
-   'Arizona Coyotes': 'ARI',
    'Buffalo Sabres': 'BUF',
    'Boston Bruins': 'BOS',
    'Calgary Flames': 'CGY',
@@ -38,6 +37,7 @@ export const teamAbbreviations: string | any = {
    'St. Louis Blues': 'STL',
    'Tampa Bay Lightning': 'TBL',
    'Toronto Maple Leafs': 'TOR',
+   'Utah Mammoth': 'UTA',
    'Vancouver Canucks': 'VAN',
    'Vegas Golden Knights': 'VGK',
    'Winnipeg Jets': 'WPG',
