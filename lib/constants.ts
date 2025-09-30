@@ -141,7 +141,7 @@ export const teams = [
    'Seattle Kraken',
    'St. Louis Blues',
    'Tampa Bay Lightning',
-   'Tornto Maple Leafs',
+   'Toronto Maple Leafs',
    'Utah Mammoth',
    'Vancouver Canucks',
    'Vegas Golden Knights',
