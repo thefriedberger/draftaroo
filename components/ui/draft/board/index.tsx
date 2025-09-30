@@ -37,7 +37,6 @@ import classNames from 'classnames';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
-import Chat from '../../chat';
 import { buttonClasses } from '../../helpers/buttons';
 import Tabs from '../../tabs';
 import DraftOrder, { Pick } from '../components/draft-order';
@@ -827,7 +826,7 @@ const Board = ({
                         <div className="flex flex-col lg:max-w-[15vw] h-full w-full">
                            <Watchlist {...watchlistProps} />
                            <MyTeam {...myTeamProps} />
-                           <Chat {...chatProps} />
+                           {/* <Chat {...chatProps} /> */}
                         </div>
                      </>
                   ) : (
