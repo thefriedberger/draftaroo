@@ -4,8 +4,8 @@ export async function POST() {
    try {
       await updatePlayers();
    } catch (error) {
-      console.log('Update players error: ', error);
+      console.error('Update players error: ', error);
       return;
    }
-   console.log('All good');
+   console.info('All good');
 }
