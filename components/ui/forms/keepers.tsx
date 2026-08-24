@@ -4,7 +4,14 @@ import { RosterPlayer } from '@/app/leagues/[id]/keepers/page';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
 import { isArray } from 'lodash';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import {
+   ChangeEvent,
+   FormEvent,
+   MutableRefObject,
+   useEffect,
+   useRef,
+   useState,
+} from 'react';
 import Featured from '../draft/components/featured-player/featured-player';
 import { cleanSeasons, seasons } from '../draft/components/player-list';
 import { buttonClasses } from '../helpers/buttons';
@@ -40,6 +47,7 @@ const KeeperForm = ({
    const [submitted, setSubmitted] = useState<boolean>(false);
    const [modalOpen, setModalOpen] = useState<boolean>(false);
    const [modalPlayer, setModalPlayer] = useState<Player>();
+   const modalRef: MutableRefObject<HTMLDivElement | null> = useRef(null);
 
    useEffect(() => {
       const picksUsed: number[] = [];
@@ -139,10 +147,27 @@ const KeeperForm = ({
       setModalPlayer(player);
    };
 
+   useEffect(() => {
+      const handleKeyDown = (e: KeyboardEvent) => {
+         if (e.key === 'Escape') {
+            setModalOpen(false);
+         }
+      };
+      if (modalOpen) {
+         modalRef.current && modalRef.current.focus();
+         window.addEventListener('keydown', handleKeyDown);
+      }
+      return () => {
+         window.removeEventListener('keydown', handleKeyDown);
+      };
+   }, [modalOpen]);
    const playerModal = () => {
       if (!modalPlayer) return;
       return (
          <div
+            ref={modalRef}
+            autoFocus={true}
+            tabIndex={0}
             className={
                'z-100 bg-gray-primary text-white left-1/2 translate-x-[-50%] fixed top-[10%] max-w-2xl w-full min-w-96 h-fit p-5'
             }
@@ -295,7 +320,7 @@ const KeeperForm = ({
                               </td>
                               <td className="p-2">
                                  <button
-                                    className="text-left"
+                                    className="text-left hover:text-gray-300 transition-all duration-100"
                                     type="button"
                                     onClick={() => showPlayerModal(playerData)}
                                  >

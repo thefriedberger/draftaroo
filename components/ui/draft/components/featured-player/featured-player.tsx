@@ -197,23 +197,6 @@ const Featured = ({
       );
    };
 
-   const statsToggle = (featuredPlayer: Player) => {
-      return (
-         <details className="flex flex-col-reverse lg:hidden">
-            {scoreProjector(featuredPlayer)}
-            {playerStats(featuredPlayer)}
-            <summary
-               className="block lg:hidden w-fit"
-               onClick={() => setIsExpanded(!isExpanded)}
-            >
-               <div className="bg-paper-dark text-md dark:bg-gray-primary text-black dark:text-white rounded-md p-1 mt-2 w-fit">
-                  {isExpanded ? 'Hide' : 'Show'} stats
-               </div>
-            </summary>
-         </details>
-      );
-   };
-
    const PlayerHeadshot = (featuredPlayer: Player) => {
       return (
          <Image
@@ -280,8 +263,6 @@ const Featured = ({
                      </div>
                   )}
                </div>
-               {Object.keys(featuredPlayer.stats ?? {}).length > 1 &&
-                  statsToggle(featuredPlayer)}
                <button
                   className="block absolute top-auto bottom-1 lg:bottom-auto lg:top-1 right-1"
                   type="button"
