@@ -1,4 +1,3 @@
-//@ts-expect-error: valid
 import '@/app/globals.css';
 import { PageContextProvider } from '@/components/context/page-context';
 import Nav from '@/components/ui/nav';
