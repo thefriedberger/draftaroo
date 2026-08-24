@@ -276,18 +276,22 @@ const KeeperForm = ({
                            }
                         );
 
-                        const closestPick = findClosestPick(
-                           player.picks_needed
-                        );
+                        const closestPick = player.picks_used.length
+                           ? player.picks_used
+                           : findClosestPick(player.picks_needed);
 
                         const canKeep =
                            closestPick.length > 1
                               ? closestPick.filter(
                                    (pick) => !picksAvailable.includes(pick)
-                                ).length
+                                ).length ||
+                                picksAvailable.length < closestPick.length
                                  ? true
                                  : false
                               : false;
+
+                        if (player.draft_position === 1)
+                           console.log(closestPick, picksAvailable);
 
                         if (!playerData) return <></>;
                         return (
@@ -339,8 +343,26 @@ const KeeperForm = ({
                               </td>
                               <td className="p-2">{player.times_kept}</td>
                               <td className="p-2">
+                                 <div className="min-w-8 flex justify-center text-left max-w-28 w-fit bg-gray-light p-1">
+                                    <span className="w-fit">
+                                       {closestPick
+                                          .sort((a, b) => a - b)
+                                          .map((pick, index) => {
+                                             if (closestPick.length > 1) {
+                                                if (
+                                                   index ===
+                                                   closestPick.length - 1
+                                                ) {
+                                                   return pick;
+                                                }
+                                                return `${pick}, `;
+                                             }
+                                             return pick;
+                                          })}
+                                    </span>
+                                 </div>
                                  <select
-                                    className="text-black"
+                                    className="text-black hidden"
                                     value={
                                        player.is_keeper &&
                                        player.picks_used?.[0]
@@ -417,7 +439,7 @@ const KeeperForm = ({
                                                                     numberOfRounds &&
                                                                  index === 0
                                                               ) {
-                                                                 return `${pickUsed}-`;
+                                                                 return `${pickUsed}, `;
                                                               } else if (
                                                                  index === 0
                                                               ) {
@@ -427,9 +449,9 @@ const KeeperForm = ({
                                                                  closestPick.length !==
                                                                     numberOfRounds
                                                               ) {
-                                                                 return `${pickUsed}-`;
+                                                                 return `${pickUsed}, `;
                                                               }
-                                                              return;
+                                                              return `${pickUsed}, `;
                                                            }
                                                         )
                                                    : pick}
