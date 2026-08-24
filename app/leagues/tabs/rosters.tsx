@@ -236,7 +236,7 @@ const KeeperSelector = ({
                         <option
                            key={player.id}
                            value={player.id}
-                        >{`${player.first_name} ${player.last_name}`}</option>
+                        >{`${player.first_name} ${player.last_name} - ${player.current_team} ${player.primary_position}`}</option>
                      );
                   })}
                </datalist>

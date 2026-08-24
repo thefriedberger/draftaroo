@@ -1,8 +1,8 @@
 'use server';
 import getPlayers from '@/app/utils/get-players';
 import {
-   fetchDraftByLeague,
    fetchDraftPicks,
+   fetchDrafts,
    fetchDraftSelections,
    fetchLeague,
    fetchLeagueRules,
@@ -21,7 +21,6 @@ export interface RosterPlayer extends TeamHistory {
    picks_needed: number[];
    times_kept: number;
    picks_used: number[];
-   picks_available: boolean;
 }
 const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
    const supabase = createClient();
@@ -33,11 +32,25 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
       id
    );
    const league: Awaited<League> = await fetchLeague(supabase, id);
-   const draft: Awaited<Draft> = await fetchDraftByLeague(
-      supabase,
-      id,
-      new Date().getFullYear()
-   );
+   const drafts: Awaited<Draft[]> = await fetchDrafts(supabase, id);
+
+   let draftYear = new Date().getFullYear();
+   const draft = drafts?.filter(
+      (draft) => !draft.is_completed && Number(draft.draft_year) === draftYear
+   )?.[0] as Draft;
+
+   if (
+      drafts?.find(
+         (draft) =>
+            Number(draft.draft_year) === draftYear && !draft.is_completed
+      )
+   ) {
+      draftYear -= 1;
+   }
+
+   const previousDraft = drafts?.filter(
+      (draft) => draft.is_completed && Number(draft.draft_year) === draftYear
+   )?.[0] as Draft;
 
    if (!draft) {
       return (
@@ -57,8 +70,13 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
       supabase,
       draft.id
    );
+
+   const previousDraftSelections: Awaited<DraftSelection[]> =
+      await fetchDraftSelections(supabase, previousDraft?.id);
+
    const draftSelections: Awaited<DraftSelection[]> =
       await fetchDraftSelections(supabase, draft?.id);
+
    const userPicks = draftPicks.filter(
       (draftPick) => draftPick.team_id === team.id
    )[0];
@@ -77,22 +95,26 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
            })
          : [];
 
+   const getFirstRoundRequiredPicks = (player) => {
+      switch (player.times_kept) {
+         case 1: {
+            return [1].concat(picks.slice(picks.length - 7));
+         }
+         case 2: {
+            return [1].concat(picks.slice(picks.length - 14));
+         }
+         default: {
+            return picks;
+         }
+      }
+   };
+
    const populatePicksNeeded = (player: RosterPlayer) => {
       if (!picks) return;
       if (!player.draft_position) return [leagueRules.number_of_rounds];
       if (player.draft_position === 1) {
          if (player.times_kept > 0) {
-            switch (player.times_kept) {
-               case 1: {
-                  return [1].concat(picks.slice(picks.length - 7));
-               }
-               case 2: {
-                  return [1].concat(picks.slice(picks.length - 14));
-               }
-               default: {
-                  return picks;
-               }
-            }
+            return getFirstRoundRequiredPicks(player);
          }
          return [player.draft_position];
       }
@@ -104,28 +126,53 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
 
       const foundPlayer = draftSelections.filter(
          (selection) => selection.player_id === player.player_id
-      );
-      return [foundPlayer?.[0]?.round] ?? null;
+      )[0];
+
+      let picksUsed: number[] = [];
+      if (player.draft_position === 1) {
+         if (player.times_kept > 0) {
+            picksUsed = getFirstRoundRequiredPicks(player);
+         }
+      }
+
+      return foundPlayer?.round
+         ? foundPlayer.round === 1
+            ? picksUsed
+            : [foundPlayer.round]
+         : [];
    };
-   teamHistory.map((player: any) => {
-      const foundPlayer = draftSelections.find(
-         (selection) =>
-            selection.player_id === player.player_id &&
-            selection.team_id === team.id
-      );
-      return (
-         (player.times_kept = foundPlayer?.is_keeper
-            ? player.times_kept + 1
-            : 0),
-         (player.picks_needed = populatePicksNeeded(player as RosterPlayer)),
-         (player.picks_used = populatePicksUsed(player as RosterPlayer))
-      );
-   });
+
    const keeperFormProps: KeeperFormProps = {
       team: team,
       userPicks: userPicks?.picks ?? [],
       players: players,
-      roster: teamHistory as RosterPlayer[],
+      roster: teamHistory.map((player: TeamHistory) => {
+         const foundPlayer = previousDraftSelections.find(
+            (selection) =>
+               selection.player_id === player.player_id &&
+               selection.team_id === team.id
+         );
+
+         const rosterPlayer: Partial<RosterPlayer> = {
+            ...player,
+            draft_position: foundPlayer?.round ?? null,
+            times_kept:
+               foundPlayer?.is_keeper && foundPlayer?.round === 1
+                  ? player.times_kept === 0
+                     ? 1
+                     : (player.times_kept ?? 1) + 1
+                  : 0,
+         };
+
+         rosterPlayer.picks_needed = populatePicksNeeded(
+            rosterPlayer as RosterPlayer
+         );
+         rosterPlayer.picks_used = populatePicksUsed(
+            rosterPlayer as RosterPlayer
+         );
+
+         return rosterPlayer;
+      }) as RosterPlayer[],
       numberOfRounds: numberOfRounds ?? 0,
       numberOfTeams: numberOfTeams ?? 0,
       draft: draft,

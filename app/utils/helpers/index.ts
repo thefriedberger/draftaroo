@@ -394,8 +394,11 @@ export const handleDraftSelection = async ({
    currentPick,
    timerDuration,
 }: HandleDraftSelectionsProps) => {
-   const {data: draft_picks} = await supabase.from('draft_selections').select('player_id').match({draft_id: draft.id})
-   console.log("draft picks: ",draft_picks)
+   const { data: draft_picks } = await supabase
+      .from('draft_selections')
+      .select('player_id')
+      .match({ draft_id: draft.id });
+   console.log('draft picks: ', draft_picks);
    if (draft_picks?.some((pick) => pick.player_id === player.id)) {
       console.error('Player has already been drafted');
       return;

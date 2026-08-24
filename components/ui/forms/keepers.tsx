@@ -1,11 +1,11 @@
 'use client';
 
-import { RosterPlayer } from '@/app/leagues/tabs/keepers';
+import { RosterPlayer } from '@/app/leagues/[id]/keepers/page';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
 import { isArray } from 'lodash';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import Confetti from 'react-confetti';
+import Featured from '../draft/components/featured-player/featured-player';
 import { cleanSeasons, seasons } from '../draft/components/player-list';
 import { buttonClasses } from '../helpers/buttons';
 
@@ -31,16 +31,22 @@ const KeeperForm = ({
    const picks = userPicks.map((pick: number) => {
       return Math.ceil(pick / numberOfTeams);
    });
-   const [picksAvailable, setPicksAvailable] = useState<number[]>(picks);
+   const [picksAvailable, setPicksAvailable] = useState<number[]>(
+      userPicks.map((pick: number) => {
+         return Math.ceil(pick / numberOfTeams);
+      })
+   );
    const [rosterState, setRosterState] = useState<RosterPlayer[]>(roster);
    const [submitted, setSubmitted] = useState<boolean>(false);
+   const [modalOpen, setModalOpen] = useState<boolean>(false);
+   const [modalPlayer, setModalPlayer] = useState<Player>();
 
    useEffect(() => {
       const picksUsed: number[] = [];
       for (const player of roster) {
-         const { picks_used } = player;
-         if (picks_used) {
-            picks_used.length && picksUsed.push(picks_used[0]);
+         const { picks_used, picks_needed } = player;
+         if (picks_used && picks_used.length) {
+            picksUsed.push(picks_used[0]);
          }
       }
       setPicksAvailable(
@@ -61,9 +67,9 @@ const KeeperForm = ({
       return picks
          .sort((a, b) => b - a)
          .map((pick) => {
-            let closestPick =
-               picksAvailable.sort((a, b) => b - a).find((x) => x <= pick) ?? 0;
-            if (closestPick <= 0) return 0;
+            const closestPick =
+               picksAvailable.sort((a, b) => b - a).find((x) => x <= pick) ??
+               pick;
 
             return closestPick;
          });
@@ -74,7 +80,6 @@ const KeeperForm = ({
    ) => {
       const { picks_needed, picks_used } = player;
       if (target.checked) {
-         const tempPicks: number[] = [];
          const picks: number[] = findClosestPick(picks_needed).sort(
             (a, b) => a - b
          );
@@ -114,10 +119,34 @@ const KeeperForm = ({
          );
       }
    };
+   const showPlayerModal = (player: Player) => {
+      setModalOpen(true);
+      setModalPlayer(player);
+   };
+
+   const playerModal = () => {
+      if (!modalPlayer) return;
+      return (
+         <div
+            className={
+               'z-100 bg-gray-primary text-white left-1/2 translate-x-[-50%] fixed top-[10%] max-w-2xl w-full min-w-96 h-fit p-5'
+            }
+         >
+            <div className="relative">
+               <Featured
+                  featuredPlayer={modalPlayer}
+                  handleClose={() => setModalOpen(false)}
+               />
+            </div>
+         </div>
+      );
+   };
    const submitKeepers = (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       if (draft?.is_active || draft?.is_completed) return;
+      console.log(rosterState);
       rosterState.map(async (player) => {
+         console.log('Player: ', player);
          if (player.player_id && player.is_keeper) {
             const { error: draftSelectionsError } = await supabase
                .from('draft_selections')
@@ -175,159 +204,214 @@ const KeeperForm = ({
    };
 
    return (
-      <form className={'flex flex-col mt-2'} onSubmit={submitKeepers}>
-         <table>
-            <thead className="bg-emerald-primary">
-               <tr className={'align-bottom text-left'}>
-                  <th className={'w-[40px] p-2'}>Keep Player?</th>
-                  <th className={'w-[40px] p-2'}>Pos</th>
-                  <th className="p-2">Player</th>
-                  <th className="p-2">Avg. Points</th>
-                  <th className="w-[20px] p-2">Round Drafted</th>
-                  <th className="p-2">Times kept</th>
-                  <th className="p-2">Pick(s) Used</th>
-               </tr>
-            </thead>
-            <tbody>
-               {rosterState
-                  .sort(
-                     (a, b) =>
-                        (a?.draft_position ?? numberOfRounds + 1) -
-                        (b?.draft_position ?? numberOfRounds + 1)
-                  )
-                  .map((player: RosterPlayer, index: number) => {
-                     const playerData: Player | any = players.find(
-                        (playerToMatch) => {
-                           return playerToMatch.id === player.player_id;
-                        }
-                     );
-
-                     const closestPick = findClosestPick(player.picks_needed);
-
-                     const canKeep =
-                        player.picks_needed.length > 1 &&
-                        player.picks_needed.some(
-                           (pick) => !picksAvailable.includes(pick)
+      <>
+         <form className={'flex flex-col mt-2'} onSubmit={submitKeepers}>
+            <table>
+               <thead className="bg-emerald-primary">
+                  <tr className={'align-bottom text-left'}>
+                     <th className={'w-[40px] p-2'}>Keep Player?</th>
+                     <th className={'w-[40px] p-2'}>Pos</th>
+                     <th className="p-2">Player</th>
+                     <th className="p-2">Avg. Points</th>
+                     <th className="w-[20px] p-2">Round Drafted</th>
+                     <th className="p-2">Times kept</th>
+                     <th className="p-2">Pick(s) Used</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {rosterState
+                     .sort(
+                        (a, b) =>
+                           (a?.draft_position ?? numberOfRounds + 1) -
+                           (b?.draft_position ?? numberOfRounds + 1)
+                     )
+                     .map((player: RosterPlayer, index: number) => {
+                        const playerData: Player | any = players.find(
+                           (playerToMatch) => {
+                              return playerToMatch.id === player.player_id;
+                           }
                         );
 
-                     if (!playerData) return <></>;
-                     return (
-                        <tr key={player.player_id}>
-                           <td className="p-2">
-                              <input
-                                 className={'w-[40px] h-[20px] align-middle'}
-                                 type="checkbox"
-                                 id={`keep-player-${player.player_id}-checkbox`}
-                                 defaultChecked={player.is_keeper ?? false}
-                                 disabled={
-                                    (closestPick.length === 0 ||
-                                       closestPick[closestPick.length - 1] ===
-                                          0 ||
-                                       canKeep) &&
-                                    !player.is_keeper
-                                 }
-                                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                    handleSetKeeper(e, player)
-                                 }
-                              />
-                           </td>
-                           <td className={'w-[40px] p-2'}>
-                              <label
-                                 htmlFor={`keep-player-${player.player_id}-checkbox`}
-                              >
-                                 {playerData?.primary_position}
-                              </label>
-                           </td>
-                           <td className="p-2">
-                              <label
-                                 htmlFor={`keep-player-${player.player_id}-checkbox`}
-                              >
-                                 {playerData?.first_name}{' '}
-                                 {playerData?.last_name}
-                              </label>
-                           </td>
-                           <td className="p-2">
-                              {playerData?.stats?.[cleanSeasons(seasons[2])]
-                                 ?.averageScore ?? 'NA'}
-                           </td>
-                           <td className="p-2">
-                              {player.draft_position ?? 'FA'}
-                           </td>
-                           <td className="p-2">{player.times_kept}</td>
-                           <td className="p-2">
-                              <select
-                                 className="text-black"
-                                 value={
-                                    player.is_keeper && player.picks_used?.[0]
-                                       ? player.picks_used[0]
-                                       : closestPick[0]
-                                 }
-                                 disabled={true}
-                              >
-                                 {picks
-                                    .filter((pick) => {
-                                       if (!player.draft_position) return pick;
-                                       return player.draft_position === 1
-                                          ? player.draft_position === pick
-                                          : player.draft_position - 1 >= pick;
-                                    })
-                                    .map((pick) => {
-                                       return (
-                                          <option
-                                             key={`${player.player_id}${pick}`}
-                                          >
-                                             {player?.picks_used?.length > 1
-                                                ? player.picks_used.map(
-                                                     (pickUsed, index) => {
-                                                        if (
-                                                           index ===
-                                                           player.picks_used
-                                                              .length -
-                                                              1
-                                                        ) {
-                                                           return pickUsed;
-                                                        } else if (
-                                                           player.picks_needed
-                                                              .length ===
-                                                              numberOfRounds &&
-                                                           index === 0
-                                                        ) {
-                                                           return `${pickUsed}-`;
-                                                        } else if (
-                                                           index === 0
-                                                        ) {
-                                                           return `${pickUsed}, `;
-                                                        } else if (
-                                                           index === 1 &&
-                                                           player.picks_needed
-                                                              .length !==
-                                                              numberOfRounds
-                                                        ) {
-                                                           return `${pickUsed}-`;
+                        const closestPick = findClosestPick(
+                           player.picks_needed
+                        );
+
+                        const canKeep =
+                           player.picks_needed.length > 1 &&
+                           player.picks_needed.some(
+                              (pick) => !picksAvailable.includes(pick)
+                           );
+
+                        if (!playerData) return <></>;
+                        return (
+                           <tr key={player.player_id}>
+                              <td className="p-2">
+                                 <input
+                                    className={'w-[40px] h-[20px] align-middle'}
+                                    type="checkbox"
+                                    id={`keep-player-${player.player_id}-checkbox`}
+                                    defaultChecked={player.is_keeper ?? false}
+                                    disabled={
+                                       (closestPick.length === 0 ||
+                                          closestPick[
+                                             closestPick.length - 1
+                                          ] === 0 ||
+                                          canKeep ||
+                                          !picksAvailable.includes(
+                                             closestPick[0]
+                                          )) &&
+                                       !player.is_keeper
+                                    }
+                                    onChange={(
+                                       e: ChangeEvent<HTMLInputElement>
+                                    ) => handleSetKeeper(e, player)}
+                                 />
+                              </td>
+                              <td className={'w-[40px] p-2'}>
+                                 <label
+                                    htmlFor={`keep-player-${player.player_id}-checkbox`}
+                                 >
+                                    {playerData?.primary_position}
+                                 </label>
+                              </td>
+                              <td className="p-2">
+                                 <button
+                                    className="text-left"
+                                    onClick={() => showPlayerModal(playerData)}
+                                 >
+                                    {playerData?.first_name}{' '}
+                                    {playerData?.last_name}
+                                 </button>
+                              </td>
+                              <td className="p-2">
+                                 {playerData?.stats?.[cleanSeasons(seasons[2])]
+                                    ?.averageScore ?? 'NA'}
+                              </td>
+                              <td className="p-2">
+                                 {player.draft_position ?? 'FA'}
+                              </td>
+                              <td className="p-2">{player.times_kept}</td>
+                              <td className="p-2">
+                                 <select
+                                    className="text-black"
+                                    value={
+                                       player.is_keeper &&
+                                       player.picks_used?.[0]
+                                          ? player.picks_used[0]
+                                          : closestPick[0]
+                                    }
+                                    disabled={true}
+                                 >
+                                    {picks
+                                       .filter((pick) => {
+                                          if (!player.draft_position)
+                                             return pick;
+                                          return player.draft_position === 1
+                                             ? player.draft_position === pick
+                                             : player.draft_position - 1 >=
+                                                  pick;
+                                       })
+                                       .map((pick) => {
+                                          return (
+                                             <option
+                                                key={`${player.player_id}${pick}`}
+                                             >
+                                                {player?.picks_used?.length > 1
+                                                   ? player.picks_used.map(
+                                                        (pickUsed, index) => {
+                                                           if (
+                                                              index ===
+                                                              player.picks_used
+                                                                 .length -
+                                                                 1
+                                                           ) {
+                                                              return pickUsed;
+                                                           } else if (
+                                                              player
+                                                                 .picks_needed
+                                                                 .length ===
+                                                                 numberOfRounds &&
+                                                              index === 0
+                                                           ) {
+                                                              return `${pickUsed}-`;
+                                                           } else if (
+                                                              index === 0
+                                                           ) {
+                                                              return `${pickUsed}, `;
+                                                           } else if (
+                                                              index === 1 &&
+                                                              player
+                                                                 .picks_needed
+                                                                 .length !==
+                                                                 numberOfRounds
+                                                           ) {
+                                                              return `${pickUsed}-`;
+                                                           }
+                                                           return;
                                                         }
-                                                        return;
-                                                     }
-                                                  )
-                                                : pick}
-                                          </option>
-                                       );
-                                    })}
-                              </select>
-                           </td>
-                        </tr>
-                     );
-                  })}
-            </tbody>
-         </table>
-         <button
-            className={classNames(buttonClasses, 'w-36 mx-auto my-5')}
-            type="submit"
-            disabled={(draft?.is_active || draft?.is_completed) ?? false}
-         >
-            Submit Keepers
-         </button>
-         {submitted && <Confetti height={window.innerHeight} />}
-      </form>
+                                                     )
+                                                   : player?.picks_needed
+                                                        ?.length > 1
+                                                   ? player.picks_needed
+                                                        .sort((a, b) => a - b)
+                                                        .map(
+                                                           (
+                                                              pickUsed,
+                                                              index
+                                                           ) => {
+                                                              if (
+                                                                 index ===
+                                                                 player
+                                                                    .picks_needed
+                                                                    .length -
+                                                                    1
+                                                              ) {
+                                                                 return pickUsed;
+                                                              } else if (
+                                                                 player
+                                                                    .picks_needed
+                                                                    .length ===
+                                                                    numberOfRounds &&
+                                                                 index === 0
+                                                              ) {
+                                                                 return `${pickUsed}-`;
+                                                              } else if (
+                                                                 index === 0
+                                                              ) {
+                                                                 return `${pickUsed}, `;
+                                                              } else if (
+                                                                 index === 1 &&
+                                                                 player
+                                                                    .picks_needed
+                                                                    .length !==
+                                                                    numberOfRounds
+                                                              ) {
+                                                                 return `${pickUsed}-`;
+                                                              }
+                                                              return;
+                                                           }
+                                                        )
+                                                   : pick}
+                                             </option>
+                                          );
+                                       })}
+                                 </select>
+                              </td>
+                           </tr>
+                        );
+                     })}
+               </tbody>
+            </table>
+            <button
+               className={classNames(buttonClasses, 'w-36 mx-auto my-5')}
+               type="submit"
+               disabled={(draft?.is_active || draft?.is_completed) ?? false}
+            >
+               Submit Keepers
+            </button>
+         </form>
+         {modalOpen && playerModal()}
+      </>
    );
 };
 
