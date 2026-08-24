@@ -44,9 +44,9 @@ const KeeperForm = ({
    useEffect(() => {
       const picksUsed: number[] = [];
       for (const player of roster) {
-         const { picks_used, picks_needed } = player;
+         const { picks_used } = player;
          if (picks_used && picks_used.length) {
-            picksUsed.push(picks_used[0]);
+            for (const pick of picks_used) picksUsed.push(pick);
          }
       }
       setPicksAvailable(
@@ -119,6 +119,7 @@ const KeeperForm = ({
          );
       }
    };
+
    const showPlayerModal = (player: Player) => {
       setModalOpen(true);
       setModalPlayer(player);
@@ -144,9 +145,7 @@ const KeeperForm = ({
    const submitKeepers = (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       if (draft?.is_active || draft?.is_completed) return;
-      console.log(rosterState);
       rosterState.map(async (player) => {
-         console.log('Player: ', player);
          if (player.player_id && player.is_keeper) {
             const { error: draftSelectionsError } = await supabase
                .from('draft_selections')
@@ -304,8 +303,9 @@ const KeeperForm = ({
                                  >
                                     {picks
                                        .filter((pick) => {
-                                          if (!player.draft_position)
+                                          if (!player.draft_position) {
                                              return pick;
+                                          }
                                           return player.draft_position === 1
                                              ? player.draft_position === pick
                                              : player.draft_position - 1 >=
