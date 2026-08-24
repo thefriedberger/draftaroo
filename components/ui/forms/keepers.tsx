@@ -65,37 +65,18 @@ const KeeperForm = ({
 
    const findClosestPick = (picks: number[]) => {
       let availablePicks = picksAvailable;
-      let closest: number[];
-      if (picks.length > 1) {
-         closest = picks
-            .sort((a, b) => b - a)
-            .map((pick) => {
-               const closestPick =
-                  availablePicks.sort((a, b) => b - a).find((x) => x <= pick) ??
-                  pick;
-               availablePicks = availablePicks.filter(
-                  (pick) => pick !== closestPick
-               );
-               // console.log(closestPick, pick);
+      let closest: number[] = [];
+      closest = picks
+         .sort((a, b) => b - a)
+         .map((pick) => {
+            const closestPick =
+               availablePicks.sort((a, b) => b - a).find((x) => x <= pick) ?? 0;
+            availablePicks = availablePicks.filter(
+               (pick) => pick !== closestPick
+            );
 
-               return closestPick;
-            });
-         // console.log(closest);
-      } else {
-         closest = picks
-            .sort((a, b) => b - a)
-            .map((pick) => {
-               const closestPick =
-                  availablePicks.sort((a, b) => b - a).find((x) => x <= pick) ??
-                  pick;
-               availablePicks = availablePicks.filter(
-                  (pick) => pick !== closestPick
-               );
-
-               return closestPick;
-            });
-      }
-      // setPicksAvailable(availablePicks);
+            return closestPick;
+         });
       return closest;
    };
    const handleSetKeeper = (
@@ -112,9 +93,6 @@ const KeeperForm = ({
          availablePicks = availablePicks.filter(
             (pick) => !picks.includes(pick)
          );
-         // setPicksAvailable(
-         //    picksAvailable.filter((pick) => !picks.includes(pick))
-         // );
          setRosterState(
             rosterState.map((rosterPlayer) => {
                if (rosterPlayer.draft_position === 1) {
@@ -135,10 +113,8 @@ const KeeperForm = ({
       if (!target.checked) {
          if (isArray(picks_used)) {
             availablePicks = [...availablePicks, ...picks_used];
-            // setPicksAvailable([...picksAvailable, ...picks_used]);
          } else {
             availablePicks = [...availablePicks, picks_used];
-            // setPicksAvailable([...picksAvailable, picks_used]);
          }
          setRosterState(
             rosterState.map((rosterPlayer) => {
@@ -157,13 +133,6 @@ const KeeperForm = ({
       }
       setPicksAvailable(availablePicks);
    };
-
-   useEffect(() => {
-      // console.log(rosterState);
-   }, [rosterState]);
-   useEffect(() => {
-      // console.log(picksAvailable);
-   }, [picksAvailable]);
 
    const showPlayerModal = (player: Player) => {
       setModalOpen(true);
@@ -202,6 +171,7 @@ const KeeperForm = ({
                      pick: userPicks[player.picks_used[0] - 1],
                      round: player.picks_used[0],
                      is_keeper: player.is_keeper,
+                     picks_used: player.picks_used,
                   },
                   {
                      onConflict: 'pick, draft_id',
@@ -276,7 +246,7 @@ const KeeperForm = ({
                            }
                         );
 
-                        const closestPick = player.picks_used.length
+                        const closestPick = player?.picks_used?.length
                            ? player.picks_used
                            : findClosestPick(player.picks_needed);
 
@@ -285,13 +255,11 @@ const KeeperForm = ({
                               ? closestPick.filter(
                                    (pick) => !picksAvailable.includes(pick)
                                 ).length ||
-                                picksAvailable.length < closestPick.length
+                                picksAvailable.length < closestPick.length ||
+                                closestPick.includes(0)
                                  ? true
                                  : false
                               : false;
-
-                        if (player.draft_position === 1)
-                           console.log(closestPick, picksAvailable);
 
                         if (!playerData) return <></>;
                         return (
@@ -328,6 +296,7 @@ const KeeperForm = ({
                               <td className="p-2">
                                  <button
                                     className="text-left"
+                                    type="button"
                                     onClick={() => showPlayerModal(playerData)}
                                  >
                                     {playerData?.first_name}{' '}
@@ -347,6 +316,7 @@ const KeeperForm = ({
                                     <span className="w-fit">
                                        {closestPick
                                           .sort((a, b) => a - b)
+                                          .filter((pick) => pick !== 0)
                                           .map((pick, index) => {
                                              if (closestPick.length > 1) {
                                                 if (

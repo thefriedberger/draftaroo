@@ -135,11 +135,7 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
          }
       }
 
-      return foundPlayer?.round
-         ? foundPlayer.round === 1
-            ? picksUsed
-            : [foundPlayer.round]
-         : [];
+      return foundPlayer ? foundPlayer.picks_used : [];
    };
 
    const keeperFormProps: KeeperFormProps = {
