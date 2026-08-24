@@ -64,30 +64,61 @@ const KeeperForm = ({
    }, [submitted]);
 
    const findClosestPick = (picks: number[]) => {
-      return picks
-         .sort((a, b) => b - a)
-         .map((pick) => {
-            const closestPick =
-               picksAvailable.sort((a, b) => b - a).find((x) => x <= pick) ??
-               pick;
+      let availablePicks = picksAvailable;
+      let closest: number[];
+      if (picks.length > 1) {
+         closest = picks
+            .sort((a, b) => b - a)
+            .map((pick) => {
+               const closestPick =
+                  availablePicks.sort((a, b) => b - a).find((x) => x <= pick) ??
+                  pick;
+               availablePicks = availablePicks.filter(
+                  (pick) => pick !== closestPick
+               );
+               // console.log(closestPick, pick);
 
-            return closestPick;
-         });
+               return closestPick;
+            });
+         // console.log(closest);
+      } else {
+         closest = picks
+            .sort((a, b) => b - a)
+            .map((pick) => {
+               const closestPick =
+                  availablePicks.sort((a, b) => b - a).find((x) => x <= pick) ??
+                  pick;
+               availablePicks = availablePicks.filter(
+                  (pick) => pick !== closestPick
+               );
+
+               return closestPick;
+            });
+      }
+      // setPicksAvailable(availablePicks);
+      return closest;
    };
    const handleSetKeeper = (
       { target }: ChangeEvent<HTMLInputElement>,
       player: RosterPlayer
    ) => {
+      let availablePicks = picksAvailable;
       const { picks_needed, picks_used } = player;
       if (target.checked) {
          const picks: number[] = findClosestPick(picks_needed).sort(
             (a, b) => a - b
          );
-         setPicksAvailable(
-            picksAvailable.filter((pick) => !picks.includes(pick))
+
+         availablePicks = availablePicks.filter(
+            (pick) => !picks.includes(pick)
          );
+         // setPicksAvailable(
+         //    picksAvailable.filter((pick) => !picks.includes(pick))
+         // );
          setRosterState(
             rosterState.map((rosterPlayer) => {
+               if (rosterPlayer.draft_position === 1) {
+               }
                if (rosterPlayer.player_id === player.player_id) {
                   return {
                      ...rosterPlayer,
@@ -95,15 +126,19 @@ const KeeperForm = ({
                      is_keeper: !rosterPlayer.is_keeper,
                   };
                }
-               return { ...rosterPlayer };
+               return {
+                  ...rosterPlayer,
+               };
             })
          );
       }
       if (!target.checked) {
          if (isArray(picks_used)) {
-            setPicksAvailable([...picksAvailable, ...picks_used]);
+            availablePicks = [...availablePicks, ...picks_used];
+            // setPicksAvailable([...picksAvailable, ...picks_used]);
          } else {
-            setPicksAvailable([...picksAvailable, picks_used]);
+            availablePicks = [...availablePicks, picks_used];
+            // setPicksAvailable([...picksAvailable, picks_used]);
          }
          setRosterState(
             rosterState.map((rosterPlayer) => {
@@ -114,11 +149,21 @@ const KeeperForm = ({
                      is_keeper: !rosterPlayer.is_keeper,
                   };
                }
-               return { ...rosterPlayer };
+               return {
+                  ...rosterPlayer,
+               };
             })
          );
       }
+      setPicksAvailable(availablePicks);
    };
+
+   useEffect(() => {
+      // console.log(rosterState);
+   }, [rosterState]);
+   useEffect(() => {
+      // console.log(picksAvailable);
+   }, [picksAvailable]);
 
    const showPlayerModal = (player: Player) => {
       setModalOpen(true);
@@ -236,10 +281,13 @@ const KeeperForm = ({
                         );
 
                         const canKeep =
-                           player.picks_needed.length > 1 &&
-                           player.picks_needed.some(
-                              (pick) => !picksAvailable.includes(pick)
-                           );
+                           closestPick.length > 1
+                              ? closestPick.filter(
+                                   (pick) => !picksAvailable.includes(pick)
+                                ).length
+                                 ? true
+                                 : false
+                              : false;
 
                         if (!playerData) return <></>;
                         return (
@@ -350,9 +398,8 @@ const KeeperForm = ({
                                                            return;
                                                         }
                                                      )
-                                                   : player?.picks_needed
-                                                        ?.length > 1
-                                                   ? player.picks_needed
+                                                   : closestPick?.length > 1
+                                                   ? closestPick
                                                         .sort((a, b) => a - b)
                                                         .map(
                                                            (
@@ -361,16 +408,12 @@ const KeeperForm = ({
                                                            ) => {
                                                               if (
                                                                  index ===
-                                                                 player
-                                                                    .picks_needed
-                                                                    .length -
+                                                                 closestPick.length -
                                                                     1
                                                               ) {
                                                                  return pickUsed;
                                                               } else if (
-                                                                 player
-                                                                    .picks_needed
-                                                                    .length ===
+                                                                 closestPick.length ===
                                                                     numberOfRounds &&
                                                                  index === 0
                                                               ) {
@@ -381,9 +424,7 @@ const KeeperForm = ({
                                                                  return `${pickUsed}, `;
                                                               } else if (
                                                                  index === 1 &&
-                                                                 player
-                                                                    .picks_needed
-                                                                    .length !==
+                                                                 closestPick.length !==
                                                                     numberOfRounds
                                                               ) {
                                                                  return `${pickUsed}-`;
