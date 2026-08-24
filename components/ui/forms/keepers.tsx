@@ -319,14 +319,22 @@ const KeeperForm = ({
                                  </label>
                               </td>
                               <td className="p-2">
-                                 <button
-                                    className="text-left hover:text-gray-300 transition-all duration-100"
-                                    type="button"
-                                    onClick={() => showPlayerModal(playerData)}
-                                 >
-                                    {playerData?.first_name}{' '}
-                                    {playerData?.last_name}
-                                 </button>
+                                 <span className="flex h-full items-center justify-start">
+                                    <span className="mr-2">
+                                       {playerData?.first_name}{' '}
+                                       {playerData?.last_name}
+                                    </span>
+                                    <button
+                                       className="inline-flex items-center leading-3 ml-auto bg-gray-light text-black p-1 h-fit text-left hover:text-gray-300 transition-all duration-100"
+                                       type="button"
+                                       onClick={() =>
+                                          showPlayerModal(playerData)
+                                       }
+                                       title="Show detailed stats"
+                                    >
+                                       =
+                                    </button>
+                                 </span>
                               </td>
                               <td className="p-2">
                                  {playerData?.stats?.[cleanSeasons(seasons[2])]
