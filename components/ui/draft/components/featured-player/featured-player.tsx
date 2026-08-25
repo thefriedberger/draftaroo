@@ -4,11 +4,9 @@ import FallbackImage from '@/app/assets/images/default-skater.png';
 import { convertTime } from '@/app/utils/helpers';
 import classNames from 'classnames';
 import Image from 'next/image';
-import { Fragment, useState } from 'react';
-import { useMediaQuery } from 'react-responsive';
+import { Fragment } from 'react';
 import { teamAbbreviations } from '../player';
 import { cleanSeasons, seasons } from '../player-list';
-import { WatchlistStarProps } from '../watchlist/watchlist-star';
 
 const Featured = ({
    featuredPlayer,
@@ -17,23 +15,13 @@ const Featured = ({
    featuredPlayer: Player;
    handleClose: () => void;
 }) => {
-   const watchlistStarProps: WatchlistStarProps = {
-      player: featuredPlayer as Player,
-      isButton: false,
-      className:
-         'flex flex-row bg-paper-dark dark:bg-gray-primary text-black dark:text-white fill-emerald-700 p-2 rounded-md whitespace-nowrap',
-   };
-   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-
-   const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
-
    const scoreProjector = (player: Player) => {
       const stats = player.stats?.[cleanSeasons(seasons[3])];
 
       return (
          <div className="dark:text-white">
             <h3 className="text-lg font-bold">Projected Stats</h3>
-            <table className="text-sm overflow-x-scroll lg:overflow-auto max-w-[100vw] lg:max-w-auto block pr-3 lg:pr-0">
+            <table className="text-sm overflow-x-scroll overflow-auto max-w-[100vw] max-w-auto block pr-0">
                <thead>
                   <tr className="text-left">
                      <th className="pl-0">Score</th>
@@ -212,12 +200,12 @@ const Featured = ({
    return (
       <div
          className={classNames(
-            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:max-w-full z-10 fixed lg:relative bottom-[66px] lg:w lg:flex lg:flex-col lg:bottom-auto w-full p-2 lg:py-0 h-fit'
+            'relative bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:max-w-full z-10 bottom-[66px] lg:w lg:flex lg:flex-col lg:bottom-auto w-full p-2 lg:py-0 h-fit'
          )}
       >
          {featuredPlayer && (
             <>
-               <div className="w-full lg:w-fit">
+               <div className="w-fit">
                   <div className={'flex flex-row'}>
                      <PlayerHeadshot {...featuredPlayer} />
                      <div className="flex flex-col w-full">
@@ -247,7 +235,7 @@ const Featured = ({
                            </span>
                         </div>
                         {Object.keys(featuredPlayer.stats ?? {}).length > 1 ? (
-                           <div className="hidden lg:block">
+                           <div className="block">
                               {scoreProjector(featuredPlayer)}
                            </div>
                         ) : (
@@ -258,13 +246,11 @@ const Featured = ({
                      </div>
                   </div>
                   {Object.keys(featuredPlayer.stats ?? {}).length > 1 && (
-                     <div className="hidden lg:block">
-                        {playerStats(featuredPlayer)}
-                     </div>
+                     <div className="block">{playerStats(featuredPlayer)}</div>
                   )}
                </div>
                <button
-                  className="block absolute top-auto bottom-1 lg:bottom-auto lg:top-1 right-1"
+                  className="absolute top-1 right-1"
                   type="button"
                   onClick={handleClose}
                >
@@ -274,7 +260,7 @@ const Featured = ({
                      viewBox="0 0 24 24"
                      fill="none"
                      xmlns="http://www.w3.org/2000/svg"
-                     className="stroke-white lg:w-[40px] lg:h-[40px]"
+                     className="stroke-white w-[40px] h-[40px]"
                   >
                      <path
                         d="M9 9L15 15M15 9L9 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"

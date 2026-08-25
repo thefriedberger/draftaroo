@@ -169,7 +169,7 @@ const KeeperForm = ({
             autoFocus={true}
             tabIndex={0}
             className={
-               'z-100 bg-gray-primary text-white left-1/2 translate-x-[-50%] fixed top-[10%] max-w-2xl w-full min-w-96 h-fit p-5'
+               'z-100 bg-gray-primary text-white left-1/2 translate-x-[-50%] fixed top-[15%] lg:top-[10%] max-w-2xl w-[95%] lg:w-full min-w-96 h-fit p-5'
             }
          >
             <div className="relative">
@@ -244,17 +244,39 @@ const KeeperForm = ({
 
    return (
       <>
-         <form className={'flex flex-col mt-2'} onSubmit={submitKeepers}>
+         <form
+            className={'flex flex-col mt-2 overflow-scroll lg:overflow-auto'}
+            onSubmit={submitKeepers}
+         >
             <table>
                <thead className="bg-emerald-primary">
                   <tr className={'align-bottom text-left'}>
-                     <th className={'w-[40px] p-2'}>Keep Player?</th>
-                     <th className={'w-[40px] p-2'}>Pos</th>
-                     <th className="p-2">Player</th>
-                     <th className="p-2">Avg. Points</th>
-                     <th className="w-[20px] p-2">Round Drafted</th>
-                     <th className="p-2">Times kept</th>
-                     <th className="p-2">Pick(s) Used</th>
+                     <th
+                        className={
+                           'w-[40px] text-sm lg:text-normal p-0.5 lg:p-2'
+                        }
+                     >
+                        Keep?
+                     </th>
+                     <th
+                        className={
+                           'w-[40px] text-sm lg:text-normal p-0.5 lg:p-2'
+                        }
+                     >
+                        Pos
+                     </th>
+                     <th className="text-sm lg:text-normal p-0.5 lg:p-2">
+                        Player
+                     </th>
+                     <th className="text-sm lg:text-normal p-0.5 lg:p-2">
+                        Avg. Points
+                     </th>
+                     <th className="w-2 lg:w-[20px] text-sm lg:text-normal p-0.5 lg:p-2">
+                        Drafted
+                     </th>
+                     <th className="text-sm lg:text-normal p-0.5 lg:p-2">
+                        Pick(s) Used
+                     </th>
                   </tr>
                </thead>
                <tbody>
@@ -289,7 +311,7 @@ const KeeperForm = ({
                         if (!playerData) return <></>;
                         return (
                            <tr key={player.player_id}>
-                              <td className="p-2">
+                              <td className="text-sm lg:text-normal p-0.5 lg:p-2">
                                  <input
                                     className={'w-[40px] h-[20px] align-middle'}
                                     type="checkbox"
@@ -311,21 +333,28 @@ const KeeperForm = ({
                                     ) => handleSetKeeper(e, player)}
                                  />
                               </td>
-                              <td className={'w-[40px] p-2'}>
+                              <td
+                                 className={
+                                    'w-[40px] text-sm lg:text-normal p-0.5 lg:p-2'
+                                 }
+                              >
                                  <label
                                     htmlFor={`keep-player-${player.player_id}-checkbox`}
                                  >
                                     {playerData?.primary_position}
                                  </label>
                               </td>
-                              <td className="p-2">
+                              <td className="text-sm lg:text-normal p-0.5 lg:p-2">
                                  <span className="flex h-full items-center justify-start">
-                                    <span className="mr-2">
+                                    <label
+                                       className="mr-2"
+                                       htmlFor={`keep-player-${player.player_id}-checkbox`}
+                                    >
                                        {playerData?.first_name}{' '}
                                        {playerData?.last_name}
-                                    </span>
+                                    </label>
                                     <button
-                                       className="inline-flex items-center leading-3 ml-auto bg-gray-light text-black p-1 h-fit text-left hover:text-gray-300 transition-all duration-100"
+                                       className="hidden lg:inline-flex items-center leading-3 ml-auto bg-gray-light text-black p-1 h-fit text-left hover:text-gray-300 transition-all duration-100"
                                        type="button"
                                        onClick={() =>
                                           showPlayerModal(playerData)
@@ -336,15 +365,14 @@ const KeeperForm = ({
                                     </button>
                                  </span>
                               </td>
-                              <td className="p-2">
+                              <td className="text-sm lg:text-normal p-0.5 lg:p-2">
                                  {playerData?.stats?.[cleanSeasons(seasons[2])]
                                     ?.averageScore ?? 'NA'}
                               </td>
-                              <td className="p-2">
+                              <td className="text-sm lg:text-normal p-0.5 lg:p-2">
                                  {player.draft_position ?? 'FA'}
                               </td>
-                              <td className="p-2">{player.times_kept}</td>
-                              <td className="p-2">
+                              <td className="text-sm lg:text-normal p-0.5 lg:p-2">
                                  <div className="min-w-8 flex justify-center text-left max-w-28 w-fit bg-gray-light p-1">
                                     <span className="w-fit">
                                        {closestPick
