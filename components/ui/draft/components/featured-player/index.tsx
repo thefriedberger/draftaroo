@@ -35,25 +35,25 @@ const FeaturedPlayer = ({
 
       return (
          <div className="dark:text-white">
-            <h3 className="text-lg font-bold">Projected Stats</h3>
+            <h4 className="text-md font-bold">Projected Stats</h4>
             <table className="text-sm overflow-x-scroll lg:overflow-auto max-w-[100vw] lg:max-w-auto block pr-3 lg:pr-0">
                <thead>
                   <tr className="text-left">
-                     <th className="pl-0">Score</th>
-                     <th>Avg</th>
-                     <th>GP</th>
+                     <th className="pl-0 leading-none">Score</th>
+                     <th className="leading-none">Avg</th>
+                     <th className="leading-none">GP</th>
                      {featuredPlayer?.primary_position !== 'G' ? (
                         <>
-                           <th>G</th>
-                           <th>A</th>
-                           <th>PIM</th>
-                           <th>PPG</th>
-                           <th>PPA</th>
-                           <th>SHG</th>
-                           <th>SHA</th>
-                           <th>SOG</th>
-                           <th>HIT</th>
-                           <th>BLK</th>
+                           <th className="leading-none">G</th>
+                           <th className="leading-none">A</th>
+                           <th className="leading-none">PIM</th>
+                           <th className="leading-none">PPG</th>
+                           <th className="leading-none">PPA</th>
+                           <th className="leading-none">SHG</th>
+                           <th className="leading-none">SHA</th>
+                           <th className="leading-none">SOG</th>
+                           <th className="leading-none">HIT</th>
+                           <th className="leading-none">BLK</th>
                         </>
                      ) : (
                         <>
@@ -71,21 +71,45 @@ const FeaturedPlayer = ({
                   <Fragment>
                      {stats && (
                         <tr>
-                           <td className="pl-0">{stats?.['score']}</td>
-                           <td>{stats?.['averageScore']}</td>
-                           <td>{stats?.['games']}</td>
+                           <td className="pl-0 leading-none">
+                              {stats?.['score']}
+                           </td>
+                           <td className="leading-none">
+                              {stats?.['averageScore']}
+                           </td>
+                           <td className="leading-none">{stats?.['games']}</td>
                            {player.primary_position !== 'G' ? (
                               <>
-                                 <td>{stats?.['goals']}</td>
-                                 <td>{stats?.['assists']}</td>
-                                 <td>{stats?.['pim']}</td>
-                                 <td>{stats?.['powerPlayGoals']}</td>
-                                 <td>{stats?.['powerPlayAssists']}</td>
-                                 <td>{stats?.['shortHandedGoals']}</td>
-                                 <td>{stats?.['shortHandedAssists']}</td>
-                                 <td>{stats?.['shots']}</td>
-                                 <td>{stats?.['hits']}</td>
-                                 <td>{stats?.['blocked']}</td>
+                                 <td className="leading-none">
+                                    {stats?.['goals']}
+                                 </td>
+                                 <td className="leading-none">
+                                    {stats?.['assists']}
+                                 </td>
+                                 <td className="leading-none">
+                                    {stats?.['pim']}
+                                 </td>
+                                 <td className="leading-none">
+                                    {stats?.['powerPlayGoals']}
+                                 </td>
+                                 <td className="leading-none">
+                                    {stats?.['powerPlayAssists']}
+                                 </td>
+                                 <td className="leading-none">
+                                    {stats?.['shortHandedGoals']}
+                                 </td>
+                                 <td className="leading-none">
+                                    {stats?.['shortHandedAssists']}
+                                 </td>
+                                 <td className="leading-none">
+                                    {stats?.['shots']}
+                                 </td>
+                                 <td className="leading-none">
+                                    {stats?.['hits']}
+                                 </td>
+                                 <td className="leading-none">
+                                    {stats?.['blocked']}
+                                 </td>
                               </>
                            ) : (
                               <>
