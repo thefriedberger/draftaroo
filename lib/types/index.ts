@@ -171,6 +171,7 @@ export interface TimerProps {
    yourTurn: boolean;
    turnOrder: DraftPicksFields[];
    userTeam: Team;
+   userPicks: Pick[];
    isCompleted: boolean;
    draftId: string;
    timerDuration: number;

@@ -150,7 +150,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                   <div className="flex flex-col">
                      <select
                         defaultValue={cleanSeasons(seasons[2])}
-                        className="text-black p-2 rounded-none lg:p-1 lg:mr-2"
+                        className="text-black p-2 rounded-none lg:p-1 lg:mr-2 lg:h-full"
                         onChange={(e: ChangeEvent) => {
                            const target = e.target as HTMLSelectElement;
                            setSeason(target?.value);
@@ -204,7 +204,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                >
                   <thead className="w-full sticky top-0">
                      <tr className="bg-gray-700 text-white dark:bg-gold min-w-full text-left">
-                        <th></th>
+                        <th className="w-2 inline">&nbsp;</th>
                         <th className={thClasses} onClick={(e) => setSort('')}>
                            Name
                         </th>

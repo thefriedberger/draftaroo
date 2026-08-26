@@ -206,7 +206,7 @@ const KeeperSelector = ({
                               key={rosterPlayer.player_id}
                               className="flex min-w-60 items-center justify-between dark:text-white border dark:border-white rounded-md p-1"
                            >
-                              {foundPlayer?.first_name} {foundPlayer?.last_name}
+                              {foundPlayer?.first_name} {foundPlayer?.last_name} - {foundPlayer?.current_team} {foundPlayer?.primary_position}
                               <button
                                  type="button"
                                  className="ml-2 mr-2 rounded-full flex items-center justify-center bg-emerald-primary w-4 h-4 appearance-none"
@@ -252,7 +252,7 @@ const KeeperSelector = ({
                            <option
                               key={player.id}
                               value={player.id}
-                           >{`${player.first_name} ${player.last_name}`}</option>
+                           >{`${player.first_name} ${player.last_name} - ${player.current_team} ${player.primary_position}`}</option>
                         );
                      })}
                   </datalist>

@@ -110,6 +110,7 @@ export type Database = {
                player_id: number;
                round: number;
                team_id: string;
+               picks_used: number[];
             };
             Insert: {
                created_at?: string | null;
@@ -120,6 +121,7 @@ export type Database = {
                player_id: number;
                round: number;
                team_id: string;
+               picks_used: number[];
             };
             Update: {
                created_at?: string | null;
@@ -130,6 +132,7 @@ export type Database = {
                player_id?: number;
                round?: number;
                team_id?: string;
+               picks_used: number[];
             };
             Relationships: [
                {
