@@ -610,6 +610,7 @@ const Board = ({
       if (teams.length > 0 && turnOrder.current.length) {
          populatePicks();
       }
+      // @es-lint-ignore react-hooks/exhaustive-deps
    }, [teams, numberOfRounds, turnOrder]);
 
    useEffect(() => {
@@ -628,6 +629,7 @@ const Board = ({
       isCompleted: isCompleted,
       draftId: draft.id,
       timerDuration,
+      userPicks: picks,
       pickIsKeeper: pickIsKeeper,
    };
 

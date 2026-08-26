@@ -16,6 +16,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
 import { createRef, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
+import { Pick } from '../draft-order';
 
 export type DraftTimerFields = { is_active: boolean; end_time?: number };
 export type DraftPicksFields = {
@@ -35,6 +36,7 @@ const Timer = ({
    isCompleted,
    turnOrder,
    userTeam,
+   userPicks,
    autopick,
    owner,
    isActive,
@@ -54,6 +56,8 @@ const Timer = ({
    const [timer, setTimer] = useState<string>(formatTime(timerDuration));
    const [userPick, setUserPick] = useState<number>();
    const [doMute, setDoMute] = useState<boolean>(false);
+   const filteredPicks = useRef<Pick[]>();
+   const [picksRemaining, setPicksRemaining] = useState<string>('');
    const autoDraftTeams = useRef<DraftPicksFields[]>([]);
    const chime = createRef<HTMLAudioElement>();
    const serverTime = useRef<number>(Date.now());
@@ -82,6 +86,23 @@ const Timer = ({
          getAutoDraftStatus();
       }
    }, [userTeam, draftId]);
+
+   useEffect(() => {
+      const setUserPicks = () => {
+         const total = userPicks.filter((pick) => pick.yourPick).length;
+         let remaining = userPicks.filter(
+            (pick) => pick.yourPick && !pick.playerID
+         ).length;
+
+         for (const pick of userPicks) {
+            if (!pick.yourPick) continue;
+         }
+
+         setPicksRemaining(`${remaining}/${total}`);
+      };
+
+      setUserPicks();
+   }, [userPicks]);
 
    useEffect(() => {
       const updateServerTime = async () => {
@@ -347,7 +368,10 @@ const Timer = ({
                         {<AutoDraftIcon active={shouldAutoDraft} />}
                      </button>
                      <p className="ml-2">{currentRound}&nbsp;Round</p>
-                     <p className="ml-2">{currentPick}&nbsp;Pick</p>
+                     <span className={'flex justify-between'}>
+                        <p className="ml-2">{currentPick}&nbsp;Pick</p>
+                        <p className="text-xs mt-auto">{picksRemaining}</p>
+                     </span>
                      <div
                         className={classNames(
                            yourTurn
