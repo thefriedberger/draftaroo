@@ -103,6 +103,9 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
          case 2: {
             return [1].concat(picks.slice(picks.length - 14));
          }
+         case 3: {
+            return [1].concat(picks.slice(picks.length - 21));
+         }
          default: {
             return picks;
          }
@@ -153,9 +156,9 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
             ...player,
             draft_position: foundPlayer?.round ?? null,
             times_kept:
-               foundPlayer?.is_keeper && foundPlayer?.round === 1
+               foundPlayer?.round === 1
                   ? player.times_kept === 0
-                     ? 1
+                     ? 0
                      : (player.times_kept ?? 1) + 1
                   : 0,
          };
