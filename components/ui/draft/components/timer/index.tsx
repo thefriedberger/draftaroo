@@ -336,7 +336,7 @@ const Timer = ({
                         onClick={() => setShouldAutoDraft(!shouldAutoDraft)}
                         className={classNames(
                            buttonClasses,
-                           'w-full py-1 px-2 rounded-md flex justify-center items-center  stroke-black dark:!stroke-white dark:lg:stroke-black'
+                           'w-full !py-1 !px-1 rounded-md flex justify-center items-center stroke-black dark:!stroke-white dark:lg:stroke-black'
                         )}
                      >
                         <span className="sr-only">
@@ -390,7 +390,7 @@ const Timer = ({
                            onClick={() => setShouldAutoDraft(!shouldAutoDraft)}
                            className={classNames(
                               buttonClasses,
-                              'w-fit py-1 px-2 rounded-md flex items-center  stroke-black dark:!stroke-white dark:lg:stroke-black'
+                              'w-fit py-1 px-2 rounded-md flex items-center stroke-black dark:!stroke-white dark:lg:stroke-black'
                            )}
                         >
                            <span className="sr-only">
