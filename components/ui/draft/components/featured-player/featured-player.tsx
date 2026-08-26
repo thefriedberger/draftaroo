@@ -21,7 +21,7 @@ const Featured = ({
       return (
          <div className="dark:text-white">
             <h3 className="text-lg font-bold">Projected Stats</h3>
-            <table className="text-sm overflow-x-scroll overflow-auto max-w-[100vw] max-w-auto block pr-0">
+            <table className="text-sm max-w-[100vw] max-w-auto block pr-0">
                <thead>
                   <tr className="text-left">
                      <th className="pl-0">Score</th>
