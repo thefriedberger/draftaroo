@@ -414,7 +414,7 @@ const Timer = ({
                            onClick={() => setShouldAutoDraft(!shouldAutoDraft)}
                            className={classNames(
                               buttonClasses,
-                              'w-fit py-1 px-2 rounded-md flex items-center stroke-black dark:!stroke-white dark:lg:stroke-black'
+                              'w-fit !py-1 !px-2 rounded-md flex items-center stroke-black dark:!stroke-white dark:lg:!stroke-black outline outline-1 outline-gray-light'
                            )}
                         >
                            <span className="sr-only">

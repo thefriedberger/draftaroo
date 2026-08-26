@@ -107,7 +107,15 @@ const Team = ({
 
    return (
       <table className="w-full">
-         <thead className="bg-gold text-left sticky top-0 lg:top-[35px] text-white">
+         <thead className="bg-gold text-left sticky top-0 text-white">
+            <tr>
+               <th
+                  colSpan={2}
+                  className="hidden lg:table-cell text-black bg-paper-dark dark:bg-blue-muted px-2 py-[.35rem]"
+               >
+                  My Team
+               </th>
+            </tr>
             <tr>
                <th>Pos</th>
                <th>Player</th>
