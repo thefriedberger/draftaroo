@@ -122,6 +122,20 @@ export const fetchAutoDraftStatusByTeam = async (
    return (data?.[0]?.auto_draft as boolean) || false;
 };
 
+export const setAutoDraftStatusByTeam = async (
+   supabase: SupabaseClient<Database>,
+   team_id: string,
+   draft_id: string,
+   should_auto_draft: boolean
+): Promise<boolean> => {
+   const { data, error } = await supabase
+      .from('draft_picks')
+      .update({ auto_draft: should_auto_draft })
+      .match({ team_id: team_id, draft_id: draft_id });
+
+   return error ? false : true;
+};
+
 export const fetchDraftedPlayers = async (
    supabase: SupabaseClient,
    draft: Draft

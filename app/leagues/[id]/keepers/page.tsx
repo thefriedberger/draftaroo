@@ -52,9 +52,16 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
       (draft) => draft.is_completed && Number(draft.draft_year) === draftYear
    )?.[0] as Draft;
 
+   const previousDraftSelections: Awaited<DraftSelection[]> =
+      await fetchDraftSelections(supabase, previousDraft?.id);
+
+   if (!previousDraftSelections) {
+      return <h1 className="dark:text-white">{'No keepers'}</h1>;
+   }
+
    if (!draft) {
       return (
-         <p className="dark:text-white">You need to create a draft silly</p>
+         <h1 className="dark:text-white">You need to create a draft silly</h1>
       );
    }
 
@@ -70,10 +77,6 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
       supabase,
       draft.id
    );
-
-   const previousDraftSelections: Awaited<DraftSelection[]> =
-      await fetchDraftSelections(supabase, previousDraft?.id);
-
    const draftSelections: Awaited<DraftSelection[]> =
       await fetchDraftSelections(supabase, draft?.id);
 

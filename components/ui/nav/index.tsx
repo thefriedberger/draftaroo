@@ -1,5 +1,6 @@
 'use client';
 
+import { supabaseStorage } from '@/app/utils/constants';
 import { PageContext } from '@/components/context/page-context';
 import { NavProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -42,7 +43,7 @@ export default function Nav({ user, userTeams, leagues, drafts }: NavProps) {
          ></div>
          {partyOn && (
             <audio className="hidden" controls={false} autoPlay={partyOn}>
-               <source src="https://mfiegmjwkqpipahwvcbz.supabase.co/storage/v1/object/sign/audio/sandstorm.mp3?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhdWRpby9zYW5kc3Rvcm0ubXAzIiwiaWF0IjoxNzI3NDQ4MjY0LCJleHAiOjE4ODUxMjgyNjR9.QGQaxzRMDz_rs4BBTvIIqr035zFlovuxVbrGCoqpPsw&t=2024-09-27T14%3A44%3A24.051Z" />
+               <source src={supabaseStorage['PartyTime']} />
             </audio>
          )}
          <nav className="h-[57px] relative z-50">
