@@ -1,0 +1,7 @@
+/* .table th,
+.table td {
+   @apply min-w-fit w-full;
+} */
+.table td span {
+   @apply w-full flex items-center min-w-fit;
+}

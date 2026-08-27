@@ -95,7 +95,7 @@ const PlayerComponent = ({
                handleUpdateFeaturedPlayer(player, e);
             }}
          >
-            <td className="w-fit flex max-w-fit lg:w-[20px] align-middle">
+            <td className="lg:w-[20px] align-middle">
                <WatchlistStar player={player} />
             </td>
             <td className="py-2 px-1">
