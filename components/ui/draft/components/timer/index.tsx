@@ -3,11 +3,13 @@
 import { AutoDraftIcon } from '@/app/assets/images/icons/auto-draft';
 import { MicIcon } from '@/app/assets/images/icons/mic-icon';
 import { MutedIcon } from '@/app/assets/images/icons/muted-icon';
+import { supabaseStorage } from '@/app/utils/constants';
 import getTime from '@/app/utils/get-time';
 import {
    fetchAutoDraftStatusByDraft,
    fetchAutoDraftStatusByTeam,
    getTimerData,
+   setAutoDraftStatusByTeam,
 } from '@/app/utils/helpers';
 import { buttonClasses } from '@/components/ui/helpers/buttons';
 import { useWorkerTimeout } from '@/components/worker/worker-timeout';
@@ -67,7 +69,7 @@ const Timer = ({
       `public:draft_picks:draft_id=eq.${draftId}`
    );
 
-   const [shouldAutoDraft, setShouldAutoDraft] = useState(false);
+   const [shouldAutoDraft, setShouldAutoDraft] = useState<boolean>();
 
    // use effects
    useEffect(() => {
@@ -206,6 +208,16 @@ const Timer = ({
 
    // end of use effects
 
+   const handleAutoDraft = async () => {
+      setAutoDraftStatusByTeam(
+         supabase,
+         userTeam.id,
+         draftId,
+         !shouldAutoDraft
+      );
+      setShouldAutoDraft(!shouldAutoDraft);
+   };
+
    const subscribeToTimerRoom = (
       draftId: string,
       changeCallback: (payload: any) => void
@@ -323,12 +335,7 @@ const Timer = ({
             <>
                {yourTurn && isActive && !pickIsKeeper && (
                   <audio ref={chime} controls={false} autoPlay={!doMute}>
-                     <source
-                        src={
-                           'https://mfiegmjwkqpipahwvcbz.supabase.co/storage/v1/object/sign/audio/draft-chime.mp3?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhdWRpby9kcmFmdC1jaGltZS5tcDMiLCJpYXQiOjE2OTYwOTE4NTYsImV4cCI6MTcyNzYyNzg1Nn0.ukNpIqoNGNJTTyh7_EMizjFHR3lyVb0mEV207Hh1CaE&t=2023-09-30T16%3A37%3A35.718Z'
-                        }
-                        type="audio/mp3"
-                     />
+                     <source src={supabaseStorage['Chime']} type="audio/mp3" />
                   </audio>
                )}
                <button
@@ -354,7 +361,7 @@ const Timer = ({
                            shouldAutoDraft ? 'Disable' : 'Enable'
                         } autodraft`}
                         type="button"
-                        onClick={() => setShouldAutoDraft(!shouldAutoDraft)}
+                        onClick={handleAutoDraft}
                         className={classNames(
                            buttonClasses,
                            'w-full !py-1 !px-1 rounded-md flex justify-center items-center stroke-black dark:!stroke-white dark:lg:stroke-black'
@@ -411,7 +418,7 @@ const Timer = ({
                               shouldAutoDraft ? 'Disable' : 'Enable'
                            } autodraft`}
                            type="button"
-                           onClick={() => setShouldAutoDraft(!shouldAutoDraft)}
+                           onClick={handleAutoDraft}
                            className={classNames(
                               buttonClasses,
                               'w-fit !py-1 !px-2 rounded-md flex items-center stroke-black dark:!stroke-white dark:lg:!stroke-black outline outline-1 outline-gray-light'
