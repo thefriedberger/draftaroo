@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import { ChangeEvent, Suspense, useEffect, useState } from 'react';
 import PlayerComponent from '../player';
 import PlayerObserver from './observer';
+import styles from './player-list.module.css';
 
 export const positions = ['Skaters', 'G', 'Forwards', 'C', 'L', 'R', 'D'];
 export const positionMap = {
@@ -58,7 +59,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
    const [season, setSeason] = useState<string>(cleanSeasons(seasons[2]));
    const [records, setRecords] = useState<number>(150);
    const [minGP, setMinGP] = useState<number | ''>('');
-   const thClasses = classNames('p-2 lg:p-1 my-2 cursor-pointer');
+   const thClasses = classNames('p-2 lg:p-1 w-10 x-2 my-2 cursor-pointer');
 
    const options: IntersectionObserverInit = {
       root: null,
@@ -199,17 +200,23 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                id={'player-list-container'}
             >
                <table
-                  className="w-full text-sm relative overflow-y-scroll"
+                  className={classNames(
+                     styles['table'],
+                     'w-full table-fixed text-sm relative overflow-y-scroll'
+                  )}
                   id={'player-list-table'}
                >
                   <thead className="w-full sticky top-0">
                      <tr className="bg-gray-700 text-white dark:bg-gold min-w-full text-left">
-                        <th className="w-2 inline">&nbsp;</th>
-                        <th className={thClasses} onClick={(e) => setSort('')}>
+                        <th className="w-8">&nbsp;</th>
+                        <th
+                           className={classNames(thClasses, '!w-52')}
+                           onClick={(e) => setSort('')}
+                        >
                            Name
                         </th>
                         <th
-                           className={thClasses}
+                           className={classNames(thClasses, '!w-[70px]')}
                            onClick={(e) => setSort('score')}
                         >
                            Score
@@ -229,7 +236,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                         {positionFilter !== 'G' ? (
                            <>
                               <th
-                                 className={thClasses}
+                                 className={classNames(thClasses, 'lg:w-14')}
                                  onClick={(e) => setSort('timeOnIcePerGame')}
                               >
                                  ATOI
