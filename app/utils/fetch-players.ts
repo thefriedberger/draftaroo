@@ -115,19 +115,31 @@ const updatePlayers = async () => {
          return `${currentYear - i - 1}${currentYear - i}`;
       })
       .reverse();
-   for (const team of teamTriCodes) {
-      const rosterResponse = await fetch(
-         `https://api-web.nhle.com/v1/roster/${team}/20252026`
-      );
-      const roster = await rosterResponse.json();
-      extractPlayers(roster, team);
 
-      const prospectsResponse = await fetch(
-         `https://api-web.nhle.com/v1/prospects/${team}`
-      );
-      const prospects = await prospectsResponse.json();
-      extractPlayers(prospects, team);
+   for (const team of teamTriCodes) {
+      try {
+         const rosterResponse = await fetch(
+            `https://api-web.nhle.com/v1/roster/${team}/20262027`,
+            { method: 'GET', headers: headers }
+         );
+         const roster = await rosterResponse.json();
+         extractPlayers(roster, team);
+      } catch (error) {
+         console.error('Roster error: ', error);
+      }
+      try {
+         const prospectsResponse = await fetch(
+            `https://api-web.nhle.com/v1/prospects/${team}`,
+            { method: 'GET', headers: headers }
+         );
+         const prospects = await prospectsResponse.json();
+         extractPlayers(prospects, team);
+      } catch (error) {
+         console.error('Prospects error: ', error);
+      }
    }
+   console.info('Roster fetched');
+
    const extractStats = async (realtimePlayers, summaryPlayers, season) => {
       const mappedPlayers: Player[] = summaryPlayers.map((summaryStat) => {
          const realtimeStats = realtimePlayers.find(
@@ -167,6 +179,7 @@ const updatePlayers = async () => {
          });
       }
    };
+
    const extractGoalieStats = (allGoalies, season) => {
       allGoalies.forEach((goalie) => {
          players.forEach((player) => {
@@ -219,7 +232,11 @@ const updatePlayers = async () => {
    const deleteAllRows = async () => {
       const { error } = await supabase.from('players').delete().neq('id', 0); // deletes all rows
    };
+
    // deleteAllRows();
+
+   console.log(players.length);
+
    const insertPlayerRows = async () => {
       const { data, error } = await supabase
          .from('players')

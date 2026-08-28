@@ -5,3 +5,8 @@
 .table td span {
    @apply w-full flex items-center min-w-fit;
 }
+
+.table th:first-of-type,
+.table td:first-of-type {
+   @apply !w-8 !max-w-8;
+}

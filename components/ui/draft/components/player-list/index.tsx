@@ -208,7 +208,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                >
                   <thead className="w-full sticky top-0">
                      <tr className="bg-gray-700 text-white dark:bg-gold min-w-full text-left">
-                        <th className="w-8">&nbsp;</th>
+                        <th className="w-7 max-w-7 min-w-7">&nbsp;</th>
                         <th
                            className={classNames(thClasses, '!w-52')}
                            onClick={(e) => setSort('')}
