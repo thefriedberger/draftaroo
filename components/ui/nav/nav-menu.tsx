@@ -44,18 +44,15 @@ const NavMenu = ({
                         text: 'Manage league',
                      };
                   });
-                  const draftLinks = leagueDrafts.map((draft: Draft) => {
-                     const draftLink = draft.is_completed
-                        ? {
-                             href: `/leagues/${team.league_id}/draft-results/${draft.id}`,
-                             text: 'View draft results',
-                          }
-                        : {
-                             href: `/leagues/${team.league_id}/draft/${draft.id}`,
-                             text: 'View draft',
-                          };
-                     return draftLink;
-                  });
+                  const draftLinks = leagueDrafts
+                     .filter((draft) => !draft.is_completed)
+                     .map((draft: Draft) => {
+                        const draftLink = {
+                           href: `/leagues/${team.league_id}/draft/${draft.id}`,
+                           text: 'View draft',
+                        };
+                        return draftLink;
+                     });
                   const leagueLinks = [
                      {
                         href: `/leagues/${league.league_id}/keepers`,
@@ -64,6 +61,10 @@ const NavMenu = ({
                      {
                         href: `/leagues/${league.league_id}/my-team`,
                         text: 'Change team name',
+                     },
+                     {
+                        href: `/leagues/${league.league_id}/draft-results`,
+                        text: 'Draft Results',
                      },
                   ];
                   if (leagueManagementLink) {
