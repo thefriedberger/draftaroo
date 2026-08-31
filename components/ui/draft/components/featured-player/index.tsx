@@ -328,7 +328,7 @@ const FeaturedPlayer = ({
                               <WatchlistStar {...watchlistStarProps} />
                            </div>
                         </div>
-                        {Object.keys(featuredPlayer.stats ?? {}).length > 1 ? (
+                        {Object.keys(featuredPlayer.stats ?? {}).length >= 1 ? (
                            <div className="hidden lg:block">
                               {scoreProjector(featuredPlayer)}
                            </div>

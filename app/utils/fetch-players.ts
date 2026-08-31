@@ -138,6 +138,7 @@ const updatePlayers = async () => {
          console.error('Prospects error: ', error);
       }
    }
+
    console.info('Roster fetched');
 
    const extractStats = async (realtimePlayers, summaryPlayers, season) => {
