@@ -47,7 +47,9 @@ const KeeperForm = ({
    const [submitted, setSubmitted] = useState<boolean>(false);
    const [modalOpen, setModalOpen] = useState<boolean>(false);
    const [modalPlayer, setModalPlayer] = useState<Player>();
-   const modalRef: MutableRefObject<HTMLDivElement | null> = useRef(null);
+   const playerModalRef: MutableRefObject<HTMLDivElement | null> = useRef(null);
+   const successModalRef: MutableRefObject<HTMLDivElement | null> =
+      useRef(null);
 
    useEffect(() => {
       const picksUsed: number[] = [];
@@ -61,15 +63,6 @@ const KeeperForm = ({
          picksAvailable.filter((pick) => !picksUsed.includes(pick))
       );
    }, [roster]);
-
-   useEffect(() => {
-      if (submitted) {
-         window.scrollTo({ top: 0, behavior: 'smooth' });
-         setTimeout(() => {
-            setSubmitted(false);
-         }, 5000);
-      }
-   }, [submitted]);
 
    const findClosestPick = (picks: number[]) => {
       let availablePicks = picksAvailable;
@@ -148,28 +141,42 @@ const KeeperForm = ({
    };
 
    useEffect(() => {
-      const handleKeyDown = (e: KeyboardEvent) => {
+      const handleKeyDownPlayerModal = (e: KeyboardEvent) => {
          if (e.key === 'Escape') {
             setModalOpen(false);
          }
       };
+      const handleKeyDownSuccessModal = (e: KeyboardEvent) => {
+         if (e.key === 'Escape') {
+            setSubmitted(false);
+         }
+      };
       if (modalOpen) {
-         modalRef.current && modalRef.current.focus();
-         window.addEventListener('keydown', handleKeyDown);
+         playerModalRef.current && playerModalRef.current.focus();
+         window.addEventListener('keydown', handleKeyDownPlayerModal);
+      }
+      if (submitted) {
+         if (modalOpen) {
+            setModalOpen(false);
+         }
+         successModalRef.current && successModalRef.current.focus();
+         window.addEventListener('keydown', handleKeyDownSuccessModal);
       }
       return () => {
-         window.removeEventListener('keydown', handleKeyDown);
+         window.removeEventListener('keydown', handleKeyDownPlayerModal);
+         window.removeEventListener('keydown', handleKeyDownSuccessModal);
       };
-   }, [modalOpen]);
+   }, [modalOpen, submitted]);
+
    const playerModal = () => {
       if (!modalPlayer) return;
       return (
          <div
-            ref={modalRef}
+            ref={playerModalRef}
             autoFocus={true}
             tabIndex={0}
             className={
-               'z-100 bg-gray-primary text-white left-1/2 translate-x-[-50%] fixed top-[15%] lg:top-[10%] max-w-2xl w-[95%] lg:w-full min-w-96 h-fit p-5'
+               'z-100 bg-gray-primary text-white left-1/2 translate-x-[-50%] fixed top-[15%] lg:top-[10%] max-w-2xl w-[95%] lg:w-full min-w-96 h-fit p-5 drop-shadow-lg'
             }
          >
             <div className="relative">
@@ -505,6 +512,29 @@ const KeeperForm = ({
             </button>
          </form>
          {modalOpen && playerModal()}
+         {submitted && (
+            <div
+               ref={successModalRef}
+               autoFocus={true}
+               tabIndex={0}
+               className={
+                  'z-100 bg-gray-primary text-white left-1/2 translate-x-[-50%] fixed top-[45%] max-w-2xl w-[95%] lg:w-full min-w-96 h-fit p-5 drop-shadow-lg'
+               }
+            >
+               <div className="relative p-5">
+                  <h1 className="text-center mx-5">
+                     Keepers successfully submitted
+                  </h1>
+                  <button
+                     className="absolute top-0 right-0"
+                     type="button"
+                     onClick={() => setSubmitted(false)}
+                  >
+                     X
+                  </button>
+               </div>
+            </div>
+         )}
       </>
    );
 };

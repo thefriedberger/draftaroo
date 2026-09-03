@@ -6,7 +6,7 @@ import { DraftContext } from '@/components/context/draft-context';
 import { FeaturedPlayerProps } from '@/lib/types';
 import classNames from 'classnames';
 import Image from 'next/image';
-import { Fragment, useContext, useState } from 'react';
+import { Fragment, useContext, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { teamAbbreviations } from '../player';
 import { cleanSeasons, seasons } from '../player-list';
@@ -27,6 +27,7 @@ const FeaturedPlayer = ({
          'flex flex-row bg-paper-dark dark:bg-gray-primary text-black dark:text-white fill-emerald-700 p-2 rounded-md whitespace-nowrap',
    };
    const [isExpanded, setIsExpanded] = useState<boolean>(false);
+   const featuredRef = useRef<HTMLDivElement>(null);
 
    const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
 
@@ -253,10 +254,19 @@ const FeaturedPlayer = ({
       );
    };
 
+   useEffect(() => {
+      if (featuredRef.current && featuredPlayer) {
+         console.log(featuredRef.current);
+         featuredRef.current.focus({ preventScroll: true });
+      }
+   }, [featuredPlayer]);
+
    return (
       <div
+         ref={featuredRef}
+         tabIndex={0}
          className={classNames(
-            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:max-w-full z-10 fixed lg:relative bottom-[66px] lg:w lg:flex lg:flex-col lg:bottom-auto w-full p-2 justify-end lg:py-0 h-fit lg:overflow-y-scroll'
+            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:max-w-full z-10 fixed lg:relative bottom-[66px] lg:w lg:flex lg:flex-col lg:bottom-auto w-full p-2 justify-end lg:py-0 h-fit lg:overflow-y-scroll focus:outline-1  focus:outline focus:outline-white'
          )}
       >
          {featuredPlayer && (
@@ -364,6 +374,7 @@ const CloseFeaturedPlayer = () => {
       <button
          className="block absolute top-auto bottom-1 lg:bottom-auto lg:top-1 right-1"
          type="button"
+         tabIndex={0}
          onClick={() => updateFeaturedPlayer?.(null)}
       >
          <svg
