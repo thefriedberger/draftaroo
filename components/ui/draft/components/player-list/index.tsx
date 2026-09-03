@@ -182,8 +182,8 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                         Min GP:
                      </label>
                      <input
-                        type="number"
-                        id={'min-gp'}
+                        type="checkbox"
+                        id={'show-drafted'}
                         className="h-full w-full lg:w-8 text-black p-2 lg:p-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         onChange={(e) =>
                            e.target.value.length
