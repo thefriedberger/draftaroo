@@ -257,7 +257,7 @@ const FeaturedPlayer = ({
       if (featuredRef.current && featuredPlayer) {
          featuredRef.current.focus({
             preventScroll: true,
-            // @ts-ignore: this is valid?
+            // @ts-ignore: this is valid
             focusVisible: false,
          });
       }
@@ -286,10 +286,16 @@ const FeaturedPlayer = ({
                            )}
                         >
                            <span className="flex flex-col items-start lg:items-center lg:flex-row">
+                              {/* <Link
+                                 href={`/players/${featuredPlayer.id}?league=${handleDraftSelectionProps.draft.league_id}`}
+                                 target="_blank"
+                                 className="underline text-emerald-primary dark:text-emerald-light"
+                              > */}
                               <h2>
                                  {featuredPlayer.first_name}{' '}
                                  {featuredPlayer.last_name}
                               </h2>
+                              {/* </Link> */}
                               <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap lg:ml-2 lg:pt-1">
                                  <h3>
                                     {teamAbbreviations?.[
