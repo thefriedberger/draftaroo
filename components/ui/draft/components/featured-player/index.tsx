@@ -228,8 +228,7 @@ const FeaturedPlayer = ({
    const statsToggle = (featuredPlayer: Player) => {
       return (
          <details className="flex flex-col-reverse lg:hidden">
-            {scoreProjector(featuredPlayer)}
-            {playerStats(featuredPlayer)}
+            <span className="">{playerStats(featuredPlayer)}</span>
             <summary
                className="block lg:hidden w-fit"
                onClick={() => setIsExpanded(!isExpanded)}
@@ -256,7 +255,11 @@ const FeaturedPlayer = ({
 
    useEffect(() => {
       if (featuredRef.current && featuredPlayer) {
-         featuredRef.current.focus({ preventScroll: true });
+         featuredRef.current.focus({
+            preventScroll: true,
+            // @ts-ignore: this is valid?
+            focusVisible: false,
+         });
       }
    }, [featuredPlayer]);
 
@@ -265,7 +268,7 @@ const FeaturedPlayer = ({
          ref={featuredRef}
          tabIndex={0}
          className={classNames(
-            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:max-w-full z-10 fixed lg:relative bottom-[66px] lg:w lg:flex lg:flex-col lg:bottom-auto w-full p-2 justify-end lg:py-0 h-fit lg:overflow-y-scroll focus:outline-1  focus:outline focus:outline-white'
+            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:max-w-full z-10 fixed lg:relative bottom-[66px] lg:w lg:flex lg:flex-col lg:bottom-auto w-full px-5 p-2 lg:p-2 justify-end lg:py-0 h-fit lg:overflow-y-scroll'
          )}
       >
          {featuredPlayer && (
@@ -348,14 +351,30 @@ const FeaturedPlayer = ({
                         )}
                      </div>
                   </div>
-                  {Object.keys(featuredPlayer.stats ?? {}).length > 1 && (
+                  {Object.keys(featuredPlayer.stats ?? {}).length >= 1 && (
                      <div className="hidden lg:block">
                         {playerStats(featuredPlayer)}
                      </div>
                   )}
                </div>
-               {Object.keys(featuredPlayer.stats ?? {}).length > 1 &&
-                  statsToggle(featuredPlayer)}
+
+               {isMobile &&
+                  Object.keys(featuredPlayer.stats ?? {}).length >= 1 && (
+                     <>
+                        {Object.keys(featuredPlayer.stats ?? {}).filter(
+                           (key) =>
+                              key.includes('proj.') &&
+                              Object.values(featuredPlayer.stats?.[key]).length
+                        ).length
+                           ? scoreProjector(featuredPlayer)
+                           : null}
+                        {Object.keys(featuredPlayer.stats ?? {}).filter(
+                           (key) => !key.includes('proj.')
+                        ).length
+                           ? statsToggle(featuredPlayer)
+                           : null}
+                     </>
+                  )}
                <p>{yourTurn}</p>
                <CloseFeaturedPlayer />
             </>

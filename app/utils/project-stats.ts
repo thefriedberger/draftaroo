@@ -21,12 +21,13 @@ const projectStats = (player: Player) => {
                ) {
                   projected[projectedYear][key] = 0;
                } else {
-                  projected[projectedYear][key] =
+                  projected[projectedYear][key] = Math.floor(
                      Math.round(
                         (Math.round((statsB[key] + (statsA?.[key] || 0)) * 10) /
                            10 /
                            numberOfSeasons || 3) * 10
-                     ) / 10;
+                     ) / 10
+                  );
                }
             } else {
                if (numberOfSeasons === 1 && key !== 'games') {

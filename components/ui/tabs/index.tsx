@@ -2,7 +2,8 @@
 
 import { TabProps } from '@/lib/types';
 import classNames from 'classnames';
-import { Fragment, useState } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { Fragment, useEffect, useState } from 'react';
 import styles from './tabs.module.css';
 
 const Tabs = ({
@@ -18,7 +19,57 @@ const Tabs = ({
    saveState = true,
    gridColumns,
 }: TabProps) => {
+   const [activeTabHash, setActiveTabHash] = useState<string>(location.hash);
    const [activeTabIndex, setActiveTabIndex] = useState(0);
+   const pathname = usePathname();
+   const searchParams = useSearchParams();
+
+   useEffect(() => {
+      const handleHashChange = () => {
+         setActiveTabHash(window.location.hash);
+      };
+
+      if (useHash) {
+         window.addEventListener('hashchange', handleHashChange);
+
+         handleHashChange();
+      }
+      return () => {
+         useHash && window.removeEventListener('hashchange', handleHashChange);
+      };
+   }, [pathname, searchParams]);
+
+   useEffect(() => {
+      if (!activeTabHash && useHash) {
+         window.location.hash = `#${(
+            tabs?.[0]?.tabButton?.props?.children?.[1]?.props?.children ||
+            tabs?.[0]?.tabButton ||
+            ''
+         )
+            .toLocaleLowerCase()
+            .replace(' ', '-')}`;
+      }
+   }, []);
+
+   useEffect(() => {
+      if (activeTabHash && useHash) {
+         const activeTab = (tabs ?? {}).find(
+            (tab) =>
+               `#${(
+                  tab?.tabButton?.props?.children?.[1]?.props?.children ||
+                  tab.tabButton ||
+                  ''
+               )
+                  .toLocaleLowerCase()
+                  .replace(' ', '-')}` === activeTabHash
+         );
+
+         if (activeTab)
+            setActiveTabIndex(
+               (tabs ?? {}).findIndex((tab) => tab === activeTab)
+            );
+      }
+   }, [activeTabHash, useHash]);
 
    const navList = () =>
       tabs.map((tab, index) => {
@@ -36,6 +87,26 @@ const Tabs = ({
                   onClick={(e) => {
                      e.preventDefault();
                      setActiveTabIndex(index);
+                     if (useHash) {
+                        setActiveTabHash(
+                           `#${(
+                              tab?.tabButton?.props?.children?.[1]?.props
+                                 ?.children ||
+                              tab.tabButton ||
+                              ''
+                           )
+                              .toLocaleLowerCase()
+                              .replace(' ', '-')}`
+                        );
+                        window.location.hash = `#${(
+                           tab?.tabButton?.props?.children?.[1]?.props
+                              ?.children ||
+                           tab.tabButton ||
+                           ''
+                        )
+                           .toLocaleLowerCase()
+                           .replace(' ', '-')}`;
+                     }
                   }}
                   className={
                      'flex flex-col items-center text-white lg:block text-center lg:p-2'

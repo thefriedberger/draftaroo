@@ -50,8 +50,7 @@ const WatchlistStar = ({ player, isButton, className }: WatchlistStarProps) => {
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                         className={classNames(
-                           'w-[30px] stroke-emerald-500 fill-emerald-500',
-                           hasFocus && 'stroke-white'
+                           'w-[30px] stroke-emerald-500 fill-emerald-500'
                         )}
                      >
                         <path
