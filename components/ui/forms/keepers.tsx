@@ -316,25 +316,28 @@ const KeeperForm = ({
                               : false;
 
                         if (!playerData) return <></>;
+
+                        const isDisabled =
+                           (closestPick.length === 0 ||
+                              closestPick[closestPick.length - 1] === 0 ||
+                              canKeep ||
+                              !picksAvailable.includes(closestPick[0])) &&
+                           !player.is_keeper;
                         return (
-                           <tr key={player.player_id}>
+                           <tr
+                              key={player.player_id}
+                              className={classNames(
+                                 isDisabled &&
+                                    'line-through dark:decoration-red-600 decoration-2 !opacity-60'
+                              )}
+                           >
                               <td className="text-sm lg:text-normal p-0.5 lg:p-2">
                                  <input
                                     className={'w-[40px] h-[20px] align-middle'}
                                     type="checkbox"
                                     id={`keep-player-${player.player_id}-checkbox`}
                                     defaultChecked={player.is_keeper ?? false}
-                                    disabled={
-                                       (closestPick.length === 0 ||
-                                          closestPick[
-                                             closestPick.length - 1
-                                          ] === 0 ||
-                                          canKeep ||
-                                          !picksAvailable.includes(
-                                             closestPick[0]
-                                          )) &&
-                                       !player.is_keeper
-                                    }
+                                    disabled={isDisabled}
                                     onChange={(
                                        e: ChangeEvent<HTMLInputElement>
                                     ) => handleSetKeeper(e, player)}
