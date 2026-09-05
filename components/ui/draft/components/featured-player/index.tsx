@@ -270,6 +270,7 @@ const FeaturedPlayer = ({
                <th className="p-1 text-sm">Drafted By</th>
                <th className="p-1 text-sm">Round</th>
                <th className="p-1 text-sm">Pick</th>
+               <th className="p-1 text-sm">Was Keeper</th>
                <th className="p-1 text-sm">Year</th>
             </thead>
             <tbody>
@@ -284,6 +285,9 @@ const FeaturedPlayer = ({
                         <td className="p-1 text-sm">{history.team}</td>
                         <td className="p-1 text-sm">{history.round}</td>
                         <td className="p-1 text-sm">{history.pick}</td>
+                        <td className="p-1 text-sm">
+                           {history.is_keeper ? 'Yes' : 'No'}
+                        </td>
                         <td className="p-1 text-sm">
                            {new Date(history.created_at ?? '').getFullYear()}
                         </td>
