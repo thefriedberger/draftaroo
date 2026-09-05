@@ -64,6 +64,7 @@ const PlayerList = ({
    const [season, setSeason] = useState<string>(cleanSeasons(seasons[2]));
    const [records, setRecords] = useState<number>(150);
    const [minGP, setMinGP] = useState<number | ''>('');
+   const [showDrafted, setShowDrafted] = useState<boolean>(false);
    const thClasses = classNames('p-2 lg:p-1 w-10 x-2 my-2 cursor-pointer');
 
    const options: IntersectionObserverInit = {
@@ -84,7 +85,10 @@ const PlayerList = ({
 
    const filterPlayers = () => {
       const playersByPostion = players
-         .filter((player: Player) => !draftedIds.includes(player.id))
+         .filter((player: Player) => {
+            if (showDrafted) return true;
+            return !draftedIds.includes(player.id);
+         })
          .filter((player: Player) => {
             if (positionFilter === 'Skaters')
                return player.primary_position !== 'G';
@@ -141,19 +145,21 @@ const PlayerList = ({
       <>
          <div className="flex flex-col items-center h-full max-h-full w-full text-black dark:text-white">
             <div className="flex flex-col sticky top-0 z-10 bg-gray-primary lg:z-0 lg:bg-transparent lg:static lg:flex-row w-full lg:w-auto justify-start self-start items-stretch lg:items-end">
-               <div className="grid grid-cols-3 lg:grid-cols-5">
+               <div className="grid grid-cols-6 lg:grid-cols-10 gap-2 lg:gap-0">
                   <Filter
                      values={positions}
                      labels={positionMap}
                      filterFun={setPositionFilter}
                      name={'Filter positions'}
+                     classes={'col-span-2'}
                   />
                   <Filter
                      values={teams}
                      filterFun={setTeamFilter}
                      name={'Filter teams'}
+                     classes={'col-span-2'}
                   />
-                  <div className="flex flex-col">
+                  <div className="flex flex-col col-span-2">
                      <select
                         defaultValue={cleanSeasons(seasons[2])}
                         className="text-black p-2 rounded-none lg:p-1 lg:mr-2 lg:h-full"
@@ -171,7 +177,7 @@ const PlayerList = ({
                      </select>
                   </div>
                   <input
-                     className="text-black p-2 col-span-2 lg:col-span-1 lg:p-1 lg:mr-2"
+                     className="text-black p-2 col-span-4 lg:col-span-2 lg:p-1 lg:mr-2"
                      type="search"
                      name="Player search"
                      aria-label="Player search"
@@ -179,22 +185,37 @@ const PlayerList = ({
                      value={playerSearch}
                      onChange={(e) => setPlayerSearch(e.target.value)}
                   />
-                  <div className="flex flex-row ml-auto col-span-1 w-full lg:ml-0 bg-white dark:bg-transparent lg:bg-transparent">
+                  <div className="flex flex-row ml-auto col-span-1 w-full lg:ml-0 dark:bg-transparent lg:bg-transparent">
                      <label
                         htmlFor="min-gp"
-                        className="h-full border-r text-black lg:text-inherit bg-white lg:bg-transparent lg:border-r-0 self-end pt-2 pr-1 min-w-16 text-right w-full lg:w-auto"
+                        className="h-fit border-r dark:text-white text-black lg:text-inherit lg:bg-transparent lg:border-r-0 self-end pr-1 min-w-16 text-right w-full lg:w-auto text-sm"
                      >
                         Min GP:
                      </label>
                      <input
-                        type="checkbox"
-                        id={'show-drafted'}
+                        type="number"
+                        id={'min-gp'}
                         className="h-full w-full lg:w-8 text-black p-2 lg:p-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         onChange={(e) =>
                            e.target.value.length
                               ? setMinGP(Number(e.target.value))
                               : setMinGP('')
                         }
+                        value={minGP}
+                     />
+                  </div>
+                  <div className="flex flex-row ml-auto col-span-1 w-full lg:ml-0 dark:bg-transparent lg:bg-transparent">
+                     <label
+                        htmlFor="show-drafted"
+                        className="h-full border-r dark:text-white text-black lg:text-inherit g:bg-transparent border-r-0 self-end pr-1 min-w-16 text-right w-full lg:w-auto text-sm"
+                     >
+                        Show drafted
+                     </label>
+                     <input
+                        type="checkbox"
+                        id={'show-drafted'}
+                        className="h-full w-full lg:w-8 text-black p-2 lg:p-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        onChange={(e) => setShowDrafted(e.target.checked)}
                         value={minGP}
                      />
                   </div>
@@ -383,11 +404,14 @@ const PlayerList = ({
    );
 };
 
-const Filter = ({ values, labels, filterFun, name }: any) => {
+const Filter = ({ values, labels, filterFun, name, classes }: any) => {
    return (
       <select
          onChange={(e) => filterFun(e.target.value)}
-         className="text-black rounded-none p-2 lg:p-1 lg:mr-2"
+         className={classNames(
+            classes,
+            'text-black rounded-none p-2 lg:p-1 lg:mr-2'
+         )}
          name={name}
       >
          {values.map((x: any) => {
