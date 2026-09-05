@@ -2,6 +2,7 @@
 
 import { TabProps } from '@/lib/types';
 import classNames from 'classnames';
+import { useRouter } from 'next/navigation';
 import { Fragment, useState } from 'react';
 import styles from './tabs.module.css';
 
@@ -18,6 +19,7 @@ const Tabs = ({
    saveState = true,
    gridColumns,
 }: TabProps) => {
+   const router = useRouter();
    const [activeTabIndex, setActiveTabIndex] = useState(0);
 
    const navList = () =>
@@ -36,6 +38,14 @@ const Tabs = ({
                   onClick={(e) => {
                      e.preventDefault();
                      setActiveTabIndex(index);
+                     router.push(
+                        `#${(
+                           tab?.tabButton?.props.children?.[1]?.props
+                              ?.children || ''
+                        )
+                           .toLocaleLowerCase()
+                           .replace(' ', '-')}`
+                     );
                   }}
                   className={
                      'flex flex-col items-center text-white lg:block text-center lg:p-2'

@@ -207,7 +207,7 @@ const PlayerList = ({
                   <div className="flex flex-row ml-auto col-span-1 w-full lg:ml-0 dark:bg-transparent lg:bg-transparent">
                      <label
                         htmlFor="show-drafted"
-                        className="h-full border-r dark:text-white text-black lg:text-inherit g:bg-transparent border-r-0 self-end pr-1 min-w-16 text-right w-full lg:w-auto text-sm"
+                        className="h-full dark:text-white text-black lg:text-inherit g:bg-transparent border-r-0 self-end pr-1 min-w-16 text-right w-full lg:w-auto text-sm"
                      >
                         Show drafted
                      </label>

@@ -62,22 +62,6 @@ const PlayerComponent = ({
       player?.stats as PlayerStats[]
    );
 
-   const getStatFromLastSeason = (player_stats: any, stat: string) => {
-      if (!player_stats) {
-         return 0;
-      }
-
-      if (!player_stats[1]['stats']) {
-         return 0;
-      }
-
-      if (!player_stats[1]['stats'][stat]) {
-         return 0;
-      }
-
-      return player_stats[1]['stats'][stat];
-   };
-
    useEffect(() => {
       if (player.stats) setPlayerStats(player.stats as PlayerStats[]);
    }, []);
@@ -135,16 +119,6 @@ const PlayerComponent = ({
             </td>
             {player.primary_position !== 'G' ? (
                <>
-                  {/* {Object.keys(playerStats?.[season] ?? {}).map(
-                     (stat: any) => (
-                        <PlayerRow
-                           key={`${player.id}-${stat}`}
-                           stat={stat}
-                           player={player}
-                           playerStats={playerStats?.[season]?.[stat]}
-                        />
-                     )
-                  )} */}
                   <td className="py-2 px-1">
                      <span
                         className={classNames(
@@ -302,15 +276,3 @@ const PlayerComponent = ({
 };
 
 export default PlayerComponent;
-
-export const PlayerRow = ({
-   stat,
-   player,
-   playerStats,
-}: {
-   stat: any;
-   player: Player;
-   playerStats: PlayerStats[];
-}) => {
-   return <></>;
-};
