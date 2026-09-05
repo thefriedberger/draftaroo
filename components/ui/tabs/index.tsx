@@ -2,8 +2,8 @@
 
 import { TabProps } from '@/lib/types';
 import classNames from 'classnames';
-import { useRouter } from 'next/navigation';
-import { Fragment, useState } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { Fragment, useEffect, useState } from 'react';
 import styles from './tabs.module.css';
 
 const Tabs = ({
@@ -19,8 +19,45 @@ const Tabs = ({
    saveState = true,
    gridColumns,
 }: TabProps) => {
-   const router = useRouter();
+   const [activeTabHash, setActiveTabHash] = useState<string>(location.hash);
    const [activeTabIndex, setActiveTabIndex] = useState(0);
+   const pathname = usePathname();
+   const searchParams = useSearchParams();
+
+   useEffect(() => {
+      const handleHashChange = () => {
+         setActiveTabHash(window.location.hash);
+         console.log('Hash changed to:', window.location.hash);
+      };
+
+      window.addEventListener('hashchange', handleHashChange);
+
+      handleHashChange();
+
+      return () => {
+         window.removeEventListener('hashchange', handleHashChange);
+      };
+   }, [pathname, searchParams]);
+
+   useEffect(() => {
+      if (activeTabHash) {
+         const activeTab = (tabs ?? {}).find(
+            (tab) =>
+               `#${(
+                  tab?.tabButton?.props?.children?.[1]?.props?.children ||
+                  tab.tabButton ||
+                  ''
+               )
+                  .toLocaleLowerCase()
+                  .replace(' ', '-')}` === activeTabHash
+         );
+
+         if (activeTab)
+            setActiveTabIndex(
+               (tabs ?? {}).findIndex((tab) => tab === activeTab)
+            );
+      }
+   }, [activeTabHash]);
 
    const navList = () =>
       tabs.map((tab, index) => {
@@ -38,14 +75,23 @@ const Tabs = ({
                   onClick={(e) => {
                      e.preventDefault();
                      setActiveTabIndex(index);
-                     router.push(
+                     setActiveTabHash(
                         `#${(
-                           tab?.tabButton?.props.children?.[1]?.props
-                              ?.children || ''
+                           tab?.tabButton?.props?.children?.[1]?.props
+                              ?.children ||
+                           tab.tabButton ||
+                           ''
                         )
                            .toLocaleLowerCase()
                            .replace(' ', '-')}`
                      );
+                     window.location.hash = `#${(
+                        tab?.tabButton?.props?.children?.[1]?.props?.children ||
+                        tab.tabButton ||
+                        ''
+                     )
+                        .toLocaleLowerCase()
+                        .replace(' ', '-')}`;
                   }}
                   className={
                      'flex flex-col items-center text-white lg:block text-center lg:p-2'
