@@ -44,8 +44,6 @@ export const PlayerList = ({
 
       stats[projectedKey] = formattedFormValues;
 
-      console.log(player);
-
       const { data, error } = await supabase
          .from('players')
          .upsert(player)

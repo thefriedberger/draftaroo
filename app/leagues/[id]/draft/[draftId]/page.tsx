@@ -129,8 +129,6 @@ const Draft = async ({
       );
    }
 
-   console.log(players.filter((player) => player.id === 8486067)[0].stats);
-
    const boardProps: BoardProps = {
       league: league,
       leagueID: params.id,

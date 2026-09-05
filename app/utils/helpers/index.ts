@@ -331,7 +331,6 @@ export const fetchPlayers = cache(
       const { data: players, error } = await supabase
          .from('players')
          .select('*');
-
       return players as Player[];
    }
 );
@@ -412,7 +411,6 @@ export const handleDraftSelection = async ({
       .from('draft_selections')
       .select('player_id')
       .match({ draft_id: draft.id });
-   console.log('draft picks: ', draft_picks);
    if (draft_picks?.some((pick) => pick.player_id === player.id)) {
       console.error('Player has already been drafted');
       return;

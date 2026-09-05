@@ -256,7 +256,6 @@ const FeaturedPlayer = ({
 
    useEffect(() => {
       if (featuredRef.current && featuredPlayer) {
-         console.log(featuredRef.current);
          featuredRef.current.focus({ preventScroll: true });
       }
    }, [featuredPlayer]);
