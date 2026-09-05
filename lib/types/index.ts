@@ -89,6 +89,7 @@ export interface PlayerListProps {
    draftedIds: number[];
    players: Player[];
    leagueScoring: LeagueScoring;
+   featuredPlayer?: FeaturedPlayerType;
 }
 
 export interface DraftTileProps {

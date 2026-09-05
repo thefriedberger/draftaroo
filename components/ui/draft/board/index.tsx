@@ -667,6 +667,7 @@ const Board = ({
       draftedIds: draftedIds,
       players: players,
       leagueScoring: leagueScoring,
+      featuredPlayer: featuredPlayer || null,
    };
 
    const myTeamProps: MyTeamProps = {

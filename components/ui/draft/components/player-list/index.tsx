@@ -51,7 +51,12 @@ export const seasons = Array.from({ length: 4 })
 
 export const cleanSeasons = (season: string) => season.replace('-', '');
 
-const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
+const PlayerList = ({
+   league,
+   players,
+   draftedIds,
+   featuredPlayer,
+}: PlayerListProps) => {
    const [sort, setSort] = useState<SortValue>('score');
    const [positionFilter, setPositionFilter] = useState<string>('Skaters');
    const [teamFilter, setTeamFilter] = useState<string>('Team');
@@ -359,6 +364,7 @@ const PlayerList = ({ league, players, draftedIds }: PlayerListProps) => {
                                        player={player}
                                        season={season}
                                        sort={sort}
+                                       featuredPlayer={featuredPlayer}
                                     />
                                  </Suspense>
                               );

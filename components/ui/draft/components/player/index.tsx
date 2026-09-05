@@ -3,7 +3,7 @@
 import { convertTime } from '@/app/utils/helpers';
 import { DraftContext } from '@/components/context/draft-context';
 import { SortValue } from '@/lib/constants';
-import { PlayerStats } from '@/lib/types';
+import { FeaturedPlayerType, PlayerStats } from '@/lib/types';
 import classNames from 'classnames';
 import { useContext, useEffect, useState } from 'react';
 import WatchlistStar from '../watchlist/watchlist-star';
@@ -49,11 +49,13 @@ const PlayerComponent = ({
    leagueScoring,
    season,
    sort,
+   featuredPlayer,
 }: {
    player: Player;
    leagueScoring?: LeagueScoring | any;
    season: string;
    sort: SortValue;
+   featuredPlayer?: FeaturedPlayerType;
 }) => {
    const { updateFeaturedPlayer } = useContext(DraftContext);
    const [playerStats, setPlayerStats] = useState<PlayerStats[]>(
@@ -90,7 +92,10 @@ const PlayerComponent = ({
       <>
          <tr
             key={player.id}
-            className="my-1 min-w-full cursor-pointer"
+            className={classNames(
+               'my-1 min-w-full cursor-pointer',
+               featuredPlayer?.id === player.id && '!bg-fuscia-primary'
+            )}
             onClick={(e: any) => {
                handleUpdateFeaturedPlayer(player, e);
             }}
