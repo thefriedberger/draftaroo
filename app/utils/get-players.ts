@@ -102,11 +102,6 @@ const getPlayers = async (league: League): Promise<Player[]> => {
             let projectedStats = projectStats(player);
 
             const currentYear = new Date().getUTCFullYear();
-            // if (player.id === 8486067) {
-            //    console.log(
-            //       player.stats[`${currentYear}${currentYear + 1} (proj.)`]
-            //    );
-            // }
             if (!player.stats[`${currentYear}${currentYear + 1} (proj.)`]) {
                player.stats[`${currentYear}${currentYear + 1} (proj.)`] =
                   projectedStats?.[`${currentYear}${currentYear + 1} (proj.)`];

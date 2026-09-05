@@ -36,7 +36,7 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
 
    let draftYear = new Date().getFullYear();
    const draft = drafts?.filter(
-      (draft) => !draft.is_completed && Number(draft.draft_year) === draftYear
+      (draft) => !draft.is_completed && Number(draft.draft_year) === draftYear // TODO: make this logic better, maybe
    )?.[0] as Draft;
 
    if (
@@ -130,6 +130,7 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
    const populatePicksUsed = (player: RosterPlayer) => {
       if (!draftSelections.length) return;
 
+      // console.log(draftSelections);
       const foundPlayer = draftSelections.filter(
          (selection) => selection.player_id === player.player_id
       )[0];
@@ -138,7 +139,13 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
       if (player.draft_position === 1) {
          if (player.times_kept > 0) {
             picksUsed = getFirstRoundRequiredPicks(player);
+         } else {
+            picksUsed = [1];
          }
+      }
+
+      if (foundPlayer?.player_id === 8476945) {
+         // console.log(foundPlayer, picksUsed);
       }
 
       return foundPlayer ? foundPlayer.picks_used : [];
@@ -150,9 +157,7 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
       players: players,
       roster: teamHistory.map((player: TeamHistory) => {
          const foundPlayer = previousDraftSelections.find(
-            (selection) =>
-               selection.player_id === player.player_id &&
-               selection.team_id === team.id
+            (selection) => selection.player_id === player.player_id
          );
 
          const rosterPlayer: Partial<RosterPlayer> = {
