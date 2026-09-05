@@ -130,7 +130,6 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
    const populatePicksUsed = (player: RosterPlayer) => {
       if (!draftSelections.length) return;
 
-      // console.log(draftSelections);
       const foundPlayer = draftSelections.filter(
          (selection) => selection.player_id === player.player_id
       )[0];
@@ -145,7 +144,7 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
       }
 
       if (foundPlayer?.player_id === 8476945) {
-         // console.log(foundPlayer, picksUsed);
+         console.log(foundPlayer, picksUsed);
       }
 
       return foundPlayer ? foundPlayer.picks_used : [];
@@ -177,6 +176,9 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
          rosterPlayer.picks_used = populatePicksUsed(
             rosterPlayer as RosterPlayer
          );
+
+         rosterPlayer.is_keeper =
+            player?.is_keeper && (rosterPlayer?.picks_used?.length || 0) > 0;
 
          return rosterPlayer;
       }) as RosterPlayer[],
