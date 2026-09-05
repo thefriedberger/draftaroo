@@ -27,8 +27,8 @@ const Tabs = ({
    useEffect(() => {
       const handleHashChange = () => {
          setActiveTabHash(window.location.hash);
-         console.log('Hash changed to:', window.location.hash);
       };
+
       if (useHash) {
          window.addEventListener('hashchange', handleHashChange);
 
@@ -38,6 +38,18 @@ const Tabs = ({
          useHash && window.removeEventListener('hashchange', handleHashChange);
       };
    }, [pathname, searchParams]);
+
+   useEffect(() => {
+      if (!activeTabHash && useHash) {
+         window.location.hash = `#${(
+            tabs?.[0]?.tabButton?.props?.children?.[1]?.props?.children ||
+            tabs?.[0]?.tabButton ||
+            ''
+         )
+            .toLocaleLowerCase()
+            .replace(' ', '-')}`;
+      }
+   }, []);
 
    useEffect(() => {
       if (activeTabHash && useHash) {
@@ -57,7 +69,7 @@ const Tabs = ({
                (tabs ?? {}).findIndex((tab) => tab === activeTab)
             );
       }
-   }, [activeTabHash]);
+   }, [activeTabHash, useHash]);
 
    const navList = () =>
       tabs.map((tab, index) => {
