@@ -1,8 +1,12 @@
 'use client';
 
 import FallbackImage from '@/app/assets/images/default-skater.png';
+import getPlayerHistory, {
+   PlayerHistoryProps,
+} from '@/app/utils/get-player-history';
 import { convertTime, handleDraftSelection } from '@/app/utils/helpers';
 import { DraftContext } from '@/components/context/draft-context';
+import { buttonClasses } from '@/components/ui/helpers/buttons';
 import { FeaturedPlayerProps } from '@/lib/types';
 import classNames from 'classnames';
 import Image from 'next/image';
@@ -27,7 +31,13 @@ const FeaturedPlayer = ({
          'flex flex-row bg-paper-dark dark:bg-gray-primary text-black dark:text-white fill-emerald-700 p-2 rounded-md whitespace-nowrap',
    };
    const [isExpanded, setIsExpanded] = useState<boolean>(false);
+   const [showStats, setShowStats] = useState<boolean>(true);
    const featuredRef = useRef<HTMLDivElement>(null);
+   let [playerHistory, setPlayerHistory] = useState<PlayerHistoryProps[]>([]);
+
+   const hasStats: boolean = featuredPlayer
+      ? Object.keys(featuredPlayer.stats ?? {}).length >= 1
+      : false;
 
    const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
 
@@ -253,6 +263,53 @@ const FeaturedPlayer = ({
       );
    };
 
+   const PlayerHistory = () => {
+      return (
+         <table className="dark:text-white table-auto">
+            <thead>
+               <th className="p-1 text-sm">Drafted By</th>
+               <th className="p-1 text-sm">Round</th>
+               <th className="p-1 text-sm">Pick</th>
+               <th className="p-1 text-sm">Year</th>
+            </thead>
+            <tbody>
+               {playerHistory
+                  .sort(
+                     (a, b) =>
+                        new Date(b.created_at ?? '').getFullYear() -
+                        new Date(a.created_at ?? '').getFullYear()
+                  )
+                  .map((history) => (
+                     <tr className="">
+                        <td className="p-1 text-sm">{history.team}</td>
+                        <td className="p-1 text-sm">{history.round}</td>
+                        <td className="p-1 text-sm">{history.pick}</td>
+                        <td className="p-1 text-sm">
+                           {new Date(history.created_at ?? '').getFullYear()}
+                        </td>
+                     </tr>
+                  ))}
+            </tbody>
+         </table>
+      );
+   };
+   useEffect(() => {
+      (async () => {
+         if (featuredPlayer?.id) {
+            setPlayerHistory(
+               await getPlayerHistory(
+                  String(featuredPlayer.id),
+                  handleDraftSelectionProps.draft.league_id
+               )
+            );
+         }
+      })();
+   }, [featuredPlayer]);
+
+   useEffect(() => {
+      console.log(playerHistory);
+   }, [playerHistory]);
+
    useEffect(() => {
       if (featuredRef.current && featuredPlayer) {
          featuredRef.current.focus({
@@ -273,114 +330,135 @@ const FeaturedPlayer = ({
       >
          {featuredPlayer && (
             <>
-               <div className="w-full lg:w-fit lg:h-full">
-                  <div className={'flex flex-row'}>
-                     <PlayerHeadshot {...featuredPlayer} />
-                     <div className="flex flex-col w-full">
-                        <div
-                           className={classNames(
-                              !draftedIds.includes(featuredPlayer.id)
-                                 ? 'justify-evenly'
-                                 : 'justify-start',
-                              'dark:text-white text-xl flex lg:justify-start mt-2 mb-1 lg:mb-0 w-full lg:w-fit'
-                           )}
-                        >
-                           <span className="flex flex-col items-start lg:items-center lg:flex-row">
-                              {/* <Link
-                                 href={`/players/${featuredPlayer.id}?league=${handleDraftSelectionProps.draft.league_id}`}
-                                 target="_blank"
-                                 className="underline text-emerald-primary dark:text-emerald-light"
-                              > */}
-                              <h2>
-                                 {featuredPlayer.first_name}{' '}
-                                 {featuredPlayer.last_name}
-                              </h2>
-                              {/* </Link> */}
-                              <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap lg:ml-2 lg:pt-1">
-                                 <h3>
-                                    {teamAbbreviations?.[
-                                       featuredPlayer.current_team
-                                    ] || 'FA'}{' '}
-                                    -{' '}
-                                    {featuredPlayer.primary_position &&
-                                       featuredPlayer.primary_position
-                                          .split(' ')
-                                          .map((char: string) => char[0])}
-                                 </h3>
-                              </span>
-                           </span>
+               <div className="w-full lg:w-full lg:h-full flex">
+                  <div className="w-full lg:w-fit">
+                     <div className={'flex flex-row'}>
+                        <PlayerHeadshot {...featuredPlayer} />
+                        <div className="flex flex-col w-full">
                            <div
                               className={classNames(
-                                 draftedIds.includes(featuredPlayer.id) &&
-                                    'hidden',
-                                 'ml-auto lg:ml-2 flex flex-row'
+                                 !draftedIds.includes(featuredPlayer.id)
+                                    ? 'justify-evenly'
+                                    : 'justify-start',
+                                 'dark:text-white text-xl flex lg:justify-start mt-2 mb-1 lg:mb-0 w-full lg:w-fit'
                               )}
                            >
-                              <button
+                              <span className="flex flex-col items-start lg:items-center lg:flex-row">
+                                 <h2>
+                                    {featuredPlayer.first_name}{' '}
+                                    {featuredPlayer.last_name}
+                                 </h2>
+                                 <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap lg:ml-2 lg:pt-1">
+                                    <h3>
+                                       {teamAbbreviations?.[
+                                          featuredPlayer.current_team
+                                       ] || 'FA'}{' '}
+                                       -{' '}
+                                       {featuredPlayer.primary_position &&
+                                          featuredPlayer.primary_position
+                                             .split(' ')
+                                             .map((char: string) => char[0])}
+                                    </h3>
+                                 </span>
+                              </span>
+                              <div
                                  className={classNames(
-                                    'bg-fuscia-primary p-2 rounded-md mr-1 disabled:cursor-not-allowed disabled:saturate-[25%] whitespace-nowrap flex items-center !text-sm'
+                                    draftedIds.includes(featuredPlayer.id) &&
+                                       'hidden',
+                                    'ml-auto lg:ml-2 flex flex-row'
                                  )}
-                                 onClick={() => {
-                                    isActive &&
-                                       yourTurn &&
-                                       handleDraftSelection({
-                                          ...handleDraftSelectionProps,
-                                          player: featuredPlayer,
-                                          timerDuration,
-                                       });
-                                 }}
-                                 type="button"
-                                 disabled={
-                                    !isActive ||
-                                    !yourTurn ||
-                                    featuredPlayer.id === 8476346
-                                 }
                               >
-                                 Draft{' '}
-                                 {featuredPlayer.first_name
-                                    .split(' ')
-                                    .map((char: string) => char[0])}
-                                 {'. '}
-                                 {featuredPlayer.last_name}
-                              </button>
-                              <WatchlistStar {...watchlistStarProps} />
+                                 <button
+                                    className={classNames(
+                                       'bg-fuscia-primary p-2 rounded-md mr-1 disabled:cursor-not-allowed disabled:saturate-[25%] whitespace-nowrap flex items-center !text-sm'
+                                    )}
+                                    onClick={() => {
+                                       isActive &&
+                                          yourTurn &&
+                                          handleDraftSelection({
+                                             ...handleDraftSelectionProps,
+                                             player: featuredPlayer,
+                                             timerDuration,
+                                          });
+                                    }}
+                                    type="button"
+                                    disabled={
+                                       !isActive ||
+                                       !yourTurn ||
+                                       featuredPlayer.id === 8476346
+                                    }
+                                 >
+                                    Draft{' '}
+                                    {featuredPlayer.first_name
+                                       .split(' ')
+                                       .map((char: string) => char[0])}
+                                    {'. '}
+                                    {featuredPlayer.last_name}
+                                 </button>
+                                 <WatchlistStar {...watchlistStarProps} />
+                              </div>
                            </div>
+                           {Object.keys(featuredPlayer.stats ?? {}).length >=
+                           1 ? (
+                              <div className="hidden lg:block">
+                                 {scoreProjector(featuredPlayer)}
+                              </div>
+                           ) : (
+                              <h2 className="dark:text-white text-lg">
+                                 I don&apos;t have any stats :&apos;(
+                              </h2>
+                           )}
                         </div>
-                        {Object.keys(featuredPlayer.stats ?? {}).length >= 1 ? (
+                     </div>
+                     {hasStats &&
+                        (showStats ? (
                            <div className="hidden lg:block">
-                              {scoreProjector(featuredPlayer)}
+                              {playerStats(featuredPlayer)}
                            </div>
                         ) : (
-                           <h2 className="dark:text-white text-lg">
-                              I don&apos;t have any stats :&apos;(
-                           </h2>
-                        )}
-                     </div>
+                           <div className="hidden lg:block">
+                              <PlayerHistory />
+                           </div>
+                        ))}
                   </div>
-                  {Object.keys(featuredPlayer.stats ?? {}).length >= 1 && (
-                     <div className="hidden lg:block">
-                        {playerStats(featuredPlayer)}
-                     </div>
-                  )}
+                  <div className="lg:ml-2 hidden lg:flex flex-col self-end">
+                     {hasStats && (
+                        <button
+                           className={classNames('mb-2', buttonClasses)}
+                           type="button"
+                           onClick={() => setShowStats(true)}
+                        >
+                           Stats
+                        </button>
+                     )}
+                     {playerHistory.length && (
+                        <button
+                           className={buttonClasses}
+                           type="button"
+                           onClick={() => setShowStats(false)}
+                        >
+                           History
+                        </button>
+                     )}
+                  </div>
                </div>
 
-               {isMobile &&
-                  Object.keys(featuredPlayer.stats ?? {}).length >= 1 && (
-                     <>
-                        {Object.keys(featuredPlayer.stats ?? {}).filter(
-                           (key) =>
-                              key.includes('proj.') &&
-                              Object.values(featuredPlayer.stats?.[key]).length
-                        ).length
-                           ? scoreProjector(featuredPlayer)
-                           : null}
-                        {Object.keys(featuredPlayer.stats ?? {}).filter(
-                           (key) => !key.includes('proj.')
-                        ).length
-                           ? statsToggle(featuredPlayer)
-                           : null}
-                     </>
-                  )}
+               {isMobile && hasStats && (
+                  <>
+                     {Object.keys(featuredPlayer.stats ?? {}).filter(
+                        (key) =>
+                           key.includes('proj.') &&
+                           Object.values(featuredPlayer.stats?.[key]).length
+                     ).length
+                        ? scoreProjector(featuredPlayer)
+                        : null}
+                     {Object.keys(featuredPlayer.stats ?? {}).filter(
+                        (key) => !key.includes('proj.')
+                     ).length
+                        ? statsToggle(featuredPlayer)
+                        : null}
+                  </>
+               )}
                <p>{yourTurn}</p>
                <CloseFeaturedPlayer />
             </>
