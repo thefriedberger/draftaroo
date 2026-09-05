@@ -280,7 +280,7 @@ const FeaturedPlayer = ({
                         new Date(a.created_at ?? '').getFullYear()
                   )
                   .map((history) => (
-                     <tr className="">
+                     <tr key={history.id}>
                         <td className="p-1 text-sm">{history.team}</td>
                         <td className="p-1 text-sm">{history.round}</td>
                         <td className="p-1 text-sm">{history.pick}</td>
