@@ -335,6 +335,16 @@ export const fetchPlayers = cache(
    }
 );
 
+export const fetchPlayer = cache(
+   async (supabase: SupabaseClient, player_id: string): Promise<Player> => {
+      const { data: player, error } = await supabase
+         .from('players')
+         .select('*')
+         .match({ id: player_id });
+      return player?.[0] as Player;
+   }
+);
+
 export const fetchRosters = async (
    supabase: SupabaseClient,
    teamId: string

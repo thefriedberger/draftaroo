@@ -145,21 +145,21 @@ const PlayerList = ({
       <>
          <div className="flex flex-col items-center h-full max-h-full w-full text-black dark:text-white">
             <div className="flex flex-col sticky top-0 z-10 bg-gray-primary lg:z-0 lg:bg-transparent lg:static lg:flex-row w-full lg:w-auto justify-start self-start items-stretch lg:items-end">
-               <div className="grid grid-cols-6 lg:grid-cols-10 gap-2 lg:gap-0">
+               <div className="grid grid-cols-9 lg:grid-cols-10 gap-2 lg:gap-0">
                   <Filter
                      values={positions}
                      labels={positionMap}
                      filterFun={setPositionFilter}
                      name={'Filter positions'}
-                     classes={'col-span-2'}
+                     classes={'col-span-3 lg:col-span-2'}
                   />
                   <Filter
                      values={teams}
                      filterFun={setTeamFilter}
                      name={'Filter teams'}
-                     classes={'col-span-2'}
+                     classes={'col-span-3 lg:col-span-2'}
                   />
-                  <div className="flex flex-col col-span-2">
+                  <div className="flex flex-col col-span-3 lg:col-span-2">
                      <select
                         defaultValue={cleanSeasons(seasons[2])}
                         className="text-black p-2 rounded-none lg:p-1 lg:mr-2 lg:h-full"
@@ -177,7 +177,7 @@ const PlayerList = ({
                      </select>
                   </div>
                   <input
-                     className="text-black p-2 col-span-4 lg:col-span-2 lg:p-1 lg:mr-2"
+                     className="text-black p-2 col-span-5 lg:col-span-2 lg:p-1 lg:mr-2"
                      type="search"
                      name="Player search"
                      aria-label="Player search"
@@ -185,10 +185,10 @@ const PlayerList = ({
                      value={playerSearch}
                      onChange={(e) => setPlayerSearch(e.target.value)}
                   />
-                  <div className="flex flex-row ml-auto col-span-1 w-full lg:ml-0 dark:bg-transparent lg:bg-transparent">
+                  <div className="flex flex-row ml-auto col-span-2 lg:col-span-1 w-full lg:ml-0 dark:bg-transparent lg:bg-transparent">
                      <label
                         htmlFor="min-gp"
-                        className="h-fit border-r dark:text-white text-black lg:text-inherit lg:bg-transparent lg:border-r-0 self-end pr-1 min-w-16 text-right w-full lg:w-auto text-sm"
+                        className="h-fit border-r dark:text-white text-black lg:text-inherit lg:bg-transparent lg:border-r-0 self-end pr-1 text-right w-full lg:w-auto text-sm"
                      >
                         Min GP:
                      </label>
@@ -204,17 +204,17 @@ const PlayerList = ({
                         value={minGP}
                      />
                   </div>
-                  <div className="flex flex-row ml-auto col-span-1 w-full lg:ml-0 dark:bg-transparent lg:bg-transparent">
+                  <div className="flex flex-row ml-auto col-span-2 lg:col-span-1 w-full lg:ml-0 dark:bg-transparent lg:bg-transparent">
                      <label
                         htmlFor="show-drafted"
-                        className="h-full dark:text-white text-black lg:text-inherit g:bg-transparent border-r-0 self-end pr-1 min-w-16 text-right w-full lg:w-auto text-sm"
+                        className="h-full dark:text-white text-black lg:text-inherit g:bg-transparent border-r-0 self-end pr-1 text-right w-full lg:w-auto text-sm"
                      >
                         Show drafted
                      </label>
                      <input
                         type="checkbox"
                         id={'show-drafted'}
-                        className="h-full w-full lg:w-8 text-black p-2 lg:p-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="h-full w-fit lg:w-8 text-black p-2 lg:p-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         onChange={(e) => setShowDrafted(e.target.checked)}
                         value={minGP}
                      />
