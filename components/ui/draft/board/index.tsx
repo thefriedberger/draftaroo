@@ -743,6 +743,7 @@ const Board = ({
       className:
          'flex flex-col w-full lg:max-w-screen-2xl lg:h-[65%] text-white',
       saveState: true,
+      useHash: false,
    };
 
    const mobileTabProps: TabProps = {
@@ -754,6 +755,7 @@ const Board = ({
       }`,
       saveState: true,
       gridColumns: `grid-cols-5`,
+      useHash: true,
    };
 
    const chatProps: ChatProps = {

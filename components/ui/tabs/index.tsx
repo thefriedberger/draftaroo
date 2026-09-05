@@ -29,18 +29,18 @@ const Tabs = ({
          setActiveTabHash(window.location.hash);
          console.log('Hash changed to:', window.location.hash);
       };
+      if (useHash) {
+         window.addEventListener('hashchange', handleHashChange);
 
-      window.addEventListener('hashchange', handleHashChange);
-
-      handleHashChange();
-
+         handleHashChange();
+      }
       return () => {
-         window.removeEventListener('hashchange', handleHashChange);
+         useHash && window.removeEventListener('hashchange', handleHashChange);
       };
    }, [pathname, searchParams]);
 
    useEffect(() => {
-      if (activeTabHash) {
+      if (activeTabHash && useHash) {
          const activeTab = (tabs ?? {}).find(
             (tab) =>
                `#${(
@@ -75,23 +75,26 @@ const Tabs = ({
                   onClick={(e) => {
                      e.preventDefault();
                      setActiveTabIndex(index);
-                     setActiveTabHash(
-                        `#${(
+                     if (useHash) {
+                        setActiveTabHash(
+                           `#${(
+                              tab?.tabButton?.props?.children?.[1]?.props
+                                 ?.children ||
+                              tab.tabButton ||
+                              ''
+                           )
+                              .toLocaleLowerCase()
+                              .replace(' ', '-')}`
+                        );
+                        window.location.hash = `#${(
                            tab?.tabButton?.props?.children?.[1]?.props
                               ?.children ||
                            tab.tabButton ||
                            ''
                         )
                            .toLocaleLowerCase()
-                           .replace(' ', '-')}`
-                     );
-                     window.location.hash = `#${(
-                        tab?.tabButton?.props?.children?.[1]?.props?.children ||
-                        tab.tabButton ||
-                        ''
-                     )
-                        .toLocaleLowerCase()
-                        .replace(' ', '-')}`;
+                           .replace(' ', '-')}`;
+                     }
                   }}
                   className={
                      'flex flex-col items-center text-white lg:block text-center lg:p-2'
