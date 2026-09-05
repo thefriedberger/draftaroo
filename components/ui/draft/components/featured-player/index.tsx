@@ -257,6 +257,7 @@ const FeaturedPlayer = ({
       if (featuredRef.current && featuredPlayer) {
          featuredRef.current.focus({
             preventScroll: true,
+            // @ts-ignore: this is valid?
             focusVisible: false,
          });
       }
