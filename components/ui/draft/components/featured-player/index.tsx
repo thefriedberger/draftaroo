@@ -246,7 +246,7 @@ const FeaturedPlayer = ({
                <button
                   className={classNames(
                      buttonClasses,
-                     'bg-paper-dark text-md dark:bg-gray-primary text-black dark:text-white rounded-md p-1 mt-2 w-fit'
+                     'text-md dark:bg-gray-primary text-black dark:text-white rounded-md p-1 mt-2 w-fit'
                   )}
                   type="button"
                   onClick={() => {
