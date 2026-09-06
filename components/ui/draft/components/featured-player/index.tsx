@@ -237,17 +237,44 @@ const FeaturedPlayer = ({
 
    const statsToggle = (featuredPlayer: Player) => {
       return (
-         <details className="flex flex-col-reverse lg:hidden">
-            <span className="">{playerStats(featuredPlayer)}</span>
-            <summary
-               className="block lg:hidden w-fit"
-               onClick={() => setIsExpanded(!isExpanded)}
-            >
-               <div className="bg-paper-dark text-md dark:bg-gray-primary text-black dark:text-white rounded-md p-1 mt-2 w-fit">
-                  {isExpanded ? 'Hide' : 'Show'} stats
-               </div>
-            </summary>
-         </details>
+         <div className="flex flex-col lg:hidden">
+            {showStats && isExpanded && (
+               <span>{playerStats(featuredPlayer)}</span>
+            )}
+            {!showStats && isExpanded && <PlayerHistory />}
+            <div className="block lg:hidden w-fit">
+               <button
+                  className={classNames(
+                     buttonClasses,
+                     'bg-paper-dark text-md dark:bg-gray-primary text-black dark:text-white rounded-md p-1 mt-2 w-fit'
+                  )}
+                  type="button"
+                  onClick={() => {
+                     if (isExpanded && !showStats) {
+                        setShowStats(true);
+                     } else {
+                        setShowStats(true);
+                        setIsExpanded(!isExpanded);
+                     }
+                  }}
+               >
+                  {isExpanded && showStats ? 'Hide' : 'Show'} stats
+               </button>
+               <button
+                  className={classNames(buttonClasses, 'ml-2')}
+                  onClick={() => {
+                     if (isExpanded && showStats) {
+                        setShowStats(false);
+                     } else {
+                        setShowStats(false);
+                        setIsExpanded(!isExpanded);
+                     }
+                  }}
+               >
+                  {isExpanded && !showStats ? 'Hide' : 'Show'} history
+               </button>
+            </div>
+         </div>
       );
    };
 
@@ -267,11 +294,11 @@ const FeaturedPlayer = ({
       return (
          <table className="dark:text-white table-auto">
             <thead>
-               <th className="p-1 text-sm">Drafted By</th>
-               <th className="p-1 text-sm">Round</th>
-               <th className="p-1 text-sm">Pick</th>
-               <th className="p-1 text-sm">Was Keeper</th>
-               <th className="p-1 text-sm">Year</th>
+               <th className="p-1 text-xs lg:text-sm">Drafted By</th>
+               <th className="p-1 text-xs lg:text-sm">Round</th>
+               <th className="p-1 text-xs lg:text-sm">Pick</th>
+               <th className="p-1 text-xs lg:text-sm">Was Keeper</th>
+               <th className="p-1 text-xs lg:text-sm">Year</th>
             </thead>
             <tbody>
                {playerHistory
@@ -282,13 +309,19 @@ const FeaturedPlayer = ({
                   )
                   .map((history) => (
                      <tr key={history.id}>
-                        <td className="p-1 text-sm">{history.team}</td>
-                        <td className="p-1 text-sm">{history.round}</td>
-                        <td className="p-1 text-sm">{history.pick}</td>
-                        <td className="p-1 text-sm">
+                        <td className="p-1 text-xs lg:text-sm">
+                           {history.team}
+                        </td>
+                        <td className="p-1 text-xs lg:text-sm">
+                           {history.round}
+                        </td>
+                        <td className="p-1 text-xs lg:text-sm">
+                           {history.pick}
+                        </td>
+                        <td className="p-1 text-xs lg:text-sm">
                            {history.is_keeper ? 'Yes' : 'No'}
                         </td>
-                        <td className="p-1 text-sm">
+                        <td className="p-1 text-xs lg:text-sm">
                            {new Date(history.created_at ?? '').getFullYear()}
                         </td>
                      </tr>
@@ -309,10 +342,6 @@ const FeaturedPlayer = ({
          }
       })();
    }, [featuredPlayer]);
-
-   useEffect(() => {
-      console.log(playerHistory);
-   }, [playerHistory]);
 
    useEffect(() => {
       if (featuredRef.current && featuredPlayer) {
@@ -456,6 +485,7 @@ const FeaturedPlayer = ({
                      ).length
                         ? scoreProjector(featuredPlayer)
                         : null}
+
                      {Object.keys(featuredPlayer.stats ?? {}).filter(
                         (key) => !key.includes('proj.')
                      ).length
