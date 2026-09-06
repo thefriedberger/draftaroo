@@ -144,25 +144,25 @@ const PlayerList = ({
    return (
       <>
          <div className="flex flex-col items-center h-full max-h-full w-full text-black dark:text-white">
-            <div className="flex flex-col sticky top-0 z-10 bg-gray-primary lg:z-0 lg:bg-transparent lg:static lg:flex-row w-full lg:w-auto justify-start self-start items-stretch lg:items-end">
+            <div className="flex flex-col sticky top-0 z-10 bg-transparent lg:z-0 lg:bg-transparent lg:static lg:flex-row w-full lg:w-auto justify-start self-start items-stretch lg:items-end">
                <div className="grid grid-cols-9 lg:grid-cols-10 gap-2 lg:gap-0">
                   <Filter
                      values={positions}
                      labels={positionMap}
                      filterFun={setPositionFilter}
                      name={'Filter positions'}
-                     classes={'col-span-3 lg:col-span-2'}
+                     classes={'col-span-3 lg:col-span-2 bg-white'}
                   />
                   <Filter
                      values={teams}
                      filterFun={setTeamFilter}
                      name={'Filter teams'}
-                     classes={'col-span-3 lg:col-span-2'}
+                     classes={'col-span-3 lg:col-span-2 bg-white'}
                   />
                   <div className="flex flex-col col-span-3 lg:col-span-2">
                      <select
                         defaultValue={cleanSeasons(seasons[2])}
-                        className="text-black p-2 rounded-none lg:p-1 lg:mr-2 lg:h-full"
+                        className="text-black p-2 rounded-none lg:p-1 lg:mr-2 lg:h-full bg-white"
                         onChange={(e: ChangeEvent) => {
                            const target = e.target as HTMLSelectElement;
                            setSeason(target?.value);
