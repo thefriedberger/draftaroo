@@ -107,18 +107,18 @@ const Team = ({
 
    return (
       <table className="w-full">
-         <thead className="bg-gold text-left sticky top-0 text-white">
+         <thead className="text-white bg-gray-700 dark:bg-gold text-left sticky top-0">
             {myTeam && (
                <tr>
                   <th
                      colSpan={2}
-                     className="hidden lg:table-cell text-black bg-paper-dark dark:bg-blue-muted px-2 py-[.35rem]"
+                     className="hidden lg:table-cell text-black bg-blue-muted dark:bg-blue-muted px-2 py-[.35rem]"
                   >
                      My Team
                   </th>
                </tr>
             )}
-            <tr>
+            <tr className="text-white">
                <th>Pos</th>
                <th>Player</th>
                {!myTeam && <th>Pick</th>}

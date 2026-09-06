@@ -149,7 +149,7 @@ const FeaturedPlayer = ({
       return (
          <table className="text-sm mt-2 overflow-x-scroll lg:overflow-auto max-w-[100vw] w-full block lg:table">
             <thead>
-               <tr className="text-left bg-gold">
+               <tr className="text-left bg-gray-700 text-white dark:bg-gold">
                   <th>Season</th>
                   <th>Score</th>
                   <th>Avg</th>
@@ -241,7 +241,7 @@ const FeaturedPlayer = ({
             {showStats && isExpanded && (
                <span>{playerStats(featuredPlayer)}</span>
             )}
-            {!showStats && isExpanded && <PlayerHistory />}
+            {!showStats && isExpanded ? <PlayerHistory /> : null}
             <div className="block lg:hidden w-fit">
                <button
                   className={classNames(
@@ -292,13 +292,19 @@ const FeaturedPlayer = ({
 
    const PlayerHistory = () => {
       return (
-         <table className="dark:text-white table-auto">
+         <table className="dark:text-white table-auto mt-2 w-full">
             <thead>
-               <th className="p-1 text-xs lg:text-sm">Drafted By</th>
-               <th className="p-1 text-xs lg:text-sm">Round</th>
-               <th className="p-1 text-xs lg:text-sm">Pick</th>
-               <th className="p-1 text-xs lg:text-sm">Was Keeper</th>
-               <th className="p-1 text-xs lg:text-sm">Year</th>
+               <tr className="bg-gray-700 text-white dark:bg-gold">
+                  <th className="p-1 text-xs lg:text-sm text-left">
+                     Drafted By
+                  </th>
+                  <th className="p-1 text-xs lg:text-sm text-left">Round</th>
+                  <th className="p-1 text-xs lg:text-sm text-left">Pick</th>
+                  <th className="p-1 text-xs lg:text-sm text-left">
+                     Was Keeper
+                  </th>
+                  <th className="p-1 text-xs lg:text-sm text-left">Year</th>
+               </tr>
             </thead>
             <tbody>
                {playerHistory
@@ -455,7 +461,7 @@ const FeaturedPlayer = ({
                         ))}
                   </div>
                   <div className="lg:ml-2 hidden lg:flex flex-col self-end">
-                     {hasStats && (
+                     {hasStats ? (
                         <button
                            className={classNames('mb-2', buttonClasses)}
                            type="button"
@@ -463,8 +469,8 @@ const FeaturedPlayer = ({
                         >
                            Stats
                         </button>
-                     )}
-                     {playerHistory.length && (
+                     ) : null}
+                     {playerHistory.length ? (
                         <button
                            className={buttonClasses}
                            type="button"
@@ -472,7 +478,7 @@ const FeaturedPlayer = ({
                         >
                            History
                         </button>
-                     )}
+                     ) : null}
                   </div>
                </div>
 
