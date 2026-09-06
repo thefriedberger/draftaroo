@@ -236,8 +236,6 @@ const updatePlayers = async () => {
 
    // deleteAllRows();
 
-   console.log(players.length);
-
    const insertPlayerRows = async () => {
       const { data, error } = await supabase
          .from('players')

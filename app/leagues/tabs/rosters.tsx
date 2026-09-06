@@ -120,10 +120,6 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
       }
    }, [rosteredPlayers, players]);
 
-   useEffect(() => {
-      console.log(file);
-   }, [file]);
-
    const rosterSelectorProps = {
       picks: draftPicks?.[String(teamToView?.id)] ?? [],
       team: teamToView ?? null,

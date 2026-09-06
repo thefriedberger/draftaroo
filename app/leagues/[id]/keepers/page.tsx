@@ -142,11 +142,6 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
             picksUsed = [1];
          }
       }
-
-      if (foundPlayer?.player_id === 8476945) {
-         console.log(foundPlayer, picksUsed);
-      }
-
       return foundPlayer ? foundPlayer.picks_used : [];
    };
 
