@@ -45,9 +45,7 @@ const projectStats = (player: Player) => {
             } else {
                if (numberOfSeasons === 1 && key !== 'games') {
                   projected[projectedYear][key] =
-                     (Math.round((statsB[key] + (statsA?.[key] || 0)) * 1.15) *
-                        10) /
-                     10;
+                     (Math.round(statsB[key] + (statsA?.[key] || 0)) * 10) / 10;
                } else {
                   projected[projectedYear][key] =
                      statsB[key] + (statsA?.[key] || 0);

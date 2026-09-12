@@ -134,6 +134,7 @@ export const Player = ({
       player.stats?.[projectedKey ?? ''] || player.stats?.[secondaryKey ?? ''];
 
    const skatersScore = [
+      'projectionMultiplier',
       'games',
       'goals',
       'assists',
@@ -149,6 +150,7 @@ export const Player = ({
       'timeOnIcePerGame',
    ];
    const goalieScore = [
+      'projectionMultiplier',
       'games',
       'gamesPlayed',
       'wins',
@@ -160,6 +162,9 @@ export const Player = ({
       'goalAgainstAverage',
       'shutouts',
    ];
+
+   const currentYear = new Date().getUTCFullYear();
+   const projectedYear = `${currentYear}${currentYear + 1} (proj.)`;
 
    const score = Object.values(playerStats ?? {}).length
       ? playerStats
@@ -211,7 +216,14 @@ export const Player = ({
                               <input
                                  id={category}
                                  name={category}
-                                 type="number"
+                                 type={
+                                    category === 'projectionMultiplier'
+                                       ? 'text'
+                                       : 'number'
+                                 }
+                                 defaultValue={
+                                    player?.stats?.[projectedYear][category]
+                                 }
                               />
                            </div>
                         );
