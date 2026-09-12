@@ -48,25 +48,37 @@ const getPlayers = async (league: League): Promise<Player[]> => {
                let powerPlayAssists = 0;
                let shortHandedAssists = 0;
                for (const key in stats) {
+                  if (
+                     key === 'powerPlayAssists' ||
+                     key === 'shortHandedAssists'
+                  )
+                     continue;
+
                   const stat = key as keyof PlayerStats;
                   if (
                      (leagueScoring?.[stat] !== undefined ||
                         leagueScoring?.[stat]) &&
                      (stats?.[key] || null !== undefined || stats?.[key])
                   ) {
+                     if (
+                        player.first_name === 'Jason' &&
+                        player.last_name === 'Robertson'
+                     ) {
+                        console.log(season, key);
+                     }
                      if (key === 'powerPlayPoints') {
                         if (
-                           stats?.['powerPlayPoints'] !== undefined &&
-                           stats?.['powerPlayGoals'] !== undefined &&
+                           stats?.['powerPlayPoints'] &&
+                           stats?.['powerPlayGoals'] &&
                            leagueScoring?.['powerPlayAssists']
                         ) {
                            powerPlayAssists =
                               stats?.['powerPlayPoints'] -
                               stats?.['powerPlayGoals'];
+
                            tempPoints +=
                               leagueScoring?.['powerPlayAssists'] *
-                              (stats?.['powerPlayPoints'] -
-                                 stats?.['powerPlayGoals']);
+                              powerPlayAssists;
                         }
                      } else if (key === 'shortHandedPoints') {
                         if (
@@ -77,10 +89,10 @@ const getPlayers = async (league: League): Promise<Player[]> => {
                            shortHandedAssists =
                               stats['shortHandedPoints'] -
                               stats['shortHandedGoals'];
+
                            tempPoints +=
                               leagueScoring?.['shortHandedAssists'] *
-                              (stats['shortHandedPoints'] -
-                                 stats['shortHandedGoals']);
+                              shortHandedAssists;
                         }
                      } else {
                         tempPoints += leagueScoring?.[stat] * stats?.[stat];
@@ -102,9 +114,29 @@ const getPlayers = async (league: League): Promise<Player[]> => {
             let projectedStats = projectStats(player);
 
             const currentYear = new Date().getUTCFullYear();
-            if (!player.stats[`${currentYear}${currentYear + 1} (proj.)`]) {
-               player.stats[`${currentYear}${currentYear + 1} (proj.)`] =
-                  projectedStats?.[`${currentYear}${currentYear + 1} (proj.)`];
+            const projectedKey = `${currentYear}${currentYear + 1} (proj.)`;
+
+            if (!player.stats[projectedKey]) {
+               player.stats[projectedKey] = projectedStats?.[projectedKey];
+            } else {
+               const mult =
+                  player.stats[projectedKey]?.['projectionMultiplier'] || 1.15;
+
+               const keys = Object.keys(player.stats[projectedKey]);
+
+               for (const key of keys) {
+                  if (key === 'games') continue;
+                  if (['score', 'averageScore'].includes(key)) {
+                     player.stats[projectedKey][key] =
+                        Math.round(
+                           player.stats[projectedKey][key] * mult * 10
+                        ) / 10;
+                  } else {
+                     player.stats[projectedKey][key] = Math.round(
+                        Math.round(player.stats[projectedKey][key] * mult)
+                     );
+                  }
+               }
             }
          }
          playersArray.push(player);
