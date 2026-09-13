@@ -721,7 +721,7 @@ const Board = ({
       {
          tabButton: (
             <>
-               <TeamsIcon />
+               <MyTeamIcon />
                <p className="text-[8px]">Your Team</p>
             </>
          ),
@@ -730,7 +730,7 @@ const Board = ({
       {
          tabButton: (
             <>
-               <MyTeamIcon />
+               <TeamsIcon />
                <p className="text-[8px]">Other Teams</p>
             </>
          ),
