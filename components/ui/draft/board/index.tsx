@@ -740,8 +740,7 @@ const Board = ({
    const tabProps: TabProps = {
       tabs,
       centerTabs: false,
-      className:
-         'flex flex-col w-full lg:max-w-screen-2xl lg:h-[65%] text-white',
+      className: 'flex flex-col w-full lg:max-w-screen-2xl text-white',
       saveState: true,
       useHash: false,
    };
@@ -749,7 +748,7 @@ const Board = ({
    const mobileTabProps: TabProps = {
       tabs: mobileTabs,
       centerTabs: false,
-      className: `flex flex-col-reverse w-full h-[calc(100%-66px)] overflow-y-scroll ${
+      className: `flex flex-col-reverse w-full h-full overflow-y-scroll ${
          featuredPlayer &&
          (!draftedIds.includes(featuredPlayer?.id) ? 'pb-[130px]' : 'pb-[90px]')
       }`,
@@ -763,7 +762,7 @@ const Board = ({
    };
 
    return (
-      <div className="flex flex-col lg:flex-row items-center w-full overflow-y-scroll lg:overflow-y-hidden draft-board">
+      <div className="flex flex-col items-center w-full overflow-y-scroll lg:overflow-y-hidden draft-board">
          <DraftContext.Provider
             value={{
                watchlist: watchlistState,
@@ -820,17 +819,17 @@ const Board = ({
                      ))}
                   {!isMobile ? (
                      <>
-                        <div className="flex flex-col lg:max-w-[15vw] h-full w-full overflow-y-hidden">
+                        <div className="flex flex-col h-full w-full overflow-y-hidden">
                            <Timer {...timerProps} />
                            <DraftOrder {...draftOrderProps} />
                         </div>
-                        <div className="flex flex-col lg:max-w-[70vw] h-full w-full">
-                           <FeaturedPlayer {...featuredPlayerProps} />
+                        <div className="flex h-full w-full">
+                           {/* <FeaturedPlayer {...featuredPlayerProps} /> */}
                            <Tabs {...tabProps} />
-                        </div>
-                        <div className="flex flex-col lg:max-w-[15vw] h-full w-full">
                            <Watchlist {...watchlistProps} />
                            <MyTeam {...myTeamProps} />
+                        </div>
+                        <div className="flex flex-col h-full w-full">
                            {/* <Chat {...chatProps} /> */}
                         </div>
                      </>

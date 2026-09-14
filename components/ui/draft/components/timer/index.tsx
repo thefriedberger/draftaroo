@@ -330,7 +330,7 @@ const Timer = ({
    }
 
    return (
-      <div className="flex flex-col justify-between w-full h-20 lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative lg:border-b lg:border-gray-light">
+      <div className="flex flex-col justify-between w-full h-fit lg:overflow-hidden dark:text-white relative lg:border-b lg:border-gray-light">
          {!isCompleted ? (
             <>
                {yourTurn && isActive && !pickIsKeeper && (
@@ -353,47 +353,44 @@ const Timer = ({
                </button>
                {!isMobile ? (
                   <>
-                     <p className="bg-orange-primary text-black text-4xl p-2 text-center font-bold">
-                        {timer}
-                     </p>{' '}
-                     <button
-                        title={`${
-                           shouldAutoDraft ? 'Disable' : 'Enable'
-                        } autodraft`}
-                        type="button"
-                        onClick={handleAutoDraft}
-                        className={classNames(
-                           buttonClasses,
-                           'w-full !py-1 !px-1 rounded-md flex justify-center items-center stroke-black dark:!stroke-white dark:lg:stroke-black'
-                        )}
-                     >
-                        <span className="sr-only">
-                           {shouldAutoDraft ? 'Disable' : 'Enable'} autodraft
-                        </span>
-                        {shouldAutoDraft ? 'Disable' : 'Enable'} Autodraft
-                        &nbsp;
-                        {<AutoDraftIcon active={shouldAutoDraft} />}
-                     </button>
-                     <p className="ml-2">{currentRound}&nbsp;Round</p>
-                     <span className={'flex justify-between'}>
-                        <p className="ml-2">{currentPick}&nbsp;Pick</p>
-                        <p className="text-xs mt-auto">{picksRemaining}</p>
-                     </span>
+                     <div className="bg-orange-primary flex items-center justify-center">
+                        <p className=" text-black text-4xl p-2 text-center font-bold">
+                           {timer}
+                        </p>{' '}
+                        <button
+                           title={`${
+                              shouldAutoDraft ? 'Disable' : 'Enable'
+                           } autodraft`}
+                           type="button"
+                           onClick={handleAutoDraft}
+                           className={classNames(
+                              buttonClasses,
+                              '!py-1 !px-1 rounded-md flex justify-center items-center stroke-black dark:!stroke-white dark:lg:stroke-black absolute right-1 top-7 w-6 h-6'
+                           )}
+                        >
+                           <span className="sr-only">
+                              {shouldAutoDraft ? 'Disable' : 'Enable'} autodraft
+                           </span>
+                           {<AutoDraftIcon active={shouldAutoDraft} />}
+                        </button>
+                     </div>
                      <div
                         className={classNames(
                            yourTurn
-                              ? 'bg-gold'
+                              ? 'bg-fuscia-dark'
                               : 'bg-paper-dark dark:bg-gray-primary',
-                           'p-2 bg-gold'
+                           'p-2 flex justify-center'
                         )}
                      >
-                        <p className="text-xl leading-none">
+                        <p className="text-md leading-none">
                            {yourTurn
                               ? pickIsKeeper
                                  ? '✨🎉✨'
                                  : 'Draft now!'
                               : userPick
-                              ? `Your turn in ${userPick}`
+                              ? `Your turn in ${userPick} ${
+                                   userPick === 1 ? 'pick' : 'picks'
+                                }`
                               : 'No more picks'}
                         </p>
                      </div>

@@ -95,7 +95,8 @@ export interface PlayerListProps {
 export interface DraftTileProps {
    pick: Pick;
    currentPick: number;
-   playerSelected: any;
+   playerSelected: DraftSelection;
+   player: Player;
    isYourTurn: boolean;
 }
 

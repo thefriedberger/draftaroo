@@ -1,4 +1,3 @@
-import KeeperIcon from '@/app/assets/images/icons/keeper-icon';
 import { DraftContext } from '@/components/context/draft-context';
 import { DraftedPlayer, TeamViewProps } from '@/lib/types';
 import classNames from 'classnames';
@@ -28,11 +27,6 @@ const Team = ({
                )}
             >
                {player?.first_name.charAt(0)}. {player?.last_name}
-               {player.is_keeper && (
-                  <span className="ml-auto">
-                     <KeeperIcon />
-                  </span>
-               )}
             </span>
          ) : (
             ''

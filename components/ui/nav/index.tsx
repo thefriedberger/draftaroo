@@ -6,7 +6,7 @@ import { NavProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { RefObject, useContext, useEffect, useRef, useState } from 'react';
 import { buttonClasses } from '../helpers/buttons';
 import NavMenu from './nav-menu';
@@ -14,6 +14,8 @@ import NavMenu from './nav-menu';
 export default function Nav({ user, userTeams, leagues, drafts }: NavProps) {
    const supabase = createClientComponentClient();
    const router = useRouter();
+   const pathname = usePathname();
+   const useNav = !pathname.includes('/draft/');
    const { userSignout } = useContext(PageContext);
    const navContainer = useRef<HTMLDivElement>(null);
    const accountNavContainer = useRef<HTMLDivElement>(null);
@@ -33,6 +35,7 @@ export default function Nav({ user, userTeams, leagues, drafts }: NavProps) {
    useOnClickOutside(navContainer, () => setNavIsOpen(false));
    useOnClickOutside(accountNavContainer, () => setAccountMenuIsOpen(false));
 
+   if (!useNav) return null;
    return (
       <>
          <div
