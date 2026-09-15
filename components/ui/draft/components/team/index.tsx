@@ -31,8 +31,8 @@ const Team = ({
             >
                <Image
                   src={player.headshot}
-                  width={50}
-                  height={50}
+                  width={40}
+                  height={40}
                   className="rounded-full bg-[rgba(0,0,0,.5)] mr-2"
                   alt={`Headshot of ${player?.first_name.charAt(0)}. ${
                      player?.last_name
@@ -116,51 +116,56 @@ const Team = ({
    return (
       <div
          aria-role="table"
-         className={classNames(styles['table'], 'w-full rounded-md')}
+         className={classNames(
+            myTeam ? styles['table_team'] : styles['table'],
+            'w-full rounded-md'
+         )}
       >
-         <div className="rounded-md text-white text-left backdrop-blur-3xl bg-[rgba(0,0,0,.5)]">
+         <div className="rounded-md text-white text-left backdrop-blur-3xl bg-[rgba(0,0,0,.5)] z-0">
             {myTeam && (
                <div
                   aria-role="row"
-                  className="hidden lg:flex w-full !border-none bg-blue-muted dark:bg-blue-muted px-2 py-[.35rem] !col-span-8 rounded-md mb-0.5"
+                  className="hidden lg:flex w-full !border-none bg-fuscia-primary px-2 py-[.35rem] !col-span-8 rounded-md mb-0.5"
                >
                   <div
                      aria-role="columnheader"
                      aria-sort="none"
-                     className="w-full !col-span-8"
+                     className="w-full !col-span-8 font-bold text-lg text-gray-dark"
                   >
-                     My Team
+                     My Roster
                   </div>
                </div>
             )}
-            <div
-               aria-role="row"
-               className="bg-gray-700 dark:bg-gold text-white rounded-md mb-0.5 grid grid-cols-15"
-            >
+            {!myTeam && (
                <div
-                  aria-role="columnheader"
-                  aria-sort="none"
-                  className={'col-span-2'}
+                  aria-role="row"
+                  className="bg-gray-700 dark:bg-gold text-white rounded-md mb-0.5 grid grid-cols-15"
                >
-                  Pos
-               </div>
-               <div
-                  aria-role="columnheader"
-                  aria-sort="none"
-                  className={'col-span-10'}
-               >
-                  Player
-               </div>
-               {
                   <div
                      aria-role="columnheader"
                      aria-sort="none"
-                     className="col-span-2"
+                     className={'!col-span-1'}
                   >
-                     Pick
+                     Pos
                   </div>
-               }
-            </div>
+                  <div
+                     aria-role="columnheader"
+                     aria-sort="none"
+                     className={'!col-span-12'}
+                  >
+                     Player
+                  </div>
+                  {
+                     <div
+                        aria-role="columnheader"
+                        aria-sort="none"
+                        className={'!col-span-1'}
+                     >
+                        Pick
+                     </div>
+                  }
+               </div>
+            )}
          </div>
          <div aria-role="rowgroup">
             {Array.from({ length: 9 }).map((val, index: number) => {
@@ -180,9 +185,7 @@ const Team = ({
                   >
                      {' '}
                      <div aria-role="cell" aria-sort="none">
-                        <span className={tileColorMap[primaryPosition ?? 'F']}>
-                           F
-                        </span>
+                        <span>F</span>
                      </div>
                      <div aria-role="cell" className={'col-span-10'}>
                         {forwards?.[index] && setDisplayName(forwards[index])}
@@ -208,7 +211,7 @@ const Team = ({
                      )}
                   >
                      <div aria-role="cell">
-                        <span className={tileColorMap['D']}>D</span>
+                        <span>D</span>
                      </div>
                      <div aria-role="cell" className={'col-span-10'}>
                         {defenseman?.[index] &&
@@ -275,7 +278,7 @@ const Team = ({
                         player && 'cursor-pointer'
                      )}
                   >
-                     <div aria-role="cell">Bench</div>
+                     <div aria-role="cell">B</div>
                      <div aria-role="cell" className={'col-span-10'}>
                         {setDisplayName(player)}
                      </div>

@@ -20,7 +20,7 @@ const TeamsList = ({
       <div className="w-full h-full overflow-y-scroll">
          {user && teams && (
             <>
-               <div className="w-full lg:sticky lg:top-0 h-[35px] bg-paper-primary dark:bg-gray-dark">
+               <div className="w-full lg:sticky lg:top-0 h-[35px] bg-paper-primary dark:bg-gray-dark z-10">
                   <select
                      className="text-black bg-white p-1 h-full w-full lg:w-fit"
                      onChange={(e: ChangeEvent<HTMLSelectElement>) => {
