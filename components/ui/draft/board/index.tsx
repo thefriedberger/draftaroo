@@ -823,15 +823,14 @@ const Board = ({
                            <Timer {...timerProps} />
                            <DraftOrder {...draftOrderProps} />
                         </div>
-                        <div className="flex h-full w-full">
-                           {/* <FeaturedPlayer {...featuredPlayerProps} /> */}
+                        <div className="flex h-full w-full lg:max-h-[calc(100vh-310px)]">
                            <Tabs {...tabProps} />
-                           <Watchlist {...watchlistProps} />
-                           <MyTeam {...myTeamProps} />
+                           <div className="flex flex-col min-w-[25%]">
+                              <Watchlist {...watchlistProps} />
+                              <MyTeam {...myTeamProps} />
+                           </div>
                         </div>
-                        <div className="flex flex-col h-full w-full">
-                           {/* <Chat {...chatProps} /> */}
-                        </div>
+                        <FeaturedPlayer {...featuredPlayerProps} />
                      </>
                   ) : (
                      <>

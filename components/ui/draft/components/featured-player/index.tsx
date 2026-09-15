@@ -7,10 +7,11 @@ import getPlayerHistory, {
 import { convertTime, handleDraftSelection } from '@/app/utils/helpers';
 import { DraftContext } from '@/components/context/draft-context';
 import { buttonClasses } from '@/components/ui/helpers/buttons';
+import Modal from '@/components/ui/modal';
 import { FeaturedPlayerProps } from '@/lib/types';
 import classNames from 'classnames';
 import Image from 'next/image';
-import { Fragment, useContext, useEffect, useRef, useState } from 'react';
+import { Fragment, ReactNode, useContext, useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { teamAbbreviations } from '../player';
 import { cleanSeasons, seasons } from '../player-list';
@@ -32,7 +33,7 @@ const FeaturedPlayer = ({
    };
    const [isExpanded, setIsExpanded] = useState<boolean>(false);
    const [showStats, setShowStats] = useState<boolean>(true);
-   const featuredRef = useRef<HTMLDivElement>(null);
+   const { updateFeaturedPlayer } = useContext(DraftContext);
    let [playerHistory, setPlayerHistory] = useState<PlayerHistoryProps[]>([]);
 
    const hasStats: boolean = featuredPlayer
@@ -349,22 +350,14 @@ const FeaturedPlayer = ({
       })();
    }, [featuredPlayer]);
 
-   useEffect(() => {
-      if (featuredRef.current && featuredPlayer) {
-         featuredRef.current.focus({
-            preventScroll: true,
-            // @ts-ignore: this is valid
-            focusVisible: false,
-         });
-      }
-   }, [featuredPlayer]);
+   const handleClose = () => {
+      updateFeaturedPlayer?.(null);
+   };
 
-   return (
+   const modalContent: ReactNode = (
       <div
-         ref={featuredRef}
-         tabIndex={0}
          className={classNames(
-            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:max-w-full z-10 fixed lg:relative bottom-[66px] lg:w lg:flex lg:flex-col lg:bottom-auto w-full px-5 p-2 lg:p-2 justify-end lg:py-0 h-fit lg:overflow-y-scroll'
+            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:max-w-full z-10 fixed lg:relative bottom-[66px] lg:w lg:flex lg:flex-col lg:bottom-auto w-full px-5 p-2 justify-end h-fit lg:overflow-y-scroll'
          )}
       >
          {featuredPlayer && (
@@ -500,40 +493,18 @@ const FeaturedPlayer = ({
                   </>
                )}
                <p>{yourTurn}</p>
-               <CloseFeaturedPlayer />
             </>
          )}
       </div>
    );
+
+   return (
+      <Modal
+         children={featuredPlayer && modalContent}
+         handleClose={handleClose}
+         isOpen={featuredPlayer ? true : false}
+      />
+   );
 };
 
 export default FeaturedPlayer;
-
-const CloseFeaturedPlayer = () => {
-   const { updateFeaturedPlayer } = useContext(DraftContext);
-
-   return (
-      <button
-         className="block absolute top-auto bottom-1 lg:bottom-auto lg:top-1 right-1"
-         type="button"
-         tabIndex={0}
-         onClick={() => updateFeaturedPlayer?.(null)}
-      >
-         <svg
-            width="30px"
-            height="30px"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="stroke-white lg:w-[40px] lg:h-[40px]"
-         >
-            <path
-               d="M9 9L15 15M15 9L9 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-               strokeWidth="2"
-               strokeLinecap="round"
-               strokeLinejoin="round"
-            />
-         </svg>
-      </button>
-   );
-};

@@ -1,4 +1,5 @@
 import KeeperIcon from '@/app/assets/images/icons/keeper-icon';
+import { tileColorMap } from '@/app/utils/constants';
 import { DraftContext } from '@/components/context/draft-context';
 import { DraftTileProps } from '@/lib/types';
 import classNames from 'classnames';
@@ -8,39 +9,28 @@ const DraftTile = ({ pick, currentPick, player }: DraftTileProps) => {
    const { updateFeaturedPlayer } = useContext(DraftContext);
    const draftTileRef = useRef<HTMLDivElement | null>(null);
    const shouldScroll = useRef<boolean>(true);
-   const tileColorMap: Record<'F' | 'C' | 'L' | 'R' | 'D' | 'G', string> = {
-      F: 'bg-blue-300',
-      C: 'bg-blue-300',
-      L: 'bg-blue-300',
-      R: 'bg-blue-300',
-      D: 'bg-orange-300',
-      G: 'bg-green-300',
-   };
 
-   const scrollCallback = () => {
-      const draftOrderContainer: HTMLDivElement = draftTileRef.current
-         ?.parentElement?.parentElement as HTMLDivElement;
-
-      draftOrderContainer.addEventListener('scroll', () => {
-         shouldScroll.current = false;
-      });
-      shouldScroll.current = true;
-      if (
-         draftOrderContainer &&
-         draftTileRef.current?.offsetTop &&
-         shouldScroll.current === true
-      ) {
-         const scrollY =
-            draftTileRef.current?.offsetTop -
-            draftOrderContainer.offsetTop -
-            40;
-         draftOrderContainer.scrollTo({
-            top: scrollY,
-         });
-      }
-   };
    useEffect(() => {
+      const scrollCallback = () => {
+         const draftOrderContainer: HTMLDivElement = draftTileRef.current
+            ?.parentElement?.parentElement as HTMLDivElement;
+
+         draftOrderContainer.addEventListener('scroll', () => {
+            shouldScroll.current = false;
+         });
+
+         shouldScroll.current = true;
+         if (
+            draftOrderContainer &&
+            draftTileRef.current &&
+            shouldScroll.current === true
+         ) {
+            draftTileRef.current.scrollIntoView({ behavior: 'smooth' });
+         }
+      };
       currentPick === pick.draftPosition && scrollCallback();
+
+      return () => {};
    }, [pick, currentPick]);
 
    const handleUpdateFeaturedPlayer = () => {
@@ -51,14 +41,16 @@ const DraftTile = ({ pick, currentPick, player }: DraftTileProps) => {
       <div
          className={classNames(
             currentPick === pick.draftPosition &&
-               'ring-2 ring-emerald-primary ring-inset',
+               'ring-2 !ring-emerald-primary ring-inset',
             pick.playerID && ' cursor-pointer',
             'flex flex-row p-1 text-black rounded-md',
             !player && 'dark:text-white dark:bg-gray-light',
+            pick.yourPick && 'ring-2 ring-gray-dark dark:ring-white ring-inset',
             player && tileColorMap[player.primary_position ?? 'C']
          )}
          ref={(currentPick === pick.draftPosition && draftTileRef) || null}
          onClick={handleUpdateFeaturedPlayer}
+         data-featured-toggle={true}
       >
          <div className="w-full max-w-[60%] h-20">
             <div className={`${pick.isKeeper ? 'col-span-3' : 'col-span-4'}`}>

@@ -14,6 +14,7 @@ const TeamsList = ({
       players: draftedPlayers,
       doReset: doReset,
       setDoReset: setDoReset,
+      myTeam: false,
    };
    return (
       <div className="w-full h-full overflow-y-scroll">

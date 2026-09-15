@@ -60,12 +60,6 @@ const getPlayers = async (league: League): Promise<Player[]> => {
                         leagueScoring?.[stat]) &&
                      (stats?.[key] || null !== undefined || stats?.[key])
                   ) {
-                     if (
-                        player.first_name === 'Jason' &&
-                        player.last_name === 'Robertson'
-                     ) {
-                        console.log(season, key);
-                     }
                      if (key === 'powerPlayPoints') {
                         if (
                            stats?.['powerPlayPoints'] &&

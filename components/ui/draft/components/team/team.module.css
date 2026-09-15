@@ -1,0 +1,15 @@
+.table,
+.table_team {
+   @apply px-1 rounded-md;
+}
+.table div[aria-role='row'],
+.table_team div[aria-role='row'] {
+   @apply grid grid-cols-15 p-1 mb-1 text-left rounded-md items-center;
+}
+.table div[aria-role='row'] div {
+   @apply first-of-type:col-span-2;
+}
+
+.table div[aria-role='row'] div[aria-role='cell'] {
+   @apply first-of-type:col-span-2 first-of-type:rounded-full first-of-type:h-8 first-of-type:w-8 first-of-type:border first-of-type:border-gray-primary first-of-type:flex first-of-type:items-center first-of-type:justify-center;
+}

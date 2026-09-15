@@ -1,7 +1,10 @@
+import { tileColorMap } from '@/app/utils/constants';
 import { DraftContext } from '@/components/context/draft-context';
 import { DraftedPlayer, TeamViewProps } from '@/lib/types';
 import classNames from 'classnames';
+import Image from 'next/image';
 import { useContext, useEffect, useState } from 'react';
+import styles from './team.module.css';
 
 const Team = ({
    players,
@@ -22,11 +25,22 @@ const Team = ({
          player?.first_name !== undefined && player?.last_name !== undefined ? (
             <span
                className={classNames(
-                  !myTeam && 'min-w-40 max-w-fit',
-                  'flex flex-row items-center justify-between'
+                  'min-w-40 max-w-fit',
+                  'flex flex-row items-center justify-start text-black'
                )}
             >
-               {player?.first_name.charAt(0)}. {player?.last_name}
+               <Image
+                  src={player.headshot}
+                  width={50}
+                  height={50}
+                  className="rounded-full bg-[rgba(0,0,0,.5)] mr-2"
+                  alt={`Headshot of ${player?.first_name.charAt(0)}. ${
+                     player?.last_name
+                  }`}
+               />
+               <span>
+                  {player?.first_name.charAt(0)}. {player?.last_name}
+               </span>
             </span>
          ) : (
             ''
@@ -100,108 +114,177 @@ const Team = ({
    // };
 
    return (
-      <table className="w-full">
-         <thead className="text-white bg-gray-700 dark:bg-gold text-left sticky top-0">
+      <div
+         aria-role="table"
+         className={classNames(styles['table'], 'w-full rounded-md')}
+      >
+         <div className="rounded-md text-white text-left backdrop-blur-3xl bg-[rgba(0,0,0,.5)]">
             {myTeam && (
-               <tr>
-                  <th
-                     colSpan={2}
-                     className="hidden lg:table-cell text-black bg-blue-muted dark:bg-blue-muted px-2 py-[.35rem]"
+               <div
+                  aria-role="row"
+                  className="hidden lg:flex w-full !border-none bg-blue-muted dark:bg-blue-muted px-2 py-[.35rem] !col-span-8 rounded-md mb-0.5"
+               >
+                  <div
+                     aria-role="columnheader"
+                     aria-sort="none"
+                     className="w-full !col-span-8"
                   >
                      My Team
-                  </th>
-               </tr>
+                  </div>
+               </div>
             )}
-            <tr className="text-white">
-               <th>Pos</th>
-               <th>Player</th>
-               {!myTeam && <th>Pick</th>}
-            </tr>
-         </thead>
-         <tbody>
+            <div
+               aria-role="row"
+               className="bg-gray-700 dark:bg-gold text-white rounded-md mb-0.5 grid grid-cols-15"
+            >
+               <div
+                  aria-role="columnheader"
+                  aria-sort="none"
+                  className={'col-span-2'}
+               >
+                  Pos
+               </div>
+               <div
+                  aria-role="columnheader"
+                  aria-sort="none"
+                  className={'col-span-10'}
+               >
+                  Player
+               </div>
+               {
+                  <div
+                     aria-role="columnheader"
+                     aria-sort="none"
+                     className="col-span-2"
+                  >
+                     Pick
+                  </div>
+               }
+            </div>
+         </div>
+         <div aria-role="rowgroup">
             {Array.from({ length: 9 }).map((val, index: number) => {
+               const primaryPosition = forwards?.[index]?.primary_position;
                return (
-                  <tr
+                  <div
+                     aria-role="row"
                      key={forwards?.[index]?.id ?? index}
                      onClick={() => {
                         forwards?.[index] &&
                            updateFeaturedPlayer?.(forwards[index]);
                      }}
-                     className={forwards?.[index] && 'cursor-pointer'}
+                     className={classNames(
+                        tileColorMap[primaryPosition ?? 'F'],
+                        forwards?.[index] && 'cursor-pointer'
+                     )}
                   >
-                     <td>F</td>
-                     <td>
+                     {' '}
+                     <div aria-role="cell" aria-sort="none">
+                        <span className={tileColorMap[primaryPosition ?? 'F']}>
+                           F
+                        </span>
+                     </div>
+                     <div aria-role="cell" className={'col-span-10'}>
                         {forwards?.[index] && setDisplayName(forwards[index])}
-                     </td>
-                     {!myTeam && <td>{forwards?.[index]?.pick}</td>}
-                  </tr>
+                     </div>
+                     {<div aria-role="cell">{forwards?.[index]?.pick}</div>}
+                  </div>
                );
             })}
             {Array.from({ length: 5 }).map((val, index: number) => {
                return (
-                  <tr
+                  <div
+                     aria-role="row"
                      key={defenseman?.[index]?.id ?? index}
                      onClick={() => {
                         defenseman?.[index] &&
                            updateFeaturedPlayer?.(defenseman[index]);
                      }}
-                     className={defenseman?.[index] && 'cursor-pointer'}
+                     className={classNames(
+                        tileColorMap[
+                           defenseman?.[index]?.primary_position ?? 'D'
+                        ],
+                        defenseman?.[index] && 'cursor-pointer'
+                     )}
                   >
-                     <td>D</td>
-                     <td>
+                     <div aria-role="cell">
+                        <span className={tileColorMap['D']}>D</span>
+                     </div>
+                     <div aria-role="cell" className={'col-span-10'}>
                         {defenseman?.[index] &&
                            setDisplayName(defenseman[index])}
-                     </td>
-                     {!myTeam && <td>{defenseman?.[index]?.pick}</td>}
-                  </tr>
+                     </div>
+                     {<div aria-role="cell">{defenseman?.[index]?.pick}</div>}
+                  </div>
                );
             })}
             {bench.map((player: DraftedPlayer) => {
                return (
-                  <tr
+                  <div
+                     aria-role="row"
                      key={player.id}
                      onClick={() => updateFeaturedPlayer?.(player)}
-                     className={'cursor-pointer'}
+                     className={classNames(
+                        'cursor-pointer bg-[rgb(173,107,183)]'
+                     )}
                   >
-                     <td>Bench</td>
-                     <td>{setDisplayName(player)}</td>
-                     {!myTeam && <td>{player.pick}</td>}
-                  </tr>
+                     <div aria-role="cell" className="text-black">
+                        B
+                     </div>
+                     <div aria-role="cell" className={'col-span-10'}>
+                        {setDisplayName(player)}
+                     </div>
+                     {
+                        <div aria-role="cell" className="text-black">
+                           {player.pick}
+                        </div>
+                     }
+                  </div>
                );
             })}
             {Array.from({ length: 2 }).map((val, index: number) => {
                return (
-                  <tr
+                  <div
+                     aria-role="row"
                      key={goalies?.[index]?.id ?? index}
                      onClick={() => {
                         goalies?.[index] &&
                            updateFeaturedPlayer?.(goalies[index]);
                      }}
-                     className={goalies?.[index] && 'cursor-pointer'}
+                     className={classNames(
+                        tileColorMap[goalies?.[index]?.primary_position ?? 'G'],
+                        goalies?.[index] && 'cursor-pointer'
+                     )}
                   >
-                     <td>G</td>
-                     <td>
+                     <div aria-role="cell">G</div>
+                     <div aria-role="cell" className={'col-span-10'}>
                         {goalies?.[index] && setDisplayName(goalies[index])}
-                     </td>
-                     {!myTeam && <td>{goalies?.[index]?.pick}</td>}
-                  </tr>
+                     </div>
+                     {<div aria-role="cell">{goalies?.[index]?.pick}</div>}
+                  </div>
                );
             })}
             {goaliesBench.map((player) => {
                return (
-                  <tr
+                  <div
+                     aria-role="row"
                      key={player.id}
                      onClick={() => updateFeaturedPlayer?.(player)}
-                     className={'cursor-pointer'}
+                     className={classNames(
+                        tileColorMap[player?.primary_position ?? 'G'],
+                        player && 'cursor-pointer'
+                     )}
                   >
-                     <td>Bench</td>
-                     <td>{setDisplayName(player)}</td>
-                     {!myTeam && <td>{player.pick}</td>}
-                  </tr>
+                     <div aria-role="cell">Bench</div>
+                     <div aria-role="cell" className={'col-span-10'}>
+                        {setDisplayName(player)}
+                     </div>
+                     {<div aria-role="cell">{player.pick}</div>}
+                  </div>
                );
             })}
-         </tbody>
-      </table>
+         </div>
+      </div>
    );
 };
 

@@ -24,7 +24,17 @@ const DraftOrder = ({
    picks,
 }: DraftOrderProps) => {
    const numberOfPicks = teams.length * numberOfRounds;
-   const gridCols = `grid-cols-${teams.length}`;
+   const gridMap = {
+      6: 'grid-cols-6',
+      7: 'grid-cols-7',
+      8: 'grid-cols-8',
+      9: 'grid-cols-9',
+      10: 'grid-cols-10',
+      11: 'grid-cols-11',
+      12: 'grid-cols-12',
+   };
+
+   const gridCols = gridMap[teams.length];
 
    return picks.length > 0 ? (
       <div className={classNames('overflow-y-scroll h-full relative max-h-64')}>
@@ -37,9 +47,16 @@ const DraftOrder = ({
             {picks
                .filter((pick) => pick.draftPosition <= teams.length)
                .map((pick) => (
-                  <div className="flex items-end text-white rounded-md z-100 text-ellipsis whitespace-nowrap overflow-hidden">
+                  <div
+                     className={classNames(
+                        'flex items-end text-white rounded-md z-100 text-ellipsis whitespace-nowrap overflow-hidden p-0.5',
+                        currentPick % 10 === pick.draftPosition &&
+                           'bg-emerald-primary',
+                        pick.yourPick && 'dark:bg-fuscia-primary'
+                     )}
+                  >
                      {pick.username}
-                     <span></span>
+                     {/* TODO: add tooltip hover to show full team name */}
                   </div>
                ))}
          </div>

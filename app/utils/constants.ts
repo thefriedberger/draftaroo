@@ -14,3 +14,12 @@ export const supabaseStorage: { [key: string]: string }[] = [
          'https://mfiegmjwkqpipahwvcbz.supabase.co/storage/v1/object/sign/audio/sandstorm.mp3?token=eyJraWQiOiIyZGVkMDgwYy01YTM0LTQzYTYtOTI5Ny0wZTgzMmNkNjhiZjkiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhdWRpby9zYW5kc3Rvcm0ubXAzIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4Nzc5MTYxMCwiZXhwIjozMzY0NTkxNjEwfQ.zr_Z5ab4U_x3AUCj98ZvMdFsGCwRH7SZJOQlmQ-MBOo',
    },
 ];
+
+export const tileColorMap: Record<'F' | 'C' | 'L' | 'R' | 'D' | 'G', string> = {
+   F: '!bg-blue-300 !text-black',
+   C: '!bg-blue-300 !text-black',
+   L: '!bg-blue-300 !text-black',
+   R: '!bg-blue-300 !text-black',
+   D: '!bg-orange-300 !text-black',
+   G: '!bg-green-300 !text-black',
+};

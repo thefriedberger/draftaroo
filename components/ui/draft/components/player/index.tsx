@@ -83,6 +83,7 @@ const PlayerComponent = ({
             onClick={(e: any) => {
                handleUpdateFeaturedPlayer(player, e);
             }}
+            data-featured-toggle={true}
          >
             <td className="w-7 max-w-7 min-w-7 align-middle">
                <WatchlistStar player={player} />
