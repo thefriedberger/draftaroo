@@ -499,11 +499,9 @@ const FeaturedPlayer = ({
    );
 
    return (
-      <Modal
-         children={featuredPlayer && modalContent}
-         handleClose={handleClose}
-         isOpen={featuredPlayer ? true : false}
-      />
+      <Modal handleClose={handleClose} isOpen={featuredPlayer ? true : false}>
+         {featuredPlayer && modalContent}
+      </Modal>
    );
 };
 
