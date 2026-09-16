@@ -1,5 +1,7 @@
 import updatePlayers from '../utils/fetch-players';
 
+export const maxDuration = 60; // Set timeout to 60 seconds
+
 export async function POST() {
    try {
       await updatePlayers();
