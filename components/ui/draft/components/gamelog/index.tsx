@@ -73,13 +73,17 @@ const Gamelog = (player: Player) => {
          <table className="mt-2 lg:max-w-[80vw] block overflow-scroll lg:max-h-[25vh]">
             <tr className="bg-gold text-white">
                {tableHeaders.map((header) => (
-                  <th className="min-w-8 text-sm text-left">{header}</th>
+                  <th key={header} className="min-w-8 text-sm text-left">
+                     {header}
+                  </th>
                ))}
             </tr>
-            {formattedStats.map((stats) => (
-               <tr>
-                  {stats.map((stat) => (
-                     <td className="text-sm">{stat}</td>
+            {formattedStats.map((stats, i) => (
+               <tr key={i}>
+                  {stats.map((stat, i) => (
+                     <td key={`${stat}-${i}`} className="text-sm">
+                        {stat}
+                     </td>
                   ))}
                </tr>
             ))}

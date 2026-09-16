@@ -52,6 +52,7 @@ const DraftOrder = ({
                .filter((pick) => pick.draftPosition <= teams.length)
                .map((pick) => (
                   <div
+                     key={pick.draftPosition}
                      className={classNames(
                         'block text-white rounded-md z-100 text-ellipsis whitespace-nowrap overflow-hidden my-0.5 p-0.5',
                         currentPick % 10 === pick.draftPosition &&
