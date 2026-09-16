@@ -307,6 +307,8 @@ export type Database = {
                primary_position: string | null;
                stats: Json | null;
                sweater_number: number | null;
+               dob?: string | Date | null;
+               gamelog?: Json | null;
             };
             Insert: {
                current_team: string;
@@ -318,6 +320,8 @@ export type Database = {
                primary_position?: string | null;
                stats?: Json | null;
                sweater_number?: number | null;
+               dob?: string | Date | null;
+               gamelog?: Json | null;
             };
             Update: {
                current_team?: string;
@@ -329,6 +333,8 @@ export type Database = {
                primary_position?: string | null;
                stats?: Json | null;
                sweater_number?: number | null;
+               dob?: string | Date | null;
+               gamelog?: Json | null;
             };
             Relationships: [];
          };

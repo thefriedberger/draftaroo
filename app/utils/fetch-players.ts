@@ -1,3 +1,5 @@
+import fetchWithRetry from './fetch-with-retry';
+
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 const supabaseUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}`;
@@ -79,60 +81,6 @@ const updatePlayers = async () => {
       'Content-Type': 'application/json',
    };
 
-   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-   async function fetchWithRetry(
-      url,
-      options = {},
-      retries = 3,
-      backoffMs = 1000
-   ) {
-      try {
-         const response = await fetch(url, options);
-
-         // If the server returns a 429 Too Many Requests error
-         if (response.status === 429) {
-            if (retries === 0) {
-               throw new Error('Max retries reached. API rate limit exceeded.');
-            }
-
-            // 1. Check for the standard 'Retry-After' header
-            const retryAfter = response.headers.get('retry-after');
-            let waitTime = backoffMs;
-
-            if (retryAfter) {
-               // If it's a number (seconds), convert to milliseconds.
-               // If it's an HTTP date string, calculate the delta.
-               // @ts-expect-error: that's why it checks...
-               waitTime = isNaN(retryAfter)
-                  ? //@ts-expect-error: pretty sure this is valid but we'll see
-                    Math.max(0, new Date(retryAfter) - new Date())
-                  : parseFloat(retryAfter) * 1000;
-            } else {
-               // 2. Fallback to exponential backoff if no header is present
-               backoffMs *= 2;
-            }
-
-            console.warn(
-               `Rate limited (429). Retrying in ${waitTime}ms... (${retries} retries left)`
-            );
-
-            await delay(waitTime);
-            return fetchWithRetry(url, options, retries - 1, backoffMs);
-         }
-
-         return response;
-      } catch (error) {
-         if (retries > 0) {
-            console.warn(
-               `Network error encountered. Retrying in ${backoffMs}ms...`,
-               error
-            );
-            await delay(backoffMs);
-            return fetchWithRetry(url, options, retries - 1, backoffMs * 2);
-         }
-         throw error;
-      }
-   }
    const players: Player[] = [];
 
    const populatePlayer = (player) => {
@@ -195,65 +143,35 @@ const updatePlayers = async () => {
 
    console.info('Roster fetched');
 
-   const extractStats = async (realtimePlayers, summaryPlayers, season) => {
-      const mappedPlayers: Player[] = summaryPlayers.map(
-         async (summaryStat) => {
-            const realtimeStats = realtimePlayers.find(
-               (rtPlayer) => rtPlayer.playerId === summaryStat.playerId
-            );
-            let gamelog;
-            let playerInfo;
-            try {
-               const playerInfoResponse = await fetchWithRetry(
-                  `https://api-web.nhle.com/v1/player/${summaryStat.playerId}/landing`,
-                  { method: 'GET' }
-               );
-               playerInfo = await playerInfoResponse.json();
-            } catch (error) {
-               console.error('Player info fetch error: ', error);
-            }
-            try {
-               const gamelogResponse = await fetchWithRetry(
-                  `https://api-web.nhle.com/v1/player/${
-                     summaryStat.playerId
-                  }/game-log/${season.replace('-', '')}/2`,
-                  { method: 'GET' }
-               );
+   const extractStats = (realtimePlayers, summaryPlayers, season) => {
+      const mappedPlayers: Player[] = summaryPlayers.map((summaryStat) => {
+         const realtimeStats = realtimePlayers.find(
+            (rtPlayer) => rtPlayer.playerId === summaryStat.playerId
+         );
 
-               gamelog = await gamelogResponse.json();
-            } catch (error) {
-               console.error('Gamelog fetch error: ', error);
-            }
-
-            console.info(playerInfo?.birthDate);
-            console.info(gamelog?.gameLog?.length);
-
-            if (realtimeStats) {
-               return {
-                  id: realtimeStats.playerId,
-                  stats: {
-                     [season]: {
-                        hits: realtimeStats.hits,
-                        blocked: realtimeStats.blockedShots,
-                        timeOnIcePerGame: realtimeStats.timeOnIcePerGame,
-                        assists: summaryStat.assists,
-                        goals: summaryStat.goals,
-                        pim: summaryStat.penaltyMinutes,
-                        powerPlayGoals: summaryStat.ppGoals,
-                        powerPlayPoints: summaryStat.ppPoints,
-                        shortHandedGoals: summaryStat.shGoals,
-                        shortHandedPoints: summaryStat.shPoints,
-                        shots: summaryStat.shots,
-                        games: summaryStat.gamesPlayed,
-                        plusMinus: summaryStat.plusMinus,
-                        dob: new Date(playerInfo.birthDate),
-                        game_log: gamelog.gameLog,
-                     },
+         if (realtimeStats) {
+            return {
+               id: realtimeStats.playerId,
+               stats: {
+                  [season]: {
+                     hits: realtimeStats.hits,
+                     blocked: realtimeStats.blockedShots,
+                     timeOnIcePerGame: realtimeStats.timeOnIcePerGame,
+                     assists: summaryStat.assists,
+                     goals: summaryStat.goals,
+                     pim: summaryStat.penaltyMinutes,
+                     powerPlayGoals: summaryStat.ppGoals,
+                     powerPlayPoints: summaryStat.ppPoints,
+                     shortHandedGoals: summaryStat.shGoals,
+                     shortHandedPoints: summaryStat.shPoints,
+                     shots: summaryStat.shots,
+                     games: summaryStat.gamesPlayed,
+                     plusMinus: summaryStat.plusMinus,
                   },
-               };
-            }
+               },
+            };
          }
-      );
+      });
       for (const tempPlayer of mappedPlayers) {
          players.forEach((player) => {
             if (player.id === tempPlayer?.id) {
