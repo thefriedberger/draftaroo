@@ -153,15 +153,12 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
          const foundPlayer = previousDraftSelections.find(
             (selection) => selection.player_id === player.player_id
          );
-
          const rosterPlayer: Partial<RosterPlayer> = {
             ...player,
             draft_position: foundPlayer?.round ?? null,
             times_kept:
                foundPlayer?.round === 1 && foundPlayer?.team_id === team.id
-                  ? player.times_kept === 0
-                     ? 0
-                     : (player.times_kept ?? 1) + 1
+                  ? player.times_kept ?? 0
                   : 0,
          };
 

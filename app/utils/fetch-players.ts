@@ -1,3 +1,5 @@
+import fetchWithRetry from './fetch-with-retry';
+
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 const supabaseUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}`;
@@ -118,9 +120,9 @@ const updatePlayers = async () => {
 
    for (const team of teamTriCodes) {
       try {
-         const rosterResponse = await fetch(
+         const rosterResponse = await fetchWithRetry(
             `https://api-web.nhle.com/v1/roster/${team}/20262027`,
-            { method: 'GET', headers: headers }
+            { method: 'GET' }
          );
          const roster = await rosterResponse.json();
          extractPlayers(roster, team);
@@ -128,9 +130,9 @@ const updatePlayers = async () => {
          console.error('Roster error: ', error);
       }
       try {
-         const prospectsResponse = await fetch(
+         const prospectsResponse = await fetchWithRetry(
             `https://api-web.nhle.com/v1/prospects/${team}`,
-            { method: 'GET', headers: headers }
+            { method: 'GET' }
          );
          const prospects = await prospectsResponse.json();
          extractPlayers(prospects, team);
@@ -141,11 +143,12 @@ const updatePlayers = async () => {
 
    console.info('Roster fetched');
 
-   const extractStats = async (realtimePlayers, summaryPlayers, season) => {
+   const extractStats = (realtimePlayers, summaryPlayers, season) => {
       const mappedPlayers: Player[] = summaryPlayers.map((summaryStat) => {
          const realtimeStats = realtimePlayers.find(
             (rtPlayer) => rtPlayer.playerId === summaryStat.playerId
          );
+
          if (realtimeStats) {
             return {
                id: realtimeStats.playerId,
@@ -208,26 +211,33 @@ const updatePlayers = async () => {
    };
 
    for (const season of seasonCodes) {
-      const skatersRealtimeResponse = await fetch(
-         `https://api.nhle.com/stats/rest/en/skater/realtime?limit=-1&cayenneExp=seasonId=${season}%20and%20gameTypeId=2`,
-         { method: 'GET', headers: headers }
-      );
-      const realtimePlayers = await skatersRealtimeResponse.json();
+      try {
+         const skatersRealtimeResponse = await fetchWithRetry(
+            `https://api.nhle.com/stats/rest/en/skater/realtime?limit=-1&cayenneExp=seasonId=${season}%20and%20gameTypeId=2`,
+            { method: 'GET' }
+         );
+         const realtimePlayers = await skatersRealtimeResponse.json();
 
-      const skatersSummaryResponse = await fetch(
-         `https://api.nhle.com/stats/rest/en/skater/summary?limit=-1&cayenneExp=seasonId=${season}%20and%20gameTypeId=2`,
-         { method: 'GET', headers: headers }
-      );
-      const summaryPlayers = await skatersSummaryResponse.json();
-      extractStats(realtimePlayers.data, summaryPlayers.data, season);
+         const skatersSummaryResponse = await fetchWithRetry(
+            `https://api.nhle.com/stats/rest/en/skater/summary?limit=-1&cayenneExp=seasonId=${season}%20and%20gameTypeId=2`,
+            { method: 'GET' }
+         );
+         const summaryPlayers = await skatersSummaryResponse.json();
+         extractStats(realtimePlayers.data, summaryPlayers.data, season);
+      } catch (error) {
+         console.error('Skater stats fetch error: ', error);
+      }
+      try {
+         const goaliesResponse = await fetchWithRetry(
+            `https://api.nhle.com/stats/rest/en/goalie/summary?limit=-1&cayenneExp=seasonId=${season}%20and%20gameTypeId=2`,
+            { method: 'GET' }
+         );
 
-      const goaliesResponse = await fetch(
-         `https://api.nhle.com/stats/rest/en/goalie/summary?limit=-1&cayenneExp=seasonId=${season}%20and%20gameTypeId=2`,
-         { method: 'GET', headers: headers }
-      );
-
-      const goalies = await goaliesResponse.json();
-      extractGoalieStats(goalies.data, season);
+         const goalies = await goaliesResponse.json();
+         extractGoalieStats(goalies.data, season);
+      } catch (error) {
+         console.error('Goalie stats fetch error: ', error);
+      }
    }
 
    const deleteAllRows = async () => {
