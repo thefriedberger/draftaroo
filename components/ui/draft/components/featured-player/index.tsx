@@ -8,11 +8,13 @@ import { convertTime, handleDraftSelection } from '@/app/utils/helpers';
 import { DraftContext } from '@/components/context/draft-context';
 import { buttonClasses } from '@/components/ui/helpers/buttons';
 import Modal from '@/components/ui/modal';
-import { FeaturedPlayerProps } from '@/lib/types';
+import Tabs from '@/components/ui/tabs';
+import { FeaturedPlayerProps, Tab, TabProps } from '@/lib/types';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { Fragment, ReactNode, useContext, useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
+import Gamelog from '../gamelog';
 import { teamAbbreviations } from '../player';
 import { cleanSeasons, seasons } from '../player-list';
 import WatchlistStar, { WatchlistStarProps } from '../watchlist/watchlist-star';
@@ -33,6 +35,7 @@ const FeaturedPlayer = ({
    };
    const [isExpanded, setIsExpanded] = useState<boolean>(false);
    const [showStats, setShowStats] = useState<boolean>(true);
+   const [showMore, setShowMore] = useState<boolean>(false);
    const { updateFeaturedPlayer } = useContext(DraftContext);
    let [playerHistory, setPlayerHistory] = useState<PlayerHistoryProps[]>([]);
 
@@ -296,15 +299,11 @@ const FeaturedPlayer = ({
          <table className="dark:text-white table-auto mt-2 w-full">
             <thead>
                <tr className="bg-gray-700 text-white dark:bg-gold">
-                  <th className="p-1 text-xs lg:text-sm text-left">
-                     Drafted By
-                  </th>
-                  <th className="p-1 text-xs lg:text-sm text-left">Round</th>
-                  <th className="p-1 text-xs lg:text-sm text-left">Pick</th>
-                  <th className="p-1 text-xs lg:text-sm text-left">
-                     Was Keeper
-                  </th>
-                  <th className="p-1 text-xs lg:text-sm text-left">Year</th>
+                  <th className="p-1 lg:text-sm text-left">Drafted By</th>
+                  <th className="p-1 lg:text-sm text-left">Round</th>
+                  <th className="p-1 lg:text-sm text-left">Pick</th>
+                  <th className="p-1 lg:text-sm text-left">Was Keeper</th>
+                  <th className="p-1 lg:text-sm text-left">Year</th>
                </tr>
             </thead>
             <tbody>
@@ -364,6 +363,25 @@ const FeaturedPlayer = ({
 
    const handleClose = () => {
       updateFeaturedPlayer?.(null);
+      setShowMore(false);
+   };
+
+   const tabs: Tab[] = [];
+   if (Object.entries(featuredPlayer?.gamelog || {}).length) {
+      tabs.push({
+         tabButton: 'Gamelog',
+         tabPane: <Gamelog {...(featuredPlayer as Player)} />,
+      });
+   }
+   if (playerHistory?.length) {
+      tabs.push({
+         tabButton: 'Player History',
+         tabPane: <PlayerHistory />,
+      });
+   }
+
+   const tabProps: TabProps = {
+      tabs: tabs,
    };
 
    const modalContent: ReactNode = (
@@ -461,36 +479,23 @@ const FeaturedPlayer = ({
                            )}
                         </div>
                      </div>
-                     {hasStats &&
-                        (showStats ? (
-                           <div className="hidden lg:block">
-                              {playerStats(featuredPlayer)}
-                           </div>
-                        ) : (
-                           <div className="hidden lg:block">
-                              <PlayerHistory />
-                           </div>
-                        ))}
-                  </div>
-                  <div className="lg:ml-2 hidden lg:flex flex-col self-end">
-                     {hasStats ? (
-                        <button
-                           className={classNames('mb-2', buttonClasses)}
-                           type="button"
-                           onClick={() => setShowStats(true)}
+                     {hasStats && (
+                        <div className="hidden lg:block">
+                           {playerStats(featuredPlayer)}
+                        </div>
+                     )}
+                     <button onClick={() => setShowMore(!showMore)}>
+                        Show {showMore ? 'less' : 'more'}{' '}
+                        <span
+                           className={classNames(
+                              showMore && 'rotate-90',
+                              'transition-all duration-75 inline-block'
+                           )}
                         >
-                           Stats
-                        </button>
-                     ) : null}
-                     {playerHistory.length ? (
-                        <button
-                           className={buttonClasses}
-                           type="button"
-                           onClick={() => setShowStats(false)}
-                        >
-                           History
-                        </button>
-                     ) : null}
+                           {'>'}
+                        </span>
+                     </button>
+                     {showMore ? <Tabs {...tabProps} /> : null}
                   </div>
                </div>
 
