@@ -37,7 +37,11 @@ const DraftOrder = ({
    const gridCols = gridMap[teams.length];
 
    return picks.length > 0 ? (
-      <div className={classNames('overflow-y-scroll h-full relative max-h-64')}>
+      <div
+         className={classNames(
+            'overflow-y-scroll h-full relative max-h-64 px-1'
+         )}
+      >
          <div
             className={classNames(
                gridCols,
@@ -49,7 +53,7 @@ const DraftOrder = ({
                .map((pick) => (
                   <div
                      className={classNames(
-                        'flex items-end text-white rounded-md z-100 text-ellipsis whitespace-nowrap overflow-hidden p-0.5',
+                        'block text-white rounded-md z-100 text-ellipsis whitespace-nowrap overflow-hidden my-0.5 p-0.5',
                         currentPick % 10 === pick.draftPosition &&
                            'bg-emerald-primary',
                         pick.yourPick && 'dark:bg-fuscia-primary'

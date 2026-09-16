@@ -3,6 +3,7 @@ import { tileColorMap } from '@/app/utils/constants';
 import { DraftContext } from '@/components/context/draft-context';
 import { DraftTileProps } from '@/lib/types';
 import classNames from 'classnames';
+import Image from 'next/image';
 import { useContext, useEffect, useRef } from 'react';
 
 const DraftTile = ({ pick, currentPick, player }: DraftTileProps) => {
@@ -40,33 +41,36 @@ const DraftTile = ({ pick, currentPick, player }: DraftTileProps) => {
    return (
       <div
          className={classNames(
-            currentPick === pick.draftPosition &&
-               'ring-2 !ring-emerald-primary ring-inset',
+            'ring-2 ring-inset ring-[rgba(0,0,0,.25)]',
+            currentPick === pick.draftPosition && '!ring-emerald-primary',
             pick.playerID && ' cursor-pointer',
-            'flex flex-row p-1 text-black rounded-md',
+            'flex flex-col text-black rounded-md h-24 relative z-10',
             !player && 'dark:text-white dark:bg-gray-light',
-            pick.yourPick && 'ring-2 ring-gray-dark dark:ring-white ring-inset',
+            pick.yourPick && ' ring-gray-dark dark:ring-fuscia-primary',
             player && tileColorMap[player.primary_position ?? 'C']
          )}
          ref={(currentPick === pick.draftPosition && draftTileRef) || null}
          onClick={handleUpdateFeaturedPlayer}
          data-featured-toggle={true}
       >
-         <div className="w-full max-w-[60%] h-20">
-            <div className={`${pick.isKeeper ? 'col-span-3' : 'col-span-4'}`}>
-               {pick.playerName && <p>{pick.playerName}</p>}
-            </div>
-         </div>
-         <div className="flex flex-col ml-auto">
-            <span
-               className={
-                  'h-8 w-8 min-w-8 max-h-8 max-w-8 flex items-center justify-center top-0 left-0 rounded-full text-white bg-gold mb-auto'
-               }
-            >
-               {pick.draftPosition}
+         <div className="flex justify-between bg-[rgba(0,0,0,.25)] rounded-t-[4px] h-[calc(fit-content-2px)] mt-[2px] w-[calc(100%-4px)] ml-[2px] px-1">
+            <span className={''}>{pick.draftPosition}</span>
+            <span className="flex items-center">
+               {pick.isKeeper && <KeeperIcon />}
             </span>
-            {pick.isKeeper && <KeeperIcon />}
          </div>
+         <div className="block w-full p-1 text-sm overflow-hidden whitespace-nowrap text-ellipsis">
+            {pick.playerName && pick.playerName}
+         </div>
+         {player && (
+            <Image
+               src={player?.headshot || ''}
+               width={35}
+               height={35}
+               alt={`Headshot of ${player.first_name} ${player.last_name}`}
+               className="rounded-full bg-[rgba(0,0,0,.5)] absolute left-1 bottom-1"
+            />
+         )}
       </div>
    );
 };

@@ -337,6 +337,18 @@ const FeaturedPlayer = ({
          </table>
       );
    };
+
+   const getPlayerAge = (dob: string) => {
+      var today = new Date();
+      var birthDate = new Date(dob);
+      var age = today.getFullYear() - birthDate.getFullYear();
+      var m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+         age--;
+      }
+      return age;
+   };
+
    useEffect(() => {
       (async () => {
          if (featuredPlayer?.id) {
@@ -375,23 +387,30 @@ const FeaturedPlayer = ({
                                  'dark:text-white text-xl flex lg:justify-start mt-2 mb-1 lg:mb-0 w-full lg:w-fit'
                               )}
                            >
-                              <span className="flex flex-col items-start lg:items-center lg:flex-row">
-                                 <h2>
+                              <span className="flex flex-col lg:flex-row items-start lg:items-end">
+                                 <h2 className="leading-none">
                                     {featuredPlayer.first_name}{' '}
                                     {featuredPlayer.last_name}
                                  </h2>
-                                 <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap lg:ml-2 lg:pt-1">
-                                    <h3>
-                                       {teamAbbreviations?.[
-                                          featuredPlayer.current_team
-                                       ] || 'FA'}{' '}
-                                       -{' '}
-                                       {featuredPlayer.primary_position &&
-                                          featuredPlayer.primary_position
-                                             .split(' ')
-                                             .map((char: string) => char[0])}
-                                    </h3>
-                                 </span>
+                                 <h3 className="text-sm leading-tight lg:ml-2">
+                                    {teamAbbreviations?.[
+                                       featuredPlayer.current_team
+                                    ] || 'FA'}{' '}
+                                    -{' '}
+                                    {featuredPlayer.primary_position &&
+                                       featuredPlayer.primary_position
+                                          .split(' ')
+                                          .map((char: string) => char[0])}
+                                 </h3>
+                                 {featuredPlayer?.dob && (
+                                    <h4 className="lg:ml-2 leading-snug text-xs">
+                                       (
+                                       {getPlayerAge(
+                                          featuredPlayer.dob.toLocaleString()
+                                       )}{' '}
+                                       yrs.)
+                                    </h4>
+                                 )}
                               </span>
                               <div
                                  className={classNames(
