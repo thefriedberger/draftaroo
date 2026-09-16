@@ -30,7 +30,7 @@ const Team = ({
                )}
             >
                <Image
-                  src={player.headshot}
+                  src={player.headshot ?? ''}
                   width={40}
                   height={40}
                   className="rounded-full bg-[rgba(0,0,0,.5)] mr-2"
