@@ -19,6 +19,7 @@ import RulesTab from '../../tabs/rules';
 import ScoringTab, { ScoringTabProps } from '../../tabs/scoring';
 import TeamsTab from '../../tabs/teams';
 import CreateDraftButton from './create-draft-button';
+import AddDOBButton from './get-dob';
 import AddGamelogsButton from './get-gamelogs';
 import UpdatePlayersButton from './update-players';
 
@@ -104,7 +105,7 @@ const LeagueManagement = async ({
          )}
          <UpdatePlayersButton />
          <AddGamelogsButton />
-         {/* <AddDOBButton /> */}
+         <AddDOBButton />
          <Tabs {...tabProps} />
       </div>
    );

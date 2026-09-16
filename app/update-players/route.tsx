@@ -1,6 +1,6 @@
 import updatePlayers from '../utils/fetch-players';
 
-export const maxDuration = 1800;
+export const maxDuration = 60;
 
 export async function POST() {
    try {
