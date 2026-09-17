@@ -187,7 +187,7 @@ const Team = ({
                      <div aria-role="cell" aria-sort="none">
                         <span>F</span>
                      </div>
-                     <div aria-role="cell" className={'col-span-10'}>
+                     <div aria-role="cell" className={'col-span-11'}>
                         {forwards?.[index] && setDisplayName(forwards[index])}
                      </div>
                      {<div aria-role="cell">{forwards?.[index]?.pick}</div>}
@@ -213,7 +213,7 @@ const Team = ({
                      <div aria-role="cell">
                         <span>D</span>
                      </div>
-                     <div aria-role="cell" className={'col-span-10'}>
+                     <div aria-role="cell" className={'col-span-11'}>
                         {defenseman?.[index] &&
                            setDisplayName(defenseman[index])}
                      </div>
@@ -234,7 +234,7 @@ const Team = ({
                      <div aria-role="cell" className="text-black">
                         B
                      </div>
-                     <div aria-role="cell" className={'col-span-10'}>
+                     <div aria-role="cell" className={'col-span-11'}>
                         {setDisplayName(player)}
                      </div>
                      {
@@ -260,7 +260,7 @@ const Team = ({
                      )}
                   >
                      <div aria-role="cell">G</div>
-                     <div aria-role="cell" className={'col-span-10'}>
+                     <div aria-role="cell" className={'col-span-11'}>
                         {goalies?.[index] && setDisplayName(goalies[index])}
                      </div>
                      {<div aria-role="cell">{goalies?.[index]?.pick}</div>}
@@ -279,7 +279,7 @@ const Team = ({
                      )}
                   >
                      <div aria-role="cell">B</div>
-                     <div aria-role="cell" className={'col-span-10'}>
+                     <div aria-role="cell" className={'col-span-11'}>
                         {setDisplayName(player)}
                      </div>
                      {<div aria-role="cell">{player.pick}</div>}

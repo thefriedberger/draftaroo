@@ -222,7 +222,7 @@ const PlayerList = ({
                </div>
             </div>
             <div
-               className=" w-full lg:h-full overflow-y-scroll relative"
+               className=" w-full h-fit overflow-y-scroll relative"
                id={'player-list-container'}
             >
                <table

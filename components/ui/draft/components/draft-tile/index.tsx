@@ -29,8 +29,8 @@ const DraftTile = ({ pick, currentPick, player }: DraftTileProps) => {
             draftTileRef.current.scrollIntoView({ behavior: 'smooth' });
          }
       };
-      currentPick === pick.draftPosition && scrollCallback();
 
+      currentPick === pick.draftPosition && scrollCallback();
       return () => {};
    }, [pick, currentPick]);
 

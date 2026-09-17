@@ -37,15 +37,11 @@ const DraftOrder = ({
    const gridCols = gridMap[teams.length];
 
    return picks.length > 0 ? (
-      <div
-         className={classNames(
-            'overflow-y-scroll relative max-h-64 h-[20vh] px-1'
-         )}
-      >
+      <>
          <div
             className={classNames(
                gridCols,
-               'w-full sticky top-0 grid gap-1 z-10 dark:bg-gray-dark'
+               'w-full sticky -top-8 grid gap-2 z-50 dark:bg-gray-dark h-8'
             )}
          >
             {picks
@@ -54,7 +50,7 @@ const DraftOrder = ({
                   <div
                      key={pick.draftPosition}
                      className={classNames(
-                        'block text-white rounded-md z-100 text-ellipsis whitespace-nowrap overflow-hidden my-0.5 p-0.5',
+                        'block text-white rounded-md text-ellipsis whitespace-nowrap overflow-hidden my-0.5 p-0.5',
                         currentPick % 10 === pick.draftPosition &&
                            'bg-emerald-primary',
                         pick.yourPick && 'dark:bg-fuscia-primary'
@@ -68,30 +64,30 @@ const DraftOrder = ({
          <div
             className={classNames(
                gridCols,
-               'overflow-y-scroll grid gap-2 h-full relative max-h-48'
+               'overflow-y-scroll grid gap-2 h-full max-h-48 relative top-8 mt-8'
             )}
+            id={'draft-tiles-container'}
          >
-            {picks?.map((pick: Pick, index: number) => {
+            {picks?.map((pick: Pick) => {
                return (
-                  <div key={index}>
-                     <DraftTile
-                        pick={pick}
-                        currentPick={currentPick}
-                        playerSelected={
-                           draftedPlayers[pick.playerID || 0] as DraftSelection
-                        }
-                        player={
-                           players.find(
-                              (player) => player.id === pick.playerID
-                           ) as Player
-                        }
-                        isYourTurn={isYourTurn}
-                     />
-                  </div>
+                  <DraftTile
+                     key={pick.draftPosition}
+                     pick={pick}
+                     currentPick={currentPick}
+                     playerSelected={
+                        draftedPlayers[pick.playerID || 0] as DraftSelection
+                     }
+                     player={
+                        players.find(
+                           (player) => player.id === pick.playerID
+                        ) as Player
+                     }
+                     isYourTurn={isYourTurn}
+                  />
                );
             })}
          </div>
-      </div>
+      </>
    ) : (
       <DraftOrderSkeleton />
    );

@@ -101,8 +101,19 @@ const Board = ({
    );
    const [teamViewToShow, setTeamViewToShow] = useState<string>('');
 
+   /*** end states ***/
+
+   const timerHeight: HeightType = { value: 90, type: 'px' };
+   const draftOrderHeight: HeightType = { value: 25, type: 'vh' };
+
+   // const [section1Height, section2Height] = useMemo(() => {},[])
+
    const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
 
+   interface HeightType {
+      value: number;
+      type: 'px' | 'vh' | 'vw' | '%';
+   }
    const handleDraftSelectionProps = {
       supabase: supabase,
       currentPick: currentPick,
@@ -458,6 +469,10 @@ const Board = ({
       });
    };
 
+   const getHeight = (height: HeightType) => {
+      return `${height.value}${height.type}`;
+   };
+
    const findPositionsNeeded = (teamRoster: Player[]) => {
       const positionsMap = {
          forwards: 9,
@@ -740,7 +755,7 @@ const Board = ({
    const tabProps: TabProps = {
       tabs,
       centerTabs: false,
-      className: 'flex flex-col w-full lg:max-w-screen-2xl text-white',
+      className: 'flex flex-col w-full lg:max-w-[75%] text-white',
       saveState: true,
       useHash: false,
    };
@@ -762,7 +777,7 @@ const Board = ({
    };
 
    return (
-      <div className="flex flex-col items-center w-full overflow-y-scroll lg:overflow-y-hidden draft-board">
+      <div className="flex flex-col items-center w-full max-h-[100vh] overflow-y-scroll lg:overflow-y-hidden draft-board">
          <DraftContext.Provider
             value={{
                watchlist: watchlistState,
@@ -819,13 +834,37 @@ const Board = ({
                      ))}
                   {!isMobile ? (
                      <>
-                        <div className="flex flex-col h-full w-full overflow-y-hidden">
-                           <Timer {...timerProps} />
-                           <DraftOrder {...draftOrderProps} />
+                        <div
+                           style={{
+                              minHeight: `calc(${getHeight(
+                                 timerHeight
+                              )} + ${getHeight(draftOrderHeight)})`,
+                           }}
+                           className="flex flex-col w-ful h-fit overflow-hidden"
+                        >
+                           <div
+                              style={{ height: getHeight(timerHeight) }}
+                              className=""
+                           >
+                              <Timer {...timerProps} />
+                           </div>
+                           <div
+                              style={{ height: getHeight(draftOrderHeight) }}
+                              className="overflow-hidden px-1 relative pt-8"
+                           >
+                              <DraftOrder {...draftOrderProps} />
+                           </div>
                         </div>
-                        <div className="flex h-full w-full lg:max-h-[calc(100vh-20vh-90px)]">
+                        <div
+                           style={{
+                              height: `calc(100vh - ${getHeight(
+                                 draftOrderHeight
+                              )} - ${getHeight(timerHeight)})`,
+                           }}
+                           className="flex h-full w-full"
+                        >
                            <Tabs {...tabProps} />
-                           <div className="flex flex-col min-w-[25%]">
+                           <div className="flex flex-col h-full min-w-[25%]">
                               <Watchlist {...watchlistProps} />
                               <MyTeam {...myTeamProps} />
                            </div>
