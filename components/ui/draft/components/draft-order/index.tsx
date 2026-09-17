@@ -39,7 +39,7 @@ const DraftOrder = ({
    return picks.length > 0 ? (
       <div
          className={classNames(
-            'overflow-y-scroll h-full relative max-h-64 px-1'
+            'overflow-y-scroll relative max-h-64 h-[20vh] px-1'
          )}
       >
          <div

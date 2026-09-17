@@ -330,7 +330,7 @@ const Timer = ({
    }
 
    return (
-      <div className="flex flex-col justify-between w-full h-fit lg:overflow-hidden dark:text-white relative lg:border-b lg:border-gray-light">
+      <div className="flex flex-col justify-between w-full h-[90px] lg:overflow-hidden dark:text-white relative lg:border-b lg:border-gray-light ">
          {!isCompleted ? (
             <>
                {yourTurn && isActive && !pickIsKeeper && (
