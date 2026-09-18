@@ -46,7 +46,9 @@ const DraftTile = ({ pick, currentPick, player }: DraftTileProps) => {
             pick.playerID && ' cursor-pointer',
             'flex flex-col text-black rounded-md h-24 relative z-10',
             !player && 'dark:text-white dark:bg-gray-light',
-            pick.yourPick && ' ring-gray-dark dark:ring-fuscia-primary',
+            pick.yourPick &&
+               currentPick !== pick.draftPosition &&
+               ' ring-gray-dark dark:ring-fuscia-primary',
             player && tileColorMap[player.primary_position ?? 'C']
          )}
          tabIndex={0}

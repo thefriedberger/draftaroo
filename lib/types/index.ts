@@ -60,6 +60,8 @@ export interface DraftOrderProps {
    numberOfRounds: number;
    picks: Pick[];
    populatePicks?: () => void;
+   timer: number;
+   timerDuration: number;
 }
 
 export interface WatchlistProps {

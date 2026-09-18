@@ -11,12 +11,13 @@ import {
    getTimerData,
    setAutoDraftStatusByTeam,
 } from '@/app/utils/helpers';
+import { DraftContext } from '@/components/context/draft-context';
 import { buttonClasses } from '@/components/ui/helpers/buttons';
 import { useWorkerTimeout } from '@/components/worker/worker-timeout';
 import { DraftPick, TimerProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
-import { createRef, useEffect, useRef, useState } from 'react';
+import { createRef, useContext, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { Pick } from '../draft-order';
 
@@ -46,6 +47,8 @@ const Timer = ({
    pickIsKeeper,
 }: TimerProps) => {
    const supabase = createClientComponentClient<Database>();
+
+   const { updateTimer } = useContext(DraftContext);
 
    const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
    const { setRunning, tick } = useWorkerTimeout();
@@ -123,6 +126,7 @@ const Timer = ({
 
                timerValue.current = finalTimer;
                setTimer(formatTime(finalTimer));
+               updateTimer?.(finalTimer);
                setRunning(true);
             });
          }
@@ -162,6 +166,7 @@ const Timer = ({
                   const end = roomData.end_time;
                   const diff = end - now;
                   if (diff < 0) {
+                     updateTimer?.(0);
                      setTimer(formatTime(0));
                      timerValue.current = 0;
                   } else {
@@ -311,6 +316,7 @@ const Timer = ({
             t = 0;
          }
          timerValue.current = t;
+         updateTimer?.(t);
          setTimer(formatTime(t));
       }
    };

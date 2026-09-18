@@ -19,7 +19,6 @@ import { DraftContext } from '@/components/context/draft-context';
 import { WatchlistAction } from '@/components/context/page-context';
 import {
    BoardProps,
-   ChatProps,
    DraftOrderProps,
    DraftedPlayer,
    FeaturedPlayerProps,
@@ -100,6 +99,7 @@ const Board = ({
       []
    );
    const [teamViewToShow, setTeamViewToShow] = useState<string>('');
+   const [timer, setTimer] = useState<number>(timerDuration);
 
    /*** end states ***/
 
@@ -414,6 +414,7 @@ const Board = ({
             }
          }
       }
+
       const playerIds: number[] = updateTeamsViewPlayers(
          autoDraftTeam.team_id
       ).map((player) => player.player_id);
@@ -439,6 +440,7 @@ const Board = ({
                cleanSeasons(seasons[2])
             )[0]) ||
          null;
+
       const bpa =
          sortPlayers(
             players.filter((player) => {
@@ -447,6 +449,7 @@ const Board = ({
             'score',
             cleanSeasons(seasons[2])
          )[0] || null;
+
       const playerToDraft =
          positionPlayer && positionPlayer.primary_position === 'G'
             ? positionPlayer
@@ -467,6 +470,11 @@ const Board = ({
          teamId: autoDraftTeam.team_id,
          timerDuration,
       });
+   };
+
+   const updateTimer = (value: number) => {
+      setTimer(value);
+      return value;
    };
 
    const getHeight = (height: HeightType) => {
@@ -659,6 +667,8 @@ const Board = ({
       teamID: team.id,
       numberOfRounds: numberOfRounds ?? 23,
       picks,
+      timer,
+      timerDuration,
    };
 
    const watchlistProps: WatchlistProps = {
@@ -771,11 +781,6 @@ const Board = ({
       gridColumns: `grid-cols-5`,
       useHash: true,
    };
-
-   const chatProps: ChatProps = {
-      user: user,
-   };
-
    return (
       <div className="flex flex-col items-center w-full max-h-[100vh] overflow-y-scroll lg:overflow-y-hidden draft-board">
          <DraftContext.Provider
@@ -784,6 +789,8 @@ const Board = ({
                updateWatchlist,
                reorderWatchlist,
                updateFeaturedPlayer,
+               timer: timerDuration,
+               updateTimer: updateTimer,
             }}
          >
             {user && team?.league_id === league.league_id && picks.length ? (
@@ -840,7 +847,7 @@ const Board = ({
                                  timerHeight
                               )} + ${getHeight(draftOrderHeight)})`,
                            }}
-                           className="flex flex-col w-ful h-fit overflow-hidden"
+                           className="flex flex-col w-full h-fit overflow-hidden"
                         >
                            <div
                               style={{ height: getHeight(timerHeight) }}
