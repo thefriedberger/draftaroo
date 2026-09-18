@@ -796,7 +796,7 @@ const Board = ({
             {user && team?.league_id === league.league_id && picks.length ? (
                <>
                   {isOwner.current &&
-                     (!isCompleted ? (
+                     (!isCompleted && !isMobile ? (
                         <>
                            <button
                               onClick={autoDraft}

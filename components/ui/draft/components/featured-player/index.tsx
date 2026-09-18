@@ -12,7 +12,14 @@ import Tabs from '@/components/ui/tabs';
 import { FeaturedPlayerProps, Tab, TabProps } from '@/lib/types';
 import classNames from 'classnames';
 import Image from 'next/image';
-import { Fragment, ReactNode, useContext, useEffect, useState } from 'react';
+import {
+   Fragment,
+   ReactNode,
+   useContext,
+   useEffect,
+   useRef,
+   useState,
+} from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Gamelog from '../gamelog';
 import { teamAbbreviations } from '../player';
@@ -37,6 +44,7 @@ const FeaturedPlayer = ({
    const [showStats, setShowStats] = useState<boolean>(true);
    const [showMore, setShowMore] = useState<boolean>(false);
    const { updateFeaturedPlayer } = useContext(DraftContext);
+   const featuredRef = useRef<HTMLDivElement>(null);
    let [playerHistory, setPlayerHistory] = useState<PlayerHistoryProps[]>([]);
 
    const hasStats: boolean = featuredPlayer
@@ -522,10 +530,184 @@ const FeaturedPlayer = ({
       </div>
    );
 
-   return (
+   return isMobile ? (
+      <div
+         ref={featuredRef}
+         tabIndex={0}
+         className={classNames(
+            'bg-paper-primary dark:bg-gray-dark border-t-2 border-paper-dark dark:border-gray-light lg:border-none lg:bg-transparent lg:min-h-[200px] lg:h-[35%] lg:max-w-full z-10 fixed lg:relative bottom-[66px] lg:w lg:flex lg:flex-col lg:bottom-auto w-full px-5 p-2 lg:p-2 justify-end lg:py-0 h-fit lg:overflow-y-scroll'
+         )}
+      >
+         {featuredPlayer && (
+            <>
+               <div className="w-full lg:w-full lg:h-full flex">
+                  <div className="w-full lg:w-fit">
+                     <div className={'flex flex-row'}>
+                        <PlayerHeadshot {...featuredPlayer} />
+                        <div className="flex flex-col w-full">
+                           <div
+                              className={classNames(
+                                 !draftedIds.includes(featuredPlayer.id)
+                                    ? 'justify-evenly'
+                                    : 'justify-start',
+                                 'dark:text-white text-xl flex lg:justify-start mt-2 mb-1 lg:mb-0 w-full lg:w-fit'
+                              )}
+                           >
+                              <span className="flex flex-col items-start lg:items-center lg:flex-row">
+                                 <h2>
+                                    {featuredPlayer.first_name}{' '}
+                                    {featuredPlayer.last_name}
+                                 </h2>
+                                 <span className="dark:text-gray-300 text-sm leading-3 whitespace-nowrap lg:ml-2 lg:pt-1">
+                                    <h3>
+                                       {teamAbbreviations?.[
+                                          featuredPlayer.current_team
+                                       ] || 'FA'}{' '}
+                                       -{' '}
+                                       {featuredPlayer.primary_position &&
+                                          featuredPlayer.primary_position
+                                             .split(' ')
+                                             .map((char: string) => char[0])}
+                                    </h3>
+                                 </span>
+                              </span>
+                              <div
+                                 className={classNames(
+                                    draftedIds.includes(featuredPlayer.id) &&
+                                       'hidden',
+                                    'ml-auto lg:ml-2 flex flex-row'
+                                 )}
+                              >
+                                 <button
+                                    className={classNames(
+                                       'bg-fuscia-primary p-2 rounded-md mr-1 disabled:cursor-not-allowed disabled:saturate-[25%] whitespace-nowrap flex items-center !text-sm'
+                                    )}
+                                    onClick={() => {
+                                       isActive &&
+                                          yourTurn &&
+                                          handleDraftSelection({
+                                             ...handleDraftSelectionProps,
+                                             player: featuredPlayer,
+                                             timerDuration,
+                                          });
+                                    }}
+                                    type="button"
+                                    disabled={
+                                       !isActive ||
+                                       !yourTurn ||
+                                       featuredPlayer.id === 8476346
+                                    }
+                                 >
+                                    Draft{' '}
+                                    {featuredPlayer.first_name
+                                       .split(' ')
+                                       .map((char: string) => char[0])}
+                                    {'. '}
+                                    {featuredPlayer.last_name}
+                                 </button>
+                                 <WatchlistStar {...watchlistStarProps} />
+                              </div>
+                           </div>
+                           {Object.keys(featuredPlayer.stats ?? {}).length >=
+                           1 ? (
+                              <div className="hidden lg:block">
+                                 {scoreProjector(featuredPlayer)}
+                              </div>
+                           ) : (
+                              <h2 className="dark:text-white text-lg">
+                                 I don&apos;t have any stats :&apos;(
+                              </h2>
+                           )}
+                        </div>
+                     </div>
+                     {hasStats &&
+                        (showStats ? (
+                           <div className="hidden lg:block">
+                              {playerStats(featuredPlayer)}
+                           </div>
+                        ) : (
+                           <div className="hidden lg:block">
+                              <PlayerHistory />
+                           </div>
+                        ))}
+                  </div>
+                  <div className="lg:ml-2 hidden lg:flex flex-col self-end">
+                     {hasStats ? (
+                        <button
+                           className={classNames('mb-2', buttonClasses)}
+                           type="button"
+                           onClick={() => setShowStats(true)}
+                        >
+                           Stats
+                        </button>
+                     ) : null}
+                     {playerHistory.length ? (
+                        <button
+                           className={buttonClasses}
+                           type="button"
+                           onClick={() => setShowStats(false)}
+                        >
+                           History
+                        </button>
+                     ) : null}
+                  </div>
+               </div>
+
+               {isMobile && hasStats && (
+                  <>
+                     {Object.keys(featuredPlayer.stats ?? {}).filter(
+                        (key) =>
+                           key.includes('proj.') &&
+                           Object.values(featuredPlayer.stats?.[key]).length
+                     ).length
+                        ? scoreProjector(featuredPlayer)
+                        : null}
+
+                     {Object.keys(featuredPlayer.stats ?? {}).filter(
+                        (key) => !key.includes('proj.')
+                     ).length
+                        ? statsToggle(featuredPlayer)
+                        : null}
+                  </>
+               )}
+               <p>{yourTurn}</p>
+               <CloseFeaturedPlayer />
+            </>
+         )}
+      </div>
+   ) : (
       <Modal handleClose={handleClose} isOpen={featuredPlayer ? true : false}>
          {featuredPlayer && modalContent}
       </Modal>
+   );
+};
+
+const CloseFeaturedPlayer = () => {
+   const { updateFeaturedPlayer } = useContext(DraftContext);
+
+   return (
+      <button
+         className="block absolute top-auto bottom-1 lg:bottom-auto lg:top-1 right-1"
+         type="button"
+         tabIndex={0}
+         onClick={() => updateFeaturedPlayer?.(null)}
+      >
+         <svg
+            width="30px"
+            height="30px"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="stroke-white lg:w-[40px] lg:h-[40px]"
+         >
+            <path
+               d="M9 9L15 15M15 9L9 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+               strokeWidth="2"
+               strokeLinecap="round"
+               strokeLinejoin="round"
+            />
+         </svg>
+      </button>
    );
 };
 
