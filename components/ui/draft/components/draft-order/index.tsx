@@ -63,7 +63,7 @@ const DraftOrder = ({
                   <div
                      key={pick.draftPosition}
                      className={classNames(
-                        'block relative text-white rounded-md text-ellipsis whitespace-nowrap overflow-hidden my-0.5'
+                        'block relative dark:text-white rounded-md text-ellipsis whitespace-nowrap overflow-hidden my-0.5'
                      )}
                   >
                      <div className="block absolute w-full h-full top-0 left-0 z-50 text-ellipsis whitespace-nowrap overflow-hidden p-0.5">
@@ -93,7 +93,7 @@ const DraftOrder = ({
                            currentPick % 10 === pick.draftPosition && countdown,
                            pick.yourPick &&
                               currentPick % 10 !== pick.draftPosition &&
-                              'dark:bg-fuscia-primary',
+                              'bg-fuscia-primary',
                            'absolute w-full h-full top-0 right-0'
                         )}
                      />

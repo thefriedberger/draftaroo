@@ -125,7 +125,7 @@ const Team = ({
             {myTeam && (
                <div
                   aria-role="row"
-                  className="hidden lg:flex w-full !border-none bg-fuscia-primary px-2 py-[.35rem] !col-span-8 rounded-md mb-0.5"
+                  className="hidden lg:flex w-full !border-none bg-paper-dark dark:bg-fuscia-primary px-2 py-[.35rem] !col-span-8 rounded-md mb-0.5"
                >
                   <div
                      aria-role="columnheader"

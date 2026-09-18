@@ -58,7 +58,7 @@ const DraftTile = ({ pick, currentPick, player }: DraftTileProps) => {
          data-featured-toggle={true}
       >
          <div className="flex justify-between bg-[rgba(0,0,0,.25)] rounded-t-[4px] h-[calc(fit-content-2px)] mt-[2px] w-[calc(100%-4px)] ml-[2px] px-1 pr-0">
-            <span className={'text-white font-medium'}>
+            <span className={'dark:text-white font-medium'}>
                {pick.draftPosition}
             </span>
             <span className="flex items-center">
