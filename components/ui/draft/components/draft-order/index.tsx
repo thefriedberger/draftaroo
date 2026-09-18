@@ -76,6 +76,16 @@ const DraftOrder = ({
                                  ? countdown
                                  : '100%',
                            transition: 'width 1s linear',
+                           background:
+                              currentPick % 10 === pick.draftPosition
+                                 ? `linear-gradient(-75deg, #059669 40%, rgba(11, 230, 162,.8) 50%, #059669 60%)`
+                                 : '',
+                           backgroundSize: '300%',
+                           backgroundPositionX: '100%',
+                           animation:
+                              currentPick % 10 === pick.draftPosition
+                                 ? 'shimmer 5s infinite linear'
+                                 : 'none',
                         }}
                         className={classNames(
                            currentPick % 10 === pick.draftPosition &&

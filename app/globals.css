@@ -184,3 +184,9 @@ table tr:nth-of-type(even):not(.skeleton) {
       }
    }
 }
+
+@keyframes shimmer {
+   to {
+      background-position-x: 0%;
+   }
+}
