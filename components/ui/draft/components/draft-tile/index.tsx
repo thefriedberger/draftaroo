@@ -49,8 +49,10 @@ const DraftTile = ({ pick, currentPick, player }: DraftTileProps) => {
             pick.yourPick && ' ring-gray-dark dark:ring-fuscia-primary',
             player && tileColorMap[player.primary_position ?? 'C']
          )}
+         tabIndex={0}
          ref={(currentPick === pick.draftPosition && draftTileRef) || null}
          onClick={handleUpdateFeaturedPlayer}
+         onKeyDown={(e) => e.code === 'Enter' && handleUpdateFeaturedPlayer()}
          data-featured-toggle={true}
       >
          <div className="flex justify-between bg-[rgba(0,0,0,.25)] rounded-t-[4px] h-[calc(fit-content-2px)] mt-[2px] w-[calc(100%-4px)] ml-[2px] px-1 pr-0">

@@ -130,7 +130,7 @@ const Team = ({
                   <div
                      aria-role="columnheader"
                      aria-sort="none"
-                     className="w-full !col-span-8 font-bold text-lg text-gray-dark"
+                     className="w-full !col-span-8 font-bold text-lg text-black"
                   >
                      My Roster
                   </div>
