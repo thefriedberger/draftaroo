@@ -115,7 +115,7 @@ const Team = ({
 
    return (
       <div
-         aria-role="table"
+         role="table"
          className={classNames(
             myTeam ? styles['table_team'] : styles['table'],
             'w-full rounded-md'
@@ -124,11 +124,11 @@ const Team = ({
          <div className="rounded-md text-white text-left backdrop-blur-3xl bg-[rgba(0,0,0,.5)] z-0">
             {myTeam && (
                <div
-                  aria-role="row"
+                  role="row"
                   className="hidden lg:flex w-full !border-none bg-paper-dark dark:bg-fuscia-primary px-2 py-[.35rem] !col-span-8 rounded-md mb-0.5"
                >
                   <div
-                     aria-role="columnheader"
+                     role="columnheader"
                      aria-sort="none"
                      className="w-full !col-span-8 font-bold text-lg text-black"
                   >
@@ -138,18 +138,18 @@ const Team = ({
             )}
             {!myTeam && (
                <div
-                  aria-role="row"
+                  role="row"
                   className="bg-gray-700 dark:bg-gold text-white rounded-md mb-0.5 grid grid-cols-15"
                >
                   <div
-                     aria-role="columnheader"
+                     role="columnheader"
                      aria-sort="none"
                      className={'!col-span-2 lg:!col-span-1'}
                   >
                      Pos
                   </div>
                   <div
-                     aria-role="columnheader"
+                     role="columnheader"
                      aria-sort="none"
                      className={'!col-span-10 lg:!col-span-12'}
                   >
@@ -157,7 +157,7 @@ const Team = ({
                   </div>
                   {
                      <div
-                        aria-role="columnheader"
+                        role="columnheader"
                         aria-sort="none"
                         className={'!col-span-1'}
                      >
@@ -167,12 +167,12 @@ const Team = ({
                </div>
             )}
          </div>
-         <div aria-role="rowgroup">
+         <div role="rowgroup">
             {Array.from({ length: 9 }).map((val, index: number) => {
                const primaryPosition = forwards?.[index]?.primary_position;
                return (
                   <div
-                     aria-role="row"
+                     role="row"
                      key={forwards?.[index]?.id ?? index}
                      onClick={() => {
                         forwards?.[index] &&
@@ -184,20 +184,20 @@ const Team = ({
                      )}
                   >
                      {' '}
-                     <div aria-role="cell" aria-sort="none">
+                     <div role="cell" aria-sort="none">
                         <span>F</span>
                      </div>
-                     <div aria-role="cell" className={'col-span-11'}>
+                     <div role="cell" className={'!col-span-10 lg:col-span-11'}>
                         {forwards?.[index] && setDisplayName(forwards[index])}
                      </div>
-                     {<div aria-role="cell">{forwards?.[index]?.pick}</div>}
+                     {<div role="cell">{forwards?.[index]?.pick}</div>}
                   </div>
                );
             })}
             {Array.from({ length: 5 }).map((val, index: number) => {
                return (
                   <div
-                     aria-role="row"
+                     role="row"
                      key={defenseman?.[index]?.id ?? index}
                      onClick={() => {
                         defenseman?.[index] &&
@@ -210,35 +210,35 @@ const Team = ({
                         defenseman?.[index] && 'cursor-pointer'
                      )}
                   >
-                     <div aria-role="cell">
+                     <div role="cell">
                         <span>D</span>
                      </div>
-                     <div aria-role="cell" className={'col-span-11'}>
+                     <div role="cell" className={'!col-span-10 lg:col-span-11'}>
                         {defenseman?.[index] &&
                            setDisplayName(defenseman[index])}
                      </div>
-                     {<div aria-role="cell">{defenseman?.[index]?.pick}</div>}
+                     {<div role="cell">{defenseman?.[index]?.pick}</div>}
                   </div>
                );
             })}
             {bench.map((player: DraftedPlayer) => {
                return (
                   <div
-                     aria-role="row"
+                     role="row"
                      key={player.id}
                      onClick={() => updateFeaturedPlayer?.(player)}
                      className={classNames(
                         'cursor-pointer bg-[rgb(173,107,183)]'
                      )}
                   >
-                     <div aria-role="cell" className="text-black">
+                     <div role="cell" className="text-black">
                         B
                      </div>
-                     <div aria-role="cell" className={'col-span-11'}>
+                     <div role="cell" className={'!col-span-10 lg:col-span-11'}>
                         {setDisplayName(player)}
                      </div>
                      {
-                        <div aria-role="cell" className="text-black">
+                        <div role="cell" className="text-black">
                            {player.pick}
                         </div>
                      }
@@ -248,7 +248,7 @@ const Team = ({
             {Array.from({ length: 2 }).map((val, index: number) => {
                return (
                   <div
-                     aria-role="row"
+                     role="row"
                      key={goalies?.[index]?.id ?? index}
                      onClick={() => {
                         goalies?.[index] &&
@@ -259,18 +259,18 @@ const Team = ({
                         goalies?.[index] && 'cursor-pointer'
                      )}
                   >
-                     <div aria-role="cell">G</div>
-                     <div aria-role="cell" className={'col-span-11'}>
+                     <div role="cell">G</div>
+                     <div role="cell" className={'!col-span-10 lg:col-span-11'}>
                         {goalies?.[index] && setDisplayName(goalies[index])}
                      </div>
-                     {<div aria-role="cell">{goalies?.[index]?.pick}</div>}
+                     {<div role="cell">{goalies?.[index]?.pick}</div>}
                   </div>
                );
             })}
             {goaliesBench.map((player) => {
                return (
                   <div
-                     aria-role="row"
+                     role="row"
                      key={player.id}
                      onClick={() => updateFeaturedPlayer?.(player)}
                      className={classNames(
@@ -278,11 +278,11 @@ const Team = ({
                         player && 'cursor-pointer'
                      )}
                   >
-                     <div aria-role="cell">B</div>
-                     <div aria-role="cell" className={'col-span-11'}>
+                     <div role="cell">B</div>
+                     <div role="cell" className={'!col-span-10 lg:col-span-11'}>
                         {setDisplayName(player)}
                      </div>
-                     {<div aria-role="cell">{player.pick}</div>}
+                     {<div role="cell">{player.pick}</div>}
                   </div>
                );
             })}
