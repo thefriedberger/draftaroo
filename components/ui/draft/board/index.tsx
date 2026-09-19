@@ -229,6 +229,7 @@ const Board = ({
          window.removeEventListener('hashchange', handleHashChange);
       };
    }, []);
+
    // set if user can pick
    useEffect(() => {
       const draftedPlayer = draftedPlayersState.find(
@@ -788,7 +789,7 @@ const Board = ({
    const mobileTabProps: TabProps = {
       tabs: mobileTabs,
       centerTabs: false,
-      className: `flex flex-col-reverse w-full h-full overflow-y-scroll ${
+      className: `shadow-[0px_-5px_10px_black] z-[100] pt-2 flex flex-col-reverse w-full h-full overflow-y-scroll ${
          featuredPlayer &&
          (!draftedIds.includes(featuredPlayer?.id) ? 'pb-[130px]' : 'pb-[90px]')
       }`,

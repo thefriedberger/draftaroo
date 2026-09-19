@@ -348,7 +348,7 @@ const Timer = ({
                   type="button"
                   title={`${doMute ? 'Unmute' : 'Mute'} draft chime`}
                   className={
-                     'w-[20px] stroke-black dark:stroke-white dark:lg:stroke-black absolute top-1 left-1 lg:left-auto lg:right-1 z-10'
+                     'hidden lg:block w-[20px] stroke-black dark:stroke-white dark:lg:stroke-black absolute top-1 left-1 lg:left-auto lg:right-1 z-10'
                   }
                   onClick={() => setDoMute(!doMute)}
                >
@@ -402,7 +402,7 @@ const Timer = ({
                      </div>
                   </>
                ) : (
-                  <div className="bg-paper-primary dark:bg-gray-primary flex flex-row items-center h-full">
+                  <div className="bg-paper-primary h-16 dark:bg-gray-primary flex flex-row items-center">
                      <div className="flex items-center justify-center mr-2 text-xl w-[100px] bg-orange-primary min-h-full">
                         <p className="p-2 text-2xl">{timer}</p>
                      </div>
@@ -416,24 +416,42 @@ const Timer = ({
                            'flex flex-col items-center h-full ml-auto align-middle p-2 text-xl'
                         )}
                      >
-                        <button
-                           title={`${
-                              shouldAutoDraft ? 'Disable' : 'Enable'
-                           } autodraft`}
-                           type="button"
-                           onClick={handleAutoDraft}
-                           className={classNames(
-                              buttonClasses,
-                              'w-fit !py-1 !px-2 rounded-md flex items-center stroke-black dark:!stroke-white dark:lg:!stroke-black outline outline-1 outline-gray-light'
-                           )}
-                        >
-                           <span className="sr-only">
-                              {shouldAutoDraft ? 'Disable' : 'Enable'} autodraft
-                           </span>
-                           {shouldAutoDraft ? 'Disable' : 'Enable'} Autodraft
-                           &nbsp;
-                           {<AutoDraftIcon active={shouldAutoDraft} />}
-                        </button>
+                        <div className="flex w-full justify-end">
+                           <button
+                              title={`${
+                                 shouldAutoDraft ? 'Disable' : 'Enable'
+                              } autodraft`}
+                              type="button"
+                              onClick={handleAutoDraft}
+                              className={classNames(
+                                 buttonClasses,
+                                 'w-[30px] !py-1 !px-1 rounded-md flex items-center stroke-black dark:!stroke-white dark:lg:!stroke-black outline outline-1 outline-gray-light'
+                              )}
+                           >
+                              <span className="sr-only">
+                                 {shouldAutoDraft ? 'Disable' : 'Enable'}{' '}
+                                 autodraft
+                              </span>
+                              {<AutoDraftIcon active={shouldAutoDraft} />}
+                           </button>
+
+                           <button
+                              type="button"
+                              title={`${
+                                 doMute ? 'Unmute' : 'Mute'
+                              } draft chime`}
+                              className={classNames(
+                                 // buttonClasses,
+                                 'ml-2 px-1 rounded-md items-center stroke-black dark:!stroke-white dark:lg:!stroke-black outline outline-1 outline-gray-light block lg:hidden w-[30px]'
+                              )}
+                              onClick={() => setDoMute(!doMute)}
+                           >
+                              <span className="sr-only">
+                                 {doMute ? 'Unmute' : 'Mute'} draft chime
+                              </span>
+                              {doMute ? <MutedIcon /> : <MicIcon />}
+                           </button>
+                        </div>
                         <p className="text-center w-full">
                            {yourTurn
                               ? pickIsKeeper
