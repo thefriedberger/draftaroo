@@ -93,19 +93,28 @@ const DraftOrderMobile = ({
                            style={{
                               width:
                                  currentPick % 10 === pick.draftPosition
-                                    ? `${countdown}%`
+                                    ? countdown
                                     : '100%',
-                              transition:
-                                 timerDuration > 60
-                                    ? 'width 4s linear'
-                                    : 'width 1s linear',
+                              transition: 'width 1s linear',
+                              background:
+                                 currentPick % 10 === pick.draftPosition
+                                    ? `linear-gradient(-75deg, #059669 40%, rgba(11, 230, 162,.8) 50%, #059669 60%)`
+                                    : '',
+                              backgroundSize: '300%',
+                              backgroundPositionX: '100%',
+                              animation:
+                                 currentPick % 10 === pick.draftPosition
+                                    ? 'shimmer 5s infinite linear'
+                                    : 'none',
                            }}
                            className={classNames(
                               currentPick % 10 === pick.draftPosition &&
                                  'bg-gradient-to-l to-[rgba(230,178,39,1)] from-emerald-primary from-[60%]',
+                              currentPick % 10 === pick.draftPosition &&
+                                 countdown,
                               pick.yourPick &&
                                  currentPick % 10 !== pick.draftPosition &&
-                                 'dark:bg-fuscia-primary',
+                                 'bg-fuscia-primary',
                               'absolute w-full h-full top-0 right-0'
                            )}
                         />
