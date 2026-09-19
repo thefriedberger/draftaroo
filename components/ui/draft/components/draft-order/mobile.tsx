@@ -1,7 +1,7 @@
 import DraftOrderSkeleton from '@/components/ui/draft/skeletons/draft-order';
 import { DraftOrderProps } from '@/lib/types';
 import classNames from 'classnames';
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import DraftTile from '../draft-tile';
 
 export type Pick = {
@@ -64,9 +64,6 @@ const DraftOrderMobile = ({
       splitPicks.push(picks.slice(i, i + teams.length));
    }
 
-   useEffect(() => {
-      console.log(hash);
-   }, [hash]);
    return picks.length > 0 ? (
       <>
          <div
@@ -77,7 +74,7 @@ const DraftOrderMobile = ({
          >
             <div
                className={classNames(
-                  'w-fit gap-2 sticky top-0 flex flex-nowrap z-50 min-w-full dark:bg-gray-dark min-h-8 h-8 mt-2'
+                  'w-fit gap-2 sticky top-0 flex flex-nowrap z-50 min-w-full bg-paper-light shadow-sm dark:bg-gray-dark min-h-8 h-8 mt-2'
                )}
             >
                {picks
