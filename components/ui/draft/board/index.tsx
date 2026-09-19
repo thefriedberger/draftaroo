@@ -786,8 +786,9 @@ const Board = ({
       tabs: mobileTabs,
       centerTabs: false,
       className: classNames(
-         hash !== '#draft-order' && 'h-[calc(100vh-10rem-85px)]',
-         `shadow-[0px_-5px_10px_black] z-[100] pt-2 flex flex-col-reverse w-full h-full overflow-y-scroll ${
+         hash !== '#draft-order' && 'h-full',
+         hash === '#draft-order' ? 'pt-0 h-0' : 'pt-2 h-full',
+         `shadow-[0px_-5px_10px_black] z-[100] flex flex-col-reverse w-full overflow-y-scroll ${
             featuredPlayer &&
             (!draftedIds.includes(featuredPlayer?.id)
                ? 'pb-[130px]'
@@ -799,7 +800,7 @@ const Board = ({
       useHash: true,
    };
    return (
-      <div className="flex flex-col items-center w-full max-h-[100vh] overflow-y-scroll lg:overflow-y-hidden draft-board">
+      <div className="flex flex-col items-center w-full max-h-[calc(100vh-66px)] lg:max-h-[100vh] overflow-y-scroll lg:overflow-y-hidden draft-board">
          <DraftContext.Provider
             value={{
                watchlist: watchlistState,
