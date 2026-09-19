@@ -107,8 +107,11 @@ const DraftOrderMobile = ({
                      </div>
                   ))}
             </div>
-            {splitPicks.map((picks) => (
-               <div className={classNames('flex flex-nowrap gap-2 w-full')}>
+            {splitPicks.map((picks, index) => (
+               <div
+                  key={index}
+                  className={classNames('flex flex-nowrap gap-2 w-full')}
+               >
                   {picks?.map((pick: Pick) => {
                      return (
                         <DraftTile
