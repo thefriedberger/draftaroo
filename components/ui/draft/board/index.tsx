@@ -33,7 +33,7 @@ import {
 } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { buttonClasses } from '../../helpers/buttons';
@@ -75,6 +75,7 @@ const Board = ({
    const [pickIsKeeper, setPickIsKeeper] = useState<boolean>(false);
    const [picks, setPicks] = useState<Pick[]>([]);
    const router = useRouter();
+   const params = useParams();
 
    /*** Channels ***/
    const draftChannel = supabase.channel('draft-channel');
@@ -101,6 +102,7 @@ const Board = ({
    );
    const [teamViewToShow, setTeamViewToShow] = useState<string>('');
    const [timer, setTimer] = useState<number>(timerDuration);
+   const [hash, setHash] = useState<string>(window.location.hash);
 
    /*** end states ***/
 
@@ -216,6 +218,17 @@ const Board = ({
       }
    }, [isActive, draftedPlayersState, currentPick]);
 
+   useEffect(() => {
+      const handleHashChange = () => {
+         if (hash !== window.location.hash) {
+            setHash(window.location.hash);
+         }
+      };
+      window.addEventListener('hashchange', handleHashChange);
+      return () => {
+         window.removeEventListener('hashchange', handleHashChange);
+      };
+   }, []);
    // set if user can pick
    useEffect(() => {
       const draftedPlayer = draftedPlayersState.find(
@@ -885,7 +898,7 @@ const Board = ({
                         <Timer {...timerProps} />
                         <div
                            className={classNames(
-                              window.location.hash === '#draft-order'
+                              hash === '#draft-order'
                                  ? 'max-h-full min-h-full'
                                  : 'min-h-40 max-h-40',
                               'max-w-full overflow-x-hidden'
