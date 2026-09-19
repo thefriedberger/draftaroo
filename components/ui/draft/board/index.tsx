@@ -220,14 +220,9 @@ const Board = ({
 
    useEffect(() => {
       const handleHashChange = () => {
-         if (hash !== window.location.hash) {
-            setHash(window.location.hash);
-         }
+         setHash(window.location.hash);
       };
       window.addEventListener('hashchange', handleHashChange);
-      return () => {
-         window.removeEventListener('hashchange', handleHashChange);
-      };
    }, []);
 
    // set if user can pick
@@ -685,6 +680,7 @@ const Board = ({
       picks,
       timer,
       timerDuration,
+      hash,
    };
 
    const watchlistProps: WatchlistProps = {
@@ -789,10 +785,15 @@ const Board = ({
    const mobileTabProps: TabProps = {
       tabs: mobileTabs,
       centerTabs: false,
-      className: `shadow-[0px_-5px_10px_black] z-[100] pt-2 flex flex-col-reverse w-full h-full overflow-y-scroll ${
-         featuredPlayer &&
-         (!draftedIds.includes(featuredPlayer?.id) ? 'pb-[130px]' : 'pb-[90px]')
-      }`,
+      className: classNames(
+         hash !== '#draft-order' && 'h-[calc(100vh-10rem-85px)]',
+         `shadow-[0px_-5px_10px_black] z-[100] pt-2 flex flex-col-reverse w-full h-full overflow-y-scroll ${
+            featuredPlayer &&
+            (!draftedIds.includes(featuredPlayer?.id)
+               ? 'pb-[130px]'
+               : 'pb-[90px]')
+         }`
+      ),
       saveState: true,
       gridColumns: `grid-cols-5`,
       useHash: true,

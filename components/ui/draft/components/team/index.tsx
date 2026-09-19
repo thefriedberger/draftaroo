@@ -144,14 +144,14 @@ const Team = ({
                   <div
                      aria-role="columnheader"
                      aria-sort="none"
-                     className={'!col-span-1'}
+                     className={'!col-span-2 lg:!col-span-1'}
                   >
                      Pos
                   </div>
                   <div
                      aria-role="columnheader"
                      aria-sort="none"
-                     className={'!col-span-12'}
+                     className={'!col-span-10 lg:!col-span-12'}
                   >
                      Player
                   </div>

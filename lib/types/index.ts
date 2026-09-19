@@ -62,6 +62,7 @@ export interface DraftOrderProps {
    populatePicks?: () => void;
    timer: number;
    timerDuration: number;
+   hash?: string;
 }
 
 export interface WatchlistProps {
