@@ -39,6 +39,7 @@ import { useMediaQuery } from 'react-responsive';
 import { buttonClasses } from '../../helpers/buttons';
 import Tabs from '../../tabs';
 import DraftOrder, { Pick } from '../components/draft-order';
+import DraftOrderMobile from '../components/draft-order/mobile';
 import FeaturedPlayer from '../components/featured-player';
 import MyTeam from '../components/my-team';
 import PlayerList, {
@@ -552,6 +553,7 @@ const Board = ({
       setWatchlistState(newWatchlist);
    };
 
+   const getDraftOrderHeight = () => {};
    useEffect(() => {
       updateSupabaseWatchlist(supabase, watchlistState, user?.id, draft.id);
    }, [watchlistState]);
@@ -693,6 +695,7 @@ const Board = ({
       players: players,
       leagueScoring: leagueScoring,
       featuredPlayer: featuredPlayer || null,
+      height: 0,
    };
 
    const myTeamProps: MyTeamProps = {
@@ -732,7 +735,6 @@ const Board = ({
                <p className="text-[8px]">Draft Order</p>
             </>
          ),
-         tabPane: <DraftOrder {...draftOrderProps} />,
       },
       {
          tabButton: (
@@ -881,6 +883,16 @@ const Board = ({
                   ) : (
                      <>
                         <Timer {...timerProps} />
+                        <div
+                           className={classNames(
+                              window.location.hash === '#draft-order'
+                                 ? 'max-h-full min-h-full'
+                                 : 'min-h-40 max-h-40',
+                              'max-w-full overflow-x-hidden'
+                           )}
+                        >
+                           <DraftOrderMobile {...draftOrderProps} />
+                        </div>
                         <Tabs {...mobileTabProps} />
                         {featuredPlayer && (
                            <FeaturedPlayer {...featuredPlayerProps} />

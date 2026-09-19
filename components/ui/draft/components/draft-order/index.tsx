@@ -54,7 +54,7 @@ const DraftOrder = ({
          <div
             className={classNames(
                gridCols,
-               'w-full sticky -top-8 grid gap-2 z-50 dark:bg-gray-dark h-8'
+               'w-full sticky -top-8 grid gap-2 z-50 dark:bg-gray-dark min-h-8'
             )}
          >
             {picks
@@ -106,7 +106,6 @@ const DraftOrder = ({
                gridCols,
                'overflow-y-scroll grid gap-2 h-full max-h-48 relative top-8 mt-8'
             )}
-            id={'draft-tiles-container'}
          >
             {picks?.map((pick: Pick) => {
                return (

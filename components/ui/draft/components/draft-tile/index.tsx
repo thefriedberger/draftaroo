@@ -6,7 +6,12 @@ import classNames from 'classnames';
 import Image from 'next/image';
 import { useContext, useEffect, useRef } from 'react';
 
-const DraftTile = ({ pick, currentPick, player }: DraftTileProps) => {
+const DraftTile = ({
+   pick,
+   currentPick,
+   player,
+   className,
+}: DraftTileProps) => {
    const { updateFeaturedPlayer } = useContext(DraftContext);
    const draftTileRef = useRef<HTMLDivElement | null>(null);
    const shouldScroll = useRef<boolean>(true);
@@ -41,6 +46,7 @@ const DraftTile = ({ pick, currentPick, player }: DraftTileProps) => {
    return (
       <div
          className={classNames(
+            className,
             'ring-2 ring-inset ring-[rgba(0,0,0,.25)]',
             currentPick === pick.draftPosition && '!ring-emerald-primary',
             pick.playerID && ' cursor-pointer',

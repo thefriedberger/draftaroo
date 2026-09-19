@@ -143,7 +143,12 @@ const PlayerList = ({
 
    return (
       <>
-         <div className="flex flex-col items-center h-full max-h-full w-full text-black dark:text-white">
+         <div
+            style={{ height: 'calc(100vh - 10rem - 72px - 83px - 66px)' }}
+            className={classNames(
+               'flex flex-col items-center lg:h-full lg:max-h-full w-full text-black dark:text-white overflow-hidden'
+            )}
+         >
             <div className="flex flex-col sticky top-0 z-10 bg-transparent lg:z-0 lg:bg-transparent lg:static lg:flex-row w-full lg:w-auto justify-start self-start items-stretch lg:items-end">
                <div className="grid grid-cols-9 lg:grid-cols-10 gap-2 lg:gap-0">
                   <Filter

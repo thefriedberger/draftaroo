@@ -92,6 +92,7 @@ export interface PlayerListProps {
    players: Player[];
    leagueScoring: LeagueScoring;
    featuredPlayer?: FeaturedPlayerType;
+   height?: number;
 }
 
 export interface DraftTileProps {
@@ -100,6 +101,7 @@ export interface DraftTileProps {
    playerSelected: DraftSelection;
    player: Player;
    isYourTurn: boolean;
+   className?: string;
 }
 
 export interface ChatProps {
