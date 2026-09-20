@@ -429,7 +429,7 @@ const FeaturedPlayer = ({
       >
          {featuredPlayer && (
             <>
-               <div className="w-full lg:w-full lg:h-full flex">
+               <div className="lg:min-w-[602px] w-full lg:w-full lg:h-full flex">
                   <div className="w-full lg:w-fit">
                      <div className={'flex flex-row'}>
                         <PlayerHeadshot {...featuredPlayer} />
