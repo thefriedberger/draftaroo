@@ -16,10 +16,25 @@ const Gamelog = (player: Player) => {
       'shorthandedGoals',
       'shorthandedPoints',
    ];
+   const statsOrderGoalie = [
+      'gameDate',
+      'homeRoadFlag',
+      'opponentAbbrev',
+      'gamesStarted',
+      'decision',
+      'goalsAgainst',
+      'shotsAgainst',
+      'hits',
+      'toi',
+   ];
    const statsMap = {
       'Game Date': 'Date',
       'Home Road Flag': '@',
       'Opponent Abbrev': 'Opp.',
+      'Goals Against': 'GA',
+      Decision: 'Res.',
+      'Games Started': 'GS',
+      'Shots Against': 'SA',
       Goals: 'G',
       Assists: 'A',
       Points: 'P',
@@ -38,10 +53,25 @@ const Gamelog = (player: Player) => {
 
    const seasonCode = Object.keys(gamelog)[0];
    const season = `${seasonCode.substring(0, 4)}-${seasonCode.substring(5)}`;
+   console.log(player.primary_position, gamelog);
    const tableHeaders = gamelog[seasonCode].map((game) => {
       const stats = Object.keys(game)
-         .filter((key) => statsOrder.includes(key))
-         .sort((a, b) => statsOrder.indexOf(a) - statsOrder.indexOf(b));
+         .filter((key) =>
+            player.primary_position === 'G'
+               ? statsOrderGoalie.includes(key)
+               : statsOrder.includes(key)
+         )
+         .sort(
+            (a, b) =>
+               (player.primary_position === 'G'
+                  ? statsOrderGoalie
+                  : statsOrder
+               ).indexOf(a) -
+               (player.primary_position === 'G'
+                  ? statsOrderGoalie
+                  : statsOrder
+               ).indexOf(b)
+         );
 
       //  return stats;
       return stats.map((stat) => {
@@ -53,8 +83,22 @@ const Gamelog = (player: Player) => {
 
    const statsKeys = gamelog[seasonCode].map((game) => {
       const stats = Object.keys(game)
-         .filter((key) => statsOrder.includes(key))
-         .sort((a, b) => statsOrder.indexOf(a) - statsOrder.indexOf(b));
+         .filter((key) =>
+            player.primary_position === 'G'
+               ? statsOrderGoalie.includes(key)
+               : statsOrder.includes(key)
+         )
+         .sort(
+            (a, b) =>
+               (player.primary_position === 'G'
+                  ? statsOrderGoalie
+                  : statsOrder
+               ).indexOf(a) -
+               (player.primary_position === 'G'
+                  ? statsOrderGoalie
+                  : statsOrder
+               ).indexOf(b)
+         );
 
       return stats;
    })[0];
