@@ -898,7 +898,7 @@ const Board = ({
                            className={classNames(
                               hash === '#draft-order'
                                  ? 'max-h-full min-h-full'
-                                 : 'min-h-40 max-h-40',
+                                 : 'min-h-56 max-h-56',
                               'max-w-full overflow-x-hidden'
                            )}
                         >

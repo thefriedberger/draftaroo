@@ -69,7 +69,7 @@ const DraftOrderMobile = ({
          <div
             className={classNames(
                hash !== '#draft-order'
-                  ? `max-h-40`
+                  ? `max-h-56`
                   : 'max-h-[calc(100vh-66px-64px)]',
                'flex flex-col overflow-scroll gap-2 min-w-full h-full'
             )}
