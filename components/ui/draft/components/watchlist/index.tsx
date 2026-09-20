@@ -39,6 +39,11 @@ const Watchlist = ({ draftedIds, players }: WatchlistProps) => {
          <h3 className="hidden lg:block text-xl font-bold rounded-md bg-paper-dark dark:bg-fuscia-primary p-1 text-black">
             Watchlist
          </h3>
+         <div className="flex flex-row items-center lg:hidden">
+            <p className="text-sm ml-auto mr-2">Score</p>
+            <p className="text-sm text-right min-w-8 mr-2">Avg.</p>
+            <p className="text-sm text-right min-w-6 mr-2"></p>
+         </div>
          {watchlistPlayers.length > 0 ? (
             watchlistPlayers
                .filter((player: Player) => !draftedIds.includes(player.id))
@@ -95,34 +100,46 @@ const WatchlistPlayer = ({
          inputRef.current.value = '';
       }
    };
+
+   const currentSeasonKey = `${
+      new Date().getUTCFullYear() - 1
+   }${new Date().getUTCFullYear()}`;
    return (
-      <div
-         key={player.id}
-         className="flex flex-row items-center cursor-pointer"
-         onClick={(e) => handleUpdateFeaturedPlayer(player, e)}
-      >
-         <p className="w-4 mr-1 text-xs">{index}.</p>
-         <div className="fill-emerald-500 w-[30px] flex items-center">
-            <WatchlistStar player={player} />
-         </div>
-         <p className="ml-2 pt-1">
-            {player.first_name} {player.last_name}
-         </p>
-         <form
-            action={handleReorderWatchlist}
-            className="min-w-5 w-6 lg:w-5 ml-auto mr-2 lg:mr-1"
+      <>
+         <div
+            key={player.id}
+            className="flex flex-row items-center cursor-pointer"
+            onClick={(e) => handleUpdateFeaturedPlayer(player, e)}
          >
-            <input
-               type="number"
-               max={watchlistPlayers.length}
-               min={1}
-               ref={inputRef}
-               className="w-full rounded-sm text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-               onChange={(e) => {
-                  watchlistPosition.current = Number(e.target.value);
-               }}
-            />
-         </form>
-      </div>
+            <p className="w-4 mr-1 text-xs">{index}.</p>
+            <div className="fill-emerald-500 w-[30px] flex items-center">
+               <WatchlistStar player={player} />
+            </div>
+            <p className="ml-2 pt-1">
+               {player.first_name} {player.last_name}
+            </p>
+            <p className="block lg:hidden text-sm ml-auto mr-2">
+               {player?.stats?.[currentSeasonKey]?.score}
+            </p>
+            <p className="block lg:hidden text-sm text-right min-w-8 mr-2">
+               {player?.stats?.[currentSeasonKey]?.averageScore}
+            </p>
+            <form
+               action={handleReorderWatchlist}
+               className="min-w-5 w-6 lg:w-5 mr-2 lg:ml-auto lg:mr-1"
+            >
+               <input
+                  type="number"
+                  max={watchlistPlayers.length}
+                  min={1}
+                  ref={inputRef}
+                  className="w-full rounded-sm text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  onChange={(e) => {
+                     watchlistPosition.current = Number(e.target.value);
+                  }}
+               />
+            </form>
+         </div>
+      </>
    );
 };
