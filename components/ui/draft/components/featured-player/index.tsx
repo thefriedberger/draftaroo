@@ -42,7 +42,11 @@ const FeaturedPlayer = ({
    };
    const [isExpanded, setIsExpanded] = useState<boolean>(false);
    const [showStats, setShowStats] = useState<boolean>(true);
+   const [showGamelog, setShowGamelog] = useState<boolean>(false);
    const [showMore, setShowMore] = useState<boolean>(false);
+   const [toDisplay, setToDisplay] = useState<'stats' | 'gamelog' | 'history'>(
+      'stats'
+   );
    const { updateFeaturedPlayer } = useContext(DraftContext);
    const featuredRef = useRef<HTMLDivElement>(null);
    let [playerHistory, setPlayerHistory] = useState<PlayerHistoryProps[]>([]);
@@ -250,10 +254,16 @@ const FeaturedPlayer = ({
    const statsToggle = (featuredPlayer: Player) => {
       return (
          <div className="flex flex-col lg:hidden">
-            {showStats && isExpanded && (
-               <span>{playerStats(featuredPlayer)}</span>
-            )}
-            {!showStats && isExpanded ? <PlayerHistory /> : null}
+            {isExpanded &&
+               (toDisplay === 'stats' ? (
+                  <span>{playerStats(featuredPlayer)}</span>
+               ) : toDisplay === 'history' ? (
+                  <PlayerHistory />
+               ) : (
+                  <div className="max-h-44 overflow-y-scroll">
+                     <Gamelog {...featuredPlayer} />
+                  </div>
+               ))}
             <div className="block lg:hidden w-fit">
                <button
                   className={classNames(
@@ -262,28 +272,47 @@ const FeaturedPlayer = ({
                   )}
                   type="button"
                   onClick={() => {
-                     if (isExpanded && !showStats) {
-                        setShowStats(true);
+                     if (!isExpanded) {
+                        setIsExpanded(true);
+                        setToDisplay('stats');
+                     } else if (isExpanded) {
+                        setToDisplay('stats');
                      } else {
-                        setShowStats(true);
                         setIsExpanded(!isExpanded);
                      }
                   }}
                >
-                  {isExpanded && showStats ? 'Hide' : 'Show'} stats
+                  Stats
                </button>
                <button
                   className={classNames(buttonClasses, 'ml-2')}
                   onClick={() => {
-                     if (isExpanded && showStats) {
-                        setShowStats(false);
+                     if (!isExpanded) {
+                        setIsExpanded(true);
+                        setToDisplay('gamelog');
+                     } else if (isExpanded) {
+                        setToDisplay('gamelog');
                      } else {
-                        setShowStats(false);
                         setIsExpanded(!isExpanded);
                      }
                   }}
                >
-                  {isExpanded && !showStats ? 'Hide' : 'Show'} history
+                  Gamelog
+               </button>
+               <button
+                  className={classNames(buttonClasses, 'ml-2')}
+                  onClick={() => {
+                     if (!isExpanded) {
+                        setIsExpanded(true);
+                        setToDisplay('history');
+                     } else if (isExpanded) {
+                        setToDisplay('history');
+                     } else {
+                        setIsExpanded(!isExpanded);
+                     }
+                  }}
+               >
+                  History
                </button>
             </div>
          </div>
