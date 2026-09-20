@@ -788,12 +788,7 @@ const Board = ({
       className: classNames(
          hash !== '#draft-order' && 'h-full',
          hash === '#draft-order' ? 'pt-0 h-0' : 'pt-2 h-full',
-         `shadow-[0px_-5px_10px_black] z-[100] flex flex-col-reverse w-full overflow-y-scroll ${
-            featuredPlayer &&
-            (!draftedIds.includes(featuredPlayer?.id)
-               ? 'pb-[130px]'
-               : 'pb-[90px]')
-         }`
+         `shadow-[0px_-5px_10px_black] z-[100] flex flex-col-reverse w-full overflow-y-scroll`
       ),
       saveState: true,
       gridColumns: `grid-cols-5`,
