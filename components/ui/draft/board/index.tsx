@@ -108,9 +108,6 @@ const Board = ({
 
    const timerHeight: HeightType = { value: 90, type: 'px' };
    const draftOrderHeight: HeightType = { value: 25, type: 'vh' };
-
-   // const [section1Height, section2Height] = useMemo(() => {},[])
-
    const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
 
    interface HeightType {
@@ -870,7 +867,7 @@ const Board = ({
                            </div>
                            <div
                               style={{ height: getHeight(draftOrderHeight) }}
-                              className="overflow-hidden px-1 relative pt-8"
+                              className="overflow-hidden px-1 relative lg:pt-8"
                            >
                               <DraftOrder {...draftOrderProps} />
                            </div>

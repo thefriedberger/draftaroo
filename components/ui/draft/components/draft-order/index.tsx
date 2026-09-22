@@ -1,3 +1,4 @@
+import { gridMap } from '@/app/utils/constants';
 import DraftOrderSkeleton from '@/components/ui/draft/skeletons/draft-order';
 import { DraftOrderProps } from '@/lib/types';
 import classNames from 'classnames';
@@ -26,21 +27,6 @@ const DraftOrder = ({
    timer,
    timerDuration,
 }: DraftOrderProps) => {
-   const numberOfPicks = teams.length * numberOfRounds;
-   const gridMap = {
-      2: 'grid-cols-2',
-      3: 'grid-cols-3',
-      4: 'grid-cols-4',
-      5: 'grid-cols-5',
-      6: 'grid-cols-6',
-      7: 'grid-cols-7',
-      8: 'grid-cols-8',
-      9: 'grid-cols-9',
-      10: 'grid-cols-10',
-      11: 'grid-cols-11',
-      12: 'grid-cols-12',
-   };
-
    const gridCols = gridMap[teams.length];
 
    const countdown = useMemo(() => {
@@ -54,7 +40,7 @@ const DraftOrder = ({
          <div
             className={classNames(
                gridCols,
-               'w-full sticky -top-8 grid gap-2 z-50 dark:bg-gray-dark min-h-8'
+               'w-full sticky lg:-top-8 grid gap-2 z-50 dark:bg-gray-dark min-h-8'
             )}
          >
             {picks
@@ -104,7 +90,7 @@ const DraftOrder = ({
          <div
             className={classNames(
                gridCols,
-               'overflow-y-scroll grid gap-2 h-full max-h-48 relative top-8 mt-8'
+               'overflow-y-scroll grid gap-2 h-full max-h-48 lg:relative lg:top-8 lg:mt-8'
             )}
          >
             {picks?.map((pick: Pick) => {

@@ -15,11 +15,28 @@ export const supabaseStorage: { [key: string]: string }[] = [
    },
 ];
 
-export const tileColorMap: Record<'F' | 'C' | 'L' | 'R' | 'D' | 'G', string> = {
-   F: '!bg-blue-300 !text-black',
-   C: '!bg-blue-300 !text-black',
-   L: '!bg-blue-300 !text-black',
-   R: '!bg-blue-300 !text-black',
-   D: '!bg-orange-300 !text-black',
-   G: '!bg-green-300 !text-black',
+export const tileColorMap: Record<
+   'F' | 'C' | 'L' | 'R' | 'D' | 'G',
+   Record<'background' | 'text', any>
+> = {
+   F: { background: '!bg-blue-300', text: '!text-black' },
+   C: { background: '!bg-blue-300', text: '!text-black' },
+   L: { background: '!bg-blue-300', text: '!text-black' },
+   R: { background: '!bg-blue-300', text: '!text-black' },
+   D: { background: '!bg-orange-300', text: '!text-black' },
+   G: { background: '!bg-green-300', text: '!text-black' },
+};
+
+export const gridMap = {
+   2: 'grid-cols-2',
+   3: 'grid-cols-3',
+   4: 'grid-cols-4',
+   5: 'grid-cols-5',
+   6: 'grid-cols-6',
+   7: 'grid-cols-7',
+   8: 'grid-cols-8',
+   9: 'grid-cols-9',
+   10: 'grid-cols-10',
+   11: 'grid-cols-11',
+   12: 'grid-cols-12',
 };

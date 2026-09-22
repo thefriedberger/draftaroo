@@ -5,6 +5,7 @@ import { DraftTileProps } from '@/lib/types';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { useContext, useEffect, useRef } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
 const DraftTile = ({
    pick,
@@ -15,6 +16,7 @@ const DraftTile = ({
    const { updateFeaturedPlayer } = useContext(DraftContext);
    const draftTileRef = useRef<HTMLDivElement | null>(null);
    const shouldScroll = useRef<boolean>(true);
+   const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
 
    useEffect(() => {
       const scrollCallback = () => {
@@ -31,7 +33,22 @@ const DraftTile = ({
             draftTileRef.current &&
             shouldScroll.current === true
          ) {
-            draftTileRef.current.scrollIntoView({ behavior: 'smooth' });
+            if (isMobile) {
+               const scrollY =
+                  draftTileRef.current?.offsetTop -
+                  draftOrderContainer.offsetTop -
+                  40;
+               const scrollX =
+                  draftTileRef.current?.offsetLeft -
+                  draftOrderContainer.offsetLeft -
+                  100;
+               draftOrderContainer.scrollTo({
+                  top: scrollY,
+                  left: scrollX,
+               });
+            } else {
+               draftTileRef.current.scrollIntoView({ behavior: 'smooth' });
+            }
          }
       };
 
@@ -55,13 +72,13 @@ const DraftTile = ({
             pick.yourPick &&
                currentPick !== pick.draftPosition &&
                ' ring-gray-dark dark:ring-fuscia-primary',
-            player && tileColorMap[player.primary_position ?? 'C']
+            player && tileColorMap[player.primary_position ?? 'C'].background,
+            player && tileColorMap[player.primary_position ?? 'C'].text
          )}
          tabIndex={0}
          ref={(currentPick === pick.draftPosition && draftTileRef) || null}
          onClick={handleUpdateFeaturedPlayer}
          onKeyDown={(e) => e.code === 'Enter' && handleUpdateFeaturedPlayer()}
-         data-featured-toggle={true}
       >
          <div className="flex justify-between bg-[rgba(0,0,0,.25)] rounded-t-[4px] h-[calc(fit-content-2px)] mt-[2px] w-[calc(100%-4px)] ml-[2px] px-1 pr-0">
             <span className={'dark:text-white font-medium'}>

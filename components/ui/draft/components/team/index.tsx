@@ -179,7 +179,8 @@ const Team = ({
                            updateFeaturedPlayer?.(forwards[index]);
                      }}
                      className={classNames(
-                        tileColorMap[primaryPosition ?? 'F'],
+                        tileColorMap[primaryPosition ?? 'F'].background,
+                        tileColorMap[primaryPosition ?? 'F'].text,
                         forwards?.[index] && 'cursor-pointer'
                      )}
                   >
@@ -206,7 +207,10 @@ const Team = ({
                      className={classNames(
                         tileColorMap[
                            defenseman?.[index]?.primary_position ?? 'D'
-                        ],
+                        ].background,
+                        tileColorMap[
+                           defenseman?.[index]?.primary_position ?? 'D'
+                        ].text,
                         defenseman?.[index] && 'cursor-pointer'
                      )}
                   >
@@ -255,7 +259,10 @@ const Team = ({
                            updateFeaturedPlayer?.(goalies[index]);
                      }}
                      className={classNames(
-                        tileColorMap[goalies?.[index]?.primary_position ?? 'G'],
+                        tileColorMap[goalies?.[index]?.primary_position ?? 'G']
+                           .background,
+                        tileColorMap[goalies?.[index]?.primary_position ?? 'G']
+                           .text,
                         goalies?.[index] && 'cursor-pointer'
                      )}
                   >
@@ -274,7 +281,9 @@ const Team = ({
                      key={player.id}
                      onClick={() => updateFeaturedPlayer?.(player)}
                      className={classNames(
-                        tileColorMap[player?.primary_position ?? 'G'],
+                        tileColorMap[player?.primary_position ?? 'G']
+                           .background,
+                        tileColorMap[player?.primary_position ?? 'G'].text,
                         player && 'cursor-pointer'
                      )}
                   >
