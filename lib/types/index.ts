@@ -60,6 +60,9 @@ export interface DraftOrderProps {
    numberOfRounds: number;
    picks: Pick[];
    populatePicks?: () => void;
+   timer: number;
+   timerDuration: number;
+   hash?: string;
 }
 
 export interface WatchlistProps {
@@ -90,13 +93,16 @@ export interface PlayerListProps {
    players: Player[];
    leagueScoring: LeagueScoring;
    featuredPlayer?: FeaturedPlayerType;
+   height?: number;
 }
 
 export interface DraftTileProps {
    pick: Pick;
    currentPick: number;
-   playerSelected: any;
+   playerSelected: DraftSelection;
+   player: Player;
    isYourTurn: boolean;
+   className?: string;
 }
 
 export interface ChatProps {

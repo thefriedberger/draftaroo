@@ -1,10 +1,10 @@
-import updatePlayers from '../utils/fetch-players';
+import getGamelogs from '../utils/get-gamelogs';
 
 export const maxDuration = 60;
 
 export async function POST() {
    try {
-      await updatePlayers();
+      await getGamelogs();
    } catch (error) {
       console.error('Update players error: ', error);
       return;

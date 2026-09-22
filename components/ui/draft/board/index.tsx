@@ -19,7 +19,6 @@ import { DraftContext } from '@/components/context/draft-context';
 import { WatchlistAction } from '@/components/context/page-context';
 import {
    BoardProps,
-   ChatProps,
    DraftOrderProps,
    DraftedPlayer,
    FeaturedPlayerProps,
@@ -34,12 +33,13 @@ import {
 } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { buttonClasses } from '../../helpers/buttons';
 import Tabs from '../../tabs';
 import DraftOrder, { Pick } from '../components/draft-order';
+import DraftOrderMobile from '../components/draft-order/mobile';
 import FeaturedPlayer from '../components/featured-player';
 import MyTeam from '../components/my-team';
 import PlayerList, {
@@ -75,6 +75,7 @@ const Board = ({
    const [pickIsKeeper, setPickIsKeeper] = useState<boolean>(false);
    const [picks, setPicks] = useState<Pick[]>([]);
    const router = useRouter();
+   const params = useParams();
 
    /*** Channels ***/
    const draftChannel = supabase.channel('draft-channel');
@@ -100,9 +101,19 @@ const Board = ({
       []
    );
    const [teamViewToShow, setTeamViewToShow] = useState<string>('');
+   const [timer, setTimer] = useState<number>(timerDuration);
+   const [hash, setHash] = useState<string>(window.location.hash);
 
+   /*** end states ***/
+
+   const timerHeight: HeightType = { value: 90, type: 'px' };
+   const draftOrderHeight: HeightType = { value: 25, type: 'vh' };
    const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
 
+   interface HeightType {
+      value: number;
+      type: 'px' | 'vh' | 'vw' | '%';
+   }
    const handleDraftSelectionProps = {
       supabase: supabase,
       currentPick: currentPick,
@@ -203,6 +214,13 @@ const Board = ({
          }
       }
    }, [isActive, draftedPlayersState, currentPick]);
+
+   useEffect(() => {
+      const handleHashChange = () => {
+         setHash(window.location.hash);
+      };
+      window.addEventListener('hashchange', handleHashChange);
+   }, []);
 
    // set if user can pick
    useEffect(() => {
@@ -403,6 +421,7 @@ const Board = ({
             }
          }
       }
+
       const playerIds: number[] = updateTeamsViewPlayers(
          autoDraftTeam.team_id
       ).map((player) => player.player_id);
@@ -428,6 +447,7 @@ const Board = ({
                cleanSeasons(seasons[2])
             )[0]) ||
          null;
+
       const bpa =
          sortPlayers(
             players.filter((player) => {
@@ -436,6 +456,7 @@ const Board = ({
             'score',
             cleanSeasons(seasons[2])
          )[0] || null;
+
       const playerToDraft =
          positionPlayer && positionPlayer.primary_position === 'G'
             ? positionPlayer
@@ -456,6 +477,15 @@ const Board = ({
          teamId: autoDraftTeam.team_id,
          timerDuration,
       });
+   };
+
+   const updateTimer = (value: number) => {
+      setTimer(value);
+      return value;
+   };
+
+   const getHeight = (height: HeightType) => {
+      return `${height.value}${height.type}`;
    };
 
    const findPositionsNeeded = (teamRoster: Player[]) => {
@@ -529,6 +559,7 @@ const Board = ({
       setWatchlistState(newWatchlist);
    };
 
+   const getDraftOrderHeight = () => {};
    useEffect(() => {
       updateSupabaseWatchlist(supabase, watchlistState, user?.id, draft.id);
    }, [watchlistState]);
@@ -644,6 +675,9 @@ const Board = ({
       teamID: team.id,
       numberOfRounds: numberOfRounds ?? 23,
       picks,
+      timer,
+      timerDuration,
+      hash,
    };
 
    const watchlistProps: WatchlistProps = {
@@ -668,6 +702,7 @@ const Board = ({
       players: players,
       leagueScoring: leagueScoring,
       featuredPlayer: featuredPlayer || null,
+      height: 0,
    };
 
    const myTeamProps: MyTeamProps = {
@@ -707,7 +742,6 @@ const Board = ({
                <p className="text-[8px]">Draft Order</p>
             </>
          ),
-         tabPane: <DraftOrder {...draftOrderProps} />,
       },
       {
          tabButton: (
@@ -740,8 +774,7 @@ const Board = ({
    const tabProps: TabProps = {
       tabs,
       centerTabs: false,
-      className:
-         'flex flex-col w-full lg:max-w-screen-2xl lg:h-[65%] text-white',
+      className: 'flex flex-col w-full lg:max-w-[75%] text-white',
       saveState: true,
       useHash: false,
    };
@@ -749,33 +782,31 @@ const Board = ({
    const mobileTabProps: TabProps = {
       tabs: mobileTabs,
       centerTabs: false,
-      className: `flex flex-col-reverse w-full h-[calc(100%-66px)] overflow-y-scroll ${
-         featuredPlayer &&
-         (!draftedIds.includes(featuredPlayer?.id) ? 'pb-[130px]' : 'pb-[90px]')
-      }`,
+      className: classNames(
+         hash !== '#draft-order' && 'h-full',
+         hash === '#draft-order' ? 'pt-0 h-0' : 'pt-2 h-full',
+         `shadow-[0px_-5px_10px_black] z-[100] flex flex-col-reverse w-full overflow-y-scroll`
+      ),
       saveState: true,
       gridColumns: `grid-cols-5`,
       useHash: true,
    };
-
-   const chatProps: ChatProps = {
-      user: user,
-   };
-
    return (
-      <div className="flex flex-col lg:flex-row items-center w-full overflow-y-scroll lg:overflow-y-hidden draft-board">
+      <div className="flex flex-col items-center w-full max-h-[calc(100vh-66px)] lg:max-h-[100vh] overflow-y-scroll lg:overflow-y-hidden draft-board">
          <DraftContext.Provider
             value={{
                watchlist: watchlistState,
                updateWatchlist,
                reorderWatchlist,
                updateFeaturedPlayer,
+               timer: timerDuration,
+               updateTimer: updateTimer,
             }}
          >
             {user && team?.league_id === league.league_id && picks.length ? (
                <>
                   {isOwner.current &&
-                     (!isCompleted ? (
+                     (!isCompleted && !isMobile ? (
                         <>
                            <button
                               onClick={autoDraft}
@@ -820,23 +851,56 @@ const Board = ({
                      ))}
                   {!isMobile ? (
                      <>
-                        <div className="flex flex-col lg:max-w-[15vw] h-full w-full overflow-y-hidden">
-                           <Timer {...timerProps} />
-                           <DraftOrder {...draftOrderProps} />
+                        <div
+                           style={{
+                              minHeight: `calc(${getHeight(
+                                 timerHeight
+                              )} + ${getHeight(draftOrderHeight)})`,
+                           }}
+                           className="flex flex-col w-full h-fit overflow-hidden"
+                        >
+                           <div
+                              style={{ height: getHeight(timerHeight) }}
+                              className=""
+                           >
+                              <Timer {...timerProps} />
+                           </div>
+                           <div
+                              style={{ height: getHeight(draftOrderHeight) }}
+                              className="overflow-hidden px-1 relative lg:pt-8"
+                           >
+                              <DraftOrder {...draftOrderProps} />
+                           </div>
                         </div>
-                        <div className="flex flex-col lg:max-w-[70vw] h-full w-full">
-                           <FeaturedPlayer {...featuredPlayerProps} />
+                        <div
+                           style={{
+                              height: `calc(100vh - ${getHeight(
+                                 draftOrderHeight
+                              )} - ${getHeight(timerHeight)})`,
+                           }}
+                           className="flex h-full w-full"
+                        >
                            <Tabs {...tabProps} />
+                           <div className="flex flex-col h-full min-w-[25%]">
+                              <Watchlist {...watchlistProps} />
+                              <MyTeam {...myTeamProps} />
+                           </div>
                         </div>
-                        <div className="flex flex-col lg:max-w-[15vw] h-full w-full">
-                           <Watchlist {...watchlistProps} />
-                           <MyTeam {...myTeamProps} />
-                           {/* <Chat {...chatProps} /> */}
-                        </div>
+                        <FeaturedPlayer {...featuredPlayerProps} />
                      </>
                   ) : (
                      <>
                         <Timer {...timerProps} />
+                        <div
+                           className={classNames(
+                              hash === '#draft-order'
+                                 ? 'max-h-full min-h-full'
+                                 : 'min-h-56 max-h-56',
+                              'max-w-full overflow-x-hidden'
+                           )}
+                        >
+                           <DraftOrderMobile {...draftOrderProps} />
+                        </div>
                         <Tabs {...mobileTabProps} />
                         {featuredPlayer && (
                            <FeaturedPlayer {...featuredPlayerProps} />
