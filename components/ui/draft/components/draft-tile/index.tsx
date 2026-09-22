@@ -1,70 +1,105 @@
 import KeeperIcon from '@/app/assets/images/icons/keeper-icon';
+import { tileColorMap } from '@/app/utils/constants';
 import { DraftContext } from '@/components/context/draft-context';
 import { DraftTileProps } from '@/lib/types';
 import classNames from 'classnames';
+import Image from 'next/image';
 import { useContext, useEffect, useRef } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
-const DraftTile = ({ pick, currentPick }: DraftTileProps) => {
+const DraftTile = ({
+   pick,
+   currentPick,
+   player,
+   className,
+}: DraftTileProps) => {
    const { updateFeaturedPlayer } = useContext(DraftContext);
    const draftTileRef = useRef<HTMLDivElement | null>(null);
    const shouldScroll = useRef<boolean>(true);
+   const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
 
-   const scrollCallback = () => {
-      const draftOrderContainer: HTMLDivElement = draftTileRef.current
-         ?.parentElement?.parentElement as HTMLDivElement;
-
-      draftOrderContainer.addEventListener('scroll', () => {
-         shouldScroll.current = false;
-      });
-      shouldScroll.current = true;
-      if (
-         draftOrderContainer &&
-         draftTileRef.current?.offsetTop &&
-         shouldScroll.current === true
-      ) {
-         const scrollY =
-            draftTileRef.current?.offsetTop -
-            draftOrderContainer.offsetTop -
-            40;
-         draftOrderContainer.scrollTo({
-            top: scrollY,
-         });
-      }
-   };
    useEffect(() => {
+      const scrollCallback = () => {
+         const draftOrderContainer: HTMLDivElement = draftTileRef.current
+            ?.parentElement?.parentElement as HTMLDivElement;
+
+         draftOrderContainer.addEventListener('scroll', () => {
+            shouldScroll.current = false;
+         });
+
+         shouldScroll.current = true;
+         if (
+            draftOrderContainer &&
+            draftTileRef.current &&
+            shouldScroll.current === true
+         ) {
+            if (isMobile) {
+               const scrollY =
+                  draftTileRef.current?.offsetTop -
+                  draftOrderContainer.offsetTop -
+                  40;
+               const scrollX =
+                  draftTileRef.current?.offsetLeft -
+                  draftOrderContainer.offsetLeft -
+                  100;
+               draftOrderContainer.scrollTo({
+                  top: scrollY,
+                  left: scrollX,
+               });
+            } else {
+               draftTileRef.current.scrollIntoView({ behavior: 'smooth' });
+            }
+         }
+      };
+
       currentPick === pick.draftPosition && scrollCallback();
+      return () => {};
    }, [pick, currentPick]);
 
    const handleUpdateFeaturedPlayer = () => {
       pick.playerID && updateFeaturedPlayer?.(null, pick.playerID);
    };
+
    return (
       <div
          className={classNames(
-            currentPick === pick.draftPosition && 'bg-fuscia-primary',
+            className,
+            'ring-2 ring-inset ring-[rgba(0,0,0,.25)]',
+            currentPick === pick.draftPosition && '!ring-emerald-primary',
+            pick.playerID && ' cursor-pointer',
+            'flex flex-col text-black rounded-md h-24 relative z-10',
+            !player && 'dark:text-white dark:bg-gray-light',
             pick.yourPick &&
                currentPick !== pick.draftPosition &&
-               'bg-paper-primary dark:bg-gray-light',
-            pick.playerID && ' cursor-pointer',
-            'flex flex-row border-b dark:border-gray-300 p-1 text-black dark:text-white'
+               ' ring-gray-dark dark:ring-fuscia-primary',
+            player && tileColorMap[player.primary_position ?? 'C'].background,
+            player && tileColorMap[player.primary_position ?? 'C'].text
          )}
+         tabIndex={0}
          ref={(currentPick === pick.draftPosition && draftTileRef) || null}
          onClick={handleUpdateFeaturedPlayer}
+         onKeyDown={(e) => e.code === 'Enter' && handleUpdateFeaturedPlayer()}
       >
-         <span
-            className={
-               'border-r border-paper-dark dark:border-gray-300 p-1 pr-2 self-center'
-            }
-         >
-            {pick.draftPosition}
-         </span>
-         <div className="w-full grid grid-cols-4 pl-2 self-center">
-            <div className={`${pick.isKeeper ? 'col-span-3' : 'col-span-4'}`}>
-               <p className="grid items-center">{pick.username}</p>
-               {pick.playerName && <p>{pick.playerName}</p>}
-            </div>
-            {pick.isKeeper && <KeeperIcon />}
+         <div className="flex justify-between bg-[rgba(0,0,0,.25)] rounded-t-[4px] h-[calc(fit-content-2px)] mt-[2px] w-[calc(100%-4px)] ml-[2px] px-1 pr-0">
+            <span className={'dark:text-white font-medium'}>
+               {pick.draftPosition}
+            </span>
+            <span className="flex items-center">
+               {pick.isKeeper && <KeeperIcon />}
+            </span>
          </div>
+         <div className="block w-full p-1 text-sm overflow-hidden whitespace-nowrap text-ellipsis">
+            {pick.playerName && pick.playerName}
+         </div>
+         {player && (
+            <Image
+               src={player?.headshot || ''}
+               width={35}
+               height={35}
+               alt={`Headshot of ${player.first_name} ${player.last_name}`}
+               className="rounded-full bg-[rgba(0,0,0,.5)] absolute left-1 bottom-1"
+            />
+         )}
       </div>
    );
 };

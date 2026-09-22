@@ -1,0 +1,25 @@
+.table,
+.table_team {
+   @apply px-1 rounded-md;
+}
+.table div[role='row'],
+.table_team div[role='row'] {
+   @apply grid grid-cols-15 p-1 mb-1 text-left rounded-md items-center;
+}
+.table div[role='row'] div,
+.table_team div[role='row'] div {
+   @apply first-of-type:col-span-2;
+}
+
+.table div[role='row'] div[role='cell']:first-of-type,
+.table_team div[role='row'] div[role='cell']:first-of-type {
+   @apply col-span-2 rounded-full h-8 w-8 border border-gray-primary flex items-center justify-center bg-[rgba(0,0,0,.3)];
+}
+
+.table div[role='row'] div[role='cell'] {
+   @apply first-of-type:col-span-2 lg:first-of-type:col-span-1 col-span-12 last-of-type:col-span-2 lg:last-of-type:col-span-1;
+}
+.table div[role='row'] div[role='cell'],
+.table_team div[role='row'] div[role='cell'] {
+   @apply flex items-center;
+}

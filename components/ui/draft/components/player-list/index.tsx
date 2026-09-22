@@ -143,7 +143,11 @@ const PlayerList = ({
 
    return (
       <>
-         <div className="flex flex-col items-center h-full max-h-full w-full text-black dark:text-white">
+         <div
+            className={classNames(
+               'flex flex-col items-center h-[calc(100vh-14rem-138px)] lg:!h-full max-h-full w-full text-black dark:text-white overflow-hidden'
+            )}
+         >
             <div className="flex flex-col sticky top-0 z-10 bg-transparent lg:z-0 lg:bg-transparent lg:static lg:flex-row w-full lg:w-auto justify-start self-start items-stretch lg:items-end">
                <div className="grid grid-cols-9 lg:grid-cols-10 gap-2 lg:gap-0">
                   <Filter
@@ -222,7 +226,7 @@ const PlayerList = ({
                </div>
             </div>
             <div
-               className=" w-full lg:h-full overflow-y-scroll relative"
+               className=" w-full h-fit overflow-y-scroll relative"
                id={'player-list-container'}
             >
                <table
