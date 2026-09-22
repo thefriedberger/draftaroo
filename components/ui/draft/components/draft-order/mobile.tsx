@@ -71,21 +71,21 @@ const DraftOrderMobile = ({
                hash !== '#draft-order'
                   ? `max-h-56`
                   : 'max-h-[calc(100vh-66px-64px)]',
-               'flex flex-col overflow-scroll gap-2 min-w-full h-full'
+               'flex flex-col overflow-scroll gap-2 min-w-full h-full items-start w-full'
             )}
          >
             <div
                className={classNames(
-                  'w-fit gap-2 sticky top-0 flex flex-nowrap z-50 min-w-full bg-paper-light shadow-sm dark:bg-gray-dark min-h-8 h-8 mt-2'
+                  'w-full gap-2 sticky top-0 flex flex-nowrap z-50 min-w-full min-h-8 h-8 mt-2'
                )}
             >
                {picks
                   .filter((pick) => pick.draftPosition <= teams.length)
-                  .map((pick) => (
+                  .map((pick, index) => (
                      <div
                         key={pick.draftPosition}
                         className={classNames(
-                           'block relative flex-1 min-w-24 dark:text-white rounded-md text-ellipsis whitespace-nowrap overflow-hidden my-0.5'
+                           'block relative flex-1 min-w-24 dark:text-white rounded-md text-ellipsis whitespace-nowrap overflow-hidden bg-paper-light shadow-sm dark:bg-gray-dark my-0.5'
                         )}
                      >
                         <div className="block absolute w-full h-full top-0 left-0 z-50 text-ellipsis whitespace-nowrap overflow-hidden p-0.5">
