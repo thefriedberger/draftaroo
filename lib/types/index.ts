@@ -64,6 +64,7 @@ export interface DraftOrderProps {
    timer: number;
    timerDuration: number;
    hash?: string;
+   draftId: string;
 }
 
 export interface WatchlistProps {

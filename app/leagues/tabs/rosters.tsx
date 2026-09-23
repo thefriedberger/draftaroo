@@ -45,7 +45,6 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
       teamID: string,
       timesKept: number
    ) => {
-      console.log(timesKept);
       const { data: drafts, error: draft_error } = await supabase
          .from('draft')
          .select('*')
