@@ -30,7 +30,6 @@ const DraftOrder = ({
    const gridCols = gridMap[teams.length];
 
    const countdown = useMemo(() => {
-      console.log(timer / timerDuration);
       const width = (timer / timerDuration) * 100;
       return `${width}%`;
    }, [timer]);

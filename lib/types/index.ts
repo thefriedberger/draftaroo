@@ -96,11 +96,11 @@ export interface PlayerListProps {
    featuredPlayer?: FeaturedPlayerType;
    height?: number;
    isYourTurn?: boolean;
-   handleDraftSelectionProps?: Omit<
+   handleDraftSelectionProps: Omit<
       HandleDraftSelectionsProps,
-      'player' | 'timer'
+      'player' | 'timerDuration'
    >;
-   timer?: number;
+   timerDuration: number;
 }
 
 export interface DraftTileProps {

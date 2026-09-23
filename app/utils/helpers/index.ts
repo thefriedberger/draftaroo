@@ -186,7 +186,7 @@ export const fetchLeague = cache(
          .match({ league_id: leagueId });
 
       if (error) {
-         console.log(error);
+         console.error(error);
       }
       return league?.[0] as League;
    }
@@ -433,9 +433,10 @@ export const handleDraftSelection = async ({
       pick: currentPick,
    });
    if (error) {
-      console.log(error);
+      console.error(error);
       return;
    }
+
    handlePick(supabase, draft, currentPick, timerDuration);
 };
 

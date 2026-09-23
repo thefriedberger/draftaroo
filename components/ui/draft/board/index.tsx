@@ -708,7 +708,7 @@ const Board = ({
       featuredPlayer: featuredPlayer || null,
       isYourTurn: isYourTurn,
       handleDraftSelectionProps: handleDraftSelectionProps,
-      timer: timer,
+      timerDuration: timerDuration,
    };
 
    const myTeamProps: MyTeamProps = {

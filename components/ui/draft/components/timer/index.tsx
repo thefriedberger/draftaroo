@@ -59,6 +59,7 @@ const Timer = ({
    });
    var timerValue = useRef(timerDuration);
    const [timer, setTimer] = useState<string>(formatTime(timerDuration));
+   const [time, setTime] = useState<number>(timerDuration);
    const [userPick, setUserPick] = useState<number>();
    const [doMute, setDoMute] = useState<boolean>(false);
    const filteredPicks = useRef<Pick[]>();
@@ -168,6 +169,7 @@ const Timer = ({
                   if (diff < 0) {
                      updateTimer?.(0);
                      setTimer(formatTime(0));
+                     setTime(diff);
                      timerValue.current = 0;
                   } else {
                      timeDown(timerValue.current);
@@ -186,15 +188,16 @@ const Timer = ({
             autoDraftTeams.current.some((team) =>
                team.picks.includes(currentPick as number)
             ) &&
-            timer === formatTime(timerDuration - 5)
+            timer === formatTime(timerDuration - 2)
          ) {
             autopick();
          }
-         if (timer === '00:00') {
+
+         if (time < -2) {
             autopick();
          }
       }
-   }, [timer]);
+   }, [timer, time]);
 
    useEffect(() => {
       if (isCompleted) supabase.removeChannel(timerTrack);
@@ -312,6 +315,7 @@ const Timer = ({
    const timeDown = (value: number) => {
       if (isTimerRunning) {
          var t = Number(String(value)) - 1;
+         setTime(t);
          if (t < 0) {
             t = 0;
          }

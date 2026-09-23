@@ -56,7 +56,7 @@ const PlayerComponent = ({
    featuredPlayer,
    isYourTurn,
    handleDraftSelectionProps,
-   timer,
+   timerDuration,
 }: {
    player: Player;
    leagueScoring?: LeagueScoring | any;
@@ -64,11 +64,11 @@ const PlayerComponent = ({
    sort: SortValue;
    featuredPlayer?: FeaturedPlayerType;
    isYourTurn?: boolean;
-   handleDraftSelectionProps?: Omit<
+   handleDraftSelectionProps: Omit<
       HandleDraftSelectionsProps,
       'player' | 'timerDuration'
    >;
-   timer?: number;
+   timerDuration: number;
 }) => {
    const { updateFeaturedPlayer } = useContext(DraftContext);
    const [playerStats, setPlayerStats] = useState<PlayerStats[]>(
@@ -105,7 +105,7 @@ const PlayerComponent = ({
                   <button
                      id="draft-button"
                      type="button"
-                     className="bg-fuscia-primary text-md rounded-md p-2 mr-1 z-[1000]"
+                     className="disabled:bg-gray-light bg-fuscia-primary hover:bg-fuscia-dark disabled:cursor-not-allowed text-md rounded-md p-2 mr-1 z-[1000]"
                      onClick={() => {
                         handleDraftSelection({
                            ...(handleDraftSelectionProps as Omit<
@@ -113,9 +113,10 @@ const PlayerComponent = ({
                               'player' | 'timerDuration'
                            >),
                            player,
-                           timerDuration: timer || 60,
+                           timerDuration,
                         });
                      }}
+                     disabled={player.id === 8476346}
                   >
                      D<span className="sr-only">Draft player</span>
                   </button>
