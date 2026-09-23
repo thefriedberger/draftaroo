@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-const SignInForm = () => {
+const LogInForm = () => {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const [invalidCredentials, setInvalidCredentials] = useState(false);
@@ -14,6 +14,7 @@ const SignInForm = () => {
    const handleSubmit = async (formData: FormData) => {
       const response = await login(formData);
       if (response) {
+         console.log(response);
          setInvalidCredentials(true);
       } else {
          setInvalidCredentials(false);
@@ -78,4 +79,4 @@ const SignInForm = () => {
    );
 };
 
-export default SignInForm;
+export default LogInForm;

@@ -15,12 +15,14 @@ export async function login(formData: FormData) {
       password: formData.get('password') as string,
    };
 
+   supabase.auth.signInWithIdToken;
    const {
       data: { user },
       error,
    } = await supabase.auth.signInWithPassword(data);
    if (error) {
-      return { status: 401 };
+      console.log('Sign in error: ', error);
+      return { status: 401, error: error };
    }
 }
 

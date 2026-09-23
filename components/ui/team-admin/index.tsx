@@ -59,6 +59,7 @@ const TeamAdmin = ({ team }: { team: Team }) => {
             leagueId: league_id,
          };
          const response = await inviteUser(formData);
+         console.log(response);
          if (!response) {
             router.refresh();
          }

@@ -18,14 +18,9 @@ const TeamsTab = async ({ league }: { league: League }) => {
       <>
          {user &&
             teams &&
-            teams
-               .filter((team: Team) => {
-                  if (league && league !== undefined)
-                     return team.league_id === league.league_id;
-               })
-               .map((team: Team) => {
-                  return <TeamAdmin key={team.id} team={team} />;
-               })}
+            teams.map((team: Team) => {
+               return <TeamAdmin key={team.id} team={team} />;
+            })}
       </>
    );
 };

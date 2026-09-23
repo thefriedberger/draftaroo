@@ -40,6 +40,8 @@ const inviteUser = async (formData: UserInvite) => {
       });
    };
 
+   console.error(error);
+
    if (
       error?.message ===
       'A user with this email address has already been registered'
