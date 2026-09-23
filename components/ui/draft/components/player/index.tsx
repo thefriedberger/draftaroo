@@ -105,7 +105,7 @@ const PlayerComponent = ({
                   <button
                      id="draft-button"
                      type="button"
-                     className="disabled:bg-gray-light bg-fuscia-primary hover:bg-fuscia-dark disabled:cursor-not-allowed text-md rounded-md p-2 mr-1 z-[1000]"
+                     className="disabled:bg-gray-light bg-fuscia-primary hover:bg-fuscia-dark disabled:cursor-not-allowed text-md rounded-md p-2 py-1 mr-1 z-[1000]"
                      onClick={() => {
                         handleDraftSelection({
                            ...(handleDraftSelectionProps as Omit<
