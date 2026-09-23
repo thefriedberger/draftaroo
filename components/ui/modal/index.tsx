@@ -42,7 +42,7 @@ const Modal = ({
    if (!children || !isOpen) return null;
 
    return (
-      <div className="fixed top-0 left-0 w-[100vw] h-[100vh] backdrop-blur-md z-[999] overflow-hidden">
+      <div className="fixed left-0 w-[100vw] h-[calc(100vh-90px)] top-[90px] backdrop-blur-md z-[999] overflow-hidden">
          <div
             ref={modalRef}
             autoFocus={true}

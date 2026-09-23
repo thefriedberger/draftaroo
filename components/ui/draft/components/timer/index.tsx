@@ -59,6 +59,7 @@ const Timer = ({
    });
    var timerValue = useRef(timerDuration);
    const [timer, setTimer] = useState<string>(formatTime(timerDuration));
+   const [time, setTime] = useState<number>(timerDuration);
    const [userPick, setUserPick] = useState<number>();
    const [doMute, setDoMute] = useState<boolean>(false);
    const filteredPicks = useRef<Pick[]>();
@@ -168,6 +169,7 @@ const Timer = ({
                   if (diff < 0) {
                      updateTimer?.(0);
                      setTimer(formatTime(0));
+                     setTime(diff);
                      timerValue.current = 0;
                   } else {
                      timeDown(timerValue.current);
@@ -186,15 +188,16 @@ const Timer = ({
             autoDraftTeams.current.some((team) =>
                team.picks.includes(currentPick as number)
             ) &&
-            timer === formatTime(timerDuration - 5)
+            timer === formatTime(timerDuration - 2)
          ) {
             autopick();
          }
-         if (timer === '00:00') {
+
+         if (time < -2) {
             autopick();
          }
       }
-   }, [timer]);
+   }, [timer, time]);
 
    useEffect(() => {
       if (isCompleted) supabase.removeChannel(timerTrack);
@@ -312,6 +315,7 @@ const Timer = ({
    const timeDown = (value: number) => {
       if (isTimerRunning) {
          var t = Number(String(value)) - 1;
+         setTime(t);
          if (t < 0) {
             t = 0;
          }
@@ -441,8 +445,7 @@ const Timer = ({
                                  doMute ? 'Unmute' : 'Mute'
                               } draft chime`}
                               className={classNames(
-                                 // buttonClasses,
-                                 'ml-2 px-1 rounded-md items-center stroke-black dark:!stroke-white dark:lg:!stroke-black outline outline-1 outline-gray-light block lg:hidden w-[30px]'
+                                 'no-underline bg-paper-button hover:bg-paper-dark dark:bg-gray-primary dark:hover:bg-gray-light dark:text-white text-sm ml-2 px-1 rounded-md items-center stroke-black dark:!stroke-white dark:lg:!stroke-black outline outline-1 outline-gray-light block lg:hidden w-[30px]'
                               )}
                               onClick={() => setDoMute(!doMute)}
                            >

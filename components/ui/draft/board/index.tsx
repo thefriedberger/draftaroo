@@ -10,6 +10,7 @@ import {
    fetchOwnerByTeam,
    fetchWatchlist,
    handleDraftSelection,
+   HandleDraftSelectionsProps,
    handlePick,
    setDraftCompleted,
    setMainTimer,
@@ -19,8 +20,8 @@ import { DraftContext } from '@/components/context/draft-context';
 import { WatchlistAction } from '@/components/context/page-context';
 import {
    BoardProps,
-   DraftOrderProps,
    DraftedPlayer,
+   DraftOrderProps,
    FeaturedPlayerProps,
    FeaturedPlayerType,
    MyTeamProps,
@@ -114,7 +115,10 @@ const Board = ({
       value: number;
       type: 'px' | 'vh' | 'vw' | '%';
    }
-   const handleDraftSelectionProps = {
+   const handleDraftSelectionProps: Omit<
+      HandleDraftSelectionsProps,
+      'player' | 'timerDuration'
+   > = {
       supabase: supabase,
       currentPick: currentPick,
       currentRound: currentRound,
@@ -702,7 +706,9 @@ const Board = ({
       players: players,
       leagueScoring: leagueScoring,
       featuredPlayer: featuredPlayer || null,
-      height: 0,
+      isYourTurn: isYourTurn,
+      handleDraftSelectionProps: handleDraftSelectionProps,
+      timerDuration: timerDuration,
    };
 
    const myTeamProps: MyTeamProps = {

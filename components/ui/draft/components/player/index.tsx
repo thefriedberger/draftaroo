@@ -1,6 +1,10 @@
 'use client';
 
-import { convertTime } from '@/app/utils/helpers';
+import {
+   convertTime,
+   handleDraftSelection,
+   HandleDraftSelectionsProps,
+} from '@/app/utils/helpers';
 import { DraftContext } from '@/components/context/draft-context';
 import { SortValue } from '@/lib/constants';
 import { FeaturedPlayerType, PlayerStats } from '@/lib/types';
@@ -50,12 +54,21 @@ const PlayerComponent = ({
    season,
    sort,
    featuredPlayer,
+   isYourTurn,
+   handleDraftSelectionProps,
+   timerDuration,
 }: {
    player: Player;
    leagueScoring?: LeagueScoring | any;
    season: string;
    sort: SortValue;
    featuredPlayer?: FeaturedPlayerType;
+   isYourTurn?: boolean;
+   handleDraftSelectionProps: Omit<
+      HandleDraftSelectionsProps,
+      'player' | 'timerDuration'
+   >;
+   timerDuration: number;
 }) => {
    const { updateFeaturedPlayer } = useContext(DraftContext);
    const [playerStats, setPlayerStats] = useState<PlayerStats[]>(
@@ -81,11 +94,35 @@ const PlayerComponent = ({
                featuredPlayer?.id === player.id && '!bg-fuscia-primary'
             )}
             onClick={(e: any) => {
+               if (e.target.id === 'draft-button') {
+                  return;
+               }
                handleUpdateFeaturedPlayer(player, e);
             }}
          >
-            <td className="w-7 max-w-7 min-w-7 align-middle">
-               <WatchlistStar player={player} />
+            <td className={'w-7 max-w-7 min-w-7 align-middle'}>
+               {isYourTurn ? (
+                  <button
+                     id="draft-button"
+                     type="button"
+                     className="disabled:bg-gray-light bg-fuscia-primary hover:bg-fuscia-dark disabled:cursor-not-allowed text-md rounded-md p-2 py-1 mr-1 z-[1000]"
+                     onClick={() => {
+                        handleDraftSelection({
+                           ...(handleDraftSelectionProps as Omit<
+                              HandleDraftSelectionsProps,
+                              'player' | 'timerDuration'
+                           >),
+                           player,
+                           timerDuration,
+                        });
+                     }}
+                     disabled={player.id === 8476346}
+                  >
+                     D<span className="sr-only">Draft player</span>
+                  </button>
+               ) : (
+                  <WatchlistStar player={player} />
+               )}
             </td>
             <td className="py-2 px-1">
                <span className="whitespace-nowrap">

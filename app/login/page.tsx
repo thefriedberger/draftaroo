@@ -1,9 +1,9 @@
-import SignInForm from '@/components/ui/forms/sign-in';
+import LogInForm from '@/components/ui/forms/log-in';
 
 export default function LoginPage() {
    return (
       <div className="my-5">
-         <SignInForm />
+         <LogInForm />
       </div>
    );
 }

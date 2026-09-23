@@ -1,3 +1,4 @@
+import { HandleDraftSelectionsProps } from '@/app/utils/helpers';
 import { Pick } from '@/components/ui/draft/components/draft-order';
 import { DraftPicksFields } from '@/components/ui/draft/components/timer';
 import { SupabaseClient, User } from '@supabase/supabase-js';
@@ -94,6 +95,12 @@ export interface PlayerListProps {
    leagueScoring: LeagueScoring;
    featuredPlayer?: FeaturedPlayerType;
    height?: number;
+   isYourTurn?: boolean;
+   handleDraftSelectionProps: Omit<
+      HandleDraftSelectionsProps,
+      'player' | 'timerDuration'
+   >;
+   timerDuration: number;
 }
 
 export interface DraftTileProps {

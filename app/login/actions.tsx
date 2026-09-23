@@ -20,7 +20,8 @@ export async function login(formData: FormData) {
       error,
    } = await supabase.auth.signInWithPassword(data);
    if (error) {
-      return { status: 401 };
+      console.log('Sign in error: ', error);
+      return { status: 401, error: error };
    }
 }
 

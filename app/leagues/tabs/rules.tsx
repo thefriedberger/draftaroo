@@ -12,8 +12,8 @@ const RulesTab = (league?: League) => {
             className="mb-3 text-black bg-white p-1"
          >
             {Array.from({ length: 20 }).map((v, index: number) => (
-               <option key={index} value={index}>
-                  {index}
+               <option key={index + 1} value={index + 1}>
+                  {index + 1}
                </option>
             ))}
          </select>
@@ -27,9 +27,9 @@ const RulesTab = (league?: League) => {
                id="number_of_rounds"
                className="text-black"
             >
-               {Array.from({ length: 15 }).map((v, index: number) => (
-                  <option key={index} value={index}>
-                     {index}
+               {Array.from({ length: 30 }).map((v, index: number) => (
+                  <option key={index + 1} value={index + 1}>
+                     {index + 1}
                   </option>
                ))}
             </select>
