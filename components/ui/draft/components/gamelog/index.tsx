@@ -53,7 +53,6 @@ const Gamelog = (player: Player) => {
 
    const seasonCode = Object.keys(gamelog)[0];
    const season = `${seasonCode.substring(0, 4)}-${seasonCode.substring(5)}`;
-   console.log(player.primary_position, gamelog);
    const tableHeaders = gamelog[seasonCode].map((game) => {
       const stats = Object.keys(game)
          .filter((key) =>

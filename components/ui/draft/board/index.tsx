@@ -682,6 +682,7 @@ const Board = ({
       timer,
       timerDuration,
       hash,
+      draftId: draft.id,
    };
 
    const watchlistProps: WatchlistProps = {
