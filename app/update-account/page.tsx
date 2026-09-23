@@ -8,7 +8,7 @@ import { useContext, useState } from 'react';
 const SetPassword = () => {
    const supabase = createClient(
       String(process.env.NEXT_PUBLIC_SUPABASE_URL),
-      String(process.env.NEXT_PUBLIC_SERVICE_ROLE_KEY),
+      String(process.env.SUPABASE_SECRET_KEY),
       {
          auth: {
             autoRefreshToken: false,

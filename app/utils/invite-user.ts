@@ -8,7 +8,7 @@ const inviteUser = async (formData: UserInvite) => {
 
    const supabase = createClient(
       String(process.env.NEXT_PUBLIC_SUPABASE_URL),
-      String(process.env.NEXT_PUBLIC_SERVICE_ROLE_KEY),
+      String(process.env.SUPABASE_SECRET_KEY),
       {
          auth: {
             autoRefreshToken: false,
@@ -18,6 +18,7 @@ const inviteUser = async (formData: UserInvite) => {
    );
    // Access auth admin api
    const adminAuthClient = supabase.auth.admin;
+
    const {
       data: { user },
       error,
@@ -39,8 +40,6 @@ const inviteUser = async (formData: UserInvite) => {
          email: email,
       });
    };
-
-   console.error(error);
 
    if (
       error?.message ===
