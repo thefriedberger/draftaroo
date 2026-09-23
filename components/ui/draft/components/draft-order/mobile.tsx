@@ -1,8 +1,12 @@
+import { AutoDraftIcon } from '@/app/assets/images/icons/auto-draft';
+import { fetchAutoDraftStatusByDraft } from '@/app/utils/helpers';
 import DraftOrderSkeleton from '@/components/ui/draft/skeletons/draft-order';
 import { DraftOrderProps } from '@/lib/types';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import DraftTile from '../draft-tile';
+import { DraftPicksFields } from '../timer';
 
 export type Pick = {
    playerID?: number;
@@ -26,7 +30,54 @@ const DraftOrderMobile = ({
    timer,
    timerDuration,
    hash,
+   draftId,
 }: DraftOrderProps) => {
+   const supabase = createClientComponentClient<Database>();
+
+   const [autoDraftTeams, setAutoDraftTeams] = useState<DraftPicksFields[]>([]);
+
+   const draftPicks = supabase.channel(
+      `public:draft_picks:draft_id=eq.${draftId}`
+   );
+   const subscribeToDraftPicksRoom = (
+      draftId: string,
+      changeCallback: (payload: any) => void
+   ) => {
+      draftPicks
+         .on(
+            'postgres_changes',
+            {
+               event: '*',
+               schema: 'public',
+               table: 'draft_picks',
+               filter: `draft_id=eq.${draftId}`,
+            },
+            (payload) => {
+               changeCallback(payload.new);
+            }
+         )
+         .subscribe();
+
+      return draftPicks;
+   };
+
+   const onDraftPicksChange = (payload: DraftPicksFields) => {
+      if (
+         !payload.auto_draft &&
+         autoDraftTeams.some((team) => team.team_id === payload.team_id)
+      ) {
+         setAutoDraftTeams(
+            autoDraftTeams.filter((team) => team.team_id !== payload.team_id)
+         );
+      }
+      if (
+         payload.auto_draft &&
+         autoDraftTeams.some((team) => team.team_id !== payload.team_id)
+      ) {
+         setAutoDraftTeams((prev) => [...prev, payload]);
+      }
+   };
+
    const previousTimer = useRef<number>(timerDuration);
 
    const countdown = useMemo(() => {
@@ -47,6 +98,16 @@ const DraftOrderMobile = ({
    for (let i = 0; i < picks.length; i += teams.length) {
       splitPicks.push(picks.slice(i, i + teams.length));
    }
+
+   // use effects
+   useEffect(() => {
+      (async () => {
+         setAutoDraftTeams(
+            (await fetchAutoDraftStatusByDraft(supabase, draftId)) || []
+         );
+      })();
+      subscribeToDraftPicksRoom(draftId, onDraftPicksChange);
+   }, []);
 
    return picks.length > 0 ? (
       <>
@@ -72,9 +133,37 @@ const DraftOrderMobile = ({
                            'block relative flex-1 min-w-24 dark:text-white rounded-md text-ellipsis whitespace-nowrap overflow-hidden bg-paper-light shadow-sm dark:bg-gray-dark my-0.5'
                         )}
                      >
-                        <div className="block absolute w-full h-full top-0 left-0 z-50 text-ellipsis whitespace-nowrap overflow-hidden p-0.5">
+                        <div
+                           className={classNames(
+                              autoDraftTeams.find(
+                                 (autoDraftTeam) =>
+                                    autoDraftTeam.auto_draft &&
+                                    autoDraftTeam.picks.includes(
+                                       pick.draftPosition
+                                    )
+                              ) && 'max-w-[calc(100%-1.75rem)]',
+                              'block absolute w-full h-full top-0 left-0 z-50 text-ellipsis whitespace-nowrap overflow-hidden p-0.5'
+                           )}
+                        >
                            {pick.username}
                         </div>
+                        {autoDraftTeams.find(
+                           (autoDraftTeam) =>
+                              autoDraftTeam.auto_draft &&
+                              autoDraftTeam.picks.includes(pick.draftPosition)
+                        ) ? (
+                           <span
+                              className={classNames(
+                                 currentPick % teams.length ===
+                                    pick.draftPosition
+                                    ? 'stroke-black dark:stroke-white'
+                                    : 'stroke-black dark:stroke-white',
+                                 'absolute top-1 right-0 z-[10000] w-7 h-7'
+                              )}
+                           >
+                              <AutoDraftIcon />
+                           </span>
+                        ) : null}
                         <div
                            style={{
                               width:
