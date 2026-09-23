@@ -58,28 +58,20 @@ const DraftOrder = ({
                      <div
                         style={{
                            width:
-                              currentPick % 10 === pick.draftPosition
+                              currentPick % teams.length === pick.draftPosition
                                  ? countdown
                                  : '100%',
                            transition: 'width 1s linear',
-                           background:
-                              currentPick % 10 === pick.draftPosition
-                                 ? `linear-gradient(-75deg, #059669 40%, rgba(11, 230, 162,.8) 50%, #059669 60%)`
-                                 : '',
-                           backgroundSize: '300%',
-                           backgroundPositionX: '100%',
-                           animation:
-                              currentPick % 10 === pick.draftPosition
-                                 ? 'shimmer 5s infinite linear'
-                                 : 'none',
                         }}
                         className={classNames(
-                           currentPick % 10 === pick.draftPosition &&
-                              'bg-gradient-to-l to-[rgba(230,178,39,1)] from-emerald-primary from-[60%]',
-                           currentPick % 10 === pick.draftPosition && countdown,
+                           currentPick % teams.length === pick.draftPosition &&
+                              'bg-emerald-primary',
+                           currentPick % teams.length === pick.draftPosition &&
+                              countdown,
                            pick.yourPick &&
-                              currentPick % 10 !== pick.draftPosition &&
-                              'bg-fuscia-primary',
+                              currentPick % teams.length !==
+                                 pick.draftPosition &&
+                              'bg-fuscia-primary !transition-none',
                            'absolute w-full h-full top-0 right-0'
                         )}
                      />

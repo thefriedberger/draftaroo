@@ -56,6 +56,9 @@ const PlayerList = ({
    players,
    draftedIds,
    featuredPlayer,
+   isYourTurn,
+   handleDraftSelectionProps,
+   timer,
 }: PlayerListProps) => {
    const [sort, setSort] = useState<SortValue>('score');
    const [positionFilter, setPositionFilter] = useState<string>('Skaters');
@@ -390,6 +393,11 @@ const PlayerList = ({
                                        season={season}
                                        sort={sort}
                                        featuredPlayer={featuredPlayer}
+                                       isYourTurn={isYourTurn}
+                                       handleDraftSelectionProps={
+                                          handleDraftSelectionProps
+                                       }
+                                       timer={timer}
                                     />
                                  </Suspense>
                               );

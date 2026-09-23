@@ -441,8 +441,7 @@ const Timer = ({
                                  doMute ? 'Unmute' : 'Mute'
                               } draft chime`}
                               className={classNames(
-                                 // buttonClasses,
-                                 'ml-2 px-1 rounded-md items-center stroke-black dark:!stroke-white dark:lg:!stroke-black outline outline-1 outline-gray-light block lg:hidden w-[30px]'
+                                 'no-underline bg-paper-button hover:bg-paper-dark dark:bg-gray-primary dark:hover:bg-gray-light dark:text-white text-sm ml-2 px-1 rounded-md items-center stroke-black dark:!stroke-white dark:lg:!stroke-black outline outline-1 outline-gray-light block lg:hidden w-[30px]'
                               )}
                               onClick={() => setDoMute(!doMute)}
                            >
