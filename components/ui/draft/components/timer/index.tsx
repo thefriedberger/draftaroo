@@ -11,12 +11,13 @@ import {
    getTimerData,
    setAutoDraftStatusByTeam,
 } from '@/app/utils/helpers';
+import { DraftContext } from '@/components/context/draft-context';
 import { buttonClasses } from '@/components/ui/helpers/buttons';
 import { useWorkerTimeout } from '@/components/worker/worker-timeout';
 import { DraftPick, TimerProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
-import { createRef, useEffect, useRef, useState } from 'react';
+import { createRef, useContext, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { Pick } from '../draft-order';
 
@@ -46,6 +47,8 @@ const Timer = ({
    pickIsKeeper,
 }: TimerProps) => {
    const supabase = createClientComponentClient<Database>();
+
+   const { updateTimer } = useContext(DraftContext);
 
    const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
    const { setRunning, tick } = useWorkerTimeout();
@@ -123,6 +126,7 @@ const Timer = ({
 
                timerValue.current = finalTimer;
                setTimer(formatTime(finalTimer));
+               updateTimer?.(finalTimer);
                setRunning(true);
             });
          }
@@ -162,6 +166,7 @@ const Timer = ({
                   const end = roomData.end_time;
                   const diff = end - now;
                   if (diff < 0) {
+                     updateTimer?.(0);
                      setTimer(formatTime(0));
                      timerValue.current = 0;
                   } else {
@@ -311,6 +316,7 @@ const Timer = ({
             t = 0;
          }
          timerValue.current = t;
+         updateTimer?.(t);
          setTimer(formatTime(t));
       }
    };
@@ -330,7 +336,7 @@ const Timer = ({
    }
 
    return (
-      <div className="flex flex-col justify-between w-full h-20 lg:min-h-[180px] lg:h-[180px] lg:overflow-hidden dark:text-white relative lg:border-b lg:border-gray-light">
+      <div className="flex flex-col justify-between w-full h-full lg:overflow-hidden dark:text-white relative lg:border-b lg:border-gray-light ">
          {!isCompleted ? (
             <>
                {yourTurn && isActive && !pickIsKeeper && (
@@ -342,7 +348,7 @@ const Timer = ({
                   type="button"
                   title={`${doMute ? 'Unmute' : 'Mute'} draft chime`}
                   className={
-                     'w-[20px] stroke-black dark:stroke-white dark:lg:stroke-black absolute top-1 left-1 lg:left-auto lg:right-1 z-10'
+                     'hidden lg:block w-[20px] stroke-black dark:stroke-white dark:lg:stroke-black absolute top-1 left-1 lg:left-auto lg:right-1 z-10'
                   }
                   onClick={() => setDoMute(!doMute)}
                >
@@ -353,53 +359,50 @@ const Timer = ({
                </button>
                {!isMobile ? (
                   <>
-                     <p className="bg-orange-primary text-black text-4xl p-2 text-center font-bold">
-                        {timer}
-                     </p>{' '}
-                     <button
-                        title={`${
-                           shouldAutoDraft ? 'Disable' : 'Enable'
-                        } autodraft`}
-                        type="button"
-                        onClick={handleAutoDraft}
-                        className={classNames(
-                           buttonClasses,
-                           'w-full !py-1 !px-1 rounded-md flex justify-center items-center stroke-black dark:!stroke-white dark:lg:stroke-black'
-                        )}
-                     >
-                        <span className="sr-only">
-                           {shouldAutoDraft ? 'Disable' : 'Enable'} autodraft
-                        </span>
-                        {shouldAutoDraft ? 'Disable' : 'Enable'} Autodraft
-                        &nbsp;
-                        {<AutoDraftIcon active={shouldAutoDraft} />}
-                     </button>
-                     <p className="ml-2">{currentRound}&nbsp;Round</p>
-                     <span className={'flex justify-between'}>
-                        <p className="ml-2">{currentPick}&nbsp;Pick</p>
-                        <p className="text-xs mt-auto">{picksRemaining}</p>
-                     </span>
+                     <div className="bg-orange-primary flex items-center justify-center">
+                        <p className=" text-black text-4xl p-2 text-center font-bold">
+                           {timer}
+                        </p>{' '}
+                        <button
+                           title={`${
+                              shouldAutoDraft ? 'Disable' : 'Enable'
+                           } autodraft`}
+                           type="button"
+                           onClick={handleAutoDraft}
+                           className={classNames(
+                              buttonClasses,
+                              '!py-1 !px-1 rounded-md flex justify-center items-center stroke-black dark:!stroke-white dark:lg:stroke-black absolute right-1 top-7 w-6 h-6'
+                           )}
+                        >
+                           <span className="sr-only">
+                              {shouldAutoDraft ? 'Disable' : 'Enable'} autodraft
+                           </span>
+                           {<AutoDraftIcon active={shouldAutoDraft} />}
+                        </button>
+                     </div>
                      <div
                         className={classNames(
                            yourTurn
-                              ? 'bg-gold'
+                              ? 'bg-fuscia-dark'
                               : 'bg-paper-dark dark:bg-gray-primary',
-                           'p-2 bg-gold'
+                           'p-2 flex justify-center'
                         )}
                      >
-                        <p className="text-xl leading-none">
+                        <p className="text-md leading-none">
                            {yourTurn
                               ? pickIsKeeper
                                  ? '✨🎉✨'
                                  : 'Draft now!'
                               : userPick
-                              ? `Your turn in ${userPick}`
+                              ? `Your turn in ${userPick} ${
+                                   userPick === 1 ? 'pick' : 'picks'
+                                }`
                               : 'No more picks'}
                         </p>
                      </div>
                   </>
                ) : (
-                  <div className="bg-paper-primary dark:bg-gray-primary flex flex-row items-center h-full">
+                  <div className="bg-paper-primary h-16 dark:bg-gray-primary flex flex-row items-center">
                      <div className="flex items-center justify-center mr-2 text-xl w-[100px] bg-orange-primary min-h-full">
                         <p className="p-2 text-2xl">{timer}</p>
                      </div>
@@ -413,24 +416,42 @@ const Timer = ({
                            'flex flex-col items-center h-full ml-auto align-middle p-2 text-xl'
                         )}
                      >
-                        <button
-                           title={`${
-                              shouldAutoDraft ? 'Disable' : 'Enable'
-                           } autodraft`}
-                           type="button"
-                           onClick={handleAutoDraft}
-                           className={classNames(
-                              buttonClasses,
-                              'w-fit !py-1 !px-2 rounded-md flex items-center stroke-black dark:!stroke-white dark:lg:!stroke-black outline outline-1 outline-gray-light'
-                           )}
-                        >
-                           <span className="sr-only">
-                              {shouldAutoDraft ? 'Disable' : 'Enable'} autodraft
-                           </span>
-                           {shouldAutoDraft ? 'Disable' : 'Enable'} Autodraft
-                           &nbsp;
-                           {<AutoDraftIcon active={shouldAutoDraft} />}
-                        </button>
+                        <div className="flex w-full justify-end">
+                           <button
+                              title={`${
+                                 shouldAutoDraft ? 'Disable' : 'Enable'
+                              } autodraft`}
+                              type="button"
+                              onClick={handleAutoDraft}
+                              className={classNames(
+                                 buttonClasses,
+                                 'w-[30px] !py-1 !px-1 rounded-md flex items-center stroke-black dark:!stroke-white dark:lg:!stroke-black outline outline-1 outline-gray-light'
+                              )}
+                           >
+                              <span className="sr-only">
+                                 {shouldAutoDraft ? 'Disable' : 'Enable'}{' '}
+                                 autodraft
+                              </span>
+                              {<AutoDraftIcon active={shouldAutoDraft} />}
+                           </button>
+
+                           <button
+                              type="button"
+                              title={`${
+                                 doMute ? 'Unmute' : 'Mute'
+                              } draft chime`}
+                              className={classNames(
+                                 // buttonClasses,
+                                 'ml-2 px-1 rounded-md items-center stroke-black dark:!stroke-white dark:lg:!stroke-black outline outline-1 outline-gray-light block lg:hidden w-[30px]'
+                              )}
+                              onClick={() => setDoMute(!doMute)}
+                           >
+                              <span className="sr-only">
+                                 {doMute ? 'Unmute' : 'Mute'} draft chime
+                              </span>
+                              {doMute ? <MutedIcon /> : <MicIcon />}
+                           </button>
+                        </div>
                         <p className="text-center w-full">
                            {yourTurn
                               ? pickIsKeeper

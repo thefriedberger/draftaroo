@@ -7,7 +7,7 @@ const MyTeam = ({ draftedPlayers }: MyTeamProps) => {
       myTeam: true,
    };
    return (
-      <div className="max-h-full lg:min-h-[40%] lg:max-h-full mb-2 overflow-y-scroll lg:border-l lg:border-paper-dark">
+      <div className="max-h-full lg:min-h-[40%] lg:max-h-full rounded-md overflow-y-scroll">
          <Team {...teamProps} />
       </div>
    );

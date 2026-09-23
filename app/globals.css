@@ -133,10 +133,7 @@
       transform: translateY(0);
    }
 }
-.draft-board {
-   height: calc(100dvh - 57px);
-   max-height: calc(100dvh - 57px);
-}
+
 table tr td,
 table tr th {
    @apply p-1;
@@ -182,5 +179,11 @@ table tr:nth-of-type(even):not(.skeleton) {
       ::-webkit-scrollbar-thumb:hover {
          background: theme(colors.gray.scrollhover);
       }
+   }
+}
+
+@keyframes shimmer {
+   to {
+      background-position-x: 0%;
    }
 }
