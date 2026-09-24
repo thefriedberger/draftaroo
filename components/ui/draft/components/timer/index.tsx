@@ -339,6 +339,10 @@ const Timer = ({
       return finalTime;
    }
 
+   useEffect(() => {
+      shouldAutoDraft && autopick();
+   }, [shouldAutoDraft]);
+
    return (
       <div className="flex flex-col justify-between w-full h-full lg:overflow-hidden dark:text-white relative lg:border-b lg:border-gray-light ">
          {!isCompleted ? (
