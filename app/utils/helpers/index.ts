@@ -319,7 +319,6 @@ export const updateSupabaseWatchlist = async (
    userId: string,
    draftId: string
 ) => {
-   console.log(watchlist, userId, draftId);
    const { data, error } = await supabase
       .from('watchlist')
       .update({ players: watchlist })

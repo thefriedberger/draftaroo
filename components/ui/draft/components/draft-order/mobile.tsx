@@ -73,12 +73,6 @@ const DraftOrderMobile = ({
             foundTeam,
          ]);
       }
-      if (
-         payload.auto_draft &&
-         autoDraftTeams.some((team) => team.team_id !== payload.team_id)
-      ) {
-         setAutoDraftTeams((prev) => [...prev, payload]);
-      }
    };
 
    const previousTimer = useRef<number>(timerDuration);

@@ -76,6 +76,7 @@ const PlayerComponent = ({
    const [playerStats, setPlayerStats] = useState<PlayerStats[]>(
       player?.stats as PlayerStats[]
    );
+   const [submitted, setSubmitted] = useState<boolean>(false);
 
    useEffect(() => {
       if (player.stats) setPlayerStats(player.stats as PlayerStats[]);
@@ -109,6 +110,8 @@ const PlayerComponent = ({
                      type="button"
                      className="disabled:bg-gray-light bg-fuscia-primary hover:bg-fuscia-dark disabled:cursor-not-allowed text-md rounded-md p-2 py-1 mr-1 z-[1000]"
                      onClick={() => {
+                        setSubmitted(true);
+                        setTimeout(() => setSubmitted(false), 1000);
                         handleDraftSelection({
                            ...(handleDraftSelectionProps as Omit<
                               HandleDraftSelectionsProps,
@@ -118,7 +121,9 @@ const PlayerComponent = ({
                            timerDuration,
                         });
                      }}
-                     disabled={!isActive || player.id === 8476346}
+                     disabled={
+                        (!isActive || player.id === 8476346) && !submitted
+                     }
                   >
                      D<span className="sr-only">Draft player</span>
                   </button>

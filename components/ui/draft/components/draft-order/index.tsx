@@ -66,6 +66,7 @@ const DraftOrder = ({
       const foundTeam =
          autoDraftTeams.filter((team) => team.team_id === payload.team_id) &&
          payload;
+      console.log(foundTeam);
       if (foundTeam) {
          setAutoDraftTeams([
             ...autoDraftTeams.filter(
@@ -73,14 +74,6 @@ const DraftOrder = ({
             ),
             foundTeam,
          ]);
-      }
-
-      //idk if this does anything but I'm too lazy and pushed for time
-      if (
-         payload.auto_draft &&
-         autoDraftTeams.some((team) => team.team_id !== payload.team_id)
-      ) {
-         setAutoDraftTeams((prev) => [...prev, payload]);
       }
    };
 
