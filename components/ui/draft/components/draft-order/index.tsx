@@ -1,13 +1,11 @@
 import { AutoDraftIcon } from '@/app/assets/images/icons/auto-draft';
 import { gridMap } from '@/app/utils/constants';
-import { fetchAutoDraftStatusByDraft } from '@/app/utils/helpers';
 import DraftOrderSkeleton from '@/components/ui/draft/skeletons/draft-order';
 import { DraftOrderProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import DraftTile from '../draft-tile';
-import { DraftPicksFields } from '../timer';
 
 export type Pick = {
    playerID?: number;
@@ -30,68 +28,17 @@ const DraftOrder = ({
    picks,
    timer,
    timerDuration,
-   draftId,
+   autoDraftTeams,
 }: DraftOrderProps) => {
    const supabase = createClientComponentClient<Database>();
 
    const gridCols = gridMap[teams.length];
-   const [autoDraftTeams, setAutoDraftTeams] = useState<DraftPicksFields[]>([]);
 
-   const draftPicks = supabase.channel(
-      `public:draft_picks:draft_id=eq.${draftId}`
-   );
-   const subscribeToDraftPicksRoom = (
-      draftId: string,
-      changeCallback: (payload: any) => void
-   ) => {
-      draftPicks
-         .on(
-            'postgres_changes',
-            {
-               event: '*',
-               schema: 'public',
-               table: 'draft_picks',
-               filter: `draft_id=eq.${draftId}`,
-            },
-            (payload) => {
-               changeCallback(payload.new);
-            }
-         )
-         .subscribe();
-
-      return draftPicks;
-   };
-
-   const onDraftPicksChange = (payload: DraftPicksFields) => {
-      const foundTeam =
-         autoDraftTeams.filter((team) => team.team_id === payload.team_id) &&
-         payload;
-      if (foundTeam) {
-         setAutoDraftTeams([
-            ...autoDraftTeams.filter(
-               (team) => team.team_id !== payload.team_id
-            ),
-            foundTeam,
-         ]);
-      }
-   };
-
+   // use effects
    const countdown = useMemo(() => {
       const width = (timer / timerDuration) * 100;
       return `${width}%`;
    }, [timer]);
-
-   // use effects
-   useEffect(() => {
-      (async () => {
-         const t = await fetchAutoDraftStatusByDraft(supabase, draftId);
-         setAutoDraftTeams(t || []);
-      })();
-   }, []);
-
-   useEffect(() => {
-      subscribeToDraftPicksRoom(draftId, onDraftPicksChange);
-   }, [autoDraftTeams]);
 
    return picks.length > 0 ? (
       <>
@@ -113,7 +60,7 @@ const DraftOrder = ({
                      <div className="block absolute w-full h-full top-0 left-0 z-50 text-ellipsis whitespace-nowrap overflow-hidden p-0.5">
                         {pick.username}
                      </div>
-                     {autoDraftTeams.find(
+                     {(autoDraftTeams || []).find(
                         (autoDraftTeam) =>
                            autoDraftTeam.auto_draft &&
                            autoDraftTeam.picks.includes(pick.draftPosition)

@@ -7,6 +7,7 @@ import { TeamsIcon } from '@/app/assets/images/icons/teams';
 import { WatchlistIcon } from '@/app/assets/images/icons/watchlist';
 import getTime from '@/app/utils/get-time';
 import {
+   fetchAutoDraftStatusByDraft,
    fetchOwnerByTeam,
    fetchWatchlist,
    handleDraftSelection,
@@ -111,6 +112,74 @@ const Board = ({
    const timerHeight: HeightType = { value: 90, type: 'px' };
    const draftOrderHeight: HeightType = { value: 25, type: 'vh' };
    const isMobile = useMediaQuery({ query: '(max-width: 1024px)' });
+
+   const draftPicksChannel = supabase.channel(
+      `public:draft_picks:draft_id=eq.${draft.id}`
+   );
+   const subscribeToDraftPicksRoom = (
+      draftId: string,
+      changeCallback: (payload: any) => void
+   ) => {
+      draftPicksChannel
+         .on(
+            'postgres_changes',
+            {
+               event: '*',
+               schema: 'public',
+               table: 'draft_picks',
+               filter: `draft_id=eq.${draftId}`,
+            },
+            (payload) => {
+               changeCallback(payload.new);
+            }
+         )
+         .subscribe();
+
+      return draftPicks;
+   };
+
+   const onDraftPicksChange = (payload: DraftPicksFields) => {
+      const foundTeam =
+         autoDraftTeams.filter((team) => team.team_id === payload.team_id) &&
+         payload;
+
+      if (!foundTeam && payload.auto_draft) {
+         setAutoDraftTeams((prev) => [...prev, payload]);
+      }
+      if (foundTeam) {
+         if (payload.auto_draft) {
+            setAutoDraftTeams([
+               ...autoDraftTeams.filter(
+                  (team) => team.team_id !== payload.team_id
+               ),
+               foundTeam,
+            ]);
+         } else {
+            setAutoDraftTeams(
+               autoDraftTeams.filter((team) => team.team_id !== payload.team_id)
+            );
+         }
+      }
+      // if (foundTeam) {
+      //    setAutoDraftTeams([
+      //       ...autoDraftTeams.filter(
+      //          (team) => team.team_id !== payload.team_id
+      //       ),
+      //       foundTeam,
+      //    ]);
+      // }
+   };
+
+   useEffect(() => {
+      (async () => {
+         const t = await fetchAutoDraftStatusByDraft(supabase, draft.id);
+         setAutoDraftTeams(t || []);
+      })();
+   }, []);
+
+   useEffect(() => {
+      subscribeToDraftPicksRoom(draft.id, onDraftPicksChange);
+   }, [autoDraftTeams]);
 
    interface HeightType {
       value: number;
@@ -645,6 +714,7 @@ const Board = ({
       timerDuration,
       userPicks: picks,
       pickIsKeeper: pickIsKeeper,
+      autoDraftTeams: autoDraftTeams,
    };
 
    const draftOrderProps: DraftOrderProps = {
@@ -661,7 +731,7 @@ const Board = ({
       timer,
       timerDuration,
       hash,
-      draftId: draft.id,
+      autoDraftTeams: autoDraftTeams,
    };
 
    const watchlistProps: WatchlistProps = {

@@ -1,12 +1,10 @@
 import { AutoDraftIcon } from '@/app/assets/images/icons/auto-draft';
-import { fetchAutoDraftStatusByDraft } from '@/app/utils/helpers';
 import DraftOrderSkeleton from '@/components/ui/draft/skeletons/draft-order';
 import { DraftOrderProps } from '@/lib/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import classNames from 'classnames';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef } from 'react';
 import DraftTile from '../draft-tile';
-import { DraftPicksFields } from '../timer';
 
 export type Pick = {
    playerID?: number;
@@ -30,50 +28,9 @@ const DraftOrderMobile = ({
    timer,
    timerDuration,
    hash,
-   draftId,
+   autoDraftTeams,
 }: DraftOrderProps) => {
    const supabase = createClientComponentClient<Database>();
-
-   const [autoDraftTeams, setAutoDraftTeams] = useState<DraftPicksFields[]>([]);
-
-   const draftPicks = supabase.channel(
-      `public:draft_picks:draft_id=eq.${draftId}`
-   );
-   const subscribeToDraftPicksRoom = (
-      draftId: string,
-      changeCallback: (payload: any) => void
-   ) => {
-      draftPicks
-         .on(
-            'postgres_changes',
-            {
-               event: '*',
-               schema: 'public',
-               table: 'draft_picks',
-               filter: `draft_id=eq.${draftId}`,
-            },
-            (payload) => {
-               changeCallback(payload.new);
-            }
-         )
-         .subscribe();
-
-      return draftPicks;
-   };
-
-   const onDraftPicksChange = (payload: DraftPicksFields) => {
-      const foundTeam = autoDraftTeams.find(
-         (team) => team.team_id === payload.team_id
-      );
-      if (foundTeam) {
-         setAutoDraftTeams([
-            ...autoDraftTeams.filter(
-               (team) => team.team_id !== payload.team_id
-            ),
-            foundTeam,
-         ]);
-      }
-   };
 
    const previousTimer = useRef<number>(timerDuration);
 
@@ -95,18 +52,6 @@ const DraftOrderMobile = ({
    for (let i = 0; i < picks.length; i += teams.length) {
       splitPicks.push(picks.slice(i, i + teams.length));
    }
-
-   // use effects
-   useEffect(() => {
-      (async () => {
-         setAutoDraftTeams(
-            (await fetchAutoDraftStatusByDraft(supabase, draftId)) || []
-         );
-      })();
-   }, []);
-   useEffect(() => {
-      subscribeToDraftPicksRoom(draftId, onDraftPicksChange);
-   }, [autoDraftTeams]);
 
    return picks.length > 0 ? (
       <>

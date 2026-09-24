@@ -6,7 +6,6 @@ import { MutedIcon } from '@/app/assets/images/icons/muted-icon';
 import { supabaseStorage } from '@/app/utils/constants';
 import getTime from '@/app/utils/get-time';
 import {
-   fetchAutoDraftStatusByDraft,
    fetchAutoDraftStatusByTeam,
    getTimerData,
    setAutoDraftStatusByTeam,
@@ -45,6 +44,7 @@ const Timer = ({
    isActive,
    timerDuration,
    pickIsKeeper,
+   autoDraftTeams,
 }: TimerProps) => {
    const supabase = createClientComponentClient<Database>();
 
@@ -64,7 +64,6 @@ const Timer = ({
    const [doMute, setDoMute] = useState<boolean>(false);
    const filteredPicks = useRef<Pick[]>();
    const [picksRemaining, setPicksRemaining] = useState<string>('');
-   const autoDraftTeams = useRef<DraftPicksFields[]>([]);
    const chime = createRef<HTMLAudioElement>();
    const serverTime = useRef<number>(Date.now());
 
@@ -78,9 +77,8 @@ const Timer = ({
    // use effects
    useEffect(() => {
       subscribeToTimerRoom(draftId, onTimerChange);
-      subscribeToDraftPicksRoom(draftId, onDraftPicksChange);
       getData();
-   }, [draftId]);
+   }, []);
 
    useEffect(() => {
       const getAutoDraftStatus = async () => {
@@ -160,7 +158,6 @@ const Timer = ({
    useEffect(() => {
       if (tick > 0) {
          const now = performance.now();
-
          if (isTimerRunning) {
             if (now - lastTick.current >= 950) {
                if (roomData.end_time) {
@@ -185,10 +182,10 @@ const Timer = ({
       if (owner) {
          if (
             isActive &&
-            autoDraftTeams.current.some((team) =>
+            autoDraftTeams.some((team) =>
                team.picks.includes(currentPick as number)
             ) &&
-            timer === formatTime(timerDuration - 2)
+            timer <= formatTime(timerDuration - 5)
          ) {
             autopick();
          }
@@ -204,19 +201,18 @@ const Timer = ({
    }, [isCompleted]);
 
    useEffect(() => {
-      const updateAutoDraft = async () => {
+      (async () => {
          const { data, error } = await supabase
             .from('draft_picks')
             .update({ auto_draft: shouldAutoDraft })
             .eq('team_id', userTeam.id)
             .eq('draft_id', draftId);
-      };
-      updateAutoDraft();
+      })();
    }, [shouldAutoDraft]);
 
    // end of use effects
 
-   const handleAutoDraft = async () => {
+   const handleAutoDraft = () => {
       setAutoDraftStatusByTeam(
          supabase,
          userTeam.id,
@@ -247,27 +243,6 @@ const Timer = ({
 
       return timerTrack;
    };
-   const subscribeToDraftPicksRoom = (
-      draftId: string,
-      changeCallback: (payload: any) => void
-   ) => {
-      draftPicks
-         .on(
-            'postgres_changes',
-            {
-               event: '*',
-               schema: 'public',
-               table: 'draft_picks',
-               filter: `draft_id=eq.${draftId}`,
-            },
-            (payload) => {
-               changeCallback(payload.new);
-            }
-         )
-         .subscribe();
-
-      return draftPicks;
-   };
 
    const onTimerChange = (payload: DraftTimerFields) => {
       if (payload?.end_time) {
@@ -275,33 +250,6 @@ const Timer = ({
             end_time: payload.end_time,
             is_active: payload.is_active,
          });
-      }
-   };
-
-   const getAutoDraft = async () => {
-      const response = await fetchAutoDraftStatusByDraft(supabase, draftId);
-      autoDraftTeams.current = response?.filter(
-         (team) => team.auto_draft
-      ) as DraftPicksFields[];
-   };
-   useEffect(() => {
-      getAutoDraft();
-   }, [supabase]);
-
-   const onDraftPicksChange = (payload: DraftPicksFields) => {
-      if (
-         !payload.auto_draft &&
-         autoDraftTeams.current.some((team) => team.team_id === payload.team_id)
-      ) {
-         autoDraftTeams.current = autoDraftTeams.current.filter(
-            (team) => team.team_id !== payload.team_id
-         );
-      }
-      if (
-         payload.auto_draft &&
-         autoDraftTeams.current.some((team) => team.team_id !== payload.team_id)
-      ) {
-         autoDraftTeams.current.push(payload);
       }
    };
 
@@ -338,10 +286,6 @@ const Timer = ({
       }
       return finalTime;
    }
-
-   useEffect(() => {
-      shouldAutoDraft && yourTurn && autopick();
-   }, [shouldAutoDraft]);
 
    return (
       <div className="flex flex-col justify-between w-full h-full lg:overflow-hidden dark:text-white relative lg:border-b lg:border-gray-light ">

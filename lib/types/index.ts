@@ -65,7 +65,7 @@ export interface DraftOrderProps {
    timer: number;
    timerDuration: number;
    hash?: string;
-   draftId: string;
+   autoDraftTeams: DraftPicksFields[];
 }
 
 export interface WatchlistProps {
@@ -193,6 +193,7 @@ export interface TimerProps {
    draftId: string;
    timerDuration: number;
    pickIsKeeper: boolean;
+   autoDraftTeams: DraftPicksFields[];
 }
 
 export interface BoardProps {
