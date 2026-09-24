@@ -35,7 +35,49 @@ export default function Nav({ user, userTeams, leagues, drafts }: NavProps) {
    useOnClickOutside(navContainer, () => setNavIsOpen(false));
    useOnClickOutside(accountNavContainer, () => setAccountMenuIsOpen(false));
 
-   if (!useNav) return null;
+   if (!useNav)
+      return (
+         <nav className="fixed top-0">
+            <button
+               onClick={() => setNavIsOpen(!navIsOpen)}
+               className="h-7 w-8 absolute top-[calc(1rem+3px)] lg:top-[calc(45px-2rem)] left-2 lg:left-4"
+            >
+               <span className="sr-only">Toggle navigation</span>
+               {Array.from({ length: 3 }).map((v, k) => {
+                  const positionClass =
+                     k === 0
+                        ? navIsOpen
+                           ? 'top-3 -rotate-45'
+                           : 'top-0 -rotate-0'
+                        : k === 1
+                        ? navIsOpen
+                           ? '!bg-transparent'
+                           : 'top-3'
+                        : navIsOpen
+                        ? 'top-3 rotate-45'
+                        : 'top-[1.475rem] rotate-0';
+                  return (
+                     <div
+                        key={k}
+                        className={classNames(
+                           positionClass,
+                           'w-full h-1 rounded-sm bg-white lg:bg-black absolute left-0 transition-all duration-75'
+                        )}
+                     ></div>
+                  );
+               })}
+            </button>
+            <NavMenu
+               user={user}
+               userTeams={userTeams}
+               leagues={leagues}
+               drafts={drafts}
+               navIsOpen={navIsOpen}
+               setNavIsOpen={setNavIsOpen}
+               className="z-[100]"
+            />
+         </nav>
+      );
    return (
       <>
          <div
