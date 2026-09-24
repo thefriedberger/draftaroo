@@ -394,12 +394,13 @@ export const handlePick = async (
    timerDuration: number
 ) => {
    const serverTime = await getTime();
-   await setMainTimer(supabase, draft.id, serverTime + timerDuration * 1000);
+   // await setMainTimer(supabase, draft.id, serverTime + timerDuration * 1000);
 
    await supabase
       .from('draft')
       .update({
          current_pick: currentPick + 1,
+         end_time: serverTime + timerDuration * 1000,
       })
       .match({ id: draft.id });
 };

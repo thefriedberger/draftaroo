@@ -1,11 +1,8 @@
 const MyTeamSkeleton = () => {
    return (
-      <div className="flex flex-col min-h-full max-h-[35%] lg:border-r lg:border-paper-dark dark:lg:border-gray-300 overflow-y-hidden ">
-         <div className="flex flex-row bg-blue-muted p-3 h-[35px]">
-            <div className="h-full w-full bg-blue-primary rounded-md animate-pulse"></div>
-         </div>
-         <div className="flex flex-row bg-gold p-3 h-[35px]">
-            <div className="h-full w-full bg-gray-light rounded-md animate-pulse"></div>
+      <div className="flex flex-col min-h-[55%] max-h-[55%] lg:border-r lg:border-paper-dark dark:lg:border-gray-300 overflow-y-hidden ">
+         <div className="flex flex-row bg-fuscia-primary p-3 h-[35px]">
+            <div className="h-full w-full bg-fuscia-dark rounded-md animate-pulse"></div>
          </div>
          {Array.from({ length: 20 }).map((v, i) => {
             return (
