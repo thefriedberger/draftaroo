@@ -66,7 +66,6 @@ const DraftOrder = ({
       const foundTeam =
          autoDraftTeams.filter((team) => team.team_id === payload.team_id) &&
          payload;
-      console.log(foundTeam);
       if (foundTeam) {
          setAutoDraftTeams([
             ...autoDraftTeams.filter(

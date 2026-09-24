@@ -50,10 +50,13 @@ const RostersTab = ({ league, teams, players, draft }: RosterProps) => {
          .select('*')
          .match({ league_id: league.league_id });
       const draftToUse: Draft = drafts
-         ? drafts.filter(
-              (d) => Number(d.draft_year) === new Date().getFullYear() - 1
-           )[0]
+         ? drafts.length > 1
+            ? drafts.filter(
+                 (d) => Number(d.draft_year) === new Date().getFullYear() - 1
+              )[0]
+            : draft
          : draft;
+      if (!draftToUse) return;
       const { data: draft_selections } = await supabase
          .from('draft_selections')
          .select('*')
