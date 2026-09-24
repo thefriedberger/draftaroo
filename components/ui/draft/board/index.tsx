@@ -96,6 +96,7 @@ const Board = ({
    const [isCompleted, setIsCompleted] = useState<boolean>(
       draft?.is_completed ?? false
    );
+   const [autoDraftTeams, setAutoDraftTeams] = useState<DraftPicksFields[]>([]);
    const [draftedIds, setdraftedIds] = useState<number[]>([]);
    const [yourPlayers, setYourPlayers] = useState<DraftedPlayer[]>([]);
    const [teamsViewPlayers, setTeamsViewPlayers] = useState<DraftedPlayer[]>(
@@ -153,12 +154,6 @@ const Board = ({
          });
       setYourPlayers(userPlayers);
 
-      // updateTeamsViewPlayers(team.id).forEach(
-      //    (player: DraftSelection) =>
-      //       player &&
-      //       !yourPlayers.includes(player.player_id) &&
-      //       setYourPlayers((prev) => [...prev, player.player_id])
-      // );
       if (teamViewToShow !== '') {
          if (updateTeamsViewPlayers(teamViewToShow).length === 0) {
             setTeamsViewPlayers([]);
@@ -182,23 +177,6 @@ const Board = ({
                   };
                });
             setTeamsViewPlayers(teamPlayers);
-
-            // let tempTeams: number[] = [];
-            // updateTeamsViewPlayers(teamViewToShow).forEach(
-            //    (player: DraftSelection) => {
-            //       if (
-            //          player.player_id &&
-            //          !teamsViewPlayers.includes(player.player_id)
-            //       ) {
-            //          tempTeams.push(player.player_id);
-            //       }
-            //    }
-            // );
-            // setTeamsViewPlayers(
-            //    updateTeamsViewPlayers(teamViewToShow).map(
-            //       (player) => player.player_id
-            //    )
-            // );
          }
       }
    }, [draftedPlayersState, teamViewToShow]);
@@ -381,6 +359,7 @@ const Board = ({
          .update({ is_active: false })
          .match({ id: draft.id });
    };
+
    const autoDraft = async () => {
       const autoDraftTeam = turnOrder.current.find((team) =>
          team.picks.includes(currentPick)

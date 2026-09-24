@@ -340,7 +340,7 @@ const Timer = ({
    }
 
    useEffect(() => {
-      shouldAutoDraft && autopick();
+      shouldAutoDraft && yourTurn && autopick();
    }, [shouldAutoDraft]);
 
    return (
