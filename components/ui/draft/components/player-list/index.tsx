@@ -59,6 +59,7 @@ const PlayerList = ({
    isYourTurn,
    handleDraftSelectionProps,
    timerDuration,
+   isActive,
 }: PlayerListProps) => {
    const [sort, setSort] = useState<SortValue>('score');
    const [positionFilter, setPositionFilter] = useState<string>('Skaters');
@@ -398,6 +399,7 @@ const PlayerList = ({
                                           handleDraftSelectionProps
                                        }
                                        timerDuration={timerDuration}
+                                       isActive={isActive}
                                     />
                                  </Suspense>
                               );

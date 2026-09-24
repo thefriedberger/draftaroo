@@ -57,6 +57,7 @@ const PlayerComponent = ({
    isYourTurn,
    handleDraftSelectionProps,
    timerDuration,
+   isActive,
 }: {
    player: Player;
    leagueScoring?: LeagueScoring | any;
@@ -69,6 +70,7 @@ const PlayerComponent = ({
       'player' | 'timerDuration'
    >;
    timerDuration: number;
+   isActive: boolean;
 }) => {
    const { updateFeaturedPlayer } = useContext(DraftContext);
    const [playerStats, setPlayerStats] = useState<PlayerStats[]>(
@@ -116,7 +118,7 @@ const PlayerComponent = ({
                            timerDuration,
                         });
                      }}
-                     disabled={player.id === 8476346}
+                     disabled={!isActive || player.id === 8476346}
                   >
                      D<span className="sr-only">Draft player</span>
                   </button>

@@ -102,6 +102,7 @@ export interface PlayerListProps {
       'player' | 'timerDuration'
    >;
    timerDuration: number;
+   isActive: boolean;
 }
 
 export interface DraftTileProps {
