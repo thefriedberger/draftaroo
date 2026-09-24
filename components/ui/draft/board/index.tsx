@@ -385,7 +385,6 @@ const Board = ({
       const autoDraftTeam = turnOrder.current.find((team) =>
          team.picks.includes(currentPick)
       );
-      console.info(autoDraftTeam);
 
       if (!autoDraftTeam) return;
 
@@ -395,7 +394,6 @@ const Board = ({
          teamOwner,
          draft
       );
-      console.info(autoDraftWatchlist);
 
       if (autoDraftWatchlist?.players?.length) {
          const autoDraftWatchlistPlayers = autoDraftWatchlist?.players.filter(
