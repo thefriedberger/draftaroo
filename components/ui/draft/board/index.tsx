@@ -160,14 +160,6 @@ const Board = ({
             );
          }
       }
-      // if (foundTeam) {
-      //    setAutoDraftTeams([
-      //       ...autoDraftTeams.filter(
-      //          (team) => team.team_id !== payload.team_id
-      //       ),
-      //       foundTeam,
-      //    ]);
-      // }
    };
 
    useEffect(() => {

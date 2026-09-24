@@ -360,11 +360,13 @@ export const setMainTimer = async (
    supabase: SupabaseClient,
    draftId: string,
    timerValue: number
-) => {
+): Promise<boolean> => {
    const { data, error } = await supabase
       .from('draft')
       .update({ end_time: timerValue })
       .match({ id: draftId });
+
+   return error ? false : true;
 };
 
 export const getTimerData = async (
@@ -392,11 +394,14 @@ export const handlePick = async (
    timerDuration: number
 ) => {
    const serverTime = await getTime();
-   setMainTimer(supabase, draft.id, serverTime + timerDuration * 1000);
+   // await setMainTimer(supabase, draft.id, serverTime + timerDuration * 1000);
 
    await supabase
       .from('draft')
-      .update({ current_pick: currentPick + 1 })
+      .update({
+         current_pick: currentPick + 1,
+         end_time: serverTime + timerDuration * 1000,
+      })
       .match({ id: draft.id });
 };
 export interface HandleDraftSelectionsProps {
