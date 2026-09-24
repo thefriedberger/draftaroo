@@ -119,9 +119,8 @@ const DraftOrderMobile = ({
                            }}
                            className={classNames(
                               currentPick % teams.length ===
-                                 pick.draftPosition && 'bg-emerald-primary',
-                              currentPick % teams.length ===
-                                 pick.draftPosition && countdown,
+                                 pick.draftPosition % teams.length &&
+                                 'bg-emerald-primary',
                               pick.yourPick &&
                                  currentPick % teams.length !==
                                     pick.draftPosition % teams.length &&
