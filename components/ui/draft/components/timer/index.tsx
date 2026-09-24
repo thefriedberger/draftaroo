@@ -289,12 +289,12 @@ const Timer = ({
    }
 
    useEffect(() => {
-      if (chime.current && !doMute && yourTurn && !pickIsKeeper) {
+      if (chime.current && !doMute && yourTurn && !pickIsKeeper && isActive) {
          chime.current.play().catch((error) => {
             console.log('Autoplay was blocked by the browser:', error);
          });
       }
-   }, [doMute, yourTurn, pickIsKeeper]);
+   }, [doMute, yourTurn, pickIsKeeper, isActive]);
 
    return (
       <div className="flex flex-col justify-between w-full h-full lg:overflow-hidden dark:text-white relative lg:border-b lg:border-gray-light ">
