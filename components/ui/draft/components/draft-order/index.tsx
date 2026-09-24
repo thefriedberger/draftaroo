@@ -107,7 +107,7 @@ const DraftOrder = ({
          <div
             className={classNames(
                gridCols,
-               'w-full sticky lg:-top-8 grid gap-2 z-50 dark:bg-gray-dark min-h-8'
+               'w-full sticky overflow-y-scroll lg:-top-8 grid gap-2 z-50 dark:bg-gray-dark min-h-8'
             )}
          >
             {picks
