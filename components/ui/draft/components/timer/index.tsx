@@ -288,15 +288,21 @@ const Timer = ({
       return finalTime;
    }
 
+   useEffect(() => {
+      if (chime.current && !doMute && yourTurn && !pickIsKeeper) {
+         chime.current.play().catch((error) => {
+            console.log('Autoplay was blocked by the browser:', error);
+         });
+      }
+   }, [doMute, yourTurn, pickIsKeeper]);
+
    return (
       <div className="flex flex-col justify-between w-full h-full lg:overflow-hidden dark:text-white relative lg:border-b lg:border-gray-light ">
          {!isCompleted ? (
             <>
-               {yourTurn && isActive && !pickIsKeeper && (
-                  <audio ref={chime} controls={false} autoPlay={!doMute}>
-                     <source src={supabaseStorage['Chime']} type="audio/mp3" />
-                  </audio>
-               )}
+               <audio ref={chime} controls={false} muted={doMute}>
+                  <source src={supabaseStorage['Chime']} type="audio/mp3" />
+               </audio>
                <button
                   type="button"
                   title={`${doMute ? 'Unmute' : 'Mute'} draft chime`}
