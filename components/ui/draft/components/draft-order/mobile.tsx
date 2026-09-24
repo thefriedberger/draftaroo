@@ -62,13 +62,16 @@ const DraftOrderMobile = ({
    };
 
    const onDraftPicksChange = (payload: DraftPicksFields) => {
-      if (
-         !payload.auto_draft &&
-         autoDraftTeams.some((team) => team.team_id === payload.team_id)
-      ) {
-         setAutoDraftTeams(
-            autoDraftTeams.filter((team) => team.team_id !== payload.team_id)
-         );
+      const foundTeam = autoDraftTeams.find(
+         (team) => team.team_id === payload.team_id
+      );
+      if (foundTeam) {
+         setAutoDraftTeams([
+            ...autoDraftTeams.filter(
+               (team) => team.team_id !== payload.team_id
+            ),
+            foundTeam,
+         ]);
       }
       if (
          payload.auto_draft &&
@@ -106,8 +109,10 @@ const DraftOrderMobile = ({
             (await fetchAutoDraftStatusByDraft(supabase, draftId)) || []
          );
       })();
-      subscribeToDraftPicksRoom(draftId, onDraftPicksChange);
    }, []);
+   useEffect(() => {
+      subscribeToDraftPicksRoom(draftId, onDraftPicksChange);
+   }, [autoDraftTeams]);
 
    return picks.length > 0 ? (
       <>

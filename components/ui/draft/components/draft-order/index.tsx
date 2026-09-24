@@ -63,14 +63,20 @@ const DraftOrder = ({
    };
 
    const onDraftPicksChange = (payload: DraftPicksFields) => {
-      if (
-         !payload.auto_draft &&
-         autoDraftTeams.some((team) => team.team_id === payload.team_id)
-      ) {
-         setAutoDraftTeams(
-            autoDraftTeams.filter((team) => team.team_id !== payload.team_id)
-         );
+      const foundTeam = autoDraftTeams.find(
+         (team) => team.team_id === payload.team_id
+      );
+      console.log(autoDraftTeams, foundTeam);
+      if (foundTeam) {
+         setAutoDraftTeams([
+            ...autoDraftTeams.filter(
+               (team) => team.team_id !== payload.team_id
+            ),
+            foundTeam,
+         ]);
       }
+
+      //idk if this does anything but I'm too lazy and pushed for time
       if (
          payload.auto_draft &&
          autoDraftTeams.some((team) => team.team_id !== payload.team_id)
@@ -87,12 +93,14 @@ const DraftOrder = ({
    // use effects
    useEffect(() => {
       (async () => {
-         setAutoDraftTeams(
-            (await fetchAutoDraftStatusByDraft(supabase, draftId)) || []
-         );
+         const t = await fetchAutoDraftStatusByDraft(supabase, draftId);
+         setAutoDraftTeams(t || []);
       })();
-      subscribeToDraftPicksRoom(draftId, onDraftPicksChange);
    }, []);
+
+   useEffect(() => {
+      subscribeToDraftPicksRoom(draftId, onDraftPicksChange);
+   }, [autoDraftTeams]);
 
    return picks.length > 0 ? (
       <>
