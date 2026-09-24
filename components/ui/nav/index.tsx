@@ -53,7 +53,7 @@ export default function Nav({ user, userTeams, leagues, drafts }: NavProps) {
                         key={k}
                         className={classNames(
                            positionClass,
-                           'w-full h-0.5 rounded-sm bg-white lg:bg-black absolute left-0 transition-all duration-75'
+                           'w-full h-0.5 rounded-sm bg-black absolute left-0 transition-all duration-75'
                         )}
                      ></div>
                   );
