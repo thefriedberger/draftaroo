@@ -182,8 +182,9 @@ const Timer = ({
       if (owner) {
          if (
             isActive &&
-            autoDraftTeams.some((team) =>
-               team.picks.includes(currentPick as number)
+            autoDraftTeams.some(
+               (team) =>
+                  team.auto_draft && team.picks.includes(currentPick as number)
             ) &&
             timer <= formatTime(timerDuration - 5)
          ) {

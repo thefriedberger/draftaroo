@@ -57,7 +57,18 @@ const DraftOrder = ({
                         'block relative dark:text-white rounded-md text-ellipsis whitespace-nowrap overflow-hidden my-0.5'
                      )}
                   >
-                     <div className="block absolute w-full h-full top-0 left-0 z-50 text-ellipsis whitespace-nowrap overflow-hidden p-0.5">
+                     <div
+                        className={classNames(
+                           autoDraftTeams.find(
+                              (autoDraftTeam) =>
+                                 autoDraftTeam.auto_draft &&
+                                 autoDraftTeam.picks.includes(
+                                    pick.draftPosition
+                                 )
+                           ) && 'max-w-[calc(100%-1.75rem)]',
+                           'block absolute w-full h-full top-0 left-0 z-50 text-ellipsis whitespace-nowrap overflow-hidden p-0.5'
+                        )}
+                     >
                         {pick.username}
                      </div>
                      {(autoDraftTeams || []).find(
