@@ -65,7 +65,7 @@ const DraftOrderMobile = ({
          >
             <div
                className={classNames(
-                  'w-full gap-2 sticky top-0 flex flex-nowrap z-10 min-w-full min-h-8 h-8 mt-2'
+                  'w-full gap-2 sticky top-0 flex flex-nowrap z-40 min-w-full min-h-8 h-8 mt-2'
                )}
             >
                {picks
@@ -99,7 +99,7 @@ const DraftOrderMobile = ({
                            <span
                               className={classNames(
                                  currentPick % teams.length ===
-                                    pick.draftPosition
+                                    pick.draftPosition % teams.length
                                     ? 'stroke-black dark:stroke-white'
                                     : 'stroke-black dark:stroke-white',
                                  'absolute top-1 right-0 z-[10000] w-7 h-7'
@@ -112,7 +112,7 @@ const DraftOrderMobile = ({
                            style={{
                               width:
                                  currentPick % teams.length ===
-                                 pick.draftPosition
+                                 pick.draftPosition % teams.length
                                     ? countdown
                                     : '100%',
                               transition: 'width 1s linear',
@@ -124,7 +124,7 @@ const DraftOrderMobile = ({
                                  pick.draftPosition && countdown,
                               pick.yourPick &&
                                  currentPick % teams.length !==
-                                    pick.draftPosition &&
+                                    pick.draftPosition % teams.length &&
                                  'bg-fuscia-primary !transition-none',
                               'absolute w-full h-full top-0 right-0'
                            )}
