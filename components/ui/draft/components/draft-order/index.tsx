@@ -66,7 +66,6 @@ const DraftOrder = ({
       const foundTeam =
          autoDraftTeams.filter((team) => team.team_id === payload.team_id) &&
          payload;
-      console.log(foundTeam);
       if (foundTeam) {
          setAutoDraftTeams([
             ...autoDraftTeams.filter(
@@ -99,7 +98,7 @@ const DraftOrder = ({
          <div
             className={classNames(
                gridCols,
-               'w-full sticky overflow-y-scroll lg:-top-8 grid gap-2 z-50 dark:bg-gray-dark min-h-8'
+               'w-full sticky overflow-y-scroll lg:-top-8 grid gap-2 z-10 dark:bg-gray-dark min-h-8'
             )}
          >
             {picks

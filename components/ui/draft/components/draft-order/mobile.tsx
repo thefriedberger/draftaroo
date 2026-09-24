@@ -120,7 +120,7 @@ const DraftOrderMobile = ({
          >
             <div
                className={classNames(
-                  'w-full gap-2 sticky top-0 flex flex-nowrap z-50 min-w-full min-h-8 h-8 mt-2'
+                  'w-full gap-2 sticky top-0 flex flex-nowrap z-10 min-w-full min-h-8 h-8 mt-2'
                )}
             >
                {picks

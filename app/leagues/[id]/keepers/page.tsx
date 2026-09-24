@@ -55,7 +55,7 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
    const previousDraftSelections: Awaited<DraftSelection[]> =
       await fetchDraftSelections(supabase, previousDraft?.id);
 
-   if (!previousDraftSelections) {
+   if (!previousDraftSelections && !draft) {
       return <h1 className="dark:text-white">{'No keepers'}</h1>;
    }
 
@@ -150,15 +150,21 @@ const Keepers = async ({ params: { id } }: { params: { id: string } }) => {
       userPicks: userPicks?.picks ?? [],
       players: players,
       roster: teamHistory.map((player: TeamHistory) => {
-         const foundPlayer = previousDraftSelections.find(
+         let toSearch = previousDraftSelections
+            ? previousDraftSelections
+            : draftSelections;
+         const foundPlayer = toSearch.find(
             (selection) => selection.player_id === player.player_id
          );
+
          const rosterPlayer: Partial<RosterPlayer> = {
             ...player,
             draft_position: foundPlayer?.round ?? null,
             times_kept:
                foundPlayer?.round === 1 && foundPlayer?.team_id === team.id
-                  ? player.times_kept ?? 0
+                  ? player.times_kept === 0
+                     ? 0
+                     : (player.times_kept ?? 1) + 1
                   : 0,
          };
 

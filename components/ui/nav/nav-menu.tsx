@@ -9,10 +9,12 @@ const NavMenu = ({
    drafts,
    navIsOpen,
    setNavIsOpen,
+   className,
 }: NavMenuProps) => {
    return (
       <div
          className={classNames(
+            className,
             navIsOpen && 'h-fit py-4',
             !navIsOpen && 'h-0',
             'absolute w-[100vw] overflow-hidden transition-all duration-100 left-0 top-[57px] z-50 bg-paper-primary dark:bg-gray-light'

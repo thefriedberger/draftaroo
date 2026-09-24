@@ -411,12 +411,8 @@ const Timer = ({
                   </>
                ) : (
                   <div className="bg-paper-primary h-16 dark:bg-gray-primary flex flex-row items-center">
-                     <div className="flex items-center justify-center mr-2 text-xl w-[100px] bg-orange-primary min-h-full">
-                        <p className="p-2 text-2xl">{timer}</p>
-                     </div>
-                     <div className="flex flex-col py-2">
-                        <p className="">{currentRound}&nbsp;Round</p>
-                        <p className="">{currentPick}&nbsp;Pick</p>
+                     <div className="flex items-center justify-center mr-2 w-1/2 bg-orange-primary min-h-full">
+                        <p className="ml-4 text-4xl leading-none">{timer}</p>
                      </div>
                      <div
                         className={classNames(

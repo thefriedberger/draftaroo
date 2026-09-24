@@ -20,6 +20,7 @@ export interface NavProps {
 export interface NavMenuProps extends NavProps {
    navIsOpen: boolean;
    setNavIsOpen: (value: boolean) => void;
+   className?: string;
 }
 
 export interface AccountMenuProps {
