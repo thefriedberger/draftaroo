@@ -691,7 +691,6 @@ const Board = ({
    useEffect(() => {
       picks.length > 0 && setPicks(updateDraftedPlayers());
    }, [draftedPlayersState]);
-
    const timerProps: TimerProps = {
       owner: isOwner.current,
       currentPick: currentPick,
