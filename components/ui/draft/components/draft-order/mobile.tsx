@@ -54,18 +54,23 @@ const DraftOrderMobile = ({
    }
 
    return picks.length > 0 ? (
-      <>
+      <div
+         className={classNames(
+            hash !== '#draft-order'
+               ? `max-h-56`
+               : 'max-h-[calc(100vh-66px-64px)]',
+            'flex flex-col overflow-scroll gap-1 min-w-full h-full items-start w-full'
+         )}
+      >
          <div
             className={classNames(
-               hash !== '#draft-order'
-                  ? `max-h-56`
-                  : 'max-h-[calc(100vh-66px-64px)]',
-               'flex flex-col overflow-scroll gap-2 min-w-full h-full items-start w-full'
+               'w-full gap-2 sticky top-0 flex flex-nowrap z-40 min-w-full min-h-8 h-8'
             )}
          >
+            <div className="w-4 mr-2">&nbsp;</div>
             <div
                className={classNames(
-                  'w-full gap-2 sticky top-0 flex flex-nowrap z-40 min-w-full min-h-8 h-8 mt-2'
+                  'w-full gap-2 sticky top-0 flex flex-nowrap z-40 min-w-full min-h-8 h-8'
                )}
             >
                {picks
@@ -132,36 +137,66 @@ const DraftOrderMobile = ({
                      </div>
                   ))}
             </div>
-            {splitPicks.map((picks, index) => (
-               <div
-                  key={index}
-                  className={classNames('flex flex-nowrap gap-2 w-full')}
-               >
-                  {picks?.map((pick: Pick) => {
-                     return (
-                        <DraftTile
-                           className="min-w-24"
-                           key={pick.draftPosition}
-                           pick={pick}
-                           currentPick={currentPick}
-                           playerSelected={
-                              draftedPlayers[
-                                 pick.playerID || 0
-                              ] as DraftSelection
-                           }
-                           player={
-                              players.find(
-                                 (player) => player.id === pick.playerID
-                              ) as Player
-                           }
-                           isYourTurn={isYourTurn}
-                        />
-                     );
-                  })}
-               </div>
-            ))}
          </div>
-      </>
+         <div className="flex">
+            <div className="w-4 grid grid-cols-1 gap-2 mr-1">
+               {Array.from({ length: numberOfRounds }).map((round, i) => (
+                  <div className="dark:bg-gray-light h-24 flex items-center justify-center max-h-24 w-full rounded-md">
+                     <p className="dark:text-white break-all max-w-full h-full py-1 flex flex-col leading-none text-center">
+                        <span className="text-[10px] block leading-none -mt-[0.1rem]">
+                           R
+                        </span>
+                        <span className="text-[10px] block leading-none -mt-[0.1rem]">
+                           o
+                        </span>
+                        <span className="text-[10px] block leading-none -mt-[0.1rem]">
+                           u
+                        </span>
+                        <span className="text-[10px] block leading-none -mt-[0.1rem]">
+                           n
+                        </span>
+                        <span className="text-[10px] block leading-none -mt-[0.1rem]">
+                           d
+                        </span>{' '}
+                        <span className="block mt-auto break-all text-md max-w-2 -ml-[0.1rem]">
+                           {i + 1}
+                        </span>
+                     </p>
+                  </div>
+               ))}
+            </div>
+            <div className="flex flex-col gap-2">
+               {splitPicks.map((picks, index) => (
+                  <div
+                     key={index}
+                     className={classNames('flex flex-nowrap gap-2 w-full')}
+                  >
+                     {picks?.map((pick: Pick) => {
+                        return (
+                           <DraftTile
+                              className="min-w-24"
+                              key={pick.draftPosition}
+                              pick={pick}
+                              currentPick={currentPick}
+                              playerSelected={
+                                 draftedPlayers[
+                                    pick.playerID || 0
+                                 ] as DraftSelection
+                              }
+                              player={
+                                 players.find(
+                                    (player) => player.id === pick.playerID
+                                 ) as Player
+                              }
+                              isYourTurn={isYourTurn}
+                           />
+                        );
+                     })}
+                  </div>
+               ))}
+            </div>
+         </div>
+      </div>
    ) : (
       <DraftOrderSkeleton />
    );
