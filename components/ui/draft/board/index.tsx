@@ -915,7 +915,7 @@ const Board = ({
                            </div>
                            <div
                               style={{ height: getHeight(draftOrderHeight) }}
-                              className="overflow-hidden px-1 relative lg:pt-8"
+                              className="overflow-hidden px-1 relative"
                            >
                               <DraftOrder {...draftOrderProps} />
                            </div>
