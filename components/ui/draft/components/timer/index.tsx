@@ -191,7 +191,7 @@ const Timer = ({
             autopick();
          }
 
-         if (time < -2) {
+         if (time === -1) {
             autopick();
          }
       }
